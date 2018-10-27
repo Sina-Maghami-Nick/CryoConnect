@@ -1,73 +1,30 @@
 <?php
-use \Psr\Http\Message\ServerRequestInterface as Request;
-use \Psr\Http\Message\ResponseInterface as Response;
+if (PHP_SAPI == 'cli-server') {
+    // To help the built-in PHP dev server, check if the request was actually for
+    // something which should probably be served as a static file
+    $url  = parse_url($_SERVER['REQUEST_URI']);
+    $file = __DIR__ . $url['path'];
+    if (is_file($file)) {
+        return false;
+    }
+}
 
-require '../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
-$config['displayErrorDetails'] = true;
-$config['addContentLengthHeader'] = false;
+session_start();
 
-$config['db']['host']   = 'localhost';
-$config['db']['user']   = 'dev';
-$config['db']['pass']   = 'password';
-$config['db']['dbname'] = 'slim_test';
+// Instantiate the app
+$settings = require __DIR__ . '/../src/settings.php';
+$app = new \Slim\App($settings);
 
-$app = new \Slim\App(['settings' => $config]);
+// Set up dependencies
+require __DIR__ . '/../src/dependencies.php';
 
-$container = $app->getContainer();
+// Register middleware
+require __DIR__ . '/../src/middleware.php';
 
-$container['logger'] = function($c) {
-    $logger = new \Monolog\Logger('my_logger');
-    $file_handler = new \Monolog\Handler\StreamHandler('../logs/app.log');
-    $logger->pushHandler($file_handler);
-    return $logger;
-};
+// Register routes
+require __DIR__ . '/../src/routes.php';
 
-$container['db'] = function ($c) {
-    $db = $c['settings']['db'];
-    $pdo = new PDO('mysql:host=' . $db['host'] . ';dbname=' . $db['dbname'],
-        $db['user'], $db['pass']);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-    return $pdo;
-};
-
-$app->get(
-        '/hello/{name}',
-        function (Request $request,
-        Response $response,
-        array $args) {
-    $name = $args['name'];
-    $response->getBody()->write("Hello, $name");
-    
-    $mapper = new TicketMapper($this->db);
-    
-    
-    $this->
-            logger->
-            addInfo('The name: ' . $name . ' was printed at: ' . date("Y-m-d H:i:s"));
-    
-
-
-    return $response;
-});
-
-$app->get('/tickets', function (Request $request, Response $response) {
-    $this->logger->addInfo("Ticket list");
-    $mapper = new TicketMapper($this->db);
-    $tickets = $mapper->getTickets();
-
-    $response->getBody()->write(var_export($tickets, true));
-    return $response;
-});
-
-$app->get('/ticket/{id}', function (Request $request, Response $response, $args) {
-    $ticket_id = (int)$args['id'];
-    $mapper = new TicketMapper($this->db);
-    $ticket = $mapper->getTicketById($ticket_id);
-
-    $response->getBody()->write(var_export($ticket, true));
-    return $response;
-});
-
+// Run app
 $app->run();
