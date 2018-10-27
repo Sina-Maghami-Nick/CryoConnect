@@ -2,16 +2,7 @@
 
 namespace App\Controllers;
 
-use Psr\Container\ContainerInterface;
-
-class ExpertsController {
-
-    protected $container;
-
-    // constructor receives container instance
-    public function __construct(ContainerInterface $container) {
-        $this->container = $container;
-    }
+class ExpertsController extends Controller {
 
     public function signup($request, $response, $args) {
         // your code
