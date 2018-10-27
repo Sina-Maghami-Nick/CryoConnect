@@ -4,7 +4,7 @@
 $container = $app->getContainer();
 
 // view renderer
-$container['renderer'] = function ($c) {
+$container['view'] = function ($c) {
     $settings = $c->get('settings')['renderer'];
     $view = new \Slim\Views\Twig($settings['template_path'], $settings['config']);
     
