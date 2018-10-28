@@ -10,7 +10,7 @@ return [
             'uri' => \Slim\Http\Uri::createFromEnvironment(new \Slim\Http\Environment($_SERVER)),
             
             'config' => [
-                'cache' => '/../cache/'
+                'cache' => __DIR__ . '/../cache/'
             ],
         ],
 

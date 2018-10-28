@@ -90,7 +90,7 @@ DROP TABLE IF EXISTS `cryosphere_what`;
 CREATE TABLE `cryosphere_what`
 (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-    `cryosphere_what _name` TEXT NOT NULL,
+    `cryosphere_what_name` TEXT NOT NULL,
     `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;

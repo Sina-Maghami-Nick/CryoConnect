@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<database name="cryo_connect" defaultIdMethod="native" defaultPhpNamingMethod="underscore">
+<database name="cryo_connect" defaultIdMethod="native" defaultPhpNamingMethod="underscore" namespace="CryoConnectDB">
   <table name="career_stage" idMethod="native" phpName="CareerStage">
     <column name="id" phpName="Id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="career_stage_name" phpName="CareerStageName" type="LONGVARCHAR" required="true"/>
@@ -52,7 +52,7 @@
   </table>
   <table name="cryosphere_what" idMethod="native" phpName="CryosphereWhat">
     <column name="id" phpName="Id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
-    <column name="cryosphere_what _name" phpName="CryosphereWhat Name" type="LONGVARCHAR" required="true"/>
+    <column name="cryosphere_what_name" phpName="CryosphereWhatName" type="LONGVARCHAR" required="true"/>
     <column name="timestamp" phpName="Timestamp" type="TIMESTAMP" required="true" defaultExpr="CURRENT_TIMESTAMP"/>
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>

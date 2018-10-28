@@ -1,11 +1,11 @@
 <?php
 
-namespace CryoconnectDB;
+namespace CryoConnectDB;
 
-use Base\Countries as BaseCountries;
+use CryoConnectDB\Base\CareerStage as BaseCareerStage;
 
 /**
- * Skeleton subclass for representing a row from the 'countries' table.
+ * Skeleton subclass for representing a row from the 'career_stage' table.
  *
  *
  *
@@ -14,7 +14,7 @@ use Base\Countries as BaseCountries;
  * long as it does not already exist in the output directory.
  *
  */
-class Countries extends BaseCountries
+class CareerStage extends BaseCareerStage
 {
 
 }

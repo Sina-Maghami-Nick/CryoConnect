@@ -2,21 +2,30 @@
 
 namespace App\Controllers;
 
-use CryoconnectDB\CountriesQuery;
-use CryoconnectDB\CryosphereWhatQuery;
+use CryoConnectDB\CountriesQuery;
+use CryoConnectDB\CryosphereWhatQuery;
+use CryoConnectDB\CryosphereWhat;
+use CryoConnectDB\CryosphereWhereQuery;
+use CryoConnectDB\CryosphereWhere;
 
 class ExpertsController extends Controller {
 
     public function signupAction($request, $response, $args) {
-        
+
         //Getting list of Expertise (Cryosphere_What)
-        $cryosphereWhatAll = CryosphereWhatQuery::create()->find();
+        //$cryosphereWhatAll = CryosphereWhatQuery::create()->find();
         
-        $q = new CountriesQuery();
-        $countries = $q->find();
-        
-        $response->getBody()->write($countries->toJSON());
-        return $response;
+        $cryospherewhats = CryosphereWhatQuery::create()->find();
+        $cryospherewheres = CryosphereWhereQuery::create()->find();
+        $countries = CountriesQuery::create()->find();
+
+        return $this->view->render(
+                        $response, 'expertsSignUp.html.twig', [
+                    'countries' => $countries->toArray(),
+                    'cryosphere-whats' => $cryospherewhats->toArray(),
+                    'cryosphere-wheres' => $cryospherewhats->toArray()
+                        ]
+        );
     }
 
     public function saveAction($request, $response, $args) {

@@ -11,13 +11,25 @@ use Psr\Container\ContainerInterface;
  */
 class Controller {
 
+    /**
+     *
+     * @var ContainerInterface $container 
+     */
     protected $container;
+
+    /**
+     *
+     * @var \Slim\Views\Twig $view
+     */
     protected $view;
 
-    // constructor receives container instance
+    /**
+     * 
+     * @param ContainerInterface $container
+     */
     public function __construct(ContainerInterface $container) {
         $this->container = $container;
-        //$this->view = $this->container->get($id);
+        $this->view = $this->container->get('view');
     }
 
 }
