@@ -1,5 +1,7 @@
 <?php
 
+namespace CryoconnectDB;
+
 use Base\ExpertFieldWorkQuery as BaseExpertFieldWorkQuery;
 
 /**

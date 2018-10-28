@@ -20,6 +20,9 @@ $app = new \Slim\App($settings);
 // Set up dependencies
 require __DIR__ . '/../src/dependencies.php';
 
+//initiate database
+require __DIR__ . '/../database/generated-conf/config.php';
+
 // Register middleware
 require __DIR__ . '/../src/middleware.php';
 

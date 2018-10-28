@@ -4,21 +4,21 @@ namespace App\Controllers;
 
 class InformationSeekersController extends Controller {
 
-    public function signup($request, $response, $args) {
+    public function signupAction($request, $response, $args) {
         // your code
         // to access items in the container... $this->container->get('');
         $response->getBody()->write("Hello test");
         return $response;
     }
 
-    public function newRequest($request, $response, $args) {
+    public function saveAction($request, $response, $args) {
         // your code
         // to access items in the container... $this->container->get('');
         $response->getBody()->write("Hello test2");
         return $response;
     }
 
-    public function requestSent($request, $response, $args) {
+    public function resultAction($request, $response, $args) {
         // your code
         // to access items in the container... $this->container->get('');
         $response->getBody()->write("Hello test3");

@@ -12,13 +12,12 @@ use Psr\Container\ContainerInterface;
 class Controller {
 
     protected $container;
+    protected $view;
 
     // constructor receives container instance
     public function __construct(ContainerInterface $container) {
         $this->container = $container;
-        $settings = $container->get('settings')['proppel'];
-        //Initilizing Proppel
-        require_once $settings['initializer_path'];
+        //$this->view = $this->container->get($id);
     }
 
 }

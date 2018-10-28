@@ -21,8 +21,5 @@ return [
             'level' => \Monolog\Logger::DEBUG,
         ],
         
-        'propel' => [
-            'initializer_path' => _DIR_ .'/../database/PropelInitializer.php'
-        ]
     ],
 ];

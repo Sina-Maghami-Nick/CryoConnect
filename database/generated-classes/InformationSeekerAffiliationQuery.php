@@ -1,5 +1,7 @@
 <?php
 
+namespace CryoconnectDB;
+
 use Base\InformationSeekerAffiliationQuery as BaseInformationSeekerAffiliationQuery;
 
 /**

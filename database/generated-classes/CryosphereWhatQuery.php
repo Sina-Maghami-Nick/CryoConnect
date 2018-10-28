@@ -1,5 +1,7 @@
 <?php
 
+namespace CryoconnectDB;
+
 use Base\CryosphereWhatQuery as BaseCryosphereWhatQuery;
 
 /**

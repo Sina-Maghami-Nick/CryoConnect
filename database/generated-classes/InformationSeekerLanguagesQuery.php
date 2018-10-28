@@ -1,5 +1,7 @@
 <?php
 
+namespace CryoconnectDB;
+
 use Base\InformationSeekerLanguagesQuery as BaseInformationSeekerLanguagesQuery;
 
 /**

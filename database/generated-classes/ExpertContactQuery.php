@@ -1,5 +1,7 @@
 <?php
 
+namespace CryoconnectDB;
+
 use Base\ExpertContactQuery as BaseExpertContactQuery;
 
 /**

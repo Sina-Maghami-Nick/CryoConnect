@@ -1,5 +1,7 @@
 <?php
 
+namespace CryoconnectDB;
+
 use Base\LanguagesQuery as BaseLanguagesQuery;
 
 /**

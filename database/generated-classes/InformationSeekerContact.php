@@ -1,5 +1,7 @@
 <?php
 
+namespace CryoconnectDB;
+
 use Base\InformationSeekerContact as BaseInformationSeekerContact;
 
 /**

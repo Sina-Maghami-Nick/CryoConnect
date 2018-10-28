@@ -1,5 +1,7 @@
 <?php
 
+namespace CryoconnectDB;
+
 use Base\CryosphereWhen as BaseCryosphereWhen;
 
 /**
