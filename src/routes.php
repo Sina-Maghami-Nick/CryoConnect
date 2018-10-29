@@ -8,10 +8,10 @@ use App\Controllers\InformationSeekersController;
 //Experts Routes
 $app->group('/experts', function () {
 //route to the expert sign-up form
-    $this->get('/sign-up', ExpertsController::class . ':signupAction');
+    $this->get('/sign-up', ExpertsController::class . ':signupFormAction');
 
 //route to the expert save data
-    $this->post('/new-request', ExpertsController::class . ':saveAction');
+    $this->post('/new-request', ExpertsController::class . ':signupAction')->setName('expert_signup');
 
 //route to the expert thank you page
     $this->get('/request-sent', ExpertsController::class . ':resultAction');
@@ -21,10 +21,10 @@ $app->group('/experts', function () {
 //Information Seeker Routes
 $app->group('/information-seekers', function () {
 //route to the information seeker request form
-    $this->get('/sign-up', InformationSeekersController::class . ':signupAction');
+    $this->get('/sign-up', InformationSeekersController::class . ':signupFormAction');
 
 //route to the information seeker save data
-    $this->get('/new-request', InformationSeekersController::class . ':saveAction');
+    $this->get('/new-request', InformationSeekersController::class . ':signupAction');
 
 //route to the expert thank you page
     $this->get('/request-sent', InformationSeekersController::class . ':resultAction');

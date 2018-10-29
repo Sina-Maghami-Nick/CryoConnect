@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Experts Sign-up</title>
+        <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+
+        
+        <form class="pure-form pure-form-aligned" action={{path_for('expert_signup')}} method="post">
+
+                <div class="pure-control-group">
+                    <label for="email">Email Address</label>
+                    <input name="email" id="email" type="email" placeholder="Email Address" required>
+                    <span class="pure-form-message-inline">This is a required field.</span>
+                </div>
+
+                <div class="pure-control-group">
+                    <label for="firstName">First Name</label>
+                    <input name="firstname" id="firstName" type="text" placeholder="First Name" required>
+                    <span class="pure-form-message-inline">This is a required field.</span>
+                </div>
+
+                <div class="pure-control-group">
+                    <label for="familyName">Last Name</label>
+                    <input name="familyname" id="familyName" type="text" placeholder="Family Name" required>
+                    <span class="pure-form-message-inline">This is a required field.</span>
+                </div>
+
+                <div class="pure-control-group">
+                    <label for="cryospherewhat">Which parts of the cryosphere are you comfortable answering questions about? </label>
+                    {% for cryosphere_what in _context.cryosphere_what %}
+                        <input name="cryosphere_what[{{cryosphere_what.CryosphereWhatName}}]" id="cryospherewhat" type="checkbox" value="{{cryosphere_what.Id}}">{{cryosphere_what.CryosphereWhatName}}</input>
+                    {% endfor %}
+                    <input name="cryosphere_what[other]" id="cryospherewhat" type="text" placeholder="other">
+                </div>
+
+                <div class="pure-control-group">
+                    <label for="cryosphere_where">In which general region(s) have you studied the cryosphere?</label>
+                    {% for cryosphere_where in _context.cryosphere_where %}
+                        <input name="cryosphere_where[{{cryosphere_what.CryosphereWhereName}}]" id="cryospherewhere" type="checkbox" value="{{cryosphere_where.Id}}">{{cryosphere_where.CryosphereWhereName}}</input>
+                    {% endfor %}
+                    <span class="pure-form-message-inline">This is a required field.</span>
+                </div>
+
+                <div class="pure-control-group">
+                    <label for="cryospherewhatspecefic">Which processes & subdisciplines are you comfortable answering questions about?</label>
+                    {% for cryosphere_what_specefic in _context.cryosphere_what_specefic %}
+                        <input name="cryosphere_what_specefic[{{cryosphere_what_specefic.CryosphereWhatSpeceficName}}] id="cryospherewhatspecefic" type="checkbox" value="{{cryosphere_what_specefic.Id}}">{{cryosphere_what_specefic.CryosphereWhatSpeceficName}}</input>
+                    {% endfor %}
+                    <input name="cryosphere_what_specefic[other]" id="cryospherewhatspecefic" type="text" placeholder="other">
+                </div>
+
+                <div class="pure-control-group">
+                    <label for="cryospheremethod">Which methods are you comfortable answering questions about? </label>
+                    {% for cryosphere_method in _context.cryosphere_methods %}
+                        <input name="cryosphere_method[{{cryosphere_method.CryosphereMethodsName}}] id="cryospheremethod" type="checkbox" value="{{cryosphere_method.Id}}">{{cryosphere_method.CryosphereMethodsName}}</input>
+                    {% endfor %}
+                    <input name="cryosphere_method[other]" id="cryospheremethod" type="text" placeholder="other">
+                </div>
+
+                <div class="pure-control-group">
+                    <label for="cryospherewhen">Which time periods are you comfortable answering questions about?</label>
+                    {% for cryosphere_when in _context.cryosphere_when %}
+                        <input name="cryosphere_when[{{cryosphere_when.CryosphereWhatName}}]" id="cryospherewhen" type="checkbox" value="{{cryosphere_when.Id}}">{{cryosphere_when.CryosphereWhenName}}</input>
+                    {% endfor %}
+                    <input name="cryosphere_when[{{cryosphere_when.CryosphereWhatName}}]" id="cryospherewhen" type="text" placeholder="other">
+                </div>
+
+                <div class="pure-control-group">
+                    <label for="fieldwork">If your research involves fieldwork, roughly where and when will this take place?</label>
+                    <input name="fieldwork[location]" id="fieldwork" type="text" placeholder="where ?">
+                    <input name="fieldwork[date]" id="fieldwork" type="date" placeholder="When ?">
+                </div>
+
+                <div class="pure-control-group">
+                    <label for="languages">Languages in which you are capable of answering scientific questions *</label>
+                    <input name="languages[1]" id="languages" type="text" placeholder="language 1" list="languagessuggestions">
+                    <input name="languages[2]" id="languages" type="text" placeholder="language 2" list="languagessuggestions">
+                    <input name="languages[3]" id="languages" type="text" placeholder="language 3" list="languagessuggestions">
+                    <datalist id="languagessuggestions">
+                        {% for language in _context.languages %}
+                            <option value="{{language.LanguageCode}}">{{language.Language}}</option>
+                        {% endfor %}
+                    </datalist>
+                </div>
+
+                <div class="pure-control-group">
+                    <label for="birtyear">When is your birth-year</label>
+                    <input name="birth_year" id="birtyear" type="number" placeholder="birtyear">
+                </div>
+
+                <div class="pure-control-group">
+                    <label for="careerstage">Career stage</label>
+                    <select name="caree_stage" id="careerstage">
+                        <option disabled selected value> Choose </option>
+                        {% for career_stages in _context.career_stages %}
+                            <option value="{{career_stages.Id}}">{{career_stages.CareerStageName}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="pure-control-group">
+                    <label for="affiliation">Affiliations</label>
+                    <input name="affiliation[primary][name]" id="affiliation" type="text" placeholder="primary affiliation">
+                    <input name="affiliation[primary][country]" id="primaryaffiliationcountry" type="text" placeholder="Country of primary affiliation" list="affliationcountries">
+                    <input name="affiliation[primary][city]" id="primaryaffiliationcity" type="text" placeholder="City of primary affiliation">
+                    <input name="affiliation[scondry][name]" id="secondryaffiliations" type="text" placeholder="secondary affiliations">
+                    <datalist id="affliationcountries">
+                        {% for country in _context.countries %}
+                            <option value="{{country.CountryName}}"></option>
+                        {% endfor %}
+                    </datalist>
+                </div>
+
+                <div class="pure-control-group">
+                    <label for="phonenumber">Phone number (incl. country code)</label>
+                    <input name="phone_number" id="phonenumber" type="tel" placeholder="number with country code">
+                </div>
+
+                <div class="pure-control-group">
+                    <label for="personalwebsite">Personal Website</label>
+                    <input name="personal_website" id="personalwebsite" type="url" placeholder="website">
+                </div>
+
+                <div class="pure-control-group">
+                    <label for="personallinkedin">Linkedin</label>
+                    <input name="personal_linkedin" id="personallinkedin" type="url" placeholder="linkedin">
+                </div>
+
+                <div class="pure-control-group">
+                    <label for="personalgooglescholar">Google Scholar profile</label>
+                    <input name="personal_google_scholar" id="personalgooglescholar" type="url" placeholder="google scholar">
+                </div>
+
+                <div class="pure-controls">
+                    <label for="cb" class="pure-checkbox">
+                        <input id="cb" type="checkbox" required> I agree to the terms and conditions
+                    </label>
+
+                    <button type="submit" class="pure-button pure-button-primary">Submit</button>
+                </div>
+            </fieldset>
+        </form>
+        <script>console.log({{ _context | json_encode | raw }});</script>
+
+    </body>
+
+</html>

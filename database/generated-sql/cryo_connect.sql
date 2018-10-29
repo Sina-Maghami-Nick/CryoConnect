@@ -75,7 +75,7 @@ DROP TABLE IF EXISTS `cryosphere_methods`;
 
 CREATE TABLE `cryosphere_methods`
 (
-    `id` int(10) unsigned NOT NULL,
+    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `cryosphere_methods_name` TEXT NOT NULL,
     `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
