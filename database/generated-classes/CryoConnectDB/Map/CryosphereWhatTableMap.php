@@ -59,7 +59,7 @@ class CryosphereWhatTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 3;
+    const NUM_COLUMNS = 4;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class CryosphereWhatTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 3;
+    const NUM_HYDRATE_COLUMNS = 4;
 
     /**
      * the column name for the id field
@@ -80,6 +80,11 @@ class CryosphereWhatTableMap extends TableMap
      * the column name for the cryosphere_what_name field
      */
     const COL_CRYOSPHERE_WHAT_NAME = 'cryosphere_what.cryosphere_what_name';
+
+    /**
+     * the column name for the approved field
+     */
+    const COL_APPROVED = 'cryosphere_what.approved';
 
     /**
      * the column name for the timestamp field
@@ -98,11 +103,11 @@ class CryosphereWhatTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'CryosphereWhatName', 'Timestamp', ),
-        self::TYPE_CAMELNAME     => array('id', 'cryosphereWhatName', 'timestamp', ),
-        self::TYPE_COLNAME       => array(CryosphereWhatTableMap::COL_ID, CryosphereWhatTableMap::COL_CRYOSPHERE_WHAT_NAME, CryosphereWhatTableMap::COL_TIMESTAMP, ),
-        self::TYPE_FIELDNAME     => array('id', 'cryosphere_what_name', 'timestamp', ),
-        self::TYPE_NUM           => array(0, 1, 2, )
+        self::TYPE_PHPNAME       => array('Id', 'CryosphereWhatName', 'Approved', 'Timestamp', ),
+        self::TYPE_CAMELNAME     => array('id', 'cryosphereWhatName', 'approved', 'timestamp', ),
+        self::TYPE_COLNAME       => array(CryosphereWhatTableMap::COL_ID, CryosphereWhatTableMap::COL_CRYOSPHERE_WHAT_NAME, CryosphereWhatTableMap::COL_APPROVED, CryosphereWhatTableMap::COL_TIMESTAMP, ),
+        self::TYPE_FIELDNAME     => array('id', 'cryosphere_what_name', 'approved', 'timestamp', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
     /**
@@ -112,11 +117,11 @@ class CryosphereWhatTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'CryosphereWhatName' => 1, 'Timestamp' => 2, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'cryosphereWhatName' => 1, 'timestamp' => 2, ),
-        self::TYPE_COLNAME       => array(CryosphereWhatTableMap::COL_ID => 0, CryosphereWhatTableMap::COL_CRYOSPHERE_WHAT_NAME => 1, CryosphereWhatTableMap::COL_TIMESTAMP => 2, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'cryosphere_what_name' => 1, 'timestamp' => 2, ),
-        self::TYPE_NUM           => array(0, 1, 2, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'CryosphereWhatName' => 1, 'Approved' => 2, 'Timestamp' => 3, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'cryosphereWhatName' => 1, 'approved' => 2, 'timestamp' => 3, ),
+        self::TYPE_COLNAME       => array(CryosphereWhatTableMap::COL_ID => 0, CryosphereWhatTableMap::COL_CRYOSPHERE_WHAT_NAME => 1, CryosphereWhatTableMap::COL_APPROVED => 2, CryosphereWhatTableMap::COL_TIMESTAMP => 3, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'cryosphere_what_name' => 1, 'approved' => 2, 'timestamp' => 3, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
     /**
@@ -138,6 +143,7 @@ class CryosphereWhatTableMap extends TableMap
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, 10, null);
         $this->addColumn('cryosphere_what_name', 'CryosphereWhatName', 'LONGVARCHAR', true, null, null);
+        $this->addColumn('approved', 'Approved', 'BOOLEAN', true, 1, false);
         $this->addColumn('timestamp', 'Timestamp', 'TIMESTAMP', true, null, 'CURRENT_TIMESTAMP');
     } // initialize()
 
@@ -305,10 +311,12 @@ class CryosphereWhatTableMap extends TableMap
         if (null === $alias) {
             $criteria->addSelectColumn(CryosphereWhatTableMap::COL_ID);
             $criteria->addSelectColumn(CryosphereWhatTableMap::COL_CRYOSPHERE_WHAT_NAME);
+            $criteria->addSelectColumn(CryosphereWhatTableMap::COL_APPROVED);
             $criteria->addSelectColumn(CryosphereWhatTableMap::COL_TIMESTAMP);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.cryosphere_what_name');
+            $criteria->addSelectColumn($alias . '.approved');
             $criteria->addSelectColumn($alias . '.timestamp');
         }
     }

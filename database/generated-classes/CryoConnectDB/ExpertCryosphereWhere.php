@@ -2,10 +2,10 @@
 
 namespace CryoConnectDB;
 
-use CryoConnectDB\Base\ExpertWhere as BaseExpertWhere;
+use CryoConnectDB\Base\ExpertCryosphereWhere as BaseExpertCryosphereWhere;
 
 /**
- * Skeleton subclass for representing a row from the 'expert_where' table.
+ * Skeleton subclass for representing a row from the 'expert_cryosphere_where' table.
  *
  *
  *
@@ -14,7 +14,7 @@ use CryoConnectDB\Base\ExpertWhere as BaseExpertWhere;
  * long as it does not already exist in the output directory.
  *
  */
-class ExpertWhere extends BaseExpertWhere
+class ExpertCryosphereWhere extends BaseExpertCryosphereWhere
 {
 
 }

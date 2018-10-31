@@ -3,9 +3,9 @@
 namespace CryoConnectDB\Base;
 
 use \Exception;
-use CryoConnectDB\ExpertWhere as ChildExpertWhere;
-use CryoConnectDB\ExpertWhereQuery as ChildExpertWhereQuery;
-use CryoConnectDB\Map\ExpertWhereTableMap;
+use CryoConnectDB\ExpertCryosphereWhere as ChildExpertCryosphereWhere;
+use CryoConnectDB\ExpertCryosphereWhereQuery as ChildExpertCryosphereWhereQuery;
+use CryoConnectDB\Map\ExpertCryosphereWhereTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -16,99 +16,99 @@ use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
 
 /**
- * Base class that represents a query for the 'expert_where' table.
+ * Base class that represents a query for the 'expert_cryosphere_where' table.
  *
  *
  *
- * @method     ChildExpertWhereQuery orderByExpertId($order = Criteria::ASC) Order by the expert_id column
- * @method     ChildExpertWhereQuery orderByCryosphereWhereId($order = Criteria::ASC) Order by the cryosphere_where_id column
- * @method     ChildExpertWhereQuery orderByTimestamp($order = Criteria::ASC) Order by the timestamp column
+ * @method     ChildExpertCryosphereWhereQuery orderByExpertId($order = Criteria::ASC) Order by the expert_id column
+ * @method     ChildExpertCryosphereWhereQuery orderByCryosphereWhereId($order = Criteria::ASC) Order by the cryosphere_where_id column
+ * @method     ChildExpertCryosphereWhereQuery orderByTimestamp($order = Criteria::ASC) Order by the timestamp column
  *
- * @method     ChildExpertWhereQuery groupByExpertId() Group by the expert_id column
- * @method     ChildExpertWhereQuery groupByCryosphereWhereId() Group by the cryosphere_where_id column
- * @method     ChildExpertWhereQuery groupByTimestamp() Group by the timestamp column
+ * @method     ChildExpertCryosphereWhereQuery groupByExpertId() Group by the expert_id column
+ * @method     ChildExpertCryosphereWhereQuery groupByCryosphereWhereId() Group by the cryosphere_where_id column
+ * @method     ChildExpertCryosphereWhereQuery groupByTimestamp() Group by the timestamp column
  *
- * @method     ChildExpertWhereQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
- * @method     ChildExpertWhereQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
- * @method     ChildExpertWhereQuery innerJoin($relation) Adds a INNER JOIN clause to the query
+ * @method     ChildExpertCryosphereWhereQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
+ * @method     ChildExpertCryosphereWhereQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
+ * @method     ChildExpertCryosphereWhereQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
- * @method     ChildExpertWhereQuery leftJoinWith($relation) Adds a LEFT JOIN clause and with to the query
- * @method     ChildExpertWhereQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
- * @method     ChildExpertWhereQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
+ * @method     ChildExpertCryosphereWhereQuery leftJoinWith($relation) Adds a LEFT JOIN clause and with to the query
+ * @method     ChildExpertCryosphereWhereQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
+ * @method     ChildExpertCryosphereWhereQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
  *
- * @method     ChildExpertWhereQuery leftJoinExperts($relationAlias = null) Adds a LEFT JOIN clause to the query using the Experts relation
- * @method     ChildExpertWhereQuery rightJoinExperts($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Experts relation
- * @method     ChildExpertWhereQuery innerJoinExperts($relationAlias = null) Adds a INNER JOIN clause to the query using the Experts relation
+ * @method     ChildExpertCryosphereWhereQuery leftJoinExperts($relationAlias = null) Adds a LEFT JOIN clause to the query using the Experts relation
+ * @method     ChildExpertCryosphereWhereQuery rightJoinExperts($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Experts relation
+ * @method     ChildExpertCryosphereWhereQuery innerJoinExperts($relationAlias = null) Adds a INNER JOIN clause to the query using the Experts relation
  *
- * @method     ChildExpertWhereQuery joinWithExperts($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Experts relation
+ * @method     ChildExpertCryosphereWhereQuery joinWithExperts($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Experts relation
  *
- * @method     ChildExpertWhereQuery leftJoinWithExperts() Adds a LEFT JOIN clause and with to the query using the Experts relation
- * @method     ChildExpertWhereQuery rightJoinWithExperts() Adds a RIGHT JOIN clause and with to the query using the Experts relation
- * @method     ChildExpertWhereQuery innerJoinWithExperts() Adds a INNER JOIN clause and with to the query using the Experts relation
+ * @method     ChildExpertCryosphereWhereQuery leftJoinWithExperts() Adds a LEFT JOIN clause and with to the query using the Experts relation
+ * @method     ChildExpertCryosphereWhereQuery rightJoinWithExperts() Adds a RIGHT JOIN clause and with to the query using the Experts relation
+ * @method     ChildExpertCryosphereWhereQuery innerJoinWithExperts() Adds a INNER JOIN clause and with to the query using the Experts relation
  *
- * @method     ChildExpertWhereQuery leftJoinCryosphereWhere($relationAlias = null) Adds a LEFT JOIN clause to the query using the CryosphereWhere relation
- * @method     ChildExpertWhereQuery rightJoinCryosphereWhere($relationAlias = null) Adds a RIGHT JOIN clause to the query using the CryosphereWhere relation
- * @method     ChildExpertWhereQuery innerJoinCryosphereWhere($relationAlias = null) Adds a INNER JOIN clause to the query using the CryosphereWhere relation
+ * @method     ChildExpertCryosphereWhereQuery leftJoinCryosphereWhere($relationAlias = null) Adds a LEFT JOIN clause to the query using the CryosphereWhere relation
+ * @method     ChildExpertCryosphereWhereQuery rightJoinCryosphereWhere($relationAlias = null) Adds a RIGHT JOIN clause to the query using the CryosphereWhere relation
+ * @method     ChildExpertCryosphereWhereQuery innerJoinCryosphereWhere($relationAlias = null) Adds a INNER JOIN clause to the query using the CryosphereWhere relation
  *
- * @method     ChildExpertWhereQuery joinWithCryosphereWhere($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the CryosphereWhere relation
+ * @method     ChildExpertCryosphereWhereQuery joinWithCryosphereWhere($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the CryosphereWhere relation
  *
- * @method     ChildExpertWhereQuery leftJoinWithCryosphereWhere() Adds a LEFT JOIN clause and with to the query using the CryosphereWhere relation
- * @method     ChildExpertWhereQuery rightJoinWithCryosphereWhere() Adds a RIGHT JOIN clause and with to the query using the CryosphereWhere relation
- * @method     ChildExpertWhereQuery innerJoinWithCryosphereWhere() Adds a INNER JOIN clause and with to the query using the CryosphereWhere relation
+ * @method     ChildExpertCryosphereWhereQuery leftJoinWithCryosphereWhere() Adds a LEFT JOIN clause and with to the query using the CryosphereWhere relation
+ * @method     ChildExpertCryosphereWhereQuery rightJoinWithCryosphereWhere() Adds a RIGHT JOIN clause and with to the query using the CryosphereWhere relation
+ * @method     ChildExpertCryosphereWhereQuery innerJoinWithCryosphereWhere() Adds a INNER JOIN clause and with to the query using the CryosphereWhere relation
  *
  * @method     \CryoConnectDB\ExpertsQuery|\CryoConnectDB\CryosphereWhereQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
- * @method     ChildExpertWhere findOne(ConnectionInterface $con = null) Return the first ChildExpertWhere matching the query
- * @method     ChildExpertWhere findOneOrCreate(ConnectionInterface $con = null) Return the first ChildExpertWhere matching the query, or a new ChildExpertWhere object populated from the query conditions when no match is found
+ * @method     ChildExpertCryosphereWhere findOne(ConnectionInterface $con = null) Return the first ChildExpertCryosphereWhere matching the query
+ * @method     ChildExpertCryosphereWhere findOneOrCreate(ConnectionInterface $con = null) Return the first ChildExpertCryosphereWhere matching the query, or a new ChildExpertCryosphereWhere object populated from the query conditions when no match is found
  *
- * @method     ChildExpertWhere findOneByExpertId(int $expert_id) Return the first ChildExpertWhere filtered by the expert_id column
- * @method     ChildExpertWhere findOneByCryosphereWhereId(int $cryosphere_where_id) Return the first ChildExpertWhere filtered by the cryosphere_where_id column
- * @method     ChildExpertWhere findOneByTimestamp(string $timestamp) Return the first ChildExpertWhere filtered by the timestamp column *
+ * @method     ChildExpertCryosphereWhere findOneByExpertId(int $expert_id) Return the first ChildExpertCryosphereWhere filtered by the expert_id column
+ * @method     ChildExpertCryosphereWhere findOneByCryosphereWhereId(int $cryosphere_where_id) Return the first ChildExpertCryosphereWhere filtered by the cryosphere_where_id column
+ * @method     ChildExpertCryosphereWhere findOneByTimestamp(string $timestamp) Return the first ChildExpertCryosphereWhere filtered by the timestamp column *
 
- * @method     ChildExpertWhere requirePk($key, ConnectionInterface $con = null) Return the ChildExpertWhere by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildExpertWhere requireOne(ConnectionInterface $con = null) Return the first ChildExpertWhere matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildExpertCryosphereWhere requirePk($key, ConnectionInterface $con = null) Return the ChildExpertCryosphereWhere by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildExpertCryosphereWhere requireOne(ConnectionInterface $con = null) Return the first ChildExpertCryosphereWhere matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
- * @method     ChildExpertWhere requireOneByExpertId(int $expert_id) Return the first ChildExpertWhere filtered by the expert_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildExpertWhere requireOneByCryosphereWhereId(int $cryosphere_where_id) Return the first ChildExpertWhere filtered by the cryosphere_where_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildExpertWhere requireOneByTimestamp(string $timestamp) Return the first ChildExpertWhere filtered by the timestamp column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildExpertCryosphereWhere requireOneByExpertId(int $expert_id) Return the first ChildExpertCryosphereWhere filtered by the expert_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildExpertCryosphereWhere requireOneByCryosphereWhereId(int $cryosphere_where_id) Return the first ChildExpertCryosphereWhere filtered by the cryosphere_where_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildExpertCryosphereWhere requireOneByTimestamp(string $timestamp) Return the first ChildExpertCryosphereWhere filtered by the timestamp column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
- * @method     ChildExpertWhere[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildExpertWhere objects based on current ModelCriteria
- * @method     ChildExpertWhere[]|ObjectCollection findByExpertId(int $expert_id) Return ChildExpertWhere objects filtered by the expert_id column
- * @method     ChildExpertWhere[]|ObjectCollection findByCryosphereWhereId(int $cryosphere_where_id) Return ChildExpertWhere objects filtered by the cryosphere_where_id column
- * @method     ChildExpertWhere[]|ObjectCollection findByTimestamp(string $timestamp) Return ChildExpertWhere objects filtered by the timestamp column
- * @method     ChildExpertWhere[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
+ * @method     ChildExpertCryosphereWhere[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildExpertCryosphereWhere objects based on current ModelCriteria
+ * @method     ChildExpertCryosphereWhere[]|ObjectCollection findByExpertId(int $expert_id) Return ChildExpertCryosphereWhere objects filtered by the expert_id column
+ * @method     ChildExpertCryosphereWhere[]|ObjectCollection findByCryosphereWhereId(int $cryosphere_where_id) Return ChildExpertCryosphereWhere objects filtered by the cryosphere_where_id column
+ * @method     ChildExpertCryosphereWhere[]|ObjectCollection findByTimestamp(string $timestamp) Return ChildExpertCryosphereWhere objects filtered by the timestamp column
+ * @method     ChildExpertCryosphereWhere[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
-abstract class ExpertWhereQuery extends ModelCriteria
+abstract class ExpertCryosphereWhereQuery extends ModelCriteria
 {
     protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityNotFoundException';
 
     /**
-     * Initializes internal state of \CryoConnectDB\Base\ExpertWhereQuery object.
+     * Initializes internal state of \CryoConnectDB\Base\ExpertCryosphereWhereQuery object.
      *
      * @param     string $dbName The database name
      * @param     string $modelName The phpName of a model, e.g. 'Book'
      * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
      */
-    public function __construct($dbName = 'cryo_connect', $modelName = '\\CryoConnectDB\\ExpertWhere', $modelAlias = null)
+    public function __construct($dbName = 'cryo_connect', $modelName = '\\CryoConnectDB\\ExpertCryosphereWhere', $modelAlias = null)
     {
         parent::__construct($dbName, $modelName, $modelAlias);
     }
 
     /**
-     * Returns a new ChildExpertWhereQuery object.
+     * Returns a new ChildExpertCryosphereWhereQuery object.
      *
      * @param     string $modelAlias The alias of a model in the query
      * @param     Criteria $criteria Optional Criteria to build the query from
      *
-     * @return ChildExpertWhereQuery
+     * @return ChildExpertCryosphereWhereQuery
      */
     public static function create($modelAlias = null, Criteria $criteria = null)
     {
-        if ($criteria instanceof ChildExpertWhereQuery) {
+        if ($criteria instanceof ChildExpertCryosphereWhereQuery) {
             return $criteria;
         }
-        $query = new ChildExpertWhereQuery();
+        $query = new ChildExpertCryosphereWhereQuery();
         if (null !== $modelAlias) {
             $query->setModelAlias($modelAlias);
         }
@@ -131,11 +131,11 @@ abstract class ExpertWhereQuery extends ModelCriteria
      * @param mixed $key Primary key to use for the query
      * @param ConnectionInterface $con an optional connection object
      *
-     * @return ChildExpertWhere|array|mixed the result, formatted by the current formatter
+     * @return ChildExpertCryosphereWhere|array|mixed the result, formatted by the current formatter
      */
     public function findPk($key, ConnectionInterface $con = null)
     {
-        throw new LogicException('The ExpertWhere object has no primary key');
+        throw new LogicException('The ExpertCryosphereWhere object has no primary key');
     }
 
     /**
@@ -150,7 +150,7 @@ abstract class ExpertWhereQuery extends ModelCriteria
      */
     public function findPks($keys, ConnectionInterface $con = null)
     {
-        throw new LogicException('The ExpertWhere object has no primary key');
+        throw new LogicException('The ExpertCryosphereWhere object has no primary key');
     }
 
     /**
@@ -158,11 +158,11 @@ abstract class ExpertWhereQuery extends ModelCriteria
      *
      * @param     mixed $key Primary key to use for the query
      *
-     * @return $this|ChildExpertWhereQuery The current query, for fluid interface
+     * @return $this|ChildExpertCryosphereWhereQuery The current query, for fluid interface
      */
     public function filterByPrimaryKey($key)
     {
-        throw new LogicException('The ExpertWhere object has no primary key');
+        throw new LogicException('The ExpertCryosphereWhere object has no primary key');
     }
 
     /**
@@ -170,11 +170,11 @@ abstract class ExpertWhereQuery extends ModelCriteria
      *
      * @param     array $keys The list of primary key to use for the query
      *
-     * @return $this|ChildExpertWhereQuery The current query, for fluid interface
+     * @return $this|ChildExpertCryosphereWhereQuery The current query, for fluid interface
      */
     public function filterByPrimaryKeys($keys)
     {
-        throw new LogicException('The ExpertWhere object has no primary key');
+        throw new LogicException('The ExpertCryosphereWhere object has no primary key');
     }
 
     /**
@@ -195,18 +195,18 @@ abstract class ExpertWhereQuery extends ModelCriteria
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildExpertWhereQuery The current query, for fluid interface
+     * @return $this|ChildExpertCryosphereWhereQuery The current query, for fluid interface
      */
     public function filterByExpertId($expertId = null, $comparison = null)
     {
         if (is_array($expertId)) {
             $useMinMax = false;
             if (isset($expertId['min'])) {
-                $this->addUsingAlias(ExpertWhereTableMap::COL_EXPERT_ID, $expertId['min'], Criteria::GREATER_EQUAL);
+                $this->addUsingAlias(ExpertCryosphereWhereTableMap::COL_EXPERT_ID, $expertId['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
             if (isset($expertId['max'])) {
-                $this->addUsingAlias(ExpertWhereTableMap::COL_EXPERT_ID, $expertId['max'], Criteria::LESS_EQUAL);
+                $this->addUsingAlias(ExpertCryosphereWhereTableMap::COL_EXPERT_ID, $expertId['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -217,7 +217,7 @@ abstract class ExpertWhereQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(ExpertWhereTableMap::COL_EXPERT_ID, $expertId, $comparison);
+        return $this->addUsingAlias(ExpertCryosphereWhereTableMap::COL_EXPERT_ID, $expertId, $comparison);
     }
 
     /**
@@ -238,18 +238,18 @@ abstract class ExpertWhereQuery extends ModelCriteria
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildExpertWhereQuery The current query, for fluid interface
+     * @return $this|ChildExpertCryosphereWhereQuery The current query, for fluid interface
      */
     public function filterByCryosphereWhereId($cryosphereWhereId = null, $comparison = null)
     {
         if (is_array($cryosphereWhereId)) {
             $useMinMax = false;
             if (isset($cryosphereWhereId['min'])) {
-                $this->addUsingAlias(ExpertWhereTableMap::COL_CRYOSPHERE_WHERE_ID, $cryosphereWhereId['min'], Criteria::GREATER_EQUAL);
+                $this->addUsingAlias(ExpertCryosphereWhereTableMap::COL_CRYOSPHERE_WHERE_ID, $cryosphereWhereId['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
             if (isset($cryosphereWhereId['max'])) {
-                $this->addUsingAlias(ExpertWhereTableMap::COL_CRYOSPHERE_WHERE_ID, $cryosphereWhereId['max'], Criteria::LESS_EQUAL);
+                $this->addUsingAlias(ExpertCryosphereWhereTableMap::COL_CRYOSPHERE_WHERE_ID, $cryosphereWhereId['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -260,7 +260,7 @@ abstract class ExpertWhereQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(ExpertWhereTableMap::COL_CRYOSPHERE_WHERE_ID, $cryosphereWhereId, $comparison);
+        return $this->addUsingAlias(ExpertCryosphereWhereTableMap::COL_CRYOSPHERE_WHERE_ID, $cryosphereWhereId, $comparison);
     }
 
     /**
@@ -281,18 +281,18 @@ abstract class ExpertWhereQuery extends ModelCriteria
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildExpertWhereQuery The current query, for fluid interface
+     * @return $this|ChildExpertCryosphereWhereQuery The current query, for fluid interface
      */
     public function filterByTimestamp($timestamp = null, $comparison = null)
     {
         if (is_array($timestamp)) {
             $useMinMax = false;
             if (isset($timestamp['min'])) {
-                $this->addUsingAlias(ExpertWhereTableMap::COL_TIMESTAMP, $timestamp['min'], Criteria::GREATER_EQUAL);
+                $this->addUsingAlias(ExpertCryosphereWhereTableMap::COL_TIMESTAMP, $timestamp['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
             if (isset($timestamp['max'])) {
-                $this->addUsingAlias(ExpertWhereTableMap::COL_TIMESTAMP, $timestamp['max'], Criteria::LESS_EQUAL);
+                $this->addUsingAlias(ExpertCryosphereWhereTableMap::COL_TIMESTAMP, $timestamp['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -303,7 +303,7 @@ abstract class ExpertWhereQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(ExpertWhereTableMap::COL_TIMESTAMP, $timestamp, $comparison);
+        return $this->addUsingAlias(ExpertCryosphereWhereTableMap::COL_TIMESTAMP, $timestamp, $comparison);
     }
 
     /**
@@ -314,20 +314,20 @@ abstract class ExpertWhereQuery extends ModelCriteria
      *
      * @throws \Propel\Runtime\Exception\PropelException
      *
-     * @return ChildExpertWhereQuery The current query, for fluid interface
+     * @return ChildExpertCryosphereWhereQuery The current query, for fluid interface
      */
     public function filterByExperts($experts, $comparison = null)
     {
         if ($experts instanceof \CryoConnectDB\Experts) {
             return $this
-                ->addUsingAlias(ExpertWhereTableMap::COL_EXPERT_ID, $experts->getId(), $comparison);
+                ->addUsingAlias(ExpertCryosphereWhereTableMap::COL_EXPERT_ID, $experts->getId(), $comparison);
         } elseif ($experts instanceof ObjectCollection) {
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
 
             return $this
-                ->addUsingAlias(ExpertWhereTableMap::COL_EXPERT_ID, $experts->toKeyValue('PrimaryKey', 'Id'), $comparison);
+                ->addUsingAlias(ExpertCryosphereWhereTableMap::COL_EXPERT_ID, $experts->toKeyValue('PrimaryKey', 'Id'), $comparison);
         } else {
             throw new PropelException('filterByExperts() only accepts arguments of type \CryoConnectDB\Experts or Collection');
         }
@@ -339,7 +339,7 @@ abstract class ExpertWhereQuery extends ModelCriteria
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return $this|ChildExpertWhereQuery The current query, for fluid interface
+     * @return $this|ChildExpertCryosphereWhereQuery The current query, for fluid interface
      */
     public function joinExperts($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
@@ -391,20 +391,20 @@ abstract class ExpertWhereQuery extends ModelCriteria
      *
      * @throws \Propel\Runtime\Exception\PropelException
      *
-     * @return ChildExpertWhereQuery The current query, for fluid interface
+     * @return ChildExpertCryosphereWhereQuery The current query, for fluid interface
      */
     public function filterByCryosphereWhere($cryosphereWhere, $comparison = null)
     {
         if ($cryosphereWhere instanceof \CryoConnectDB\CryosphereWhere) {
             return $this
-                ->addUsingAlias(ExpertWhereTableMap::COL_CRYOSPHERE_WHERE_ID, $cryosphereWhere->getId(), $comparison);
+                ->addUsingAlias(ExpertCryosphereWhereTableMap::COL_CRYOSPHERE_WHERE_ID, $cryosphereWhere->getId(), $comparison);
         } elseif ($cryosphereWhere instanceof ObjectCollection) {
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
 
             return $this
-                ->addUsingAlias(ExpertWhereTableMap::COL_CRYOSPHERE_WHERE_ID, $cryosphereWhere->toKeyValue('PrimaryKey', 'Id'), $comparison);
+                ->addUsingAlias(ExpertCryosphereWhereTableMap::COL_CRYOSPHERE_WHERE_ID, $cryosphereWhere->toKeyValue('PrimaryKey', 'Id'), $comparison);
         } else {
             throw new PropelException('filterByCryosphereWhere() only accepts arguments of type \CryoConnectDB\CryosphereWhere or Collection');
         }
@@ -416,7 +416,7 @@ abstract class ExpertWhereQuery extends ModelCriteria
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return $this|ChildExpertWhereQuery The current query, for fluid interface
+     * @return $this|ChildExpertCryosphereWhereQuery The current query, for fluid interface
      */
     public function joinCryosphereWhere($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
@@ -463,14 +463,14 @@ abstract class ExpertWhereQuery extends ModelCriteria
     /**
      * Exclude object from result
      *
-     * @param   ChildExpertWhere $expertWhere Object to remove from the list of results
+     * @param   ChildExpertCryosphereWhere $expertCryosphereWhere Object to remove from the list of results
      *
-     * @return $this|ChildExpertWhereQuery The current query, for fluid interface
+     * @return $this|ChildExpertCryosphereWhereQuery The current query, for fluid interface
      */
-    public function prune($expertWhere = null)
+    public function prune($expertCryosphereWhere = null)
     {
-        if ($expertWhere) {
-            throw new LogicException('ExpertWhere object has no primary key');
+        if ($expertCryosphereWhere) {
+            throw new LogicException('ExpertCryosphereWhere object has no primary key');
 
         }
 
@@ -478,7 +478,7 @@ abstract class ExpertWhereQuery extends ModelCriteria
     }
 
     /**
-     * Deletes all rows from the expert_where table.
+     * Deletes all rows from the expert_cryosphere_where table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
@@ -486,7 +486,7 @@ abstract class ExpertWhereQuery extends ModelCriteria
     public function doDeleteAll(ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ExpertWhereTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ExpertCryosphereWhereTableMap::DATABASE_NAME);
         }
 
         // use transaction because $criteria could contain info
@@ -497,8 +497,8 @@ abstract class ExpertWhereQuery extends ModelCriteria
             // Because this db requires some delete cascade/set null emulation, we have to
             // clear the cached instance *after* the emulation has happened (since
             // instances get re-added by the select statement contained therein).
-            ExpertWhereTableMap::clearInstancePool();
-            ExpertWhereTableMap::clearRelatedInstancePool();
+            ExpertCryosphereWhereTableMap::clearInstancePool();
+            ExpertCryosphereWhereTableMap::clearRelatedInstancePool();
 
             return $affectedRows;
         });
@@ -516,26 +516,26 @@ abstract class ExpertWhereQuery extends ModelCriteria
     public function delete(ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ExpertWhereTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ExpertCryosphereWhereTableMap::DATABASE_NAME);
         }
 
         $criteria = $this;
 
         // Set the correct dbName
-        $criteria->setDbName(ExpertWhereTableMap::DATABASE_NAME);
+        $criteria->setDbName(ExpertCryosphereWhereTableMap::DATABASE_NAME);
 
         // use transaction because $criteria could contain info
         // for more than one table or we could emulating ON DELETE CASCADE, etc.
         return $con->transaction(function () use ($con, $criteria) {
             $affectedRows = 0; // initialize var to track total num of affected rows
 
-            ExpertWhereTableMap::removeInstanceFromPool($criteria);
+            ExpertCryosphereWhereTableMap::removeInstanceFromPool($criteria);
 
             $affectedRows += ModelCriteria::delete($con);
-            ExpertWhereTableMap::clearRelatedInstancePool();
+            ExpertCryosphereWhereTableMap::clearRelatedInstancePool();
 
             return $affectedRows;
         });
     }
 
-} // ExpertWhereQuery
+} // ExpertCryosphereWhereQuery

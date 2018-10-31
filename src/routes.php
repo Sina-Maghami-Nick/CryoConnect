@@ -17,7 +17,6 @@ $app->group('/experts', function () {
     $this->get('/request-sent', ExpertsController::class . ':resultAction');
 });
 
-
 //Information Seeker Routes
 $app->group('/information-seekers', function () {
 //route to the information seeker request form

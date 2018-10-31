@@ -22,10 +22,12 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildCryosphereWhenQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildCryosphereWhenQuery orderByCryosphereWhenName($order = Criteria::ASC) Order by the cryosphere_when_name column
+ * @method     ChildCryosphereWhenQuery orderByApproved($order = Criteria::ASC) Order by the approved column
  * @method     ChildCryosphereWhenQuery orderByTimestamp($order = Criteria::ASC) Order by the timestamp column
  *
  * @method     ChildCryosphereWhenQuery groupById() Group by the id column
  * @method     ChildCryosphereWhenQuery groupByCryosphereWhenName() Group by the cryosphere_when_name column
+ * @method     ChildCryosphereWhenQuery groupByApproved() Group by the approved column
  * @method     ChildCryosphereWhenQuery groupByTimestamp() Group by the timestamp column
  *
  * @method     ChildCryosphereWhenQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
@@ -36,23 +38,24 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildCryosphereWhenQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
  * @method     ChildCryosphereWhenQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
  *
- * @method     ChildCryosphereWhenQuery leftJoinExpertWhen($relationAlias = null) Adds a LEFT JOIN clause to the query using the ExpertWhen relation
- * @method     ChildCryosphereWhenQuery rightJoinExpertWhen($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ExpertWhen relation
- * @method     ChildCryosphereWhenQuery innerJoinExpertWhen($relationAlias = null) Adds a INNER JOIN clause to the query using the ExpertWhen relation
+ * @method     ChildCryosphereWhenQuery leftJoinExpertCryosphereWhen($relationAlias = null) Adds a LEFT JOIN clause to the query using the ExpertCryosphereWhen relation
+ * @method     ChildCryosphereWhenQuery rightJoinExpertCryosphereWhen($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ExpertCryosphereWhen relation
+ * @method     ChildCryosphereWhenQuery innerJoinExpertCryosphereWhen($relationAlias = null) Adds a INNER JOIN clause to the query using the ExpertCryosphereWhen relation
  *
- * @method     ChildCryosphereWhenQuery joinWithExpertWhen($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the ExpertWhen relation
+ * @method     ChildCryosphereWhenQuery joinWithExpertCryosphereWhen($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the ExpertCryosphereWhen relation
  *
- * @method     ChildCryosphereWhenQuery leftJoinWithExpertWhen() Adds a LEFT JOIN clause and with to the query using the ExpertWhen relation
- * @method     ChildCryosphereWhenQuery rightJoinWithExpertWhen() Adds a RIGHT JOIN clause and with to the query using the ExpertWhen relation
- * @method     ChildCryosphereWhenQuery innerJoinWithExpertWhen() Adds a INNER JOIN clause and with to the query using the ExpertWhen relation
+ * @method     ChildCryosphereWhenQuery leftJoinWithExpertCryosphereWhen() Adds a LEFT JOIN clause and with to the query using the ExpertCryosphereWhen relation
+ * @method     ChildCryosphereWhenQuery rightJoinWithExpertCryosphereWhen() Adds a RIGHT JOIN clause and with to the query using the ExpertCryosphereWhen relation
+ * @method     ChildCryosphereWhenQuery innerJoinWithExpertCryosphereWhen() Adds a INNER JOIN clause and with to the query using the ExpertCryosphereWhen relation
  *
- * @method     \CryoConnectDB\ExpertWhenQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \CryoConnectDB\ExpertCryosphereWhenQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildCryosphereWhen findOne(ConnectionInterface $con = null) Return the first ChildCryosphereWhen matching the query
  * @method     ChildCryosphereWhen findOneOrCreate(ConnectionInterface $con = null) Return the first ChildCryosphereWhen matching the query, or a new ChildCryosphereWhen object populated from the query conditions when no match is found
  *
  * @method     ChildCryosphereWhen findOneById(int $id) Return the first ChildCryosphereWhen filtered by the id column
  * @method     ChildCryosphereWhen findOneByCryosphereWhenName(string $cryosphere_when_name) Return the first ChildCryosphereWhen filtered by the cryosphere_when_name column
+ * @method     ChildCryosphereWhen findOneByApproved(boolean $approved) Return the first ChildCryosphereWhen filtered by the approved column
  * @method     ChildCryosphereWhen findOneByTimestamp(string $timestamp) Return the first ChildCryosphereWhen filtered by the timestamp column *
 
  * @method     ChildCryosphereWhen requirePk($key, ConnectionInterface $con = null) Return the ChildCryosphereWhen by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -60,11 +63,13 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildCryosphereWhen requireOneById(int $id) Return the first ChildCryosphereWhen filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildCryosphereWhen requireOneByCryosphereWhenName(string $cryosphere_when_name) Return the first ChildCryosphereWhen filtered by the cryosphere_when_name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildCryosphereWhen requireOneByApproved(boolean $approved) Return the first ChildCryosphereWhen filtered by the approved column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildCryosphereWhen requireOneByTimestamp(string $timestamp) Return the first ChildCryosphereWhen filtered by the timestamp column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildCryosphereWhen[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildCryosphereWhen objects based on current ModelCriteria
  * @method     ChildCryosphereWhen[]|ObjectCollection findById(int $id) Return ChildCryosphereWhen objects filtered by the id column
  * @method     ChildCryosphereWhen[]|ObjectCollection findByCryosphereWhenName(string $cryosphere_when_name) Return ChildCryosphereWhen objects filtered by the cryosphere_when_name column
+ * @method     ChildCryosphereWhen[]|ObjectCollection findByApproved(boolean $approved) Return ChildCryosphereWhen objects filtered by the approved column
  * @method     ChildCryosphereWhen[]|ObjectCollection findByTimestamp(string $timestamp) Return ChildCryosphereWhen objects filtered by the timestamp column
  * @method     ChildCryosphereWhen[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
@@ -164,7 +169,7 @@ abstract class CryosphereWhenQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, cryosphere_when_name, timestamp FROM cryosphere_when WHERE id = :p0';
+        $sql = 'SELECT id, cryosphere_when_name, approved, timestamp FROM cryosphere_when WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -321,6 +326,33 @@ abstract class CryosphereWhenQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query on the approved column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByApproved(true); // WHERE approved = true
+     * $query->filterByApproved('yes'); // WHERE approved = true
+     * </code>
+     *
+     * @param     boolean|string $approved The value to use as filter.
+     *              Non-boolean arguments are converted using the following rules:
+     *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     *              Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildCryosphereWhenQuery The current query, for fluid interface
+     */
+    public function filterByApproved($approved = null, $comparison = null)
+    {
+        if (is_string($approved)) {
+            $approved = in_array(strtolower($approved), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+        }
+
+        return $this->addUsingAlias(CryosphereWhenTableMap::COL_APPROVED, $approved, $comparison);
+    }
+
+    /**
      * Filter the query on the timestamp column
      *
      * Example usage:
@@ -364,40 +396,40 @@ abstract class CryosphereWhenQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related \CryoConnectDB\ExpertWhen object
+     * Filter the query by a related \CryoConnectDB\ExpertCryosphereWhen object
      *
-     * @param \CryoConnectDB\ExpertWhen|ObjectCollection $expertWhen the related object to use as filter
+     * @param \CryoConnectDB\ExpertCryosphereWhen|ObjectCollection $expertCryosphereWhen the related object to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return ChildCryosphereWhenQuery The current query, for fluid interface
      */
-    public function filterByExpertWhen($expertWhen, $comparison = null)
+    public function filterByExpertCryosphereWhen($expertCryosphereWhen, $comparison = null)
     {
-        if ($expertWhen instanceof \CryoConnectDB\ExpertWhen) {
+        if ($expertCryosphereWhen instanceof \CryoConnectDB\ExpertCryosphereWhen) {
             return $this
-                ->addUsingAlias(CryosphereWhenTableMap::COL_ID, $expertWhen->getCryosphereWhenId(), $comparison);
-        } elseif ($expertWhen instanceof ObjectCollection) {
+                ->addUsingAlias(CryosphereWhenTableMap::COL_ID, $expertCryosphereWhen->getCryosphereWhenId(), $comparison);
+        } elseif ($expertCryosphereWhen instanceof ObjectCollection) {
             return $this
-                ->useExpertWhenQuery()
-                ->filterByPrimaryKeys($expertWhen->getPrimaryKeys())
+                ->useExpertCryosphereWhenQuery()
+                ->filterByPrimaryKeys($expertCryosphereWhen->getPrimaryKeys())
                 ->endUse();
         } else {
-            throw new PropelException('filterByExpertWhen() only accepts arguments of type \CryoConnectDB\ExpertWhen or Collection');
+            throw new PropelException('filterByExpertCryosphereWhen() only accepts arguments of type \CryoConnectDB\ExpertCryosphereWhen or Collection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the ExpertWhen relation
+     * Adds a JOIN clause to the query using the ExpertCryosphereWhen relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return $this|ChildCryosphereWhenQuery The current query, for fluid interface
      */
-    public function joinExpertWhen($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinExpertCryosphereWhen($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('ExpertWhen');
+        $relationMap = $tableMap->getRelation('ExpertCryosphereWhen');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -412,14 +444,14 @@ abstract class CryosphereWhenQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'ExpertWhen');
+            $this->addJoinObject($join, 'ExpertCryosphereWhen');
         }
 
         return $this;
     }
 
     /**
-     * Use the ExpertWhen relation ExpertWhen object
+     * Use the ExpertCryosphereWhen relation ExpertCryosphereWhen object
      *
      * @see useQuery()
      *
@@ -427,13 +459,13 @@ abstract class CryosphereWhenQuery extends ModelCriteria
      *                                   to be used as main alias in the secondary query
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return \CryoConnectDB\ExpertWhenQuery A secondary query class using the current class as primary query
+     * @return \CryoConnectDB\ExpertCryosphereWhenQuery A secondary query class using the current class as primary query
      */
-    public function useExpertWhenQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useExpertCryosphereWhenQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
-            ->joinExpertWhen($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'ExpertWhen', '\CryoConnectDB\ExpertWhenQuery');
+            ->joinExpertCryosphereWhen($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'ExpertCryosphereWhen', '\CryoConnectDB\ExpertCryosphereWhenQuery');
     }
 
     /**

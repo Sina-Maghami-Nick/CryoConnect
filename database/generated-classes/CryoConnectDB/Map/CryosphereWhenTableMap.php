@@ -59,7 +59,7 @@ class CryosphereWhenTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 3;
+    const NUM_COLUMNS = 4;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class CryosphereWhenTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 3;
+    const NUM_HYDRATE_COLUMNS = 4;
 
     /**
      * the column name for the id field
@@ -80,6 +80,11 @@ class CryosphereWhenTableMap extends TableMap
      * the column name for the cryosphere_when_name field
      */
     const COL_CRYOSPHERE_WHEN_NAME = 'cryosphere_when.cryosphere_when_name';
+
+    /**
+     * the column name for the approved field
+     */
+    const COL_APPROVED = 'cryosphere_when.approved';
 
     /**
      * the column name for the timestamp field
@@ -98,11 +103,11 @@ class CryosphereWhenTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'CryosphereWhenName', 'Timestamp', ),
-        self::TYPE_CAMELNAME     => array('id', 'cryosphereWhenName', 'timestamp', ),
-        self::TYPE_COLNAME       => array(CryosphereWhenTableMap::COL_ID, CryosphereWhenTableMap::COL_CRYOSPHERE_WHEN_NAME, CryosphereWhenTableMap::COL_TIMESTAMP, ),
-        self::TYPE_FIELDNAME     => array('id', 'cryosphere_when_name', 'timestamp', ),
-        self::TYPE_NUM           => array(0, 1, 2, )
+        self::TYPE_PHPNAME       => array('Id', 'CryosphereWhenName', 'Approved', 'Timestamp', ),
+        self::TYPE_CAMELNAME     => array('id', 'cryosphereWhenName', 'approved', 'timestamp', ),
+        self::TYPE_COLNAME       => array(CryosphereWhenTableMap::COL_ID, CryosphereWhenTableMap::COL_CRYOSPHERE_WHEN_NAME, CryosphereWhenTableMap::COL_APPROVED, CryosphereWhenTableMap::COL_TIMESTAMP, ),
+        self::TYPE_FIELDNAME     => array('id', 'cryosphere_when_name', 'approved', 'timestamp', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
     /**
@@ -112,11 +117,11 @@ class CryosphereWhenTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'CryosphereWhenName' => 1, 'Timestamp' => 2, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'cryosphereWhenName' => 1, 'timestamp' => 2, ),
-        self::TYPE_COLNAME       => array(CryosphereWhenTableMap::COL_ID => 0, CryosphereWhenTableMap::COL_CRYOSPHERE_WHEN_NAME => 1, CryosphereWhenTableMap::COL_TIMESTAMP => 2, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'cryosphere_when_name' => 1, 'timestamp' => 2, ),
-        self::TYPE_NUM           => array(0, 1, 2, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'CryosphereWhenName' => 1, 'Approved' => 2, 'Timestamp' => 3, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'cryosphereWhenName' => 1, 'approved' => 2, 'timestamp' => 3, ),
+        self::TYPE_COLNAME       => array(CryosphereWhenTableMap::COL_ID => 0, CryosphereWhenTableMap::COL_CRYOSPHERE_WHEN_NAME => 1, CryosphereWhenTableMap::COL_APPROVED => 2, CryosphereWhenTableMap::COL_TIMESTAMP => 3, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'cryosphere_when_name' => 1, 'approved' => 2, 'timestamp' => 3, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
     /**
@@ -138,6 +143,7 @@ class CryosphereWhenTableMap extends TableMap
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, 10, null);
         $this->addColumn('cryosphere_when_name', 'CryosphereWhenName', 'LONGVARCHAR', true, null, null);
+        $this->addColumn('approved', 'Approved', 'BOOLEAN', true, 1, false);
         $this->addColumn('timestamp', 'Timestamp', 'TIMESTAMP', true, null, 'CURRENT_TIMESTAMP');
     } // initialize()
 
@@ -146,13 +152,13 @@ class CryosphereWhenTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('ExpertWhen', '\\CryoConnectDB\\ExpertWhen', RelationMap::ONE_TO_MANY, array (
+        $this->addRelation('ExpertCryosphereWhen', '\\CryoConnectDB\\ExpertCryosphereWhen', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
     0 => ':cryosphere_when_id',
     1 => ':id',
   ),
-), 'CASCADE', 'CASCADE', 'ExpertWhens', false);
+), 'CASCADE', 'CASCADE', 'ExpertCryosphereWhens', false);
     } // buildRelations()
     /**
      * Method to invalidate the instance pool of all tables related to cryosphere_when     * by a foreign key with ON DELETE CASCADE
@@ -161,7 +167,7 @@ class CryosphereWhenTableMap extends TableMap
     {
         // Invalidate objects in related instance pools,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        ExpertWhenTableMap::clearInstancePool();
+        ExpertCryosphereWhenTableMap::clearInstancePool();
     }
 
     /**
@@ -307,10 +313,12 @@ class CryosphereWhenTableMap extends TableMap
         if (null === $alias) {
             $criteria->addSelectColumn(CryosphereWhenTableMap::COL_ID);
             $criteria->addSelectColumn(CryosphereWhenTableMap::COL_CRYOSPHERE_WHEN_NAME);
+            $criteria->addSelectColumn(CryosphereWhenTableMap::COL_APPROVED);
             $criteria->addSelectColumn(CryosphereWhenTableMap::COL_TIMESTAMP);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.cryosphere_when_name');
+            $criteria->addSelectColumn($alias . '.approved');
             $criteria->addSelectColumn($alias . '.timestamp');
         }
     }

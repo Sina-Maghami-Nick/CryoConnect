@@ -5,12 +5,12 @@ namespace CryoConnectDB\Base;
 use \DateTime;
 use \Exception;
 use \PDO;
-use CryoConnectDB\CryosphereExpertMethods as ChildCryosphereExpertMethods;
-use CryoConnectDB\CryosphereExpertMethodsQuery as ChildCryosphereExpertMethodsQuery;
 use CryoConnectDB\CryosphereMethods as ChildCryosphereMethods;
 use CryoConnectDB\CryosphereMethodsQuery as ChildCryosphereMethodsQuery;
-use CryoConnectDB\Map\CryosphereExpertMethodsTableMap;
+use CryoConnectDB\ExpertCryosphereMethods as ChildExpertCryosphereMethods;
+use CryoConnectDB\ExpertCryosphereMethodsQuery as ChildExpertCryosphereMethodsQuery;
 use CryoConnectDB\Map\CryosphereMethodsTableMap;
+use CryoConnectDB\Map\ExpertCryosphereMethodsTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -81,6 +81,14 @@ abstract class CryosphereMethods implements ActiveRecordInterface
     protected $cryosphere_methods_name;
 
     /**
+     * The value for the approved field.
+     *
+     * Note: this column has a database default value of: false
+     * @var        boolean
+     */
+    protected $approved;
+
+    /**
      * The value for the timestamp field.
      *
      * Note: this column has a database default value of: (expression) CURRENT_TIMESTAMP
@@ -89,10 +97,10 @@ abstract class CryosphereMethods implements ActiveRecordInterface
     protected $timestamp;
 
     /**
-     * @var        ObjectCollection|ChildCryosphereExpertMethods[] Collection to store aggregation of ChildCryosphereExpertMethods objects.
+     * @var        ObjectCollection|ChildExpertCryosphereMethods[] Collection to store aggregation of ChildExpertCryosphereMethods objects.
      */
-    protected $collCryosphereExpertMethodss;
-    protected $collCryosphereExpertMethodssPartial;
+    protected $collExpertCryosphereMethodss;
+    protected $collExpertCryosphereMethodssPartial;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -104,9 +112,9 @@ abstract class CryosphereMethods implements ActiveRecordInterface
 
     /**
      * An array of objects scheduled for deletion.
-     * @var ObjectCollection|ChildCryosphereExpertMethods[]
+     * @var ObjectCollection|ChildExpertCryosphereMethods[]
      */
-    protected $cryosphereExpertMethodssScheduledForDeletion = null;
+    protected $expertCryosphereMethodssScheduledForDeletion = null;
 
     /**
      * Applies default values to this object.
@@ -116,6 +124,7 @@ abstract class CryosphereMethods implements ActiveRecordInterface
      */
     public function applyDefaultValues()
     {
+        $this->approved = false;
     }
 
     /**
@@ -366,6 +375,26 @@ abstract class CryosphereMethods implements ActiveRecordInterface
     }
 
     /**
+     * Get the [approved] column value.
+     *
+     * @return boolean
+     */
+    public function getApproved()
+    {
+        return $this->approved;
+    }
+
+    /**
+     * Get the [approved] column value.
+     *
+     * @return boolean
+     */
+    public function isApproved()
+    {
+        return $this->getApproved();
+    }
+
+    /**
      * Get the [optionally formatted] temporal [timestamp] column value.
      *
      *
@@ -426,6 +455,34 @@ abstract class CryosphereMethods implements ActiveRecordInterface
     } // setCryosphereMethodsName()
 
     /**
+     * Sets the value of the [approved] column.
+     * Non-boolean arguments are converted using the following rules:
+     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     *
+     * @param  boolean|integer|string $v The new value
+     * @return $this|\CryoConnectDB\CryosphereMethods The current object (for fluent API support)
+     */
+    public function setApproved($v)
+    {
+        if ($v !== null) {
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
+            }
+        }
+
+        if ($this->approved !== $v) {
+            $this->approved = $v;
+            $this->modifiedColumns[CryosphereMethodsTableMap::COL_APPROVED] = true;
+        }
+
+        return $this;
+    } // setApproved()
+
+    /**
      * Sets the value of [timestamp] column to a normalized version of the date/time value specified.
      *
      * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
@@ -455,6 +512,10 @@ abstract class CryosphereMethods implements ActiveRecordInterface
      */
     public function hasOnlyDefaultValues()
     {
+            if ($this->approved !== false) {
+                return false;
+            }
+
         // otherwise, everything was equal, so return TRUE
         return true;
     } // hasOnlyDefaultValues()
@@ -487,7 +548,10 @@ abstract class CryosphereMethods implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : CryosphereMethodsTableMap::translateFieldName('CryosphereMethodsName', TableMap::TYPE_PHPNAME, $indexType)];
             $this->cryosphere_methods_name = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : CryosphereMethodsTableMap::translateFieldName('Timestamp', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : CryosphereMethodsTableMap::translateFieldName('Approved', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->approved = (null !== $col) ? (boolean) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : CryosphereMethodsTableMap::translateFieldName('Timestamp', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
@@ -500,7 +564,7 @@ abstract class CryosphereMethods implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 3; // 3 = CryosphereMethodsTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 4; // 4 = CryosphereMethodsTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\CryoConnectDB\\CryosphereMethods'), 0, $e);
@@ -561,7 +625,7 @@ abstract class CryosphereMethods implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->collCryosphereExpertMethodss = null;
+            $this->collExpertCryosphereMethodss = null;
 
         } // if (deep)
     }
@@ -677,17 +741,17 @@ abstract class CryosphereMethods implements ActiveRecordInterface
                 $this->resetModified();
             }
 
-            if ($this->cryosphereExpertMethodssScheduledForDeletion !== null) {
-                if (!$this->cryosphereExpertMethodssScheduledForDeletion->isEmpty()) {
-                    \CryoConnectDB\CryosphereExpertMethodsQuery::create()
-                        ->filterByPrimaryKeys($this->cryosphereExpertMethodssScheduledForDeletion->getPrimaryKeys(false))
+            if ($this->expertCryosphereMethodssScheduledForDeletion !== null) {
+                if (!$this->expertCryosphereMethodssScheduledForDeletion->isEmpty()) {
+                    \CryoConnectDB\ExpertCryosphereMethodsQuery::create()
+                        ->filterByPrimaryKeys($this->expertCryosphereMethodssScheduledForDeletion->getPrimaryKeys(false))
                         ->delete($con);
-                    $this->cryosphereExpertMethodssScheduledForDeletion = null;
+                    $this->expertCryosphereMethodssScheduledForDeletion = null;
                 }
             }
 
-            if ($this->collCryosphereExpertMethodss !== null) {
-                foreach ($this->collCryosphereExpertMethodss as $referrerFK) {
+            if ($this->collExpertCryosphereMethodss !== null) {
+                foreach ($this->collExpertCryosphereMethodss as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -714,6 +778,10 @@ abstract class CryosphereMethods implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
+        $this->modifiedColumns[CryosphereMethodsTableMap::COL_ID] = true;
+        if (null !== $this->id) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . CryosphereMethodsTableMap::COL_ID . ')');
+        }
 
          // check the columns in natural order for more readable SQL queries
         if ($this->isColumnModified(CryosphereMethodsTableMap::COL_ID)) {
@@ -721,6 +789,9 @@ abstract class CryosphereMethods implements ActiveRecordInterface
         }
         if ($this->isColumnModified(CryosphereMethodsTableMap::COL_CRYOSPHERE_METHODS_NAME)) {
             $modifiedColumns[':p' . $index++]  = 'cryosphere_methods_name';
+        }
+        if ($this->isColumnModified(CryosphereMethodsTableMap::COL_APPROVED)) {
+            $modifiedColumns[':p' . $index++]  = 'approved';
         }
         if ($this->isColumnModified(CryosphereMethodsTableMap::COL_TIMESTAMP)) {
             $modifiedColumns[':p' . $index++]  = 'timestamp';
@@ -742,6 +813,9 @@ abstract class CryosphereMethods implements ActiveRecordInterface
                     case 'cryosphere_methods_name':
                         $stmt->bindValue($identifier, $this->cryosphere_methods_name, PDO::PARAM_STR);
                         break;
+                    case 'approved':
+                        $stmt->bindValue($identifier, (int) $this->approved, PDO::PARAM_INT);
+                        break;
                     case 'timestamp':
                         $stmt->bindValue($identifier, $this->timestamp ? $this->timestamp->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
                         break;
@@ -752,6 +826,13 @@ abstract class CryosphereMethods implements ActiveRecordInterface
             Propel::log($e->getMessage(), Propel::LOG_ERR);
             throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), 0, $e);
         }
+
+        try {
+            $pk = $con->lastInsertId();
+        } catch (Exception $e) {
+            throw new PropelException('Unable to get autoincrement id.', 0, $e);
+        }
+        $this->setId($pk);
 
         $this->setNew(false);
     }
@@ -807,6 +888,9 @@ abstract class CryosphereMethods implements ActiveRecordInterface
                 return $this->getCryosphereMethodsName();
                 break;
             case 2:
+                return $this->getApproved();
+                break;
+            case 3:
                 return $this->getTimestamp();
                 break;
             default:
@@ -841,10 +925,11 @@ abstract class CryosphereMethods implements ActiveRecordInterface
         $result = array(
             $keys[0] => $this->getId(),
             $keys[1] => $this->getCryosphereMethodsName(),
-            $keys[2] => $this->getTimestamp(),
+            $keys[2] => $this->getApproved(),
+            $keys[3] => $this->getTimestamp(),
         );
-        if ($result[$keys[2]] instanceof \DateTimeInterface) {
-            $result[$keys[2]] = $result[$keys[2]]->format('c');
+        if ($result[$keys[3]] instanceof \DateTimeInterface) {
+            $result[$keys[3]] = $result[$keys[3]]->format('c');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -853,20 +938,20 @@ abstract class CryosphereMethods implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->collCryosphereExpertMethodss) {
+            if (null !== $this->collExpertCryosphereMethodss) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
-                        $key = 'cryosphereExpertMethodss';
+                        $key = 'expertCryosphereMethodss';
                         break;
                     case TableMap::TYPE_FIELDNAME:
-                        $key = 'cryosphere_expert_methodss';
+                        $key = 'expert_cryosphere_methodss';
                         break;
                     default:
-                        $key = 'CryosphereExpertMethodss';
+                        $key = 'ExpertCryosphereMethodss';
                 }
 
-                $result[$key] = $this->collCryosphereExpertMethodss->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+                $result[$key] = $this->collExpertCryosphereMethodss->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -909,6 +994,9 @@ abstract class CryosphereMethods implements ActiveRecordInterface
                 $this->setCryosphereMethodsName($value);
                 break;
             case 2:
+                $this->setApproved($value);
+                break;
+            case 3:
                 $this->setTimestamp($value);
                 break;
         } // switch()
@@ -944,7 +1032,10 @@ abstract class CryosphereMethods implements ActiveRecordInterface
             $this->setCryosphereMethodsName($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setTimestamp($arr[$keys[2]]);
+            $this->setApproved($arr[$keys[2]]);
+        }
+        if (array_key_exists($keys[3], $arr)) {
+            $this->setTimestamp($arr[$keys[3]]);
         }
     }
 
@@ -992,6 +1083,9 @@ abstract class CryosphereMethods implements ActiveRecordInterface
         }
         if ($this->isColumnModified(CryosphereMethodsTableMap::COL_CRYOSPHERE_METHODS_NAME)) {
             $criteria->add(CryosphereMethodsTableMap::COL_CRYOSPHERE_METHODS_NAME, $this->cryosphere_methods_name);
+        }
+        if ($this->isColumnModified(CryosphereMethodsTableMap::COL_APPROVED)) {
+            $criteria->add(CryosphereMethodsTableMap::COL_APPROVED, $this->approved);
         }
         if ($this->isColumnModified(CryosphereMethodsTableMap::COL_TIMESTAMP)) {
             $criteria->add(CryosphereMethodsTableMap::COL_TIMESTAMP, $this->timestamp);
@@ -1082,8 +1176,8 @@ abstract class CryosphereMethods implements ActiveRecordInterface
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setId($this->getId());
         $copyObj->setCryosphereMethodsName($this->getCryosphereMethodsName());
+        $copyObj->setApproved($this->getApproved());
         $copyObj->setTimestamp($this->getTimestamp());
 
         if ($deepCopy) {
@@ -1091,9 +1185,9 @@ abstract class CryosphereMethods implements ActiveRecordInterface
             // the getter/setter methods for fkey referrer objects.
             $copyObj->setNew(false);
 
-            foreach ($this->getCryosphereExpertMethodss() as $relObj) {
+            foreach ($this->getExpertCryosphereMethodss() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addCryosphereExpertMethods($relObj->copy($deepCopy));
+                    $copyObj->addExpertCryosphereMethods($relObj->copy($deepCopy));
                 }
             }
 
@@ -1101,6 +1195,7 @@ abstract class CryosphereMethods implements ActiveRecordInterface
 
         if ($makeNew) {
             $copyObj->setNew(true);
+            $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
         }
     }
 
@@ -1137,38 +1232,38 @@ abstract class CryosphereMethods implements ActiveRecordInterface
      */
     public function initRelation($relationName)
     {
-        if ('CryosphereExpertMethods' == $relationName) {
-            $this->initCryosphereExpertMethodss();
+        if ('ExpertCryosphereMethods' == $relationName) {
+            $this->initExpertCryosphereMethodss();
             return;
         }
     }
 
     /**
-     * Clears out the collCryosphereExpertMethodss collection
+     * Clears out the collExpertCryosphereMethodss collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
      * them to be refetched by subsequent calls to accessor method.
      *
      * @return void
-     * @see        addCryosphereExpertMethodss()
+     * @see        addExpertCryosphereMethodss()
      */
-    public function clearCryosphereExpertMethodss()
+    public function clearExpertCryosphereMethodss()
     {
-        $this->collCryosphereExpertMethodss = null; // important to set this to NULL since that means it is uninitialized
+        $this->collExpertCryosphereMethodss = null; // important to set this to NULL since that means it is uninitialized
     }
 
     /**
-     * Reset is the collCryosphereExpertMethodss collection loaded partially.
+     * Reset is the collExpertCryosphereMethodss collection loaded partially.
      */
-    public function resetPartialCryosphereExpertMethodss($v = true)
+    public function resetPartialExpertCryosphereMethodss($v = true)
     {
-        $this->collCryosphereExpertMethodssPartial = $v;
+        $this->collExpertCryosphereMethodssPartial = $v;
     }
 
     /**
-     * Initializes the collCryosphereExpertMethodss collection.
+     * Initializes the collExpertCryosphereMethodss collection.
      *
-     * By default this just sets the collCryosphereExpertMethodss collection to an empty array (like clearcollCryosphereExpertMethodss());
+     * By default this just sets the collExpertCryosphereMethodss collection to an empty array (like clearcollExpertCryosphereMethodss());
      * however, you may wish to override this method in your stub class to provide setting appropriate
      * to your application -- for example, setting the initial array to the values stored in database.
      *
@@ -1177,20 +1272,20 @@ abstract class CryosphereMethods implements ActiveRecordInterface
      *
      * @return void
      */
-    public function initCryosphereExpertMethodss($overrideExisting = true)
+    public function initExpertCryosphereMethodss($overrideExisting = true)
     {
-        if (null !== $this->collCryosphereExpertMethodss && !$overrideExisting) {
+        if (null !== $this->collExpertCryosphereMethodss && !$overrideExisting) {
             return;
         }
 
-        $collectionClassName = CryosphereExpertMethodsTableMap::getTableMap()->getCollectionClassName();
+        $collectionClassName = ExpertCryosphereMethodsTableMap::getTableMap()->getCollectionClassName();
 
-        $this->collCryosphereExpertMethodss = new $collectionClassName;
-        $this->collCryosphereExpertMethodss->setModel('\CryoConnectDB\CryosphereExpertMethods');
+        $this->collExpertCryosphereMethodss = new $collectionClassName;
+        $this->collExpertCryosphereMethodss->setModel('\CryoConnectDB\ExpertCryosphereMethods');
     }
 
     /**
-     * Gets an array of ChildCryosphereExpertMethods objects which contain a foreign key that references this object.
+     * Gets an array of ChildExpertCryosphereMethods objects which contain a foreign key that references this object.
      *
      * If the $criteria is not null, it is used to always fetch the results from the database.
      * Otherwise the results are fetched from the database the first time, then cached.
@@ -1200,108 +1295,108 @@ abstract class CryosphereMethods implements ActiveRecordInterface
      *
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
-     * @return ObjectCollection|ChildCryosphereExpertMethods[] List of ChildCryosphereExpertMethods objects
+     * @return ObjectCollection|ChildExpertCryosphereMethods[] List of ChildExpertCryosphereMethods objects
      * @throws PropelException
      */
-    public function getCryosphereExpertMethodss(Criteria $criteria = null, ConnectionInterface $con = null)
+    public function getExpertCryosphereMethodss(Criteria $criteria = null, ConnectionInterface $con = null)
     {
-        $partial = $this->collCryosphereExpertMethodssPartial && !$this->isNew();
-        if (null === $this->collCryosphereExpertMethodss || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collCryosphereExpertMethodss) {
+        $partial = $this->collExpertCryosphereMethodssPartial && !$this->isNew();
+        if (null === $this->collExpertCryosphereMethodss || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collExpertCryosphereMethodss) {
                 // return empty collection
-                $this->initCryosphereExpertMethodss();
+                $this->initExpertCryosphereMethodss();
             } else {
-                $collCryosphereExpertMethodss = ChildCryosphereExpertMethodsQuery::create(null, $criteria)
+                $collExpertCryosphereMethodss = ChildExpertCryosphereMethodsQuery::create(null, $criteria)
                     ->filterByCryosphereMethods($this)
                     ->find($con);
 
                 if (null !== $criteria) {
-                    if (false !== $this->collCryosphereExpertMethodssPartial && count($collCryosphereExpertMethodss)) {
-                        $this->initCryosphereExpertMethodss(false);
+                    if (false !== $this->collExpertCryosphereMethodssPartial && count($collExpertCryosphereMethodss)) {
+                        $this->initExpertCryosphereMethodss(false);
 
-                        foreach ($collCryosphereExpertMethodss as $obj) {
-                            if (false == $this->collCryosphereExpertMethodss->contains($obj)) {
-                                $this->collCryosphereExpertMethodss->append($obj);
+                        foreach ($collExpertCryosphereMethodss as $obj) {
+                            if (false == $this->collExpertCryosphereMethodss->contains($obj)) {
+                                $this->collExpertCryosphereMethodss->append($obj);
                             }
                         }
 
-                        $this->collCryosphereExpertMethodssPartial = true;
+                        $this->collExpertCryosphereMethodssPartial = true;
                     }
 
-                    return $collCryosphereExpertMethodss;
+                    return $collExpertCryosphereMethodss;
                 }
 
-                if ($partial && $this->collCryosphereExpertMethodss) {
-                    foreach ($this->collCryosphereExpertMethodss as $obj) {
+                if ($partial && $this->collExpertCryosphereMethodss) {
+                    foreach ($this->collExpertCryosphereMethodss as $obj) {
                         if ($obj->isNew()) {
-                            $collCryosphereExpertMethodss[] = $obj;
+                            $collExpertCryosphereMethodss[] = $obj;
                         }
                     }
                 }
 
-                $this->collCryosphereExpertMethodss = $collCryosphereExpertMethodss;
-                $this->collCryosphereExpertMethodssPartial = false;
+                $this->collExpertCryosphereMethodss = $collExpertCryosphereMethodss;
+                $this->collExpertCryosphereMethodssPartial = false;
             }
         }
 
-        return $this->collCryosphereExpertMethodss;
+        return $this->collExpertCryosphereMethodss;
     }
 
     /**
-     * Sets a collection of ChildCryosphereExpertMethods objects related by a one-to-many relationship
+     * Sets a collection of ChildExpertCryosphereMethods objects related by a one-to-many relationship
      * to the current object.
      * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
      * and new objects from the given Propel collection.
      *
-     * @param      Collection $cryosphereExpertMethodss A Propel collection.
+     * @param      Collection $expertCryosphereMethodss A Propel collection.
      * @param      ConnectionInterface $con Optional connection object
      * @return $this|ChildCryosphereMethods The current object (for fluent API support)
      */
-    public function setCryosphereExpertMethodss(Collection $cryosphereExpertMethodss, ConnectionInterface $con = null)
+    public function setExpertCryosphereMethodss(Collection $expertCryosphereMethodss, ConnectionInterface $con = null)
     {
-        /** @var ChildCryosphereExpertMethods[] $cryosphereExpertMethodssToDelete */
-        $cryosphereExpertMethodssToDelete = $this->getCryosphereExpertMethodss(new Criteria(), $con)->diff($cryosphereExpertMethodss);
+        /** @var ChildExpertCryosphereMethods[] $expertCryosphereMethodssToDelete */
+        $expertCryosphereMethodssToDelete = $this->getExpertCryosphereMethodss(new Criteria(), $con)->diff($expertCryosphereMethodss);
 
 
-        $this->cryosphereExpertMethodssScheduledForDeletion = $cryosphereExpertMethodssToDelete;
+        $this->expertCryosphereMethodssScheduledForDeletion = $expertCryosphereMethodssToDelete;
 
-        foreach ($cryosphereExpertMethodssToDelete as $cryosphereExpertMethodsRemoved) {
-            $cryosphereExpertMethodsRemoved->setCryosphereMethods(null);
+        foreach ($expertCryosphereMethodssToDelete as $expertCryosphereMethodsRemoved) {
+            $expertCryosphereMethodsRemoved->setCryosphereMethods(null);
         }
 
-        $this->collCryosphereExpertMethodss = null;
-        foreach ($cryosphereExpertMethodss as $cryosphereExpertMethods) {
-            $this->addCryosphereExpertMethods($cryosphereExpertMethods);
+        $this->collExpertCryosphereMethodss = null;
+        foreach ($expertCryosphereMethodss as $expertCryosphereMethods) {
+            $this->addExpertCryosphereMethods($expertCryosphereMethods);
         }
 
-        $this->collCryosphereExpertMethodss = $cryosphereExpertMethodss;
-        $this->collCryosphereExpertMethodssPartial = false;
+        $this->collExpertCryosphereMethodss = $expertCryosphereMethodss;
+        $this->collExpertCryosphereMethodssPartial = false;
 
         return $this;
     }
 
     /**
-     * Returns the number of related CryosphereExpertMethods objects.
+     * Returns the number of related ExpertCryosphereMethods objects.
      *
      * @param      Criteria $criteria
      * @param      boolean $distinct
      * @param      ConnectionInterface $con
-     * @return int             Count of related CryosphereExpertMethods objects.
+     * @return int             Count of related ExpertCryosphereMethods objects.
      * @throws PropelException
      */
-    public function countCryosphereExpertMethodss(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    public function countExpertCryosphereMethodss(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
     {
-        $partial = $this->collCryosphereExpertMethodssPartial && !$this->isNew();
-        if (null === $this->collCryosphereExpertMethodss || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collCryosphereExpertMethodss) {
+        $partial = $this->collExpertCryosphereMethodssPartial && !$this->isNew();
+        if (null === $this->collExpertCryosphereMethodss || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collExpertCryosphereMethodss) {
                 return 0;
             }
 
             if ($partial && !$criteria) {
-                return count($this->getCryosphereExpertMethodss());
+                return count($this->getExpertCryosphereMethodss());
             }
 
-            $query = ChildCryosphereExpertMethodsQuery::create(null, $criteria);
+            $query = ChildExpertCryosphereMethodsQuery::create(null, $criteria);
             if ($distinct) {
                 $query->distinct();
             }
@@ -1311,28 +1406,28 @@ abstract class CryosphereMethods implements ActiveRecordInterface
                 ->count($con);
         }
 
-        return count($this->collCryosphereExpertMethodss);
+        return count($this->collExpertCryosphereMethodss);
     }
 
     /**
-     * Method called to associate a ChildCryosphereExpertMethods object to this object
-     * through the ChildCryosphereExpertMethods foreign key attribute.
+     * Method called to associate a ChildExpertCryosphereMethods object to this object
+     * through the ChildExpertCryosphereMethods foreign key attribute.
      *
-     * @param  ChildCryosphereExpertMethods $l ChildCryosphereExpertMethods
+     * @param  ChildExpertCryosphereMethods $l ChildExpertCryosphereMethods
      * @return $this|\CryoConnectDB\CryosphereMethods The current object (for fluent API support)
      */
-    public function addCryosphereExpertMethods(ChildCryosphereExpertMethods $l)
+    public function addExpertCryosphereMethods(ChildExpertCryosphereMethods $l)
     {
-        if ($this->collCryosphereExpertMethodss === null) {
-            $this->initCryosphereExpertMethodss();
-            $this->collCryosphereExpertMethodssPartial = true;
+        if ($this->collExpertCryosphereMethodss === null) {
+            $this->initExpertCryosphereMethodss();
+            $this->collExpertCryosphereMethodssPartial = true;
         }
 
-        if (!$this->collCryosphereExpertMethodss->contains($l)) {
-            $this->doAddCryosphereExpertMethods($l);
+        if (!$this->collExpertCryosphereMethodss->contains($l)) {
+            $this->doAddExpertCryosphereMethods($l);
 
-            if ($this->cryosphereExpertMethodssScheduledForDeletion and $this->cryosphereExpertMethodssScheduledForDeletion->contains($l)) {
-                $this->cryosphereExpertMethodssScheduledForDeletion->remove($this->cryosphereExpertMethodssScheduledForDeletion->search($l));
+            if ($this->expertCryosphereMethodssScheduledForDeletion and $this->expertCryosphereMethodssScheduledForDeletion->contains($l)) {
+                $this->expertCryosphereMethodssScheduledForDeletion->remove($this->expertCryosphereMethodssScheduledForDeletion->search($l));
             }
         }
 
@@ -1340,29 +1435,29 @@ abstract class CryosphereMethods implements ActiveRecordInterface
     }
 
     /**
-     * @param ChildCryosphereExpertMethods $cryosphereExpertMethods The ChildCryosphereExpertMethods object to add.
+     * @param ChildExpertCryosphereMethods $expertCryosphereMethods The ChildExpertCryosphereMethods object to add.
      */
-    protected function doAddCryosphereExpertMethods(ChildCryosphereExpertMethods $cryosphereExpertMethods)
+    protected function doAddExpertCryosphereMethods(ChildExpertCryosphereMethods $expertCryosphereMethods)
     {
-        $this->collCryosphereExpertMethodss[]= $cryosphereExpertMethods;
-        $cryosphereExpertMethods->setCryosphereMethods($this);
+        $this->collExpertCryosphereMethodss[]= $expertCryosphereMethods;
+        $expertCryosphereMethods->setCryosphereMethods($this);
     }
 
     /**
-     * @param  ChildCryosphereExpertMethods $cryosphereExpertMethods The ChildCryosphereExpertMethods object to remove.
+     * @param  ChildExpertCryosphereMethods $expertCryosphereMethods The ChildExpertCryosphereMethods object to remove.
      * @return $this|ChildCryosphereMethods The current object (for fluent API support)
      */
-    public function removeCryosphereExpertMethods(ChildCryosphereExpertMethods $cryosphereExpertMethods)
+    public function removeExpertCryosphereMethods(ChildExpertCryosphereMethods $expertCryosphereMethods)
     {
-        if ($this->getCryosphereExpertMethodss()->contains($cryosphereExpertMethods)) {
-            $pos = $this->collCryosphereExpertMethodss->search($cryosphereExpertMethods);
-            $this->collCryosphereExpertMethodss->remove($pos);
-            if (null === $this->cryosphereExpertMethodssScheduledForDeletion) {
-                $this->cryosphereExpertMethodssScheduledForDeletion = clone $this->collCryosphereExpertMethodss;
-                $this->cryosphereExpertMethodssScheduledForDeletion->clear();
+        if ($this->getExpertCryosphereMethodss()->contains($expertCryosphereMethods)) {
+            $pos = $this->collExpertCryosphereMethodss->search($expertCryosphereMethods);
+            $this->collExpertCryosphereMethodss->remove($pos);
+            if (null === $this->expertCryosphereMethodssScheduledForDeletion) {
+                $this->expertCryosphereMethodssScheduledForDeletion = clone $this->collExpertCryosphereMethodss;
+                $this->expertCryosphereMethodssScheduledForDeletion->clear();
             }
-            $this->cryosphereExpertMethodssScheduledForDeletion[]= clone $cryosphereExpertMethods;
-            $cryosphereExpertMethods->setCryosphereMethods(null);
+            $this->expertCryosphereMethodssScheduledForDeletion[]= clone $expertCryosphereMethods;
+            $expertCryosphereMethods->setCryosphereMethods(null);
         }
 
         return $this;
@@ -1374,7 +1469,7 @@ abstract class CryosphereMethods implements ActiveRecordInterface
      * an identical criteria, it returns the collection.
      * Otherwise if this CryosphereMethods is new, it will return
      * an empty collection; or if this CryosphereMethods has previously
-     * been saved, it will retrieve related CryosphereExpertMethodss from storage.
+     * been saved, it will retrieve related ExpertCryosphereMethodss from storage.
      *
      * This method is protected by default in order to keep the public
      * api reasonable.  You can provide public methods for those you
@@ -1383,14 +1478,14 @@ abstract class CryosphereMethods implements ActiveRecordInterface
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
      * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return ObjectCollection|ChildCryosphereExpertMethods[] List of ChildCryosphereExpertMethods objects
+     * @return ObjectCollection|ChildExpertCryosphereMethods[] List of ChildExpertCryosphereMethods objects
      */
-    public function getCryosphereExpertMethodssJoinExperts(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    public function getExpertCryosphereMethodssJoinExperts(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
     {
-        $query = ChildCryosphereExpertMethodsQuery::create(null, $criteria);
+        $query = ChildExpertCryosphereMethodsQuery::create(null, $criteria);
         $query->joinWith('Experts', $joinBehavior);
 
-        return $this->getCryosphereExpertMethodss($query, $con);
+        return $this->getExpertCryosphereMethodss($query, $con);
     }
 
     /**
@@ -1402,6 +1497,7 @@ abstract class CryosphereMethods implements ActiveRecordInterface
     {
         $this->id = null;
         $this->cryosphere_methods_name = null;
+        $this->approved = null;
         $this->timestamp = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
@@ -1422,14 +1518,14 @@ abstract class CryosphereMethods implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
-            if ($this->collCryosphereExpertMethodss) {
-                foreach ($this->collCryosphereExpertMethodss as $o) {
+            if ($this->collExpertCryosphereMethodss) {
+                foreach ($this->collExpertCryosphereMethodss as $o) {
                     $o->clearAllReferences($deep);
                 }
             }
         } // if ($deep)
 
-        $this->collCryosphereExpertMethodss = null;
+        $this->collExpertCryosphereMethodss = null;
     }
 
     /**

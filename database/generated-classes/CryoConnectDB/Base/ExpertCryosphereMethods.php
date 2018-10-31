@@ -5,12 +5,12 @@ namespace CryoConnectDB\Base;
 use \DateTime;
 use \Exception;
 use \PDO;
-use CryoConnectDB\CryosphereWhen as ChildCryosphereWhen;
-use CryoConnectDB\CryosphereWhenQuery as ChildCryosphereWhenQuery;
-use CryoConnectDB\ExpertWhenQuery as ChildExpertWhenQuery;
+use CryoConnectDB\CryosphereMethods as ChildCryosphereMethods;
+use CryoConnectDB\CryosphereMethodsQuery as ChildCryosphereMethodsQuery;
+use CryoConnectDB\ExpertCryosphereMethodsQuery as ChildExpertCryosphereMethodsQuery;
 use CryoConnectDB\Experts as ChildExperts;
 use CryoConnectDB\ExpertsQuery as ChildExpertsQuery;
-use CryoConnectDB\Map\ExpertWhenTableMap;
+use CryoConnectDB\Map\ExpertCryosphereMethodsTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -25,18 +25,18 @@ use Propel\Runtime\Parser\AbstractParser;
 use Propel\Runtime\Util\PropelDateTime;
 
 /**
- * Base class that represents a row from the 'expert_when' table.
+ * Base class that represents a row from the 'expert_cryosphere_methods' table.
  *
  *
  *
  * @package    propel.generator.CryoConnectDB.Base
  */
-abstract class ExpertWhen implements ActiveRecordInterface
+abstract class ExpertCryosphereMethods implements ActiveRecordInterface
 {
     /**
      * TableMap class name
      */
-    const TABLE_MAP = '\\CryoConnectDB\\Map\\ExpertWhenTableMap';
+    const TABLE_MAP = '\\CryoConnectDB\\Map\\ExpertCryosphereMethodsTableMap';
 
 
     /**
@@ -73,11 +73,11 @@ abstract class ExpertWhen implements ActiveRecordInterface
     protected $expert_id;
 
     /**
-     * The value for the cryosphere_when_id field.
+     * The value for the method_id field.
      *
      * @var        int
      */
-    protected $cryosphere_when_id;
+    protected $method_id;
 
     /**
      * The value for the timestamp field.
@@ -93,9 +93,9 @@ abstract class ExpertWhen implements ActiveRecordInterface
     protected $aExperts;
 
     /**
-     * @var        ChildCryosphereWhen
+     * @var        ChildCryosphereMethods
      */
-    protected $aCryosphereWhen;
+    protected $aCryosphereMethods;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -116,7 +116,7 @@ abstract class ExpertWhen implements ActiveRecordInterface
     }
 
     /**
-     * Initializes internal state of CryoConnectDB\Base\ExpertWhen object.
+     * Initializes internal state of CryoConnectDB\Base\ExpertCryosphereMethods object.
      * @see applyDefaults()
      */
     public function __construct()
@@ -213,9 +213,9 @@ abstract class ExpertWhen implements ActiveRecordInterface
     }
 
     /**
-     * Compares this with another <code>ExpertWhen</code> instance.  If
-     * <code>obj</code> is an instance of <code>ExpertWhen</code>, delegates to
-     * <code>equals(ExpertWhen)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code>ExpertCryosphereMethods</code> instance.  If
+     * <code>obj</code> is an instance of <code>ExpertCryosphereMethods</code>, delegates to
+     * <code>equals(ExpertCryosphereMethods)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param  mixed   $obj The object to compare to.
      * @return boolean Whether equal to the object specified.
@@ -281,7 +281,7 @@ abstract class ExpertWhen implements ActiveRecordInterface
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return $this|ExpertWhen The current object, for fluid interface
+     * @return $this|ExpertCryosphereMethods The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -353,13 +353,13 @@ abstract class ExpertWhen implements ActiveRecordInterface
     }
 
     /**
-     * Get the [cryosphere_when_id] column value.
+     * Get the [method_id] column value.
      *
      * @return int
      */
-    public function getCryosphereWhenId()
+    public function getMethodId()
     {
-        return $this->cryosphere_when_id;
+        return $this->method_id;
     }
 
     /**
@@ -386,7 +386,7 @@ abstract class ExpertWhen implements ActiveRecordInterface
      * Set the value of [expert_id] column.
      *
      * @param int $v new value
-     * @return $this|\CryoConnectDB\ExpertWhen The current object (for fluent API support)
+     * @return $this|\CryoConnectDB\ExpertCryosphereMethods The current object (for fluent API support)
      */
     public function setExpertId($v)
     {
@@ -396,7 +396,7 @@ abstract class ExpertWhen implements ActiveRecordInterface
 
         if ($this->expert_id !== $v) {
             $this->expert_id = $v;
-            $this->modifiedColumns[ExpertWhenTableMap::COL_EXPERT_ID] = true;
+            $this->modifiedColumns[ExpertCryosphereMethodsTableMap::COL_EXPERT_ID] = true;
         }
 
         if ($this->aExperts !== null && $this->aExperts->getId() !== $v) {
@@ -407,35 +407,35 @@ abstract class ExpertWhen implements ActiveRecordInterface
     } // setExpertId()
 
     /**
-     * Set the value of [cryosphere_when_id] column.
+     * Set the value of [method_id] column.
      *
      * @param int $v new value
-     * @return $this|\CryoConnectDB\ExpertWhen The current object (for fluent API support)
+     * @return $this|\CryoConnectDB\ExpertCryosphereMethods The current object (for fluent API support)
      */
-    public function setCryosphereWhenId($v)
+    public function setMethodId($v)
     {
         if ($v !== null) {
             $v = (int) $v;
         }
 
-        if ($this->cryosphere_when_id !== $v) {
-            $this->cryosphere_when_id = $v;
-            $this->modifiedColumns[ExpertWhenTableMap::COL_CRYOSPHERE_WHEN_ID] = true;
+        if ($this->method_id !== $v) {
+            $this->method_id = $v;
+            $this->modifiedColumns[ExpertCryosphereMethodsTableMap::COL_METHOD_ID] = true;
         }
 
-        if ($this->aCryosphereWhen !== null && $this->aCryosphereWhen->getId() !== $v) {
-            $this->aCryosphereWhen = null;
+        if ($this->aCryosphereMethods !== null && $this->aCryosphereMethods->getId() !== $v) {
+            $this->aCryosphereMethods = null;
         }
 
         return $this;
-    } // setCryosphereWhenId()
+    } // setMethodId()
 
     /**
      * Sets the value of [timestamp] column to a normalized version of the date/time value specified.
      *
      * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
      *               Empty strings are treated as NULL.
-     * @return $this|\CryoConnectDB\ExpertWhen The current object (for fluent API support)
+     * @return $this|\CryoConnectDB\ExpertCryosphereMethods The current object (for fluent API support)
      */
     public function setTimestamp($v)
     {
@@ -443,7 +443,7 @@ abstract class ExpertWhen implements ActiveRecordInterface
         if ($this->timestamp !== null || $dt !== null) {
             if ($this->timestamp === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->timestamp->format("Y-m-d H:i:s.u")) {
                 $this->timestamp = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[ExpertWhenTableMap::COL_TIMESTAMP] = true;
+                $this->modifiedColumns[ExpertCryosphereMethodsTableMap::COL_TIMESTAMP] = true;
             }
         } // if either are not null
 
@@ -486,13 +486,13 @@ abstract class ExpertWhen implements ActiveRecordInterface
     {
         try {
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : ExpertWhenTableMap::translateFieldName('ExpertId', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : ExpertCryosphereMethodsTableMap::translateFieldName('ExpertId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->expert_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ExpertWhenTableMap::translateFieldName('CryosphereWhenId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->cryosphere_when_id = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ExpertCryosphereMethodsTableMap::translateFieldName('MethodId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->method_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ExpertWhenTableMap::translateFieldName('Timestamp', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ExpertCryosphereMethodsTableMap::translateFieldName('Timestamp', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
@@ -505,10 +505,10 @@ abstract class ExpertWhen implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 3; // 3 = ExpertWhenTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 3; // 3 = ExpertCryosphereMethodsTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException(sprintf('Error populating %s object', '\\CryoConnectDB\\ExpertWhen'), 0, $e);
+            throw new PropelException(sprintf('Error populating %s object', '\\CryoConnectDB\\ExpertCryosphereMethods'), 0, $e);
         }
     }
 
@@ -530,8 +530,8 @@ abstract class ExpertWhen implements ActiveRecordInterface
         if ($this->aExperts !== null && $this->expert_id !== $this->aExperts->getId()) {
             $this->aExperts = null;
         }
-        if ($this->aCryosphereWhen !== null && $this->cryosphere_when_id !== $this->aCryosphereWhen->getId()) {
-            $this->aCryosphereWhen = null;
+        if ($this->aCryosphereMethods !== null && $this->method_id !== $this->aCryosphereMethods->getId()) {
+            $this->aCryosphereMethods = null;
         }
     } // ensureConsistency
 
@@ -556,13 +556,13 @@ abstract class ExpertWhen implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(ExpertWhenTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(ExpertCryosphereMethodsTableMap::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $dataFetcher = ChildExpertWhenQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+        $dataFetcher = ChildExpertCryosphereMethodsQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
         $row = $dataFetcher->fetch();
         $dataFetcher->close();
         if (!$row) {
@@ -573,7 +573,7 @@ abstract class ExpertWhen implements ActiveRecordInterface
         if ($deep) {  // also de-associate any related objects?
 
             $this->aExperts = null;
-            $this->aCryosphereWhen = null;
+            $this->aCryosphereMethods = null;
         } // if (deep)
     }
 
@@ -583,8 +583,8 @@ abstract class ExpertWhen implements ActiveRecordInterface
      * @param      ConnectionInterface $con
      * @return void
      * @throws PropelException
-     * @see ExpertWhen::setDeleted()
-     * @see ExpertWhen::isDeleted()
+     * @see ExpertCryosphereMethods::setDeleted()
+     * @see ExpertCryosphereMethods::isDeleted()
      */
     public function delete(ConnectionInterface $con = null)
     {
@@ -593,11 +593,11 @@ abstract class ExpertWhen implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ExpertWhenTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ExpertCryosphereMethodsTableMap::DATABASE_NAME);
         }
 
         $con->transaction(function () use ($con) {
-            $deleteQuery = ChildExpertWhenQuery::create()
+            $deleteQuery = ChildExpertCryosphereMethodsQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -632,7 +632,7 @@ abstract class ExpertWhen implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ExpertWhenTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ExpertCryosphereMethodsTableMap::DATABASE_NAME);
         }
 
         return $con->transaction(function () use ($con) {
@@ -651,7 +651,7 @@ abstract class ExpertWhen implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                ExpertWhenTableMap::addInstanceToPool($this);
+                ExpertCryosphereMethodsTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -689,11 +689,11 @@ abstract class ExpertWhen implements ActiveRecordInterface
                 $this->setExperts($this->aExperts);
             }
 
-            if ($this->aCryosphereWhen !== null) {
-                if ($this->aCryosphereWhen->isModified() || $this->aCryosphereWhen->isNew()) {
-                    $affectedRows += $this->aCryosphereWhen->save($con);
+            if ($this->aCryosphereMethods !== null) {
+                if ($this->aCryosphereMethods->isModified() || $this->aCryosphereMethods->isNew()) {
+                    $affectedRows += $this->aCryosphereMethods->save($con);
                 }
-                $this->setCryosphereWhen($this->aCryosphereWhen);
+                $this->setCryosphereMethods($this->aCryosphereMethods);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -729,18 +729,18 @@ abstract class ExpertWhen implements ActiveRecordInterface
 
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(ExpertWhenTableMap::COL_EXPERT_ID)) {
+        if ($this->isColumnModified(ExpertCryosphereMethodsTableMap::COL_EXPERT_ID)) {
             $modifiedColumns[':p' . $index++]  = 'expert_id';
         }
-        if ($this->isColumnModified(ExpertWhenTableMap::COL_CRYOSPHERE_WHEN_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'cryosphere_when_id';
+        if ($this->isColumnModified(ExpertCryosphereMethodsTableMap::COL_METHOD_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'method_id';
         }
-        if ($this->isColumnModified(ExpertWhenTableMap::COL_TIMESTAMP)) {
+        if ($this->isColumnModified(ExpertCryosphereMethodsTableMap::COL_TIMESTAMP)) {
             $modifiedColumns[':p' . $index++]  = 'timestamp';
         }
 
         $sql = sprintf(
-            'INSERT INTO expert_when (%s) VALUES (%s)',
+            'INSERT INTO expert_cryosphere_methods (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -752,8 +752,8 @@ abstract class ExpertWhen implements ActiveRecordInterface
                     case 'expert_id':
                         $stmt->bindValue($identifier, $this->expert_id, PDO::PARAM_INT);
                         break;
-                    case 'cryosphere_when_id':
-                        $stmt->bindValue($identifier, $this->cryosphere_when_id, PDO::PARAM_INT);
+                    case 'method_id':
+                        $stmt->bindValue($identifier, $this->method_id, PDO::PARAM_INT);
                         break;
                     case 'timestamp':
                         $stmt->bindValue($identifier, $this->timestamp ? $this->timestamp->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
@@ -797,7 +797,7 @@ abstract class ExpertWhen implements ActiveRecordInterface
      */
     public function getByName($name, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = ExpertWhenTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = ExpertCryosphereMethodsTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -817,7 +817,7 @@ abstract class ExpertWhen implements ActiveRecordInterface
                 return $this->getExpertId();
                 break;
             case 1:
-                return $this->getCryosphereWhenId();
+                return $this->getMethodId();
                 break;
             case 2:
                 return $this->getTimestamp();
@@ -846,14 +846,14 @@ abstract class ExpertWhen implements ActiveRecordInterface
     public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
 
-        if (isset($alreadyDumpedObjects['ExpertWhen'][$this->hashCode()])) {
+        if (isset($alreadyDumpedObjects['ExpertCryosphereMethods'][$this->hashCode()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['ExpertWhen'][$this->hashCode()] = true;
-        $keys = ExpertWhenTableMap::getFieldNames($keyType);
+        $alreadyDumpedObjects['ExpertCryosphereMethods'][$this->hashCode()] = true;
+        $keys = ExpertCryosphereMethodsTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getExpertId(),
-            $keys[1] => $this->getCryosphereWhenId(),
+            $keys[1] => $this->getMethodId(),
             $keys[2] => $this->getTimestamp(),
         );
         if ($result[$keys[2]] instanceof \DateTimeInterface) {
@@ -881,20 +881,20 @@ abstract class ExpertWhen implements ActiveRecordInterface
 
                 $result[$key] = $this->aExperts->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
-            if (null !== $this->aCryosphereWhen) {
+            if (null !== $this->aCryosphereMethods) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
-                        $key = 'cryosphereWhen';
+                        $key = 'cryosphereMethods';
                         break;
                     case TableMap::TYPE_FIELDNAME:
-                        $key = 'cryosphere_when';
+                        $key = 'cryosphere_methods';
                         break;
                     default:
-                        $key = 'CryosphereWhen';
+                        $key = 'CryosphereMethods';
                 }
 
-                $result[$key] = $this->aCryosphereWhen->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+                $result[$key] = $this->aCryosphereMethods->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
         }
 
@@ -910,11 +910,11 @@ abstract class ExpertWhen implements ActiveRecordInterface
      *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                Defaults to TableMap::TYPE_PHPNAME.
-     * @return $this|\CryoConnectDB\ExpertWhen
+     * @return $this|\CryoConnectDB\ExpertCryosphereMethods
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = ExpertWhenTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = ExpertCryosphereMethodsTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
 
         return $this->setByPosition($pos, $value);
     }
@@ -925,7 +925,7 @@ abstract class ExpertWhen implements ActiveRecordInterface
      *
      * @param  int $pos position in xml schema
      * @param  mixed $value field value
-     * @return $this|\CryoConnectDB\ExpertWhen
+     * @return $this|\CryoConnectDB\ExpertCryosphereMethods
      */
     public function setByPosition($pos, $value)
     {
@@ -934,7 +934,7 @@ abstract class ExpertWhen implements ActiveRecordInterface
                 $this->setExpertId($value);
                 break;
             case 1:
-                $this->setCryosphereWhenId($value);
+                $this->setMethodId($value);
                 break;
             case 2:
                 $this->setTimestamp($value);
@@ -963,13 +963,13 @@ abstract class ExpertWhen implements ActiveRecordInterface
      */
     public function fromArray($arr, $keyType = TableMap::TYPE_PHPNAME)
     {
-        $keys = ExpertWhenTableMap::getFieldNames($keyType);
+        $keys = ExpertCryosphereMethodsTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
             $this->setExpertId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setCryosphereWhenId($arr[$keys[1]]);
+            $this->setMethodId($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
             $this->setTimestamp($arr[$keys[2]]);
@@ -993,7 +993,7 @@ abstract class ExpertWhen implements ActiveRecordInterface
      * @param string $data The source data to import from
      * @param string $keyType The type of keys the array uses.
      *
-     * @return $this|\CryoConnectDB\ExpertWhen The current object, for fluid interface
+     * @return $this|\CryoConnectDB\ExpertCryosphereMethods The current object, for fluid interface
      */
     public function importFrom($parser, $data, $keyType = TableMap::TYPE_PHPNAME)
     {
@@ -1013,16 +1013,16 @@ abstract class ExpertWhen implements ActiveRecordInterface
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(ExpertWhenTableMap::DATABASE_NAME);
+        $criteria = new Criteria(ExpertCryosphereMethodsTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(ExpertWhenTableMap::COL_EXPERT_ID)) {
-            $criteria->add(ExpertWhenTableMap::COL_EXPERT_ID, $this->expert_id);
+        if ($this->isColumnModified(ExpertCryosphereMethodsTableMap::COL_EXPERT_ID)) {
+            $criteria->add(ExpertCryosphereMethodsTableMap::COL_EXPERT_ID, $this->expert_id);
         }
-        if ($this->isColumnModified(ExpertWhenTableMap::COL_CRYOSPHERE_WHEN_ID)) {
-            $criteria->add(ExpertWhenTableMap::COL_CRYOSPHERE_WHEN_ID, $this->cryosphere_when_id);
+        if ($this->isColumnModified(ExpertCryosphereMethodsTableMap::COL_METHOD_ID)) {
+            $criteria->add(ExpertCryosphereMethodsTableMap::COL_METHOD_ID, $this->method_id);
         }
-        if ($this->isColumnModified(ExpertWhenTableMap::COL_TIMESTAMP)) {
-            $criteria->add(ExpertWhenTableMap::COL_TIMESTAMP, $this->timestamp);
+        if ($this->isColumnModified(ExpertCryosphereMethodsTableMap::COL_TIMESTAMP)) {
+            $criteria->add(ExpertCryosphereMethodsTableMap::COL_TIMESTAMP, $this->timestamp);
         }
 
         return $criteria;
@@ -1040,7 +1040,7 @@ abstract class ExpertWhen implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        throw new LogicException('The ExpertWhen object has no primary key');
+        throw new LogicException('The ExpertCryosphereMethods object has no primary key');
 
         return $criteria;
     }
@@ -1106,7 +1106,7 @@ abstract class ExpertWhen implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of \CryoConnectDB\ExpertWhen (or compatible) type.
+     * @param      object $copyObj An object of \CryoConnectDB\ExpertCryosphereMethods (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
@@ -1114,7 +1114,7 @@ abstract class ExpertWhen implements ActiveRecordInterface
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setExpertId($this->getExpertId());
-        $copyObj->setCryosphereWhenId($this->getCryosphereWhenId());
+        $copyObj->setMethodId($this->getMethodId());
         $copyObj->setTimestamp($this->getTimestamp());
         if ($makeNew) {
             $copyObj->setNew(true);
@@ -1130,7 +1130,7 @@ abstract class ExpertWhen implements ActiveRecordInterface
      * objects.
      *
      * @param  boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return \CryoConnectDB\ExpertWhen Clone of current object.
+     * @return \CryoConnectDB\ExpertCryosphereMethods Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1147,7 +1147,7 @@ abstract class ExpertWhen implements ActiveRecordInterface
      * Declares an association between this object and a ChildExperts object.
      *
      * @param  ChildExperts $v
-     * @return $this|\CryoConnectDB\ExpertWhen The current object (for fluent API support)
+     * @return $this|\CryoConnectDB\ExpertCryosphereMethods The current object (for fluent API support)
      * @throws PropelException
      */
     public function setExperts(ChildExperts $v = null)
@@ -1163,7 +1163,7 @@ abstract class ExpertWhen implements ActiveRecordInterface
         // Add binding for other direction of this n:n relationship.
         // If this object has already been added to the ChildExperts object, it will not be re-added.
         if ($v !== null) {
-            $v->addExpertWhen($this);
+            $v->addExpertCryosphereMethods($this);
         }
 
 
@@ -1187,7 +1187,7 @@ abstract class ExpertWhen implements ActiveRecordInterface
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aExperts->addExpertWhens($this);
+                $this->aExperts->addExpertCryosphereMethodss($this);
              */
         }
 
@@ -1195,26 +1195,26 @@ abstract class ExpertWhen implements ActiveRecordInterface
     }
 
     /**
-     * Declares an association between this object and a ChildCryosphereWhen object.
+     * Declares an association between this object and a ChildCryosphereMethods object.
      *
-     * @param  ChildCryosphereWhen $v
-     * @return $this|\CryoConnectDB\ExpertWhen The current object (for fluent API support)
+     * @param  ChildCryosphereMethods $v
+     * @return $this|\CryoConnectDB\ExpertCryosphereMethods The current object (for fluent API support)
      * @throws PropelException
      */
-    public function setCryosphereWhen(ChildCryosphereWhen $v = null)
+    public function setCryosphereMethods(ChildCryosphereMethods $v = null)
     {
         if ($v === null) {
-            $this->setCryosphereWhenId(NULL);
+            $this->setMethodId(NULL);
         } else {
-            $this->setCryosphereWhenId($v->getId());
+            $this->setMethodId($v->getId());
         }
 
-        $this->aCryosphereWhen = $v;
+        $this->aCryosphereMethods = $v;
 
         // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildCryosphereWhen object, it will not be re-added.
+        // If this object has already been added to the ChildCryosphereMethods object, it will not be re-added.
         if ($v !== null) {
-            $v->addExpertWhen($this);
+            $v->addExpertCryosphereMethods($this);
         }
 
 
@@ -1223,26 +1223,26 @@ abstract class ExpertWhen implements ActiveRecordInterface
 
 
     /**
-     * Get the associated ChildCryosphereWhen object
+     * Get the associated ChildCryosphereMethods object
      *
      * @param  ConnectionInterface $con Optional Connection object.
-     * @return ChildCryosphereWhen The associated ChildCryosphereWhen object.
+     * @return ChildCryosphereMethods The associated ChildCryosphereMethods object.
      * @throws PropelException
      */
-    public function getCryosphereWhen(ConnectionInterface $con = null)
+    public function getCryosphereMethods(ConnectionInterface $con = null)
     {
-        if ($this->aCryosphereWhen === null && ($this->cryosphere_when_id != 0)) {
-            $this->aCryosphereWhen = ChildCryosphereWhenQuery::create()->findPk($this->cryosphere_when_id, $con);
+        if ($this->aCryosphereMethods === null && ($this->method_id != 0)) {
+            $this->aCryosphereMethods = ChildCryosphereMethodsQuery::create()->findPk($this->method_id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aCryosphereWhen->addExpertWhens($this);
+                $this->aCryosphereMethods->addExpertCryosphereMethodss($this);
              */
         }
 
-        return $this->aCryosphereWhen;
+        return $this->aCryosphereMethods;
     }
 
     /**
@@ -1253,13 +1253,13 @@ abstract class ExpertWhen implements ActiveRecordInterface
     public function clear()
     {
         if (null !== $this->aExperts) {
-            $this->aExperts->removeExpertWhen($this);
+            $this->aExperts->removeExpertCryosphereMethods($this);
         }
-        if (null !== $this->aCryosphereWhen) {
-            $this->aCryosphereWhen->removeExpertWhen($this);
+        if (null !== $this->aCryosphereMethods) {
+            $this->aCryosphereMethods->removeExpertCryosphereMethods($this);
         }
         $this->expert_id = null;
-        $this->cryosphere_when_id = null;
+        $this->method_id = null;
         $this->timestamp = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
@@ -1283,7 +1283,7 @@ abstract class ExpertWhen implements ActiveRecordInterface
         } // if ($deep)
 
         $this->aExperts = null;
-        $this->aCryosphereWhen = null;
+        $this->aCryosphereMethods = null;
     }
 
     /**
@@ -1293,7 +1293,7 @@ abstract class ExpertWhen implements ActiveRecordInterface
      */
     public function __toString()
     {
-        return (string) $this->exportTo(ExpertWhenTableMap::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(ExpertCryosphereMethodsTableMap::DEFAULT_STRING_FORMAT);
     }
 
     /**

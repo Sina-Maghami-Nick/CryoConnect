@@ -22,10 +22,12 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildCryosphereMethodsQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildCryosphereMethodsQuery orderByCryosphereMethodsName($order = Criteria::ASC) Order by the cryosphere_methods_name column
+ * @method     ChildCryosphereMethodsQuery orderByApproved($order = Criteria::ASC) Order by the approved column
  * @method     ChildCryosphereMethodsQuery orderByTimestamp($order = Criteria::ASC) Order by the timestamp column
  *
  * @method     ChildCryosphereMethodsQuery groupById() Group by the id column
  * @method     ChildCryosphereMethodsQuery groupByCryosphereMethodsName() Group by the cryosphere_methods_name column
+ * @method     ChildCryosphereMethodsQuery groupByApproved() Group by the approved column
  * @method     ChildCryosphereMethodsQuery groupByTimestamp() Group by the timestamp column
  *
  * @method     ChildCryosphereMethodsQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
@@ -36,23 +38,24 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildCryosphereMethodsQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
  * @method     ChildCryosphereMethodsQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
  *
- * @method     ChildCryosphereMethodsQuery leftJoinCryosphereExpertMethods($relationAlias = null) Adds a LEFT JOIN clause to the query using the CryosphereExpertMethods relation
- * @method     ChildCryosphereMethodsQuery rightJoinCryosphereExpertMethods($relationAlias = null) Adds a RIGHT JOIN clause to the query using the CryosphereExpertMethods relation
- * @method     ChildCryosphereMethodsQuery innerJoinCryosphereExpertMethods($relationAlias = null) Adds a INNER JOIN clause to the query using the CryosphereExpertMethods relation
+ * @method     ChildCryosphereMethodsQuery leftJoinExpertCryosphereMethods($relationAlias = null) Adds a LEFT JOIN clause to the query using the ExpertCryosphereMethods relation
+ * @method     ChildCryosphereMethodsQuery rightJoinExpertCryosphereMethods($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ExpertCryosphereMethods relation
+ * @method     ChildCryosphereMethodsQuery innerJoinExpertCryosphereMethods($relationAlias = null) Adds a INNER JOIN clause to the query using the ExpertCryosphereMethods relation
  *
- * @method     ChildCryosphereMethodsQuery joinWithCryosphereExpertMethods($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the CryosphereExpertMethods relation
+ * @method     ChildCryosphereMethodsQuery joinWithExpertCryosphereMethods($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the ExpertCryosphereMethods relation
  *
- * @method     ChildCryosphereMethodsQuery leftJoinWithCryosphereExpertMethods() Adds a LEFT JOIN clause and with to the query using the CryosphereExpertMethods relation
- * @method     ChildCryosphereMethodsQuery rightJoinWithCryosphereExpertMethods() Adds a RIGHT JOIN clause and with to the query using the CryosphereExpertMethods relation
- * @method     ChildCryosphereMethodsQuery innerJoinWithCryosphereExpertMethods() Adds a INNER JOIN clause and with to the query using the CryosphereExpertMethods relation
+ * @method     ChildCryosphereMethodsQuery leftJoinWithExpertCryosphereMethods() Adds a LEFT JOIN clause and with to the query using the ExpertCryosphereMethods relation
+ * @method     ChildCryosphereMethodsQuery rightJoinWithExpertCryosphereMethods() Adds a RIGHT JOIN clause and with to the query using the ExpertCryosphereMethods relation
+ * @method     ChildCryosphereMethodsQuery innerJoinWithExpertCryosphereMethods() Adds a INNER JOIN clause and with to the query using the ExpertCryosphereMethods relation
  *
- * @method     \CryoConnectDB\CryosphereExpertMethodsQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \CryoConnectDB\ExpertCryosphereMethodsQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildCryosphereMethods findOne(ConnectionInterface $con = null) Return the first ChildCryosphereMethods matching the query
  * @method     ChildCryosphereMethods findOneOrCreate(ConnectionInterface $con = null) Return the first ChildCryosphereMethods matching the query, or a new ChildCryosphereMethods object populated from the query conditions when no match is found
  *
  * @method     ChildCryosphereMethods findOneById(int $id) Return the first ChildCryosphereMethods filtered by the id column
  * @method     ChildCryosphereMethods findOneByCryosphereMethodsName(string $cryosphere_methods_name) Return the first ChildCryosphereMethods filtered by the cryosphere_methods_name column
+ * @method     ChildCryosphereMethods findOneByApproved(boolean $approved) Return the first ChildCryosphereMethods filtered by the approved column
  * @method     ChildCryosphereMethods findOneByTimestamp(string $timestamp) Return the first ChildCryosphereMethods filtered by the timestamp column *
 
  * @method     ChildCryosphereMethods requirePk($key, ConnectionInterface $con = null) Return the ChildCryosphereMethods by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -60,11 +63,13 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildCryosphereMethods requireOneById(int $id) Return the first ChildCryosphereMethods filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildCryosphereMethods requireOneByCryosphereMethodsName(string $cryosphere_methods_name) Return the first ChildCryosphereMethods filtered by the cryosphere_methods_name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildCryosphereMethods requireOneByApproved(boolean $approved) Return the first ChildCryosphereMethods filtered by the approved column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildCryosphereMethods requireOneByTimestamp(string $timestamp) Return the first ChildCryosphereMethods filtered by the timestamp column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildCryosphereMethods[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildCryosphereMethods objects based on current ModelCriteria
  * @method     ChildCryosphereMethods[]|ObjectCollection findById(int $id) Return ChildCryosphereMethods objects filtered by the id column
  * @method     ChildCryosphereMethods[]|ObjectCollection findByCryosphereMethodsName(string $cryosphere_methods_name) Return ChildCryosphereMethods objects filtered by the cryosphere_methods_name column
+ * @method     ChildCryosphereMethods[]|ObjectCollection findByApproved(boolean $approved) Return ChildCryosphereMethods objects filtered by the approved column
  * @method     ChildCryosphereMethods[]|ObjectCollection findByTimestamp(string $timestamp) Return ChildCryosphereMethods objects filtered by the timestamp column
  * @method     ChildCryosphereMethods[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
@@ -164,7 +169,7 @@ abstract class CryosphereMethodsQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, cryosphere_methods_name, timestamp FROM cryosphere_methods WHERE id = :p0';
+        $sql = 'SELECT id, cryosphere_methods_name, approved, timestamp FROM cryosphere_methods WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -321,6 +326,33 @@ abstract class CryosphereMethodsQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query on the approved column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByApproved(true); // WHERE approved = true
+     * $query->filterByApproved('yes'); // WHERE approved = true
+     * </code>
+     *
+     * @param     boolean|string $approved The value to use as filter.
+     *              Non-boolean arguments are converted using the following rules:
+     *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     *              Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildCryosphereMethodsQuery The current query, for fluid interface
+     */
+    public function filterByApproved($approved = null, $comparison = null)
+    {
+        if (is_string($approved)) {
+            $approved = in_array(strtolower($approved), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+        }
+
+        return $this->addUsingAlias(CryosphereMethodsTableMap::COL_APPROVED, $approved, $comparison);
+    }
+
+    /**
      * Filter the query on the timestamp column
      *
      * Example usage:
@@ -364,40 +396,40 @@ abstract class CryosphereMethodsQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related \CryoConnectDB\CryosphereExpertMethods object
+     * Filter the query by a related \CryoConnectDB\ExpertCryosphereMethods object
      *
-     * @param \CryoConnectDB\CryosphereExpertMethods|ObjectCollection $cryosphereExpertMethods the related object to use as filter
+     * @param \CryoConnectDB\ExpertCryosphereMethods|ObjectCollection $expertCryosphereMethods the related object to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return ChildCryosphereMethodsQuery The current query, for fluid interface
      */
-    public function filterByCryosphereExpertMethods($cryosphereExpertMethods, $comparison = null)
+    public function filterByExpertCryosphereMethods($expertCryosphereMethods, $comparison = null)
     {
-        if ($cryosphereExpertMethods instanceof \CryoConnectDB\CryosphereExpertMethods) {
+        if ($expertCryosphereMethods instanceof \CryoConnectDB\ExpertCryosphereMethods) {
             return $this
-                ->addUsingAlias(CryosphereMethodsTableMap::COL_ID, $cryosphereExpertMethods->getMethodId(), $comparison);
-        } elseif ($cryosphereExpertMethods instanceof ObjectCollection) {
+                ->addUsingAlias(CryosphereMethodsTableMap::COL_ID, $expertCryosphereMethods->getMethodId(), $comparison);
+        } elseif ($expertCryosphereMethods instanceof ObjectCollection) {
             return $this
-                ->useCryosphereExpertMethodsQuery()
-                ->filterByPrimaryKeys($cryosphereExpertMethods->getPrimaryKeys())
+                ->useExpertCryosphereMethodsQuery()
+                ->filterByPrimaryKeys($expertCryosphereMethods->getPrimaryKeys())
                 ->endUse();
         } else {
-            throw new PropelException('filterByCryosphereExpertMethods() only accepts arguments of type \CryoConnectDB\CryosphereExpertMethods or Collection');
+            throw new PropelException('filterByExpertCryosphereMethods() only accepts arguments of type \CryoConnectDB\ExpertCryosphereMethods or Collection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the CryosphereExpertMethods relation
+     * Adds a JOIN clause to the query using the ExpertCryosphereMethods relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return $this|ChildCryosphereMethodsQuery The current query, for fluid interface
      */
-    public function joinCryosphereExpertMethods($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinExpertCryosphereMethods($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('CryosphereExpertMethods');
+        $relationMap = $tableMap->getRelation('ExpertCryosphereMethods');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -412,14 +444,14 @@ abstract class CryosphereMethodsQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'CryosphereExpertMethods');
+            $this->addJoinObject($join, 'ExpertCryosphereMethods');
         }
 
         return $this;
     }
 
     /**
-     * Use the CryosphereExpertMethods relation CryosphereExpertMethods object
+     * Use the ExpertCryosphereMethods relation ExpertCryosphereMethods object
      *
      * @see useQuery()
      *
@@ -427,13 +459,13 @@ abstract class CryosphereMethodsQuery extends ModelCriteria
      *                                   to be used as main alias in the secondary query
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return \CryoConnectDB\CryosphereExpertMethodsQuery A secondary query class using the current class as primary query
+     * @return \CryoConnectDB\ExpertCryosphereMethodsQuery A secondary query class using the current class as primary query
      */
-    public function useCryosphereExpertMethodsQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useExpertCryosphereMethodsQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
-            ->joinCryosphereExpertMethods($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'CryosphereExpertMethods', '\CryoConnectDB\CryosphereExpertMethodsQuery');
+            ->joinExpertCryosphereMethods($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'ExpertCryosphereMethods', '\CryoConnectDB\ExpertCryosphereMethodsQuery');
     }
 
     /**

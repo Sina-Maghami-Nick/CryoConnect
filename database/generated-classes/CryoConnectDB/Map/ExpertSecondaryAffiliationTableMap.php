@@ -2,8 +2,8 @@
 
 namespace CryoConnectDB\Map;
 
-use CryoConnectDB\ExpertAffiliation;
-use CryoConnectDB\ExpertAffiliationQuery;
+use CryoConnectDB\ExpertSecondaryAffiliation;
+use CryoConnectDB\ExpertSecondaryAffiliationQuery;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
@@ -17,7 +17,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the 'expert_affiliation' table.
+ * This class defines the structure of the 'expert_secondary_affiliation' table.
  *
  *
  *
@@ -27,7 +27,7 @@ use Propel\Runtime\Map\TableMapTrait;
  * (i.e. if it's a text column type).
  *
  */
-class ExpertAffiliationTableMap extends TableMap
+class ExpertSecondaryAffiliationTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
@@ -35,7 +35,7 @@ class ExpertAffiliationTableMap extends TableMap
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'CryoConnectDB.Map.ExpertAffiliationTableMap';
+    const CLASS_NAME = 'CryoConnectDB.Map.ExpertSecondaryAffiliationTableMap';
 
     /**
      * The default database name for this class
@@ -45,17 +45,17 @@ class ExpertAffiliationTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'expert_affiliation';
+    const TABLE_NAME = 'expert_secondary_affiliation';
 
     /**
      * The related Propel class for this table
      */
-    const OM_CLASS = '\\CryoConnectDB\\ExpertAffiliation';
+    const OM_CLASS = '\\CryoConnectDB\\ExpertSecondaryAffiliation';
 
     /**
      * A class that can be returned by this tableMap
      */
-    const CLASS_DEFAULT = 'CryoConnectDB.ExpertAffiliation';
+    const CLASS_DEFAULT = 'CryoConnectDB.ExpertSecondaryAffiliation';
 
     /**
      * The total number of columns
@@ -75,17 +75,17 @@ class ExpertAffiliationTableMap extends TableMap
     /**
      * the column name for the expert_id field
      */
-    const COL_EXPERT_ID = 'expert_affiliation.expert_id';
+    const COL_EXPERT_ID = 'expert_secondary_affiliation.expert_id';
 
     /**
-     * the column name for the affiliation_name field
+     * the column name for the secondary_affiliation_name field
      */
-    const COL_AFFILIATION_NAME = 'expert_affiliation.affiliation_name';
+    const COL_SECONDARY_AFFILIATION_NAME = 'expert_secondary_affiliation.secondary_affiliation_name';
 
     /**
      * the column name for the timestamp field
      */
-    const COL_TIMESTAMP = 'expert_affiliation.timestamp';
+    const COL_TIMESTAMP = 'expert_secondary_affiliation.timestamp';
 
     /**
      * The default string format for model objects of the related table
@@ -99,10 +99,10 @@ class ExpertAffiliationTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('ExpertId', 'AffiliationName', 'Timestamp', ),
-        self::TYPE_CAMELNAME     => array('expertId', 'affiliationName', 'timestamp', ),
-        self::TYPE_COLNAME       => array(ExpertAffiliationTableMap::COL_EXPERT_ID, ExpertAffiliationTableMap::COL_AFFILIATION_NAME, ExpertAffiliationTableMap::COL_TIMESTAMP, ),
-        self::TYPE_FIELDNAME     => array('expert_id', 'affiliation_name', 'timestamp', ),
+        self::TYPE_PHPNAME       => array('ExpertId', 'SecondaryAffiliationName', 'Timestamp', ),
+        self::TYPE_CAMELNAME     => array('expertId', 'secondaryAffiliationName', 'timestamp', ),
+        self::TYPE_COLNAME       => array(ExpertSecondaryAffiliationTableMap::COL_EXPERT_ID, ExpertSecondaryAffiliationTableMap::COL_SECONDARY_AFFILIATION_NAME, ExpertSecondaryAffiliationTableMap::COL_TIMESTAMP, ),
+        self::TYPE_FIELDNAME     => array('expert_id', 'secondary_affiliation_name', 'timestamp', ),
         self::TYPE_NUM           => array(0, 1, 2, )
     );
 
@@ -113,10 +113,10 @@ class ExpertAffiliationTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('ExpertId' => 0, 'AffiliationName' => 1, 'Timestamp' => 2, ),
-        self::TYPE_CAMELNAME     => array('expertId' => 0, 'affiliationName' => 1, 'timestamp' => 2, ),
-        self::TYPE_COLNAME       => array(ExpertAffiliationTableMap::COL_EXPERT_ID => 0, ExpertAffiliationTableMap::COL_AFFILIATION_NAME => 1, ExpertAffiliationTableMap::COL_TIMESTAMP => 2, ),
-        self::TYPE_FIELDNAME     => array('expert_id' => 0, 'affiliation_name' => 1, 'timestamp' => 2, ),
+        self::TYPE_PHPNAME       => array('ExpertId' => 0, 'SecondaryAffiliationName' => 1, 'Timestamp' => 2, ),
+        self::TYPE_CAMELNAME     => array('expertId' => 0, 'secondaryAffiliationName' => 1, 'timestamp' => 2, ),
+        self::TYPE_COLNAME       => array(ExpertSecondaryAffiliationTableMap::COL_EXPERT_ID => 0, ExpertSecondaryAffiliationTableMap::COL_SECONDARY_AFFILIATION_NAME => 1, ExpertSecondaryAffiliationTableMap::COL_TIMESTAMP => 2, ),
+        self::TYPE_FIELDNAME     => array('expert_id' => 0, 'secondary_affiliation_name' => 1, 'timestamp' => 2, ),
         self::TYPE_NUM           => array(0, 1, 2, )
     );
 
@@ -130,15 +130,15 @@ class ExpertAffiliationTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('expert_affiliation');
-        $this->setPhpName('ExpertAffiliation');
+        $this->setName('expert_secondary_affiliation');
+        $this->setPhpName('ExpertSecondaryAffiliation');
         $this->setIdentifierQuoting(false);
-        $this->setClassName('\\CryoConnectDB\\ExpertAffiliation');
+        $this->setClassName('\\CryoConnectDB\\ExpertSecondaryAffiliation');
         $this->setPackage('CryoConnectDB');
         $this->setUseIdGenerator(false);
         // columns
         $this->addForeignKey('expert_id', 'ExpertId', 'INTEGER', 'experts', 'id', true, 10, null);
-        $this->addColumn('affiliation_name', 'AffiliationName', 'LONGVARCHAR', true, null, null);
+        $this->addColumn('secondary_affiliation_name', 'SecondaryAffiliationName', 'LONGVARCHAR', true, null, null);
         $this->addColumn('timestamp', 'Timestamp', 'TIMESTAMP', true, null, 'CURRENT_TIMESTAMP');
     } // initialize()
 
@@ -204,7 +204,7 @@ class ExpertAffiliationTableMap extends TableMap
      */
     public static function getOMClass($withPrefix = true)
     {
-        return $withPrefix ? ExpertAffiliationTableMap::CLASS_DEFAULT : ExpertAffiliationTableMap::OM_CLASS;
+        return $withPrefix ? ExpertSecondaryAffiliationTableMap::CLASS_DEFAULT : ExpertSecondaryAffiliationTableMap::OM_CLASS;
     }
 
     /**
@@ -218,22 +218,22 @@ class ExpertAffiliationTableMap extends TableMap
      *
      * @throws PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
-     * @return array           (ExpertAffiliation object, last column rank)
+     * @return array           (ExpertSecondaryAffiliation object, last column rank)
      */
     public static function populateObject($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        $key = ExpertAffiliationTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
-        if (null !== ($obj = ExpertAffiliationTableMap::getInstanceFromPool($key))) {
+        $key = ExpertSecondaryAffiliationTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
+        if (null !== ($obj = ExpertSecondaryAffiliationTableMap::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $offset, true); // rehydrate
-            $col = $offset + ExpertAffiliationTableMap::NUM_HYDRATE_COLUMNS;
+            $col = $offset + ExpertSecondaryAffiliationTableMap::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = ExpertAffiliationTableMap::OM_CLASS;
-            /** @var ExpertAffiliation $obj */
+            $cls = ExpertSecondaryAffiliationTableMap::OM_CLASS;
+            /** @var ExpertSecondaryAffiliation $obj */
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
-            ExpertAffiliationTableMap::addInstanceToPool($obj, $key);
+            ExpertSecondaryAffiliationTableMap::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -256,18 +256,18 @@ class ExpertAffiliationTableMap extends TableMap
         $cls = static::getOMClass(false);
         // populate the object(s)
         while ($row = $dataFetcher->fetch()) {
-            $key = ExpertAffiliationTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
-            if (null !== ($obj = ExpertAffiliationTableMap::getInstanceFromPool($key))) {
+            $key = ExpertSecondaryAffiliationTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
+            if (null !== ($obj = ExpertSecondaryAffiliationTableMap::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
-                /** @var ExpertAffiliation $obj */
+                /** @var ExpertSecondaryAffiliation $obj */
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                ExpertAffiliationTableMap::addInstanceToPool($obj, $key);
+                ExpertSecondaryAffiliationTableMap::addInstanceToPool($obj, $key);
             } // if key exists
         }
 
@@ -288,12 +288,12 @@ class ExpertAffiliationTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(ExpertAffiliationTableMap::COL_EXPERT_ID);
-            $criteria->addSelectColumn(ExpertAffiliationTableMap::COL_AFFILIATION_NAME);
-            $criteria->addSelectColumn(ExpertAffiliationTableMap::COL_TIMESTAMP);
+            $criteria->addSelectColumn(ExpertSecondaryAffiliationTableMap::COL_EXPERT_ID);
+            $criteria->addSelectColumn(ExpertSecondaryAffiliationTableMap::COL_SECONDARY_AFFILIATION_NAME);
+            $criteria->addSelectColumn(ExpertSecondaryAffiliationTableMap::COL_TIMESTAMP);
         } else {
             $criteria->addSelectColumn($alias . '.expert_id');
-            $criteria->addSelectColumn($alias . '.affiliation_name');
+            $criteria->addSelectColumn($alias . '.secondary_affiliation_name');
             $criteria->addSelectColumn($alias . '.timestamp');
         }
     }
@@ -307,7 +307,7 @@ class ExpertAffiliationTableMap extends TableMap
      */
     public static function getTableMap()
     {
-        return Propel::getServiceContainer()->getDatabaseMap(ExpertAffiliationTableMap::DATABASE_NAME)->getTable(ExpertAffiliationTableMap::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(ExpertSecondaryAffiliationTableMap::DATABASE_NAME)->getTable(ExpertSecondaryAffiliationTableMap::TABLE_NAME);
     }
 
     /**
@@ -315,16 +315,16 @@ class ExpertAffiliationTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap(ExpertAffiliationTableMap::DATABASE_NAME);
-        if (!$dbMap->hasTable(ExpertAffiliationTableMap::TABLE_NAME)) {
-            $dbMap->addTableObject(new ExpertAffiliationTableMap());
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap(ExpertSecondaryAffiliationTableMap::DATABASE_NAME);
+        if (!$dbMap->hasTable(ExpertSecondaryAffiliationTableMap::TABLE_NAME)) {
+            $dbMap->addTableObject(new ExpertSecondaryAffiliationTableMap());
         }
     }
 
     /**
-     * Performs a DELETE on the database, given a ExpertAffiliation or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a ExpertSecondaryAffiliation or Criteria object OR a primary key value.
      *
-     * @param mixed               $values Criteria or ExpertAffiliation object or primary key or array of primary keys
+     * @param mixed               $values Criteria or ExpertSecondaryAffiliation object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param  ConnectionInterface $con the connection to use
      * @return int             The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -335,26 +335,26 @@ class ExpertAffiliationTableMap extends TableMap
      public static function doDelete($values, ConnectionInterface $con = null)
      {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ExpertAffiliationTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ExpertSecondaryAffiliationTableMap::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \CryoConnectDB\ExpertAffiliation) { // it's a model object
+        } elseif ($values instanceof \CryoConnectDB\ExpertSecondaryAffiliation) { // it's a model object
             // create criteria based on pk value
             $criteria = $values->buildCriteria();
         } else { // it's a primary key, or an array of pks
-            throw new LogicException('The ExpertAffiliation object has no primary key');
+            throw new LogicException('The ExpertSecondaryAffiliation object has no primary key');
         }
 
-        $query = ExpertAffiliationQuery::create()->mergeWith($criteria);
+        $query = ExpertSecondaryAffiliationQuery::create()->mergeWith($criteria);
 
         if ($values instanceof Criteria) {
-            ExpertAffiliationTableMap::clearInstancePool();
+            ExpertSecondaryAffiliationTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
             foreach ((array) $values as $singleval) {
-                ExpertAffiliationTableMap::removeInstanceFromPool($singleval);
+                ExpertSecondaryAffiliationTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -362,20 +362,20 @@ class ExpertAffiliationTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the expert_affiliation table.
+     * Deletes all rows from the expert_secondary_affiliation table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
     public static function doDeleteAll(ConnectionInterface $con = null)
     {
-        return ExpertAffiliationQuery::create()->doDeleteAll($con);
+        return ExpertSecondaryAffiliationQuery::create()->doDeleteAll($con);
     }
 
     /**
-     * Performs an INSERT on the database, given a ExpertAffiliation or Criteria object.
+     * Performs an INSERT on the database, given a ExpertSecondaryAffiliation or Criteria object.
      *
-     * @param mixed               $criteria Criteria or ExpertAffiliation object containing data that is used to create the INSERT statement.
+     * @param mixed               $criteria Criteria or ExpertSecondaryAffiliation object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface $con the ConnectionInterface connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -384,18 +384,18 @@ class ExpertAffiliationTableMap extends TableMap
     public static function doInsert($criteria, ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ExpertAffiliationTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ExpertSecondaryAffiliationTableMap::DATABASE_NAME);
         }
 
         if ($criteria instanceof Criteria) {
             $criteria = clone $criteria; // rename for clarity
         } else {
-            $criteria = $criteria->buildCriteria(); // build Criteria from ExpertAffiliation object
+            $criteria = $criteria->buildCriteria(); // build Criteria from ExpertSecondaryAffiliation object
         }
 
 
         // Set the correct dbName
-        $query = ExpertAffiliationQuery::create()->mergeWith($criteria);
+        $query = ExpertSecondaryAffiliationQuery::create()->mergeWith($criteria);
 
         // use transaction because $criteria could contain info
         // for more than one table (I guess, conceivably)
@@ -404,7 +404,7 @@ class ExpertAffiliationTableMap extends TableMap
         });
     }
 
-} // ExpertAffiliationTableMap
+} // ExpertSecondaryAffiliationTableMap
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-ExpertAffiliationTableMap::buildTableMap();
+ExpertSecondaryAffiliationTableMap::buildTableMap();

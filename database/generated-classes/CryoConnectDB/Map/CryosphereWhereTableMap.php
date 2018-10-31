@@ -146,13 +146,13 @@ class CryosphereWhereTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('ExpertWhere', '\\CryoConnectDB\\ExpertWhere', RelationMap::ONE_TO_MANY, array (
+        $this->addRelation('ExpertCryosphereWhere', '\\CryoConnectDB\\ExpertCryosphereWhere', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
     0 => ':cryosphere_where_id',
     1 => ':id',
   ),
-), 'CASCADE', 'CASCADE', 'ExpertWheres', false);
+), 'CASCADE', 'CASCADE', 'ExpertCryosphereWheres', false);
         $this->addRelation('InformationSeekerConnectRequestCryosphereWhere', '\\CryoConnectDB\\InformationSeekerConnectRequestCryosphereWhere', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
@@ -168,7 +168,7 @@ class CryosphereWhereTableMap extends TableMap
     {
         // Invalidate objects in related instance pools,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        ExpertWhereTableMap::clearInstancePool();
+        ExpertCryosphereWhereTableMap::clearInstancePool();
     }
 
     /**

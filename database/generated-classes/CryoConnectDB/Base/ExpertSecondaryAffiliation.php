@@ -5,12 +5,10 @@ namespace CryoConnectDB\Base;
 use \DateTime;
 use \Exception;
 use \PDO;
-use CryoConnectDB\CryosphereWhere as ChildCryosphereWhere;
-use CryoConnectDB\CryosphereWhereQuery as ChildCryosphereWhereQuery;
-use CryoConnectDB\ExpertWhereQuery as ChildExpertWhereQuery;
+use CryoConnectDB\ExpertSecondaryAffiliationQuery as ChildExpertSecondaryAffiliationQuery;
 use CryoConnectDB\Experts as ChildExperts;
 use CryoConnectDB\ExpertsQuery as ChildExpertsQuery;
-use CryoConnectDB\Map\ExpertWhereTableMap;
+use CryoConnectDB\Map\ExpertSecondaryAffiliationTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -25,18 +23,18 @@ use Propel\Runtime\Parser\AbstractParser;
 use Propel\Runtime\Util\PropelDateTime;
 
 /**
- * Base class that represents a row from the 'expert_where' table.
+ * Base class that represents a row from the 'expert_secondary_affiliation' table.
  *
  *
  *
  * @package    propel.generator.CryoConnectDB.Base
  */
-abstract class ExpertWhere implements ActiveRecordInterface
+abstract class ExpertSecondaryAffiliation implements ActiveRecordInterface
 {
     /**
      * TableMap class name
      */
-    const TABLE_MAP = '\\CryoConnectDB\\Map\\ExpertWhereTableMap';
+    const TABLE_MAP = '\\CryoConnectDB\\Map\\ExpertSecondaryAffiliationTableMap';
 
 
     /**
@@ -73,11 +71,11 @@ abstract class ExpertWhere implements ActiveRecordInterface
     protected $expert_id;
 
     /**
-     * The value for the cryosphere_where_id field.
+     * The value for the secondary_affiliation_name field.
      *
-     * @var        int
+     * @var        string
      */
-    protected $cryosphere_where_id;
+    protected $secondary_affiliation_name;
 
     /**
      * The value for the timestamp field.
@@ -91,11 +89,6 @@ abstract class ExpertWhere implements ActiveRecordInterface
      * @var        ChildExperts
      */
     protected $aExperts;
-
-    /**
-     * @var        ChildCryosphereWhere
-     */
-    protected $aCryosphereWhere;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -116,7 +109,7 @@ abstract class ExpertWhere implements ActiveRecordInterface
     }
 
     /**
-     * Initializes internal state of CryoConnectDB\Base\ExpertWhere object.
+     * Initializes internal state of CryoConnectDB\Base\ExpertSecondaryAffiliation object.
      * @see applyDefaults()
      */
     public function __construct()
@@ -213,9 +206,9 @@ abstract class ExpertWhere implements ActiveRecordInterface
     }
 
     /**
-     * Compares this with another <code>ExpertWhere</code> instance.  If
-     * <code>obj</code> is an instance of <code>ExpertWhere</code>, delegates to
-     * <code>equals(ExpertWhere)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code>ExpertSecondaryAffiliation</code> instance.  If
+     * <code>obj</code> is an instance of <code>ExpertSecondaryAffiliation</code>, delegates to
+     * <code>equals(ExpertSecondaryAffiliation)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param  mixed   $obj The object to compare to.
      * @return boolean Whether equal to the object specified.
@@ -281,7 +274,7 @@ abstract class ExpertWhere implements ActiveRecordInterface
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return $this|ExpertWhere The current object, for fluid interface
+     * @return $this|ExpertSecondaryAffiliation The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -353,13 +346,13 @@ abstract class ExpertWhere implements ActiveRecordInterface
     }
 
     /**
-     * Get the [cryosphere_where_id] column value.
+     * Get the [secondary_affiliation_name] column value.
      *
-     * @return int
+     * @return string
      */
-    public function getCryosphereWhereId()
+    public function getSecondaryAffiliationName()
     {
-        return $this->cryosphere_where_id;
+        return $this->secondary_affiliation_name;
     }
 
     /**
@@ -386,7 +379,7 @@ abstract class ExpertWhere implements ActiveRecordInterface
      * Set the value of [expert_id] column.
      *
      * @param int $v new value
-     * @return $this|\CryoConnectDB\ExpertWhere The current object (for fluent API support)
+     * @return $this|\CryoConnectDB\ExpertSecondaryAffiliation The current object (for fluent API support)
      */
     public function setExpertId($v)
     {
@@ -396,7 +389,7 @@ abstract class ExpertWhere implements ActiveRecordInterface
 
         if ($this->expert_id !== $v) {
             $this->expert_id = $v;
-            $this->modifiedColumns[ExpertWhereTableMap::COL_EXPERT_ID] = true;
+            $this->modifiedColumns[ExpertSecondaryAffiliationTableMap::COL_EXPERT_ID] = true;
         }
 
         if ($this->aExperts !== null && $this->aExperts->getId() !== $v) {
@@ -407,35 +400,31 @@ abstract class ExpertWhere implements ActiveRecordInterface
     } // setExpertId()
 
     /**
-     * Set the value of [cryosphere_where_id] column.
+     * Set the value of [secondary_affiliation_name] column.
      *
-     * @param int $v new value
-     * @return $this|\CryoConnectDB\ExpertWhere The current object (for fluent API support)
+     * @param string $v new value
+     * @return $this|\CryoConnectDB\ExpertSecondaryAffiliation The current object (for fluent API support)
      */
-    public function setCryosphereWhereId($v)
+    public function setSecondaryAffiliationName($v)
     {
         if ($v !== null) {
-            $v = (int) $v;
+            $v = (string) $v;
         }
 
-        if ($this->cryosphere_where_id !== $v) {
-            $this->cryosphere_where_id = $v;
-            $this->modifiedColumns[ExpertWhereTableMap::COL_CRYOSPHERE_WHERE_ID] = true;
-        }
-
-        if ($this->aCryosphereWhere !== null && $this->aCryosphereWhere->getId() !== $v) {
-            $this->aCryosphereWhere = null;
+        if ($this->secondary_affiliation_name !== $v) {
+            $this->secondary_affiliation_name = $v;
+            $this->modifiedColumns[ExpertSecondaryAffiliationTableMap::COL_SECONDARY_AFFILIATION_NAME] = true;
         }
 
         return $this;
-    } // setCryosphereWhereId()
+    } // setSecondaryAffiliationName()
 
     /**
      * Sets the value of [timestamp] column to a normalized version of the date/time value specified.
      *
      * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
      *               Empty strings are treated as NULL.
-     * @return $this|\CryoConnectDB\ExpertWhere The current object (for fluent API support)
+     * @return $this|\CryoConnectDB\ExpertSecondaryAffiliation The current object (for fluent API support)
      */
     public function setTimestamp($v)
     {
@@ -443,7 +432,7 @@ abstract class ExpertWhere implements ActiveRecordInterface
         if ($this->timestamp !== null || $dt !== null) {
             if ($this->timestamp === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->timestamp->format("Y-m-d H:i:s.u")) {
                 $this->timestamp = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[ExpertWhereTableMap::COL_TIMESTAMP] = true;
+                $this->modifiedColumns[ExpertSecondaryAffiliationTableMap::COL_TIMESTAMP] = true;
             }
         } // if either are not null
 
@@ -486,13 +475,13 @@ abstract class ExpertWhere implements ActiveRecordInterface
     {
         try {
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : ExpertWhereTableMap::translateFieldName('ExpertId', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : ExpertSecondaryAffiliationTableMap::translateFieldName('ExpertId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->expert_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ExpertWhereTableMap::translateFieldName('CryosphereWhereId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->cryosphere_where_id = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ExpertSecondaryAffiliationTableMap::translateFieldName('SecondaryAffiliationName', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->secondary_affiliation_name = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ExpertWhereTableMap::translateFieldName('Timestamp', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ExpertSecondaryAffiliationTableMap::translateFieldName('Timestamp', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
@@ -505,10 +494,10 @@ abstract class ExpertWhere implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 3; // 3 = ExpertWhereTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 3; // 3 = ExpertSecondaryAffiliationTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException(sprintf('Error populating %s object', '\\CryoConnectDB\\ExpertWhere'), 0, $e);
+            throw new PropelException(sprintf('Error populating %s object', '\\CryoConnectDB\\ExpertSecondaryAffiliation'), 0, $e);
         }
     }
 
@@ -529,9 +518,6 @@ abstract class ExpertWhere implements ActiveRecordInterface
     {
         if ($this->aExperts !== null && $this->expert_id !== $this->aExperts->getId()) {
             $this->aExperts = null;
-        }
-        if ($this->aCryosphereWhere !== null && $this->cryosphere_where_id !== $this->aCryosphereWhere->getId()) {
-            $this->aCryosphereWhere = null;
         }
     } // ensureConsistency
 
@@ -556,13 +542,13 @@ abstract class ExpertWhere implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(ExpertWhereTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(ExpertSecondaryAffiliationTableMap::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $dataFetcher = ChildExpertWhereQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+        $dataFetcher = ChildExpertSecondaryAffiliationQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
         $row = $dataFetcher->fetch();
         $dataFetcher->close();
         if (!$row) {
@@ -573,7 +559,6 @@ abstract class ExpertWhere implements ActiveRecordInterface
         if ($deep) {  // also de-associate any related objects?
 
             $this->aExperts = null;
-            $this->aCryosphereWhere = null;
         } // if (deep)
     }
 
@@ -583,8 +568,8 @@ abstract class ExpertWhere implements ActiveRecordInterface
      * @param      ConnectionInterface $con
      * @return void
      * @throws PropelException
-     * @see ExpertWhere::setDeleted()
-     * @see ExpertWhere::isDeleted()
+     * @see ExpertSecondaryAffiliation::setDeleted()
+     * @see ExpertSecondaryAffiliation::isDeleted()
      */
     public function delete(ConnectionInterface $con = null)
     {
@@ -593,11 +578,11 @@ abstract class ExpertWhere implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ExpertWhereTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ExpertSecondaryAffiliationTableMap::DATABASE_NAME);
         }
 
         $con->transaction(function () use ($con) {
-            $deleteQuery = ChildExpertWhereQuery::create()
+            $deleteQuery = ChildExpertSecondaryAffiliationQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -632,7 +617,7 @@ abstract class ExpertWhere implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ExpertWhereTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ExpertSecondaryAffiliationTableMap::DATABASE_NAME);
         }
 
         return $con->transaction(function () use ($con) {
@@ -651,7 +636,7 @@ abstract class ExpertWhere implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                ExpertWhereTableMap::addInstanceToPool($this);
+                ExpertSecondaryAffiliationTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -689,13 +674,6 @@ abstract class ExpertWhere implements ActiveRecordInterface
                 $this->setExperts($this->aExperts);
             }
 
-            if ($this->aCryosphereWhere !== null) {
-                if ($this->aCryosphereWhere->isModified() || $this->aCryosphereWhere->isNew()) {
-                    $affectedRows += $this->aCryosphereWhere->save($con);
-                }
-                $this->setCryosphereWhere($this->aCryosphereWhere);
-            }
-
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
                 if ($this->isNew()) {
@@ -729,18 +707,18 @@ abstract class ExpertWhere implements ActiveRecordInterface
 
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(ExpertWhereTableMap::COL_EXPERT_ID)) {
+        if ($this->isColumnModified(ExpertSecondaryAffiliationTableMap::COL_EXPERT_ID)) {
             $modifiedColumns[':p' . $index++]  = 'expert_id';
         }
-        if ($this->isColumnModified(ExpertWhereTableMap::COL_CRYOSPHERE_WHERE_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'cryosphere_where_id';
+        if ($this->isColumnModified(ExpertSecondaryAffiliationTableMap::COL_SECONDARY_AFFILIATION_NAME)) {
+            $modifiedColumns[':p' . $index++]  = 'secondary_affiliation_name';
         }
-        if ($this->isColumnModified(ExpertWhereTableMap::COL_TIMESTAMP)) {
+        if ($this->isColumnModified(ExpertSecondaryAffiliationTableMap::COL_TIMESTAMP)) {
             $modifiedColumns[':p' . $index++]  = 'timestamp';
         }
 
         $sql = sprintf(
-            'INSERT INTO expert_where (%s) VALUES (%s)',
+            'INSERT INTO expert_secondary_affiliation (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -752,8 +730,8 @@ abstract class ExpertWhere implements ActiveRecordInterface
                     case 'expert_id':
                         $stmt->bindValue($identifier, $this->expert_id, PDO::PARAM_INT);
                         break;
-                    case 'cryosphere_where_id':
-                        $stmt->bindValue($identifier, $this->cryosphere_where_id, PDO::PARAM_INT);
+                    case 'secondary_affiliation_name':
+                        $stmt->bindValue($identifier, $this->secondary_affiliation_name, PDO::PARAM_STR);
                         break;
                     case 'timestamp':
                         $stmt->bindValue($identifier, $this->timestamp ? $this->timestamp->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
@@ -797,7 +775,7 @@ abstract class ExpertWhere implements ActiveRecordInterface
      */
     public function getByName($name, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = ExpertWhereTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = ExpertSecondaryAffiliationTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -817,7 +795,7 @@ abstract class ExpertWhere implements ActiveRecordInterface
                 return $this->getExpertId();
                 break;
             case 1:
-                return $this->getCryosphereWhereId();
+                return $this->getSecondaryAffiliationName();
                 break;
             case 2:
                 return $this->getTimestamp();
@@ -846,14 +824,14 @@ abstract class ExpertWhere implements ActiveRecordInterface
     public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
 
-        if (isset($alreadyDumpedObjects['ExpertWhere'][$this->hashCode()])) {
+        if (isset($alreadyDumpedObjects['ExpertSecondaryAffiliation'][$this->hashCode()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['ExpertWhere'][$this->hashCode()] = true;
-        $keys = ExpertWhereTableMap::getFieldNames($keyType);
+        $alreadyDumpedObjects['ExpertSecondaryAffiliation'][$this->hashCode()] = true;
+        $keys = ExpertSecondaryAffiliationTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getExpertId(),
-            $keys[1] => $this->getCryosphereWhereId(),
+            $keys[1] => $this->getSecondaryAffiliationName(),
             $keys[2] => $this->getTimestamp(),
         );
         if ($result[$keys[2]] instanceof \DateTimeInterface) {
@@ -881,21 +859,6 @@ abstract class ExpertWhere implements ActiveRecordInterface
 
                 $result[$key] = $this->aExperts->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
-            if (null !== $this->aCryosphereWhere) {
-
-                switch ($keyType) {
-                    case TableMap::TYPE_CAMELNAME:
-                        $key = 'cryosphereWhere';
-                        break;
-                    case TableMap::TYPE_FIELDNAME:
-                        $key = 'cryosphere_where';
-                        break;
-                    default:
-                        $key = 'CryosphereWhere';
-                }
-
-                $result[$key] = $this->aCryosphereWhere->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
         }
 
         return $result;
@@ -910,11 +873,11 @@ abstract class ExpertWhere implements ActiveRecordInterface
      *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                Defaults to TableMap::TYPE_PHPNAME.
-     * @return $this|\CryoConnectDB\ExpertWhere
+     * @return $this|\CryoConnectDB\ExpertSecondaryAffiliation
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = ExpertWhereTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = ExpertSecondaryAffiliationTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
 
         return $this->setByPosition($pos, $value);
     }
@@ -925,7 +888,7 @@ abstract class ExpertWhere implements ActiveRecordInterface
      *
      * @param  int $pos position in xml schema
      * @param  mixed $value field value
-     * @return $this|\CryoConnectDB\ExpertWhere
+     * @return $this|\CryoConnectDB\ExpertSecondaryAffiliation
      */
     public function setByPosition($pos, $value)
     {
@@ -934,7 +897,7 @@ abstract class ExpertWhere implements ActiveRecordInterface
                 $this->setExpertId($value);
                 break;
             case 1:
-                $this->setCryosphereWhereId($value);
+                $this->setSecondaryAffiliationName($value);
                 break;
             case 2:
                 $this->setTimestamp($value);
@@ -963,13 +926,13 @@ abstract class ExpertWhere implements ActiveRecordInterface
      */
     public function fromArray($arr, $keyType = TableMap::TYPE_PHPNAME)
     {
-        $keys = ExpertWhereTableMap::getFieldNames($keyType);
+        $keys = ExpertSecondaryAffiliationTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
             $this->setExpertId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setCryosphereWhereId($arr[$keys[1]]);
+            $this->setSecondaryAffiliationName($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
             $this->setTimestamp($arr[$keys[2]]);
@@ -993,7 +956,7 @@ abstract class ExpertWhere implements ActiveRecordInterface
      * @param string $data The source data to import from
      * @param string $keyType The type of keys the array uses.
      *
-     * @return $this|\CryoConnectDB\ExpertWhere The current object, for fluid interface
+     * @return $this|\CryoConnectDB\ExpertSecondaryAffiliation The current object, for fluid interface
      */
     public function importFrom($parser, $data, $keyType = TableMap::TYPE_PHPNAME)
     {
@@ -1013,16 +976,16 @@ abstract class ExpertWhere implements ActiveRecordInterface
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(ExpertWhereTableMap::DATABASE_NAME);
+        $criteria = new Criteria(ExpertSecondaryAffiliationTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(ExpertWhereTableMap::COL_EXPERT_ID)) {
-            $criteria->add(ExpertWhereTableMap::COL_EXPERT_ID, $this->expert_id);
+        if ($this->isColumnModified(ExpertSecondaryAffiliationTableMap::COL_EXPERT_ID)) {
+            $criteria->add(ExpertSecondaryAffiliationTableMap::COL_EXPERT_ID, $this->expert_id);
         }
-        if ($this->isColumnModified(ExpertWhereTableMap::COL_CRYOSPHERE_WHERE_ID)) {
-            $criteria->add(ExpertWhereTableMap::COL_CRYOSPHERE_WHERE_ID, $this->cryosphere_where_id);
+        if ($this->isColumnModified(ExpertSecondaryAffiliationTableMap::COL_SECONDARY_AFFILIATION_NAME)) {
+            $criteria->add(ExpertSecondaryAffiliationTableMap::COL_SECONDARY_AFFILIATION_NAME, $this->secondary_affiliation_name);
         }
-        if ($this->isColumnModified(ExpertWhereTableMap::COL_TIMESTAMP)) {
-            $criteria->add(ExpertWhereTableMap::COL_TIMESTAMP, $this->timestamp);
+        if ($this->isColumnModified(ExpertSecondaryAffiliationTableMap::COL_TIMESTAMP)) {
+            $criteria->add(ExpertSecondaryAffiliationTableMap::COL_TIMESTAMP, $this->timestamp);
         }
 
         return $criteria;
@@ -1040,7 +1003,7 @@ abstract class ExpertWhere implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        throw new LogicException('The ExpertWhere object has no primary key');
+        throw new LogicException('The ExpertSecondaryAffiliation object has no primary key');
 
         return $criteria;
     }
@@ -1106,7 +1069,7 @@ abstract class ExpertWhere implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of \CryoConnectDB\ExpertWhere (or compatible) type.
+     * @param      object $copyObj An object of \CryoConnectDB\ExpertSecondaryAffiliation (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
@@ -1114,7 +1077,7 @@ abstract class ExpertWhere implements ActiveRecordInterface
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setExpertId($this->getExpertId());
-        $copyObj->setCryosphereWhereId($this->getCryosphereWhereId());
+        $copyObj->setSecondaryAffiliationName($this->getSecondaryAffiliationName());
         $copyObj->setTimestamp($this->getTimestamp());
         if ($makeNew) {
             $copyObj->setNew(true);
@@ -1130,7 +1093,7 @@ abstract class ExpertWhere implements ActiveRecordInterface
      * objects.
      *
      * @param  boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return \CryoConnectDB\ExpertWhere Clone of current object.
+     * @return \CryoConnectDB\ExpertSecondaryAffiliation Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1147,7 +1110,7 @@ abstract class ExpertWhere implements ActiveRecordInterface
      * Declares an association between this object and a ChildExperts object.
      *
      * @param  ChildExperts $v
-     * @return $this|\CryoConnectDB\ExpertWhere The current object (for fluent API support)
+     * @return $this|\CryoConnectDB\ExpertSecondaryAffiliation The current object (for fluent API support)
      * @throws PropelException
      */
     public function setExperts(ChildExperts $v = null)
@@ -1163,7 +1126,7 @@ abstract class ExpertWhere implements ActiveRecordInterface
         // Add binding for other direction of this n:n relationship.
         // If this object has already been added to the ChildExperts object, it will not be re-added.
         if ($v !== null) {
-            $v->addExpertWhere($this);
+            $v->addExpertSecondaryAffiliation($this);
         }
 
 
@@ -1187,62 +1150,11 @@ abstract class ExpertWhere implements ActiveRecordInterface
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aExperts->addExpertWheres($this);
+                $this->aExperts->addExpertSecondaryAffiliations($this);
              */
         }
 
         return $this->aExperts;
-    }
-
-    /**
-     * Declares an association between this object and a ChildCryosphereWhere object.
-     *
-     * @param  ChildCryosphereWhere $v
-     * @return $this|\CryoConnectDB\ExpertWhere The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setCryosphereWhere(ChildCryosphereWhere $v = null)
-    {
-        if ($v === null) {
-            $this->setCryosphereWhereId(NULL);
-        } else {
-            $this->setCryosphereWhereId($v->getId());
-        }
-
-        $this->aCryosphereWhere = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildCryosphereWhere object, it will not be re-added.
-        if ($v !== null) {
-            $v->addExpertWhere($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated ChildCryosphereWhere object
-     *
-     * @param  ConnectionInterface $con Optional Connection object.
-     * @return ChildCryosphereWhere The associated ChildCryosphereWhere object.
-     * @throws PropelException
-     */
-    public function getCryosphereWhere(ConnectionInterface $con = null)
-    {
-        if ($this->aCryosphereWhere === null && ($this->cryosphere_where_id != 0)) {
-            $this->aCryosphereWhere = ChildCryosphereWhereQuery::create()->findPk($this->cryosphere_where_id, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aCryosphereWhere->addExpertWheres($this);
-             */
-        }
-
-        return $this->aCryosphereWhere;
     }
 
     /**
@@ -1253,13 +1165,10 @@ abstract class ExpertWhere implements ActiveRecordInterface
     public function clear()
     {
         if (null !== $this->aExperts) {
-            $this->aExperts->removeExpertWhere($this);
-        }
-        if (null !== $this->aCryosphereWhere) {
-            $this->aCryosphereWhere->removeExpertWhere($this);
+            $this->aExperts->removeExpertSecondaryAffiliation($this);
         }
         $this->expert_id = null;
-        $this->cryosphere_where_id = null;
+        $this->secondary_affiliation_name = null;
         $this->timestamp = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
@@ -1283,7 +1192,6 @@ abstract class ExpertWhere implements ActiveRecordInterface
         } // if ($deep)
 
         $this->aExperts = null;
-        $this->aCryosphereWhere = null;
     }
 
     /**
@@ -1293,7 +1201,7 @@ abstract class ExpertWhere implements ActiveRecordInterface
      */
     public function __toString()
     {
-        return (string) $this->exportTo(ExpertWhereTableMap::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(ExpertSecondaryAffiliationTableMap::DEFAULT_STRING_FORMAT);
     }
 
     /**

@@ -7,12 +7,12 @@ use \Exception;
 use \PDO;
 use CryoConnectDB\CryosphereWhere as ChildCryosphereWhere;
 use CryoConnectDB\CryosphereWhereQuery as ChildCryosphereWhereQuery;
-use CryoConnectDB\ExpertWhere as ChildExpertWhere;
-use CryoConnectDB\ExpertWhereQuery as ChildExpertWhereQuery;
+use CryoConnectDB\ExpertCryosphereWhere as ChildExpertCryosphereWhere;
+use CryoConnectDB\ExpertCryosphereWhereQuery as ChildExpertCryosphereWhereQuery;
 use CryoConnectDB\InformationSeekerConnectRequestCryosphereWhere as ChildInformationSeekerConnectRequestCryosphereWhere;
 use CryoConnectDB\InformationSeekerConnectRequestCryosphereWhereQuery as ChildInformationSeekerConnectRequestCryosphereWhereQuery;
 use CryoConnectDB\Map\CryosphereWhereTableMap;
-use CryoConnectDB\Map\ExpertWhereTableMap;
+use CryoConnectDB\Map\ExpertCryosphereWhereTableMap;
 use CryoConnectDB\Map\InformationSeekerConnectRequestCryosphereWhereTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
@@ -92,10 +92,10 @@ abstract class CryosphereWhere implements ActiveRecordInterface
     protected $timestamp;
 
     /**
-     * @var        ObjectCollection|ChildExpertWhere[] Collection to store aggregation of ChildExpertWhere objects.
+     * @var        ObjectCollection|ChildExpertCryosphereWhere[] Collection to store aggregation of ChildExpertCryosphereWhere objects.
      */
-    protected $collExpertWheres;
-    protected $collExpertWheresPartial;
+    protected $collExpertCryosphereWheres;
+    protected $collExpertCryosphereWheresPartial;
 
     /**
      * @var        ObjectCollection|ChildInformationSeekerConnectRequestCryosphereWhere[] Collection to store aggregation of ChildInformationSeekerConnectRequestCryosphereWhere objects.
@@ -113,9 +113,9 @@ abstract class CryosphereWhere implements ActiveRecordInterface
 
     /**
      * An array of objects scheduled for deletion.
-     * @var ObjectCollection|ChildExpertWhere[]
+     * @var ObjectCollection|ChildExpertCryosphereWhere[]
      */
-    protected $expertWheresScheduledForDeletion = null;
+    protected $expertCryosphereWheresScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -576,7 +576,7 @@ abstract class CryosphereWhere implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->collExpertWheres = null;
+            $this->collExpertCryosphereWheres = null;
 
             $this->collInformationSeekerConnectRequestCryosphereWheres = null;
 
@@ -694,17 +694,17 @@ abstract class CryosphereWhere implements ActiveRecordInterface
                 $this->resetModified();
             }
 
-            if ($this->expertWheresScheduledForDeletion !== null) {
-                if (!$this->expertWheresScheduledForDeletion->isEmpty()) {
-                    \CryoConnectDB\ExpertWhereQuery::create()
-                        ->filterByPrimaryKeys($this->expertWheresScheduledForDeletion->getPrimaryKeys(false))
+            if ($this->expertCryosphereWheresScheduledForDeletion !== null) {
+                if (!$this->expertCryosphereWheresScheduledForDeletion->isEmpty()) {
+                    \CryoConnectDB\ExpertCryosphereWhereQuery::create()
+                        ->filterByPrimaryKeys($this->expertCryosphereWheresScheduledForDeletion->getPrimaryKeys(false))
                         ->delete($con);
-                    $this->expertWheresScheduledForDeletion = null;
+                    $this->expertCryosphereWheresScheduledForDeletion = null;
                 }
             }
 
-            if ($this->collExpertWheres !== null) {
-                foreach ($this->collExpertWheres as $referrerFK) {
+            if ($this->collExpertCryosphereWheres !== null) {
+                foreach ($this->collExpertCryosphereWheres as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -898,20 +898,20 @@ abstract class CryosphereWhere implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->collExpertWheres) {
+            if (null !== $this->collExpertCryosphereWheres) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
-                        $key = 'expertWheres';
+                        $key = 'expertCryosphereWheres';
                         break;
                     case TableMap::TYPE_FIELDNAME:
-                        $key = 'expert_wheres';
+                        $key = 'expert_cryosphere_wheres';
                         break;
                     default:
-                        $key = 'ExpertWheres';
+                        $key = 'ExpertCryosphereWheres';
                 }
 
-                $result[$key] = $this->collExpertWheres->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+                $result[$key] = $this->collExpertCryosphereWheres->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
             if (null !== $this->collInformationSeekerConnectRequestCryosphereWheres) {
 
@@ -1150,9 +1150,9 @@ abstract class CryosphereWhere implements ActiveRecordInterface
             // the getter/setter methods for fkey referrer objects.
             $copyObj->setNew(false);
 
-            foreach ($this->getExpertWheres() as $relObj) {
+            foreach ($this->getExpertCryosphereWheres() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addExpertWhere($relObj->copy($deepCopy));
+                    $copyObj->addExpertCryosphereWhere($relObj->copy($deepCopy));
                 }
             }
 
@@ -1203,8 +1203,8 @@ abstract class CryosphereWhere implements ActiveRecordInterface
      */
     public function initRelation($relationName)
     {
-        if ('ExpertWhere' == $relationName) {
-            $this->initExpertWheres();
+        if ('ExpertCryosphereWhere' == $relationName) {
+            $this->initExpertCryosphereWheres();
             return;
         }
         if ('InformationSeekerConnectRequestCryosphereWhere' == $relationName) {
@@ -1214,31 +1214,31 @@ abstract class CryosphereWhere implements ActiveRecordInterface
     }
 
     /**
-     * Clears out the collExpertWheres collection
+     * Clears out the collExpertCryosphereWheres collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
      * them to be refetched by subsequent calls to accessor method.
      *
      * @return void
-     * @see        addExpertWheres()
+     * @see        addExpertCryosphereWheres()
      */
-    public function clearExpertWheres()
+    public function clearExpertCryosphereWheres()
     {
-        $this->collExpertWheres = null; // important to set this to NULL since that means it is uninitialized
+        $this->collExpertCryosphereWheres = null; // important to set this to NULL since that means it is uninitialized
     }
 
     /**
-     * Reset is the collExpertWheres collection loaded partially.
+     * Reset is the collExpertCryosphereWheres collection loaded partially.
      */
-    public function resetPartialExpertWheres($v = true)
+    public function resetPartialExpertCryosphereWheres($v = true)
     {
-        $this->collExpertWheresPartial = $v;
+        $this->collExpertCryosphereWheresPartial = $v;
     }
 
     /**
-     * Initializes the collExpertWheres collection.
+     * Initializes the collExpertCryosphereWheres collection.
      *
-     * By default this just sets the collExpertWheres collection to an empty array (like clearcollExpertWheres());
+     * By default this just sets the collExpertCryosphereWheres collection to an empty array (like clearcollExpertCryosphereWheres());
      * however, you may wish to override this method in your stub class to provide setting appropriate
      * to your application -- for example, setting the initial array to the values stored in database.
      *
@@ -1247,20 +1247,20 @@ abstract class CryosphereWhere implements ActiveRecordInterface
      *
      * @return void
      */
-    public function initExpertWheres($overrideExisting = true)
+    public function initExpertCryosphereWheres($overrideExisting = true)
     {
-        if (null !== $this->collExpertWheres && !$overrideExisting) {
+        if (null !== $this->collExpertCryosphereWheres && !$overrideExisting) {
             return;
         }
 
-        $collectionClassName = ExpertWhereTableMap::getTableMap()->getCollectionClassName();
+        $collectionClassName = ExpertCryosphereWhereTableMap::getTableMap()->getCollectionClassName();
 
-        $this->collExpertWheres = new $collectionClassName;
-        $this->collExpertWheres->setModel('\CryoConnectDB\ExpertWhere');
+        $this->collExpertCryosphereWheres = new $collectionClassName;
+        $this->collExpertCryosphereWheres->setModel('\CryoConnectDB\ExpertCryosphereWhere');
     }
 
     /**
-     * Gets an array of ChildExpertWhere objects which contain a foreign key that references this object.
+     * Gets an array of ChildExpertCryosphereWhere objects which contain a foreign key that references this object.
      *
      * If the $criteria is not null, it is used to always fetch the results from the database.
      * Otherwise the results are fetched from the database the first time, then cached.
@@ -1270,108 +1270,108 @@ abstract class CryosphereWhere implements ActiveRecordInterface
      *
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
-     * @return ObjectCollection|ChildExpertWhere[] List of ChildExpertWhere objects
+     * @return ObjectCollection|ChildExpertCryosphereWhere[] List of ChildExpertCryosphereWhere objects
      * @throws PropelException
      */
-    public function getExpertWheres(Criteria $criteria = null, ConnectionInterface $con = null)
+    public function getExpertCryosphereWheres(Criteria $criteria = null, ConnectionInterface $con = null)
     {
-        $partial = $this->collExpertWheresPartial && !$this->isNew();
-        if (null === $this->collExpertWheres || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collExpertWheres) {
+        $partial = $this->collExpertCryosphereWheresPartial && !$this->isNew();
+        if (null === $this->collExpertCryosphereWheres || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collExpertCryosphereWheres) {
                 // return empty collection
-                $this->initExpertWheres();
+                $this->initExpertCryosphereWheres();
             } else {
-                $collExpertWheres = ChildExpertWhereQuery::create(null, $criteria)
+                $collExpertCryosphereWheres = ChildExpertCryosphereWhereQuery::create(null, $criteria)
                     ->filterByCryosphereWhere($this)
                     ->find($con);
 
                 if (null !== $criteria) {
-                    if (false !== $this->collExpertWheresPartial && count($collExpertWheres)) {
-                        $this->initExpertWheres(false);
+                    if (false !== $this->collExpertCryosphereWheresPartial && count($collExpertCryosphereWheres)) {
+                        $this->initExpertCryosphereWheres(false);
 
-                        foreach ($collExpertWheres as $obj) {
-                            if (false == $this->collExpertWheres->contains($obj)) {
-                                $this->collExpertWheres->append($obj);
+                        foreach ($collExpertCryosphereWheres as $obj) {
+                            if (false == $this->collExpertCryosphereWheres->contains($obj)) {
+                                $this->collExpertCryosphereWheres->append($obj);
                             }
                         }
 
-                        $this->collExpertWheresPartial = true;
+                        $this->collExpertCryosphereWheresPartial = true;
                     }
 
-                    return $collExpertWheres;
+                    return $collExpertCryosphereWheres;
                 }
 
-                if ($partial && $this->collExpertWheres) {
-                    foreach ($this->collExpertWheres as $obj) {
+                if ($partial && $this->collExpertCryosphereWheres) {
+                    foreach ($this->collExpertCryosphereWheres as $obj) {
                         if ($obj->isNew()) {
-                            $collExpertWheres[] = $obj;
+                            $collExpertCryosphereWheres[] = $obj;
                         }
                     }
                 }
 
-                $this->collExpertWheres = $collExpertWheres;
-                $this->collExpertWheresPartial = false;
+                $this->collExpertCryosphereWheres = $collExpertCryosphereWheres;
+                $this->collExpertCryosphereWheresPartial = false;
             }
         }
 
-        return $this->collExpertWheres;
+        return $this->collExpertCryosphereWheres;
     }
 
     /**
-     * Sets a collection of ChildExpertWhere objects related by a one-to-many relationship
+     * Sets a collection of ChildExpertCryosphereWhere objects related by a one-to-many relationship
      * to the current object.
      * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
      * and new objects from the given Propel collection.
      *
-     * @param      Collection $expertWheres A Propel collection.
+     * @param      Collection $expertCryosphereWheres A Propel collection.
      * @param      ConnectionInterface $con Optional connection object
      * @return $this|ChildCryosphereWhere The current object (for fluent API support)
      */
-    public function setExpertWheres(Collection $expertWheres, ConnectionInterface $con = null)
+    public function setExpertCryosphereWheres(Collection $expertCryosphereWheres, ConnectionInterface $con = null)
     {
-        /** @var ChildExpertWhere[] $expertWheresToDelete */
-        $expertWheresToDelete = $this->getExpertWheres(new Criteria(), $con)->diff($expertWheres);
+        /** @var ChildExpertCryosphereWhere[] $expertCryosphereWheresToDelete */
+        $expertCryosphereWheresToDelete = $this->getExpertCryosphereWheres(new Criteria(), $con)->diff($expertCryosphereWheres);
 
 
-        $this->expertWheresScheduledForDeletion = $expertWheresToDelete;
+        $this->expertCryosphereWheresScheduledForDeletion = $expertCryosphereWheresToDelete;
 
-        foreach ($expertWheresToDelete as $expertWhereRemoved) {
-            $expertWhereRemoved->setCryosphereWhere(null);
+        foreach ($expertCryosphereWheresToDelete as $expertCryosphereWhereRemoved) {
+            $expertCryosphereWhereRemoved->setCryosphereWhere(null);
         }
 
-        $this->collExpertWheres = null;
-        foreach ($expertWheres as $expertWhere) {
-            $this->addExpertWhere($expertWhere);
+        $this->collExpertCryosphereWheres = null;
+        foreach ($expertCryosphereWheres as $expertCryosphereWhere) {
+            $this->addExpertCryosphereWhere($expertCryosphereWhere);
         }
 
-        $this->collExpertWheres = $expertWheres;
-        $this->collExpertWheresPartial = false;
+        $this->collExpertCryosphereWheres = $expertCryosphereWheres;
+        $this->collExpertCryosphereWheresPartial = false;
 
         return $this;
     }
 
     /**
-     * Returns the number of related ExpertWhere objects.
+     * Returns the number of related ExpertCryosphereWhere objects.
      *
      * @param      Criteria $criteria
      * @param      boolean $distinct
      * @param      ConnectionInterface $con
-     * @return int             Count of related ExpertWhere objects.
+     * @return int             Count of related ExpertCryosphereWhere objects.
      * @throws PropelException
      */
-    public function countExpertWheres(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    public function countExpertCryosphereWheres(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
     {
-        $partial = $this->collExpertWheresPartial && !$this->isNew();
-        if (null === $this->collExpertWheres || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collExpertWheres) {
+        $partial = $this->collExpertCryosphereWheresPartial && !$this->isNew();
+        if (null === $this->collExpertCryosphereWheres || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collExpertCryosphereWheres) {
                 return 0;
             }
 
             if ($partial && !$criteria) {
-                return count($this->getExpertWheres());
+                return count($this->getExpertCryosphereWheres());
             }
 
-            $query = ChildExpertWhereQuery::create(null, $criteria);
+            $query = ChildExpertCryosphereWhereQuery::create(null, $criteria);
             if ($distinct) {
                 $query->distinct();
             }
@@ -1381,28 +1381,28 @@ abstract class CryosphereWhere implements ActiveRecordInterface
                 ->count($con);
         }
 
-        return count($this->collExpertWheres);
+        return count($this->collExpertCryosphereWheres);
     }
 
     /**
-     * Method called to associate a ChildExpertWhere object to this object
-     * through the ChildExpertWhere foreign key attribute.
+     * Method called to associate a ChildExpertCryosphereWhere object to this object
+     * through the ChildExpertCryosphereWhere foreign key attribute.
      *
-     * @param  ChildExpertWhere $l ChildExpertWhere
+     * @param  ChildExpertCryosphereWhere $l ChildExpertCryosphereWhere
      * @return $this|\CryoConnectDB\CryosphereWhere The current object (for fluent API support)
      */
-    public function addExpertWhere(ChildExpertWhere $l)
+    public function addExpertCryosphereWhere(ChildExpertCryosphereWhere $l)
     {
-        if ($this->collExpertWheres === null) {
-            $this->initExpertWheres();
-            $this->collExpertWheresPartial = true;
+        if ($this->collExpertCryosphereWheres === null) {
+            $this->initExpertCryosphereWheres();
+            $this->collExpertCryosphereWheresPartial = true;
         }
 
-        if (!$this->collExpertWheres->contains($l)) {
-            $this->doAddExpertWhere($l);
+        if (!$this->collExpertCryosphereWheres->contains($l)) {
+            $this->doAddExpertCryosphereWhere($l);
 
-            if ($this->expertWheresScheduledForDeletion and $this->expertWheresScheduledForDeletion->contains($l)) {
-                $this->expertWheresScheduledForDeletion->remove($this->expertWheresScheduledForDeletion->search($l));
+            if ($this->expertCryosphereWheresScheduledForDeletion and $this->expertCryosphereWheresScheduledForDeletion->contains($l)) {
+                $this->expertCryosphereWheresScheduledForDeletion->remove($this->expertCryosphereWheresScheduledForDeletion->search($l));
             }
         }
 
@@ -1410,29 +1410,29 @@ abstract class CryosphereWhere implements ActiveRecordInterface
     }
 
     /**
-     * @param ChildExpertWhere $expertWhere The ChildExpertWhere object to add.
+     * @param ChildExpertCryosphereWhere $expertCryosphereWhere The ChildExpertCryosphereWhere object to add.
      */
-    protected function doAddExpertWhere(ChildExpertWhere $expertWhere)
+    protected function doAddExpertCryosphereWhere(ChildExpertCryosphereWhere $expertCryosphereWhere)
     {
-        $this->collExpertWheres[]= $expertWhere;
-        $expertWhere->setCryosphereWhere($this);
+        $this->collExpertCryosphereWheres[]= $expertCryosphereWhere;
+        $expertCryosphereWhere->setCryosphereWhere($this);
     }
 
     /**
-     * @param  ChildExpertWhere $expertWhere The ChildExpertWhere object to remove.
+     * @param  ChildExpertCryosphereWhere $expertCryosphereWhere The ChildExpertCryosphereWhere object to remove.
      * @return $this|ChildCryosphereWhere The current object (for fluent API support)
      */
-    public function removeExpertWhere(ChildExpertWhere $expertWhere)
+    public function removeExpertCryosphereWhere(ChildExpertCryosphereWhere $expertCryosphereWhere)
     {
-        if ($this->getExpertWheres()->contains($expertWhere)) {
-            $pos = $this->collExpertWheres->search($expertWhere);
-            $this->collExpertWheres->remove($pos);
-            if (null === $this->expertWheresScheduledForDeletion) {
-                $this->expertWheresScheduledForDeletion = clone $this->collExpertWheres;
-                $this->expertWheresScheduledForDeletion->clear();
+        if ($this->getExpertCryosphereWheres()->contains($expertCryosphereWhere)) {
+            $pos = $this->collExpertCryosphereWheres->search($expertCryosphereWhere);
+            $this->collExpertCryosphereWheres->remove($pos);
+            if (null === $this->expertCryosphereWheresScheduledForDeletion) {
+                $this->expertCryosphereWheresScheduledForDeletion = clone $this->collExpertCryosphereWheres;
+                $this->expertCryosphereWheresScheduledForDeletion->clear();
             }
-            $this->expertWheresScheduledForDeletion[]= clone $expertWhere;
-            $expertWhere->setCryosphereWhere(null);
+            $this->expertCryosphereWheresScheduledForDeletion[]= clone $expertCryosphereWhere;
+            $expertCryosphereWhere->setCryosphereWhere(null);
         }
 
         return $this;
@@ -1444,7 +1444,7 @@ abstract class CryosphereWhere implements ActiveRecordInterface
      * an identical criteria, it returns the collection.
      * Otherwise if this CryosphereWhere is new, it will return
      * an empty collection; or if this CryosphereWhere has previously
-     * been saved, it will retrieve related ExpertWheres from storage.
+     * been saved, it will retrieve related ExpertCryosphereWheres from storage.
      *
      * This method is protected by default in order to keep the public
      * api reasonable.  You can provide public methods for those you
@@ -1453,14 +1453,14 @@ abstract class CryosphereWhere implements ActiveRecordInterface
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
      * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return ObjectCollection|ChildExpertWhere[] List of ChildExpertWhere objects
+     * @return ObjectCollection|ChildExpertCryosphereWhere[] List of ChildExpertCryosphereWhere objects
      */
-    public function getExpertWheresJoinExperts(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    public function getExpertCryosphereWheresJoinExperts(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
     {
-        $query = ChildExpertWhereQuery::create(null, $criteria);
+        $query = ChildExpertCryosphereWhereQuery::create(null, $criteria);
         $query->joinWith('Experts', $joinBehavior);
 
-        return $this->getExpertWheres($query, $con);
+        return $this->getExpertCryosphereWheres($query, $con);
     }
 
     /**
@@ -1742,8 +1742,8 @@ abstract class CryosphereWhere implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
-            if ($this->collExpertWheres) {
-                foreach ($this->collExpertWheres as $o) {
+            if ($this->collExpertCryosphereWheres) {
+                foreach ($this->collExpertCryosphereWheres as $o) {
                     $o->clearAllReferences($deep);
                 }
             }
@@ -1754,7 +1754,7 @@ abstract class CryosphereWhere implements ActiveRecordInterface
             }
         } // if ($deep)
 
-        $this->collExpertWheres = null;
+        $this->collExpertCryosphereWheres = null;
         $this->collInformationSeekerConnectRequestCryosphereWheres = null;
     }
 

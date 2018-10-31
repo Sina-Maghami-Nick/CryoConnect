@@ -5,18 +5,15 @@ namespace CryoConnectDB\Base;
 use \DateTime;
 use \Exception;
 use \PDO;
-use CryoConnectDB\CryosphereWhatSpecefic as ChildCryosphereWhatSpecefic;
-use CryoConnectDB\CryosphereWhatSpeceficQuery as ChildCryosphereWhatSpeceficQuery;
-use CryoConnectDB\ExpertCryosphereWhatSpecefic as ChildExpertCryosphereWhatSpecefic;
-use CryoConnectDB\ExpertCryosphereWhatSpeceficQuery as ChildExpertCryosphereWhatSpeceficQuery;
-use CryoConnectDB\Map\CryosphereWhatSpeceficTableMap;
-use CryoConnectDB\Map\ExpertCryosphereWhatSpeceficTableMap;
+use CryoConnectDB\ExpertPrimaryAffiliationQuery as ChildExpertPrimaryAffiliationQuery;
+use CryoConnectDB\Experts as ChildExperts;
+use CryoConnectDB\ExpertsQuery as ChildExpertsQuery;
+use CryoConnectDB\Map\ExpertPrimaryAffiliationTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
-use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\LogicException;
@@ -26,18 +23,18 @@ use Propel\Runtime\Parser\AbstractParser;
 use Propel\Runtime\Util\PropelDateTime;
 
 /**
- * Base class that represents a row from the 'cryosphere_what_specefic' table.
+ * Base class that represents a row from the 'expert_primary_affiliation' table.
  *
  *
  *
  * @package    propel.generator.CryoConnectDB.Base
  */
-abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
+abstract class ExpertPrimaryAffiliation implements ActiveRecordInterface
 {
     /**
      * TableMap class name
      */
-    const TABLE_MAP = '\\CryoConnectDB\\Map\\CryosphereWhatSpeceficTableMap';
+    const TABLE_MAP = '\\CryoConnectDB\\Map\\ExpertPrimaryAffiliationTableMap';
 
 
     /**
@@ -67,26 +64,32 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
     protected $virtualColumns = array();
 
     /**
-     * The value for the id field.
+     * The value for the expert_id field.
      *
      * @var        int
      */
-    protected $id;
+    protected $expert_id;
 
     /**
-     * The value for the cryosphere_what_specefic_name field.
+     * The value for the primary_affiliation_name field.
      *
      * @var        string
      */
-    protected $cryosphere_what_specefic_name;
+    protected $primary_affiliation_name;
 
     /**
-     * The value for the approved field.
+     * The value for the primary_affiliation_country_code field.
      *
-     * Note: this column has a database default value of: false
-     * @var        boolean
+     * @var        string
      */
-    protected $approved;
+    protected $primary_affiliation_country_code;
+
+    /**
+     * The value for the primary_affiliation_city field.
+     *
+     * @var        string
+     */
+    protected $primary_affiliation_city;
 
     /**
      * The value for the timestamp field.
@@ -97,10 +100,9 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
     protected $timestamp;
 
     /**
-     * @var        ObjectCollection|ChildExpertCryosphereWhatSpecefic[] Collection to store aggregation of ChildExpertCryosphereWhatSpecefic objects.
+     * @var        ChildExperts
      */
-    protected $collExpertCryosphereWhatSpecefics;
-    protected $collExpertCryosphereWhatSpeceficsPartial;
+    protected $aExperts;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -111,12 +113,6 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
     protected $alreadyInSave = false;
 
     /**
-     * An array of objects scheduled for deletion.
-     * @var ObjectCollection|ChildExpertCryosphereWhatSpecefic[]
-     */
-    protected $expertCryosphereWhatSpeceficsScheduledForDeletion = null;
-
-    /**
      * Applies default values to this object.
      * This method should be called from the object's constructor (or
      * equivalent initialization method).
@@ -124,11 +120,10 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
      */
     public function applyDefaultValues()
     {
-        $this->approved = false;
     }
 
     /**
-     * Initializes internal state of CryoConnectDB\Base\CryosphereWhatSpecefic object.
+     * Initializes internal state of CryoConnectDB\Base\ExpertPrimaryAffiliation object.
      * @see applyDefaults()
      */
     public function __construct()
@@ -225,9 +220,9 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
     }
 
     /**
-     * Compares this with another <code>CryosphereWhatSpecefic</code> instance.  If
-     * <code>obj</code> is an instance of <code>CryosphereWhatSpecefic</code>, delegates to
-     * <code>equals(CryosphereWhatSpecefic)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code>ExpertPrimaryAffiliation</code> instance.  If
+     * <code>obj</code> is an instance of <code>ExpertPrimaryAffiliation</code>, delegates to
+     * <code>equals(ExpertPrimaryAffiliation)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param  mixed   $obj The object to compare to.
      * @return boolean Whether equal to the object specified.
@@ -293,7 +288,7 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return $this|CryosphereWhatSpecefic The current object, for fluid interface
+     * @return $this|ExpertPrimaryAffiliation The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -355,43 +350,43 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
     }
 
     /**
-     * Get the [id] column value.
+     * Get the [expert_id] column value.
      *
      * @return int
      */
-    public function getId()
+    public function getExpertId()
     {
-        return $this->id;
+        return $this->expert_id;
     }
 
     /**
-     * Get the [cryosphere_what_specefic_name] column value.
+     * Get the [primary_affiliation_name] column value.
      *
      * @return string
      */
-    public function getCryosphereWhatSpeceficName()
+    public function getPrimaryAffiliationName()
     {
-        return $this->cryosphere_what_specefic_name;
+        return $this->primary_affiliation_name;
     }
 
     /**
-     * Get the [approved] column value.
+     * Get the [primary_affiliation_country_code] column value.
      *
-     * @return boolean
+     * @return string
      */
-    public function getApproved()
+    public function getPrimaryAffiliationCountryCode()
     {
-        return $this->approved;
+        return $this->primary_affiliation_country_code;
     }
 
     /**
-     * Get the [approved] column value.
+     * Get the [primary_affiliation_city] column value.
      *
-     * @return boolean
+     * @return string
      */
-    public function isApproved()
+    public function getPrimaryAffiliationCity()
     {
-        return $this->getApproved();
+        return $this->primary_affiliation_city;
     }
 
     /**
@@ -415,79 +410,95 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
     }
 
     /**
-     * Set the value of [id] column.
+     * Set the value of [expert_id] column.
      *
      * @param int $v new value
-     * @return $this|\CryoConnectDB\CryosphereWhatSpecefic The current object (for fluent API support)
+     * @return $this|\CryoConnectDB\ExpertPrimaryAffiliation The current object (for fluent API support)
      */
-    public function setId($v)
+    public function setExpertId($v)
     {
         if ($v !== null) {
             $v = (int) $v;
         }
 
-        if ($this->id !== $v) {
-            $this->id = $v;
-            $this->modifiedColumns[CryosphereWhatSpeceficTableMap::COL_ID] = true;
+        if ($this->expert_id !== $v) {
+            $this->expert_id = $v;
+            $this->modifiedColumns[ExpertPrimaryAffiliationTableMap::COL_EXPERT_ID] = true;
+        }
+
+        if ($this->aExperts !== null && $this->aExperts->getId() !== $v) {
+            $this->aExperts = null;
         }
 
         return $this;
-    } // setId()
+    } // setExpertId()
 
     /**
-     * Set the value of [cryosphere_what_specefic_name] column.
+     * Set the value of [primary_affiliation_name] column.
      *
      * @param string $v new value
-     * @return $this|\CryoConnectDB\CryosphereWhatSpecefic The current object (for fluent API support)
+     * @return $this|\CryoConnectDB\ExpertPrimaryAffiliation The current object (for fluent API support)
      */
-    public function setCryosphereWhatSpeceficName($v)
+    public function setPrimaryAffiliationName($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->cryosphere_what_specefic_name !== $v) {
-            $this->cryosphere_what_specefic_name = $v;
-            $this->modifiedColumns[CryosphereWhatSpeceficTableMap::COL_CRYOSPHERE_WHAT_SPECEFIC_NAME] = true;
+        if ($this->primary_affiliation_name !== $v) {
+            $this->primary_affiliation_name = $v;
+            $this->modifiedColumns[ExpertPrimaryAffiliationTableMap::COL_PRIMARY_AFFILIATION_NAME] = true;
         }
 
         return $this;
-    } // setCryosphereWhatSpeceficName()
+    } // setPrimaryAffiliationName()
 
     /**
-     * Sets the value of the [approved] column.
-     * Non-boolean arguments are converted using the following rules:
-     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     * Set the value of [primary_affiliation_country_code] column.
      *
-     * @param  boolean|integer|string $v The new value
-     * @return $this|\CryoConnectDB\CryosphereWhatSpecefic The current object (for fluent API support)
+     * @param string $v new value
+     * @return $this|\CryoConnectDB\ExpertPrimaryAffiliation The current object (for fluent API support)
      */
-    public function setApproved($v)
+    public function setPrimaryAffiliationCountryCode($v)
     {
         if ($v !== null) {
-            if (is_string($v)) {
-                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-            } else {
-                $v = (boolean) $v;
-            }
+            $v = (string) $v;
         }
 
-        if ($this->approved !== $v) {
-            $this->approved = $v;
-            $this->modifiedColumns[CryosphereWhatSpeceficTableMap::COL_APPROVED] = true;
+        if ($this->primary_affiliation_country_code !== $v) {
+            $this->primary_affiliation_country_code = $v;
+            $this->modifiedColumns[ExpertPrimaryAffiliationTableMap::COL_PRIMARY_AFFILIATION_COUNTRY_CODE] = true;
         }
 
         return $this;
-    } // setApproved()
+    } // setPrimaryAffiliationCountryCode()
+
+    /**
+     * Set the value of [primary_affiliation_city] column.
+     *
+     * @param string $v new value
+     * @return $this|\CryoConnectDB\ExpertPrimaryAffiliation The current object (for fluent API support)
+     */
+    public function setPrimaryAffiliationCity($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->primary_affiliation_city !== $v) {
+            $this->primary_affiliation_city = $v;
+            $this->modifiedColumns[ExpertPrimaryAffiliationTableMap::COL_PRIMARY_AFFILIATION_CITY] = true;
+        }
+
+        return $this;
+    } // setPrimaryAffiliationCity()
 
     /**
      * Sets the value of [timestamp] column to a normalized version of the date/time value specified.
      *
      * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
      *               Empty strings are treated as NULL.
-     * @return $this|\CryoConnectDB\CryosphereWhatSpecefic The current object (for fluent API support)
+     * @return $this|\CryoConnectDB\ExpertPrimaryAffiliation The current object (for fluent API support)
      */
     public function setTimestamp($v)
     {
@@ -495,7 +506,7 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
         if ($this->timestamp !== null || $dt !== null) {
             if ($this->timestamp === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->timestamp->format("Y-m-d H:i:s.u")) {
                 $this->timestamp = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[CryosphereWhatSpeceficTableMap::COL_TIMESTAMP] = true;
+                $this->modifiedColumns[ExpertPrimaryAffiliationTableMap::COL_TIMESTAMP] = true;
             }
         } // if either are not null
 
@@ -512,10 +523,6 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
      */
     public function hasOnlyDefaultValues()
     {
-            if ($this->approved !== false) {
-                return false;
-            }
-
         // otherwise, everything was equal, so return TRUE
         return true;
     } // hasOnlyDefaultValues()
@@ -542,16 +549,19 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
     {
         try {
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : CryosphereWhatSpeceficTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->id = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : ExpertPrimaryAffiliationTableMap::translateFieldName('ExpertId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->expert_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : CryosphereWhatSpeceficTableMap::translateFieldName('CryosphereWhatSpeceficName', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->cryosphere_what_specefic_name = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ExpertPrimaryAffiliationTableMap::translateFieldName('PrimaryAffiliationName', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->primary_affiliation_name = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : CryosphereWhatSpeceficTableMap::translateFieldName('Approved', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->approved = (null !== $col) ? (boolean) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ExpertPrimaryAffiliationTableMap::translateFieldName('PrimaryAffiliationCountryCode', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->primary_affiliation_country_code = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : CryosphereWhatSpeceficTableMap::translateFieldName('Timestamp', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ExpertPrimaryAffiliationTableMap::translateFieldName('PrimaryAffiliationCity', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->primary_affiliation_city = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ExpertPrimaryAffiliationTableMap::translateFieldName('Timestamp', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
@@ -564,10 +574,10 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 4; // 4 = CryosphereWhatSpeceficTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 5; // 5 = ExpertPrimaryAffiliationTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException(sprintf('Error populating %s object', '\\CryoConnectDB\\CryosphereWhatSpecefic'), 0, $e);
+            throw new PropelException(sprintf('Error populating %s object', '\\CryoConnectDB\\ExpertPrimaryAffiliation'), 0, $e);
         }
     }
 
@@ -586,6 +596,9 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
+        if ($this->aExperts !== null && $this->expert_id !== $this->aExperts->getId()) {
+            $this->aExperts = null;
+        }
     } // ensureConsistency
 
     /**
@@ -609,13 +622,13 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(CryosphereWhatSpeceficTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(ExpertPrimaryAffiliationTableMap::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $dataFetcher = ChildCryosphereWhatSpeceficQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+        $dataFetcher = ChildExpertPrimaryAffiliationQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
         $row = $dataFetcher->fetch();
         $dataFetcher->close();
         if (!$row) {
@@ -625,8 +638,7 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->collExpertCryosphereWhatSpecefics = null;
-
+            $this->aExperts = null;
         } // if (deep)
     }
 
@@ -636,8 +648,8 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
      * @param      ConnectionInterface $con
      * @return void
      * @throws PropelException
-     * @see CryosphereWhatSpecefic::setDeleted()
-     * @see CryosphereWhatSpecefic::isDeleted()
+     * @see ExpertPrimaryAffiliation::setDeleted()
+     * @see ExpertPrimaryAffiliation::isDeleted()
      */
     public function delete(ConnectionInterface $con = null)
     {
@@ -646,11 +658,11 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(CryosphereWhatSpeceficTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ExpertPrimaryAffiliationTableMap::DATABASE_NAME);
         }
 
         $con->transaction(function () use ($con) {
-            $deleteQuery = ChildCryosphereWhatSpeceficQuery::create()
+            $deleteQuery = ChildExpertPrimaryAffiliationQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -685,7 +697,7 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(CryosphereWhatSpeceficTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ExpertPrimaryAffiliationTableMap::DATABASE_NAME);
         }
 
         return $con->transaction(function () use ($con) {
@@ -704,7 +716,7 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                CryosphereWhatSpeceficTableMap::addInstanceToPool($this);
+                ExpertPrimaryAffiliationTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -730,6 +742,18 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
 
+            // We call the save method on the following object(s) if they
+            // were passed to this object by their corresponding set
+            // method.  This object relates to these object(s) by a
+            // foreign key reference.
+
+            if ($this->aExperts !== null) {
+                if ($this->aExperts->isModified() || $this->aExperts->isNew()) {
+                    $affectedRows += $this->aExperts->save($con);
+                }
+                $this->setExperts($this->aExperts);
+            }
+
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
                 if ($this->isNew()) {
@@ -739,23 +763,6 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
                     $affectedRows += $this->doUpdate($con);
                 }
                 $this->resetModified();
-            }
-
-            if ($this->expertCryosphereWhatSpeceficsScheduledForDeletion !== null) {
-                if (!$this->expertCryosphereWhatSpeceficsScheduledForDeletion->isEmpty()) {
-                    \CryoConnectDB\ExpertCryosphereWhatSpeceficQuery::create()
-                        ->filterByPrimaryKeys($this->expertCryosphereWhatSpeceficsScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->expertCryosphereWhatSpeceficsScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collExpertCryosphereWhatSpecefics !== null) {
-                foreach ($this->collExpertCryosphereWhatSpecefics as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
             }
 
             $this->alreadyInSave = false;
@@ -778,27 +785,26 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[CryosphereWhatSpeceficTableMap::COL_ID] = true;
-        if (null !== $this->id) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . CryosphereWhatSpeceficTableMap::COL_ID . ')');
-        }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(CryosphereWhatSpeceficTableMap::COL_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'id';
+        if ($this->isColumnModified(ExpertPrimaryAffiliationTableMap::COL_EXPERT_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'expert_id';
         }
-        if ($this->isColumnModified(CryosphereWhatSpeceficTableMap::COL_CRYOSPHERE_WHAT_SPECEFIC_NAME)) {
-            $modifiedColumns[':p' . $index++]  = 'cryosphere_what_specefic_name';
+        if ($this->isColumnModified(ExpertPrimaryAffiliationTableMap::COL_PRIMARY_AFFILIATION_NAME)) {
+            $modifiedColumns[':p' . $index++]  = 'primary_affiliation_name';
         }
-        if ($this->isColumnModified(CryosphereWhatSpeceficTableMap::COL_APPROVED)) {
-            $modifiedColumns[':p' . $index++]  = 'approved';
+        if ($this->isColumnModified(ExpertPrimaryAffiliationTableMap::COL_PRIMARY_AFFILIATION_COUNTRY_CODE)) {
+            $modifiedColumns[':p' . $index++]  = 'primary_affiliation_country_code';
         }
-        if ($this->isColumnModified(CryosphereWhatSpeceficTableMap::COL_TIMESTAMP)) {
+        if ($this->isColumnModified(ExpertPrimaryAffiliationTableMap::COL_PRIMARY_AFFILIATION_CITY)) {
+            $modifiedColumns[':p' . $index++]  = 'primary_affiliation_city';
+        }
+        if ($this->isColumnModified(ExpertPrimaryAffiliationTableMap::COL_TIMESTAMP)) {
             $modifiedColumns[':p' . $index++]  = 'timestamp';
         }
 
         $sql = sprintf(
-            'INSERT INTO cryosphere_what_specefic (%s) VALUES (%s)',
+            'INSERT INTO expert_primary_affiliation (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -807,14 +813,17 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
             $stmt = $con->prepare($sql);
             foreach ($modifiedColumns as $identifier => $columnName) {
                 switch ($columnName) {
-                    case 'id':
-                        $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+                    case 'expert_id':
+                        $stmt->bindValue($identifier, $this->expert_id, PDO::PARAM_INT);
                         break;
-                    case 'cryosphere_what_specefic_name':
-                        $stmt->bindValue($identifier, $this->cryosphere_what_specefic_name, PDO::PARAM_STR);
+                    case 'primary_affiliation_name':
+                        $stmt->bindValue($identifier, $this->primary_affiliation_name, PDO::PARAM_STR);
                         break;
-                    case 'approved':
-                        $stmt->bindValue($identifier, (int) $this->approved, PDO::PARAM_INT);
+                    case 'primary_affiliation_country_code':
+                        $stmt->bindValue($identifier, $this->primary_affiliation_country_code, PDO::PARAM_STR);
+                        break;
+                    case 'primary_affiliation_city':
+                        $stmt->bindValue($identifier, $this->primary_affiliation_city, PDO::PARAM_STR);
                         break;
                     case 'timestamp':
                         $stmt->bindValue($identifier, $this->timestamp ? $this->timestamp->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
@@ -826,13 +835,6 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
             Propel::log($e->getMessage(), Propel::LOG_ERR);
             throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), 0, $e);
         }
-
-        try {
-            $pk = $con->lastInsertId();
-        } catch (Exception $e) {
-            throw new PropelException('Unable to get autoincrement id.', 0, $e);
-        }
-        $this->setId($pk);
 
         $this->setNew(false);
     }
@@ -865,7 +867,7 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
      */
     public function getByName($name, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = CryosphereWhatSpeceficTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = ExpertPrimaryAffiliationTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -882,15 +884,18 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
     {
         switch ($pos) {
             case 0:
-                return $this->getId();
+                return $this->getExpertId();
                 break;
             case 1:
-                return $this->getCryosphereWhatSpeceficName();
+                return $this->getPrimaryAffiliationName();
                 break;
             case 2:
-                return $this->getApproved();
+                return $this->getPrimaryAffiliationCountryCode();
                 break;
             case 3:
+                return $this->getPrimaryAffiliationCity();
+                break;
+            case 4:
                 return $this->getTimestamp();
                 break;
             default:
@@ -917,19 +922,20 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
     public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
 
-        if (isset($alreadyDumpedObjects['CryosphereWhatSpecefic'][$this->hashCode()])) {
+        if (isset($alreadyDumpedObjects['ExpertPrimaryAffiliation'][$this->hashCode()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['CryosphereWhatSpecefic'][$this->hashCode()] = true;
-        $keys = CryosphereWhatSpeceficTableMap::getFieldNames($keyType);
+        $alreadyDumpedObjects['ExpertPrimaryAffiliation'][$this->hashCode()] = true;
+        $keys = ExpertPrimaryAffiliationTableMap::getFieldNames($keyType);
         $result = array(
-            $keys[0] => $this->getId(),
-            $keys[1] => $this->getCryosphereWhatSpeceficName(),
-            $keys[2] => $this->getApproved(),
-            $keys[3] => $this->getTimestamp(),
+            $keys[0] => $this->getExpertId(),
+            $keys[1] => $this->getPrimaryAffiliationName(),
+            $keys[2] => $this->getPrimaryAffiliationCountryCode(),
+            $keys[3] => $this->getPrimaryAffiliationCity(),
+            $keys[4] => $this->getTimestamp(),
         );
-        if ($result[$keys[3]] instanceof \DateTimeInterface) {
-            $result[$keys[3]] = $result[$keys[3]]->format('c');
+        if ($result[$keys[4]] instanceof \DateTimeInterface) {
+            $result[$keys[4]] = $result[$keys[4]]->format('c');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -938,20 +944,20 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->collExpertCryosphereWhatSpecefics) {
+            if (null !== $this->aExperts) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
-                        $key = 'expertCryosphereWhatSpecefics';
+                        $key = 'experts';
                         break;
                     case TableMap::TYPE_FIELDNAME:
-                        $key = 'expert_cryosphere_what_specefics';
+                        $key = 'experts';
                         break;
                     default:
-                        $key = 'ExpertCryosphereWhatSpecefics';
+                        $key = 'Experts';
                 }
 
-                $result[$key] = $this->collExpertCryosphereWhatSpecefics->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+                $result[$key] = $this->aExperts->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
         }
 
@@ -967,11 +973,11 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
      *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                Defaults to TableMap::TYPE_PHPNAME.
-     * @return $this|\CryoConnectDB\CryosphereWhatSpecefic
+     * @return $this|\CryoConnectDB\ExpertPrimaryAffiliation
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = CryosphereWhatSpeceficTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = ExpertPrimaryAffiliationTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
 
         return $this->setByPosition($pos, $value);
     }
@@ -982,21 +988,24 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
      *
      * @param  int $pos position in xml schema
      * @param  mixed $value field value
-     * @return $this|\CryoConnectDB\CryosphereWhatSpecefic
+     * @return $this|\CryoConnectDB\ExpertPrimaryAffiliation
      */
     public function setByPosition($pos, $value)
     {
         switch ($pos) {
             case 0:
-                $this->setId($value);
+                $this->setExpertId($value);
                 break;
             case 1:
-                $this->setCryosphereWhatSpeceficName($value);
+                $this->setPrimaryAffiliationName($value);
                 break;
             case 2:
-                $this->setApproved($value);
+                $this->setPrimaryAffiliationCountryCode($value);
                 break;
             case 3:
+                $this->setPrimaryAffiliationCity($value);
+                break;
+            case 4:
                 $this->setTimestamp($value);
                 break;
         } // switch()
@@ -1023,19 +1032,22 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
      */
     public function fromArray($arr, $keyType = TableMap::TYPE_PHPNAME)
     {
-        $keys = CryosphereWhatSpeceficTableMap::getFieldNames($keyType);
+        $keys = ExpertPrimaryAffiliationTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
-            $this->setId($arr[$keys[0]]);
+            $this->setExpertId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setCryosphereWhatSpeceficName($arr[$keys[1]]);
+            $this->setPrimaryAffiliationName($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setApproved($arr[$keys[2]]);
+            $this->setPrimaryAffiliationCountryCode($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setTimestamp($arr[$keys[3]]);
+            $this->setPrimaryAffiliationCity($arr[$keys[3]]);
+        }
+        if (array_key_exists($keys[4], $arr)) {
+            $this->setTimestamp($arr[$keys[4]]);
         }
     }
 
@@ -1056,7 +1068,7 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
      * @param string $data The source data to import from
      * @param string $keyType The type of keys the array uses.
      *
-     * @return $this|\CryoConnectDB\CryosphereWhatSpecefic The current object, for fluid interface
+     * @return $this|\CryoConnectDB\ExpertPrimaryAffiliation The current object, for fluid interface
      */
     public function importFrom($parser, $data, $keyType = TableMap::TYPE_PHPNAME)
     {
@@ -1076,19 +1088,22 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(CryosphereWhatSpeceficTableMap::DATABASE_NAME);
+        $criteria = new Criteria(ExpertPrimaryAffiliationTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(CryosphereWhatSpeceficTableMap::COL_ID)) {
-            $criteria->add(CryosphereWhatSpeceficTableMap::COL_ID, $this->id);
+        if ($this->isColumnModified(ExpertPrimaryAffiliationTableMap::COL_EXPERT_ID)) {
+            $criteria->add(ExpertPrimaryAffiliationTableMap::COL_EXPERT_ID, $this->expert_id);
         }
-        if ($this->isColumnModified(CryosphereWhatSpeceficTableMap::COL_CRYOSPHERE_WHAT_SPECEFIC_NAME)) {
-            $criteria->add(CryosphereWhatSpeceficTableMap::COL_CRYOSPHERE_WHAT_SPECEFIC_NAME, $this->cryosphere_what_specefic_name);
+        if ($this->isColumnModified(ExpertPrimaryAffiliationTableMap::COL_PRIMARY_AFFILIATION_NAME)) {
+            $criteria->add(ExpertPrimaryAffiliationTableMap::COL_PRIMARY_AFFILIATION_NAME, $this->primary_affiliation_name);
         }
-        if ($this->isColumnModified(CryosphereWhatSpeceficTableMap::COL_APPROVED)) {
-            $criteria->add(CryosphereWhatSpeceficTableMap::COL_APPROVED, $this->approved);
+        if ($this->isColumnModified(ExpertPrimaryAffiliationTableMap::COL_PRIMARY_AFFILIATION_COUNTRY_CODE)) {
+            $criteria->add(ExpertPrimaryAffiliationTableMap::COL_PRIMARY_AFFILIATION_COUNTRY_CODE, $this->primary_affiliation_country_code);
         }
-        if ($this->isColumnModified(CryosphereWhatSpeceficTableMap::COL_TIMESTAMP)) {
-            $criteria->add(CryosphereWhatSpeceficTableMap::COL_TIMESTAMP, $this->timestamp);
+        if ($this->isColumnModified(ExpertPrimaryAffiliationTableMap::COL_PRIMARY_AFFILIATION_CITY)) {
+            $criteria->add(ExpertPrimaryAffiliationTableMap::COL_PRIMARY_AFFILIATION_CITY, $this->primary_affiliation_city);
+        }
+        if ($this->isColumnModified(ExpertPrimaryAffiliationTableMap::COL_TIMESTAMP)) {
+            $criteria->add(ExpertPrimaryAffiliationTableMap::COL_TIMESTAMP, $this->timestamp);
         }
 
         return $criteria;
@@ -1106,8 +1121,7 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        $criteria = ChildCryosphereWhatSpeceficQuery::create();
-        $criteria->add(CryosphereWhatSpeceficTableMap::COL_ID, $this->id);
+        throw new LogicException('The ExpertPrimaryAffiliation object has no primary key');
 
         return $criteria;
     }
@@ -1120,7 +1134,7 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
      */
     public function hashCode()
     {
-        $validPk = null !== $this->getId();
+        $validPk = false;
 
         $validPrimaryKeyFKs = 0;
         $primaryKeyFKs = [];
@@ -1135,23 +1149,27 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
     }
 
     /**
-     * Returns the primary key for this object (row).
-     * @return int
+     * Returns NULL since this table doesn't have a primary key.
+     * This method exists only for BC and is deprecated!
+     * @return null
      */
     public function getPrimaryKey()
     {
-        return $this->getId();
+        return null;
     }
 
     /**
-     * Generic method to set the primary key (id column).
+     * Dummy primary key setter.
      *
-     * @param       int $key Primary key.
-     * @return void
+     * This function only exists to preserve backwards compatibility.  It is no longer
+     * needed or required by the Persistent interface.  It will be removed in next BC-breaking
+     * release of Propel.
+     *
+     * @deprecated
      */
-    public function setPrimaryKey($key)
+    public function setPrimaryKey($pk)
     {
-        $this->setId($key);
+        // do nothing, because this object doesn't have any primary keys
     }
 
     /**
@@ -1160,7 +1178,7 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
      */
     public function isPrimaryKeyNull()
     {
-        return null === $this->getId();
+        return ;
     }
 
     /**
@@ -1169,33 +1187,20 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of \CryoConnectDB\CryosphereWhatSpecefic (or compatible) type.
+     * @param      object $copyObj An object of \CryoConnectDB\ExpertPrimaryAffiliation (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setCryosphereWhatSpeceficName($this->getCryosphereWhatSpeceficName());
-        $copyObj->setApproved($this->getApproved());
+        $copyObj->setExpertId($this->getExpertId());
+        $copyObj->setPrimaryAffiliationName($this->getPrimaryAffiliationName());
+        $copyObj->setPrimaryAffiliationCountryCode($this->getPrimaryAffiliationCountryCode());
+        $copyObj->setPrimaryAffiliationCity($this->getPrimaryAffiliationCity());
         $copyObj->setTimestamp($this->getTimestamp());
-
-        if ($deepCopy) {
-            // important: temporarily setNew(false) because this affects the behavior of
-            // the getter/setter methods for fkey referrer objects.
-            $copyObj->setNew(false);
-
-            foreach ($this->getExpertCryosphereWhatSpecefics() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addExpertCryosphereWhatSpecefic($relObj->copy($deepCopy));
-                }
-            }
-
-        } // if ($deepCopy)
-
         if ($makeNew) {
             $copyObj->setNew(true);
-            $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
         }
     }
 
@@ -1208,7 +1213,7 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
      * objects.
      *
      * @param  boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return \CryoConnectDB\CryosphereWhatSpecefic Clone of current object.
+     * @return \CryoConnectDB\ExpertPrimaryAffiliation Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1221,271 +1226,55 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
         return $copyObj;
     }
 
-
     /**
-     * Initializes a collection based on the name of a relation.
-     * Avoids crafting an 'init[$relationName]s' method name
-     * that wouldn't work when StandardEnglishPluralizer is used.
+     * Declares an association between this object and a ChildExperts object.
      *
-     * @param      string $relationName The name of the relation to initialize
-     * @return void
-     */
-    public function initRelation($relationName)
-    {
-        if ('ExpertCryosphereWhatSpecefic' == $relationName) {
-            $this->initExpertCryosphereWhatSpecefics();
-            return;
-        }
-    }
-
-    /**
-     * Clears out the collExpertCryosphereWhatSpecefics collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return void
-     * @see        addExpertCryosphereWhatSpecefics()
-     */
-    public function clearExpertCryosphereWhatSpecefics()
-    {
-        $this->collExpertCryosphereWhatSpecefics = null; // important to set this to NULL since that means it is uninitialized
-    }
-
-    /**
-     * Reset is the collExpertCryosphereWhatSpecefics collection loaded partially.
-     */
-    public function resetPartialExpertCryosphereWhatSpecefics($v = true)
-    {
-        $this->collExpertCryosphereWhatSpeceficsPartial = $v;
-    }
-
-    /**
-     * Initializes the collExpertCryosphereWhatSpecefics collection.
-     *
-     * By default this just sets the collExpertCryosphereWhatSpecefics collection to an empty array (like clearcollExpertCryosphereWhatSpecefics());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param      boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initExpertCryosphereWhatSpecefics($overrideExisting = true)
-    {
-        if (null !== $this->collExpertCryosphereWhatSpecefics && !$overrideExisting) {
-            return;
-        }
-
-        $collectionClassName = ExpertCryosphereWhatSpeceficTableMap::getTableMap()->getCollectionClassName();
-
-        $this->collExpertCryosphereWhatSpecefics = new $collectionClassName;
-        $this->collExpertCryosphereWhatSpecefics->setModel('\CryoConnectDB\ExpertCryosphereWhatSpecefic');
-    }
-
-    /**
-     * Gets an array of ChildExpertCryosphereWhatSpecefic objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this ChildCryosphereWhatSpecefic is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param      Criteria $criteria optional Criteria object to narrow the query
-     * @param      ConnectionInterface $con optional connection object
-     * @return ObjectCollection|ChildExpertCryosphereWhatSpecefic[] List of ChildExpertCryosphereWhatSpecefic objects
+     * @param  ChildExperts $v
+     * @return $this|\CryoConnectDB\ExpertPrimaryAffiliation The current object (for fluent API support)
      * @throws PropelException
      */
-    public function getExpertCryosphereWhatSpecefics(Criteria $criteria = null, ConnectionInterface $con = null)
+    public function setExperts(ChildExperts $v = null)
     {
-        $partial = $this->collExpertCryosphereWhatSpeceficsPartial && !$this->isNew();
-        if (null === $this->collExpertCryosphereWhatSpecefics || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collExpertCryosphereWhatSpecefics) {
-                // return empty collection
-                $this->initExpertCryosphereWhatSpecefics();
-            } else {
-                $collExpertCryosphereWhatSpecefics = ChildExpertCryosphereWhatSpeceficQuery::create(null, $criteria)
-                    ->filterByCryosphereWhatSpecefic($this)
-                    ->find($con);
-
-                if (null !== $criteria) {
-                    if (false !== $this->collExpertCryosphereWhatSpeceficsPartial && count($collExpertCryosphereWhatSpecefics)) {
-                        $this->initExpertCryosphereWhatSpecefics(false);
-
-                        foreach ($collExpertCryosphereWhatSpecefics as $obj) {
-                            if (false == $this->collExpertCryosphereWhatSpecefics->contains($obj)) {
-                                $this->collExpertCryosphereWhatSpecefics->append($obj);
-                            }
-                        }
-
-                        $this->collExpertCryosphereWhatSpeceficsPartial = true;
-                    }
-
-                    return $collExpertCryosphereWhatSpecefics;
-                }
-
-                if ($partial && $this->collExpertCryosphereWhatSpecefics) {
-                    foreach ($this->collExpertCryosphereWhatSpecefics as $obj) {
-                        if ($obj->isNew()) {
-                            $collExpertCryosphereWhatSpecefics[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collExpertCryosphereWhatSpecefics = $collExpertCryosphereWhatSpecefics;
-                $this->collExpertCryosphereWhatSpeceficsPartial = false;
-            }
+        if ($v === null) {
+            $this->setExpertId(NULL);
+        } else {
+            $this->setExpertId($v->getId());
         }
 
-        return $this->collExpertCryosphereWhatSpecefics;
-    }
+        $this->aExperts = $v;
 
-    /**
-     * Sets a collection of ChildExpertCryosphereWhatSpecefic objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param      Collection $expertCryosphereWhatSpecefics A Propel collection.
-     * @param      ConnectionInterface $con Optional connection object
-     * @return $this|ChildCryosphereWhatSpecefic The current object (for fluent API support)
-     */
-    public function setExpertCryosphereWhatSpecefics(Collection $expertCryosphereWhatSpecefics, ConnectionInterface $con = null)
-    {
-        /** @var ChildExpertCryosphereWhatSpecefic[] $expertCryosphereWhatSpeceficsToDelete */
-        $expertCryosphereWhatSpeceficsToDelete = $this->getExpertCryosphereWhatSpecefics(new Criteria(), $con)->diff($expertCryosphereWhatSpecefics);
-
-
-        $this->expertCryosphereWhatSpeceficsScheduledForDeletion = $expertCryosphereWhatSpeceficsToDelete;
-
-        foreach ($expertCryosphereWhatSpeceficsToDelete as $expertCryosphereWhatSpeceficRemoved) {
-            $expertCryosphereWhatSpeceficRemoved->setCryosphereWhatSpecefic(null);
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the ChildExperts object, it will not be re-added.
+        if ($v !== null) {
+            $v->addExpertPrimaryAffiliation($this);
         }
 
-        $this->collExpertCryosphereWhatSpecefics = null;
-        foreach ($expertCryosphereWhatSpecefics as $expertCryosphereWhatSpecefic) {
-            $this->addExpertCryosphereWhatSpecefic($expertCryosphereWhatSpecefic);
-        }
-
-        $this->collExpertCryosphereWhatSpecefics = $expertCryosphereWhatSpecefics;
-        $this->collExpertCryosphereWhatSpeceficsPartial = false;
 
         return $this;
     }
 
+
     /**
-     * Returns the number of related ExpertCryosphereWhatSpecefic objects.
+     * Get the associated ChildExperts object
      *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct
-     * @param      ConnectionInterface $con
-     * @return int             Count of related ExpertCryosphereWhatSpecefic objects.
+     * @param  ConnectionInterface $con Optional Connection object.
+     * @return ChildExperts The associated ChildExperts object.
      * @throws PropelException
      */
-    public function countExpertCryosphereWhatSpecefics(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    public function getExperts(ConnectionInterface $con = null)
     {
-        $partial = $this->collExpertCryosphereWhatSpeceficsPartial && !$this->isNew();
-        if (null === $this->collExpertCryosphereWhatSpecefics || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collExpertCryosphereWhatSpecefics) {
-                return 0;
-            }
-
-            if ($partial && !$criteria) {
-                return count($this->getExpertCryosphereWhatSpecefics());
-            }
-
-            $query = ChildExpertCryosphereWhatSpeceficQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByCryosphereWhatSpecefic($this)
-                ->count($con);
+        if ($this->aExperts === null && ($this->expert_id != 0)) {
+            $this->aExperts = ChildExpertsQuery::create()->findPk($this->expert_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aExperts->addExpertPrimaryAffiliations($this);
+             */
         }
 
-        return count($this->collExpertCryosphereWhatSpecefics);
-    }
-
-    /**
-     * Method called to associate a ChildExpertCryosphereWhatSpecefic object to this object
-     * through the ChildExpertCryosphereWhatSpecefic foreign key attribute.
-     *
-     * @param  ChildExpertCryosphereWhatSpecefic $l ChildExpertCryosphereWhatSpecefic
-     * @return $this|\CryoConnectDB\CryosphereWhatSpecefic The current object (for fluent API support)
-     */
-    public function addExpertCryosphereWhatSpecefic(ChildExpertCryosphereWhatSpecefic $l)
-    {
-        if ($this->collExpertCryosphereWhatSpecefics === null) {
-            $this->initExpertCryosphereWhatSpecefics();
-            $this->collExpertCryosphereWhatSpeceficsPartial = true;
-        }
-
-        if (!$this->collExpertCryosphereWhatSpecefics->contains($l)) {
-            $this->doAddExpertCryosphereWhatSpecefic($l);
-
-            if ($this->expertCryosphereWhatSpeceficsScheduledForDeletion and $this->expertCryosphereWhatSpeceficsScheduledForDeletion->contains($l)) {
-                $this->expertCryosphereWhatSpeceficsScheduledForDeletion->remove($this->expertCryosphereWhatSpeceficsScheduledForDeletion->search($l));
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param ChildExpertCryosphereWhatSpecefic $expertCryosphereWhatSpecefic The ChildExpertCryosphereWhatSpecefic object to add.
-     */
-    protected function doAddExpertCryosphereWhatSpecefic(ChildExpertCryosphereWhatSpecefic $expertCryosphereWhatSpecefic)
-    {
-        $this->collExpertCryosphereWhatSpecefics[]= $expertCryosphereWhatSpecefic;
-        $expertCryosphereWhatSpecefic->setCryosphereWhatSpecefic($this);
-    }
-
-    /**
-     * @param  ChildExpertCryosphereWhatSpecefic $expertCryosphereWhatSpecefic The ChildExpertCryosphereWhatSpecefic object to remove.
-     * @return $this|ChildCryosphereWhatSpecefic The current object (for fluent API support)
-     */
-    public function removeExpertCryosphereWhatSpecefic(ChildExpertCryosphereWhatSpecefic $expertCryosphereWhatSpecefic)
-    {
-        if ($this->getExpertCryosphereWhatSpecefics()->contains($expertCryosphereWhatSpecefic)) {
-            $pos = $this->collExpertCryosphereWhatSpecefics->search($expertCryosphereWhatSpecefic);
-            $this->collExpertCryosphereWhatSpecefics->remove($pos);
-            if (null === $this->expertCryosphereWhatSpeceficsScheduledForDeletion) {
-                $this->expertCryosphereWhatSpeceficsScheduledForDeletion = clone $this->collExpertCryosphereWhatSpecefics;
-                $this->expertCryosphereWhatSpeceficsScheduledForDeletion->clear();
-            }
-            $this->expertCryosphereWhatSpeceficsScheduledForDeletion[]= clone $expertCryosphereWhatSpecefic;
-            $expertCryosphereWhatSpecefic->setCryosphereWhatSpecefic(null);
-        }
-
-        return $this;
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this CryosphereWhatSpecefic is new, it will return
-     * an empty collection; or if this CryosphereWhatSpecefic has previously
-     * been saved, it will retrieve related ExpertCryosphereWhatSpecefics from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in CryosphereWhatSpecefic.
-     *
-     * @param      Criteria $criteria optional Criteria object to narrow the query
-     * @param      ConnectionInterface $con optional connection object
-     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return ObjectCollection|ChildExpertCryosphereWhatSpecefic[] List of ChildExpertCryosphereWhatSpecefic objects
-     */
-    public function getExpertCryosphereWhatSpeceficsJoinExperts(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
-    {
-        $query = ChildExpertCryosphereWhatSpeceficQuery::create(null, $criteria);
-        $query->joinWith('Experts', $joinBehavior);
-
-        return $this->getExpertCryosphereWhatSpecefics($query, $con);
+        return $this->aExperts;
     }
 
     /**
@@ -1495,9 +1284,13 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
      */
     public function clear()
     {
-        $this->id = null;
-        $this->cryosphere_what_specefic_name = null;
-        $this->approved = null;
+        if (null !== $this->aExperts) {
+            $this->aExperts->removeExpertPrimaryAffiliation($this);
+        }
+        $this->expert_id = null;
+        $this->primary_affiliation_name = null;
+        $this->primary_affiliation_country_code = null;
+        $this->primary_affiliation_city = null;
         $this->timestamp = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
@@ -1518,14 +1311,9 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
-            if ($this->collExpertCryosphereWhatSpecefics) {
-                foreach ($this->collExpertCryosphereWhatSpecefics as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
         } // if ($deep)
 
-        $this->collExpertCryosphereWhatSpecefics = null;
+        $this->aExperts = null;
     }
 
     /**
@@ -1535,7 +1323,7 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
      */
     public function __toString()
     {
-        return (string) $this->exportTo(CryosphereWhatSpeceficTableMap::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(ExpertPrimaryAffiliationTableMap::DEFAULT_STRING_FORMAT);
     }
 
     /**

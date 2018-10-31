@@ -56,25 +56,35 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildExpertsQuery rightJoinWithCountries() Adds a RIGHT JOIN clause and with to the query using the Countries relation
  * @method     ChildExpertsQuery innerJoinWithCountries() Adds a INNER JOIN clause and with to the query using the Countries relation
  *
- * @method     ChildExpertsQuery leftJoinCryosphereExpertMethods($relationAlias = null) Adds a LEFT JOIN clause to the query using the CryosphereExpertMethods relation
- * @method     ChildExpertsQuery rightJoinCryosphereExpertMethods($relationAlias = null) Adds a RIGHT JOIN clause to the query using the CryosphereExpertMethods relation
- * @method     ChildExpertsQuery innerJoinCryosphereExpertMethods($relationAlias = null) Adds a INNER JOIN clause to the query using the CryosphereExpertMethods relation
+ * @method     ChildExpertsQuery leftJoinExpertCryosphereMethods($relationAlias = null) Adds a LEFT JOIN clause to the query using the ExpertCryosphereMethods relation
+ * @method     ChildExpertsQuery rightJoinExpertCryosphereMethods($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ExpertCryosphereMethods relation
+ * @method     ChildExpertsQuery innerJoinExpertCryosphereMethods($relationAlias = null) Adds a INNER JOIN clause to the query using the ExpertCryosphereMethods relation
  *
- * @method     ChildExpertsQuery joinWithCryosphereExpertMethods($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the CryosphereExpertMethods relation
+ * @method     ChildExpertsQuery joinWithExpertCryosphereMethods($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the ExpertCryosphereMethods relation
  *
- * @method     ChildExpertsQuery leftJoinWithCryosphereExpertMethods() Adds a LEFT JOIN clause and with to the query using the CryosphereExpertMethods relation
- * @method     ChildExpertsQuery rightJoinWithCryosphereExpertMethods() Adds a RIGHT JOIN clause and with to the query using the CryosphereExpertMethods relation
- * @method     ChildExpertsQuery innerJoinWithCryosphereExpertMethods() Adds a INNER JOIN clause and with to the query using the CryosphereExpertMethods relation
+ * @method     ChildExpertsQuery leftJoinWithExpertCryosphereMethods() Adds a LEFT JOIN clause and with to the query using the ExpertCryosphereMethods relation
+ * @method     ChildExpertsQuery rightJoinWithExpertCryosphereMethods() Adds a RIGHT JOIN clause and with to the query using the ExpertCryosphereMethods relation
+ * @method     ChildExpertsQuery innerJoinWithExpertCryosphereMethods() Adds a INNER JOIN clause and with to the query using the ExpertCryosphereMethods relation
  *
- * @method     ChildExpertsQuery leftJoinExpertAffiliation($relationAlias = null) Adds a LEFT JOIN clause to the query using the ExpertAffiliation relation
- * @method     ChildExpertsQuery rightJoinExpertAffiliation($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ExpertAffiliation relation
- * @method     ChildExpertsQuery innerJoinExpertAffiliation($relationAlias = null) Adds a INNER JOIN clause to the query using the ExpertAffiliation relation
+ * @method     ChildExpertsQuery leftJoinExpertPrimaryAffiliation($relationAlias = null) Adds a LEFT JOIN clause to the query using the ExpertPrimaryAffiliation relation
+ * @method     ChildExpertsQuery rightJoinExpertPrimaryAffiliation($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ExpertPrimaryAffiliation relation
+ * @method     ChildExpertsQuery innerJoinExpertPrimaryAffiliation($relationAlias = null) Adds a INNER JOIN clause to the query using the ExpertPrimaryAffiliation relation
  *
- * @method     ChildExpertsQuery joinWithExpertAffiliation($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the ExpertAffiliation relation
+ * @method     ChildExpertsQuery joinWithExpertPrimaryAffiliation($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the ExpertPrimaryAffiliation relation
  *
- * @method     ChildExpertsQuery leftJoinWithExpertAffiliation() Adds a LEFT JOIN clause and with to the query using the ExpertAffiliation relation
- * @method     ChildExpertsQuery rightJoinWithExpertAffiliation() Adds a RIGHT JOIN clause and with to the query using the ExpertAffiliation relation
- * @method     ChildExpertsQuery innerJoinWithExpertAffiliation() Adds a INNER JOIN clause and with to the query using the ExpertAffiliation relation
+ * @method     ChildExpertsQuery leftJoinWithExpertPrimaryAffiliation() Adds a LEFT JOIN clause and with to the query using the ExpertPrimaryAffiliation relation
+ * @method     ChildExpertsQuery rightJoinWithExpertPrimaryAffiliation() Adds a RIGHT JOIN clause and with to the query using the ExpertPrimaryAffiliation relation
+ * @method     ChildExpertsQuery innerJoinWithExpertPrimaryAffiliation() Adds a INNER JOIN clause and with to the query using the ExpertPrimaryAffiliation relation
+ *
+ * @method     ChildExpertsQuery leftJoinExpertSecondaryAffiliation($relationAlias = null) Adds a LEFT JOIN clause to the query using the ExpertSecondaryAffiliation relation
+ * @method     ChildExpertsQuery rightJoinExpertSecondaryAffiliation($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ExpertSecondaryAffiliation relation
+ * @method     ChildExpertsQuery innerJoinExpertSecondaryAffiliation($relationAlias = null) Adds a INNER JOIN clause to the query using the ExpertSecondaryAffiliation relation
+ *
+ * @method     ChildExpertsQuery joinWithExpertSecondaryAffiliation($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the ExpertSecondaryAffiliation relation
+ *
+ * @method     ChildExpertsQuery leftJoinWithExpertSecondaryAffiliation() Adds a LEFT JOIN clause and with to the query using the ExpertSecondaryAffiliation relation
+ * @method     ChildExpertsQuery rightJoinWithExpertSecondaryAffiliation() Adds a RIGHT JOIN clause and with to the query using the ExpertSecondaryAffiliation relation
+ * @method     ChildExpertsQuery innerJoinWithExpertSecondaryAffiliation() Adds a INNER JOIN clause and with to the query using the ExpertSecondaryAffiliation relation
  *
  * @method     ChildExpertsQuery leftJoinExpertCareerStage($relationAlias = null) Adds a LEFT JOIN clause to the query using the ExpertCareerStage relation
  * @method     ChildExpertsQuery rightJoinExpertCareerStage($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ExpertCareerStage relation
@@ -136,27 +146,27 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildExpertsQuery rightJoinWithExpertLanguages() Adds a RIGHT JOIN clause and with to the query using the ExpertLanguages relation
  * @method     ChildExpertsQuery innerJoinWithExpertLanguages() Adds a INNER JOIN clause and with to the query using the ExpertLanguages relation
  *
- * @method     ChildExpertsQuery leftJoinExpertWhen($relationAlias = null) Adds a LEFT JOIN clause to the query using the ExpertWhen relation
- * @method     ChildExpertsQuery rightJoinExpertWhen($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ExpertWhen relation
- * @method     ChildExpertsQuery innerJoinExpertWhen($relationAlias = null) Adds a INNER JOIN clause to the query using the ExpertWhen relation
+ * @method     ChildExpertsQuery leftJoinExpertCryosphereWhen($relationAlias = null) Adds a LEFT JOIN clause to the query using the ExpertCryosphereWhen relation
+ * @method     ChildExpertsQuery rightJoinExpertCryosphereWhen($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ExpertCryosphereWhen relation
+ * @method     ChildExpertsQuery innerJoinExpertCryosphereWhen($relationAlias = null) Adds a INNER JOIN clause to the query using the ExpertCryosphereWhen relation
  *
- * @method     ChildExpertsQuery joinWithExpertWhen($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the ExpertWhen relation
+ * @method     ChildExpertsQuery joinWithExpertCryosphereWhen($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the ExpertCryosphereWhen relation
  *
- * @method     ChildExpertsQuery leftJoinWithExpertWhen() Adds a LEFT JOIN clause and with to the query using the ExpertWhen relation
- * @method     ChildExpertsQuery rightJoinWithExpertWhen() Adds a RIGHT JOIN clause and with to the query using the ExpertWhen relation
- * @method     ChildExpertsQuery innerJoinWithExpertWhen() Adds a INNER JOIN clause and with to the query using the ExpertWhen relation
+ * @method     ChildExpertsQuery leftJoinWithExpertCryosphereWhen() Adds a LEFT JOIN clause and with to the query using the ExpertCryosphereWhen relation
+ * @method     ChildExpertsQuery rightJoinWithExpertCryosphereWhen() Adds a RIGHT JOIN clause and with to the query using the ExpertCryosphereWhen relation
+ * @method     ChildExpertsQuery innerJoinWithExpertCryosphereWhen() Adds a INNER JOIN clause and with to the query using the ExpertCryosphereWhen relation
  *
- * @method     ChildExpertsQuery leftJoinExpertWhere($relationAlias = null) Adds a LEFT JOIN clause to the query using the ExpertWhere relation
- * @method     ChildExpertsQuery rightJoinExpertWhere($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ExpertWhere relation
- * @method     ChildExpertsQuery innerJoinExpertWhere($relationAlias = null) Adds a INNER JOIN clause to the query using the ExpertWhere relation
+ * @method     ChildExpertsQuery leftJoinExpertCryosphereWhere($relationAlias = null) Adds a LEFT JOIN clause to the query using the ExpertCryosphereWhere relation
+ * @method     ChildExpertsQuery rightJoinExpertCryosphereWhere($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ExpertCryosphereWhere relation
+ * @method     ChildExpertsQuery innerJoinExpertCryosphereWhere($relationAlias = null) Adds a INNER JOIN clause to the query using the ExpertCryosphereWhere relation
  *
- * @method     ChildExpertsQuery joinWithExpertWhere($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the ExpertWhere relation
+ * @method     ChildExpertsQuery joinWithExpertCryosphereWhere($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the ExpertCryosphereWhere relation
  *
- * @method     ChildExpertsQuery leftJoinWithExpertWhere() Adds a LEFT JOIN clause and with to the query using the ExpertWhere relation
- * @method     ChildExpertsQuery rightJoinWithExpertWhere() Adds a RIGHT JOIN clause and with to the query using the ExpertWhere relation
- * @method     ChildExpertsQuery innerJoinWithExpertWhere() Adds a INNER JOIN clause and with to the query using the ExpertWhere relation
+ * @method     ChildExpertsQuery leftJoinWithExpertCryosphereWhere() Adds a LEFT JOIN clause and with to the query using the ExpertCryosphereWhere relation
+ * @method     ChildExpertsQuery rightJoinWithExpertCryosphereWhere() Adds a RIGHT JOIN clause and with to the query using the ExpertCryosphereWhere relation
+ * @method     ChildExpertsQuery innerJoinWithExpertCryosphereWhere() Adds a INNER JOIN clause and with to the query using the ExpertCryosphereWhere relation
  *
- * @method     \CryoConnectDB\CountriesQuery|\CryoConnectDB\CryosphereExpertMethodsQuery|\CryoConnectDB\ExpertAffiliationQuery|\CryoConnectDB\ExpertCareerStageQuery|\CryoConnectDB\ExpertContactQuery|\CryoConnectDB\ExpertCryosphereWhatQuery|\CryoConnectDB\ExpertCryosphereWhatSpeceficQuery|\CryoConnectDB\ExpertFieldWorkQuery|\CryoConnectDB\ExpertLanguagesQuery|\CryoConnectDB\ExpertWhenQuery|\CryoConnectDB\ExpertWhereQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \CryoConnectDB\CountriesQuery|\CryoConnectDB\ExpertCryosphereMethodsQuery|\CryoConnectDB\ExpertPrimaryAffiliationQuery|\CryoConnectDB\ExpertSecondaryAffiliationQuery|\CryoConnectDB\ExpertCareerStageQuery|\CryoConnectDB\ExpertContactQuery|\CryoConnectDB\ExpertCryosphereWhatQuery|\CryoConnectDB\ExpertCryosphereWhatSpeceficQuery|\CryoConnectDB\ExpertFieldWorkQuery|\CryoConnectDB\ExpertLanguagesQuery|\CryoConnectDB\ExpertCryosphereWhenQuery|\CryoConnectDB\ExpertCryosphereWhereQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildExperts findOne(ConnectionInterface $con = null) Return the first ChildExperts matching the query
  * @method     ChildExperts findOneOrCreate(ConnectionInterface $con = null) Return the first ChildExperts matching the query, or a new ChildExperts object populated from the query conditions when no match is found
@@ -709,40 +719,40 @@ abstract class ExpertsQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related \CryoConnectDB\CryosphereExpertMethods object
+     * Filter the query by a related \CryoConnectDB\ExpertCryosphereMethods object
      *
-     * @param \CryoConnectDB\CryosphereExpertMethods|ObjectCollection $cryosphereExpertMethods the related object to use as filter
+     * @param \CryoConnectDB\ExpertCryosphereMethods|ObjectCollection $expertCryosphereMethods the related object to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return ChildExpertsQuery The current query, for fluid interface
      */
-    public function filterByCryosphereExpertMethods($cryosphereExpertMethods, $comparison = null)
+    public function filterByExpertCryosphereMethods($expertCryosphereMethods, $comparison = null)
     {
-        if ($cryosphereExpertMethods instanceof \CryoConnectDB\CryosphereExpertMethods) {
+        if ($expertCryosphereMethods instanceof \CryoConnectDB\ExpertCryosphereMethods) {
             return $this
-                ->addUsingAlias(ExpertsTableMap::COL_ID, $cryosphereExpertMethods->getExpertId(), $comparison);
-        } elseif ($cryosphereExpertMethods instanceof ObjectCollection) {
+                ->addUsingAlias(ExpertsTableMap::COL_ID, $expertCryosphereMethods->getExpertId(), $comparison);
+        } elseif ($expertCryosphereMethods instanceof ObjectCollection) {
             return $this
-                ->useCryosphereExpertMethodsQuery()
-                ->filterByPrimaryKeys($cryosphereExpertMethods->getPrimaryKeys())
+                ->useExpertCryosphereMethodsQuery()
+                ->filterByPrimaryKeys($expertCryosphereMethods->getPrimaryKeys())
                 ->endUse();
         } else {
-            throw new PropelException('filterByCryosphereExpertMethods() only accepts arguments of type \CryoConnectDB\CryosphereExpertMethods or Collection');
+            throw new PropelException('filterByExpertCryosphereMethods() only accepts arguments of type \CryoConnectDB\ExpertCryosphereMethods or Collection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the CryosphereExpertMethods relation
+     * Adds a JOIN clause to the query using the ExpertCryosphereMethods relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return $this|ChildExpertsQuery The current query, for fluid interface
      */
-    public function joinCryosphereExpertMethods($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinExpertCryosphereMethods($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('CryosphereExpertMethods');
+        $relationMap = $tableMap->getRelation('ExpertCryosphereMethods');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -757,14 +767,14 @@ abstract class ExpertsQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'CryosphereExpertMethods');
+            $this->addJoinObject($join, 'ExpertCryosphereMethods');
         }
 
         return $this;
     }
 
     /**
-     * Use the CryosphereExpertMethods relation CryosphereExpertMethods object
+     * Use the ExpertCryosphereMethods relation ExpertCryosphereMethods object
      *
      * @see useQuery()
      *
@@ -772,50 +782,50 @@ abstract class ExpertsQuery extends ModelCriteria
      *                                   to be used as main alias in the secondary query
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return \CryoConnectDB\CryosphereExpertMethodsQuery A secondary query class using the current class as primary query
+     * @return \CryoConnectDB\ExpertCryosphereMethodsQuery A secondary query class using the current class as primary query
      */
-    public function useCryosphereExpertMethodsQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useExpertCryosphereMethodsQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
-            ->joinCryosphereExpertMethods($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'CryosphereExpertMethods', '\CryoConnectDB\CryosphereExpertMethodsQuery');
+            ->joinExpertCryosphereMethods($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'ExpertCryosphereMethods', '\CryoConnectDB\ExpertCryosphereMethodsQuery');
     }
 
     /**
-     * Filter the query by a related \CryoConnectDB\ExpertAffiliation object
+     * Filter the query by a related \CryoConnectDB\ExpertPrimaryAffiliation object
      *
-     * @param \CryoConnectDB\ExpertAffiliation|ObjectCollection $expertAffiliation the related object to use as filter
+     * @param \CryoConnectDB\ExpertPrimaryAffiliation|ObjectCollection $expertPrimaryAffiliation the related object to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return ChildExpertsQuery The current query, for fluid interface
      */
-    public function filterByExpertAffiliation($expertAffiliation, $comparison = null)
+    public function filterByExpertPrimaryAffiliation($expertPrimaryAffiliation, $comparison = null)
     {
-        if ($expertAffiliation instanceof \CryoConnectDB\ExpertAffiliation) {
+        if ($expertPrimaryAffiliation instanceof \CryoConnectDB\ExpertPrimaryAffiliation) {
             return $this
-                ->addUsingAlias(ExpertsTableMap::COL_ID, $expertAffiliation->getExpertId(), $comparison);
-        } elseif ($expertAffiliation instanceof ObjectCollection) {
+                ->addUsingAlias(ExpertsTableMap::COL_ID, $expertPrimaryAffiliation->getExpertId(), $comparison);
+        } elseif ($expertPrimaryAffiliation instanceof ObjectCollection) {
             return $this
-                ->useExpertAffiliationQuery()
-                ->filterByPrimaryKeys($expertAffiliation->getPrimaryKeys())
+                ->useExpertPrimaryAffiliationQuery()
+                ->filterByPrimaryKeys($expertPrimaryAffiliation->getPrimaryKeys())
                 ->endUse();
         } else {
-            throw new PropelException('filterByExpertAffiliation() only accepts arguments of type \CryoConnectDB\ExpertAffiliation or Collection');
+            throw new PropelException('filterByExpertPrimaryAffiliation() only accepts arguments of type \CryoConnectDB\ExpertPrimaryAffiliation or Collection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the ExpertAffiliation relation
+     * Adds a JOIN clause to the query using the ExpertPrimaryAffiliation relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return $this|ChildExpertsQuery The current query, for fluid interface
      */
-    public function joinExpertAffiliation($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinExpertPrimaryAffiliation($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('ExpertAffiliation');
+        $relationMap = $tableMap->getRelation('ExpertPrimaryAffiliation');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -830,14 +840,14 @@ abstract class ExpertsQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'ExpertAffiliation');
+            $this->addJoinObject($join, 'ExpertPrimaryAffiliation');
         }
 
         return $this;
     }
 
     /**
-     * Use the ExpertAffiliation relation ExpertAffiliation object
+     * Use the ExpertPrimaryAffiliation relation ExpertPrimaryAffiliation object
      *
      * @see useQuery()
      *
@@ -845,13 +855,86 @@ abstract class ExpertsQuery extends ModelCriteria
      *                                   to be used as main alias in the secondary query
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return \CryoConnectDB\ExpertAffiliationQuery A secondary query class using the current class as primary query
+     * @return \CryoConnectDB\ExpertPrimaryAffiliationQuery A secondary query class using the current class as primary query
      */
-    public function useExpertAffiliationQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useExpertPrimaryAffiliationQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
-            ->joinExpertAffiliation($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'ExpertAffiliation', '\CryoConnectDB\ExpertAffiliationQuery');
+            ->joinExpertPrimaryAffiliation($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'ExpertPrimaryAffiliation', '\CryoConnectDB\ExpertPrimaryAffiliationQuery');
+    }
+
+    /**
+     * Filter the query by a related \CryoConnectDB\ExpertSecondaryAffiliation object
+     *
+     * @param \CryoConnectDB\ExpertSecondaryAffiliation|ObjectCollection $expertSecondaryAffiliation the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildExpertsQuery The current query, for fluid interface
+     */
+    public function filterByExpertSecondaryAffiliation($expertSecondaryAffiliation, $comparison = null)
+    {
+        if ($expertSecondaryAffiliation instanceof \CryoConnectDB\ExpertSecondaryAffiliation) {
+            return $this
+                ->addUsingAlias(ExpertsTableMap::COL_ID, $expertSecondaryAffiliation->getExpertId(), $comparison);
+        } elseif ($expertSecondaryAffiliation instanceof ObjectCollection) {
+            return $this
+                ->useExpertSecondaryAffiliationQuery()
+                ->filterByPrimaryKeys($expertSecondaryAffiliation->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByExpertSecondaryAffiliation() only accepts arguments of type \CryoConnectDB\ExpertSecondaryAffiliation or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the ExpertSecondaryAffiliation relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildExpertsQuery The current query, for fluid interface
+     */
+    public function joinExpertSecondaryAffiliation($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('ExpertSecondaryAffiliation');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'ExpertSecondaryAffiliation');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the ExpertSecondaryAffiliation relation ExpertSecondaryAffiliation object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \CryoConnectDB\ExpertSecondaryAffiliationQuery A secondary query class using the current class as primary query
+     */
+    public function useExpertSecondaryAffiliationQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinExpertSecondaryAffiliation($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'ExpertSecondaryAffiliation', '\CryoConnectDB\ExpertSecondaryAffiliationQuery');
     }
 
     /**
@@ -1293,40 +1376,40 @@ abstract class ExpertsQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related \CryoConnectDB\ExpertWhen object
+     * Filter the query by a related \CryoConnectDB\ExpertCryosphereWhen object
      *
-     * @param \CryoConnectDB\ExpertWhen|ObjectCollection $expertWhen the related object to use as filter
+     * @param \CryoConnectDB\ExpertCryosphereWhen|ObjectCollection $expertCryosphereWhen the related object to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return ChildExpertsQuery The current query, for fluid interface
      */
-    public function filterByExpertWhen($expertWhen, $comparison = null)
+    public function filterByExpertCryosphereWhen($expertCryosphereWhen, $comparison = null)
     {
-        if ($expertWhen instanceof \CryoConnectDB\ExpertWhen) {
+        if ($expertCryosphereWhen instanceof \CryoConnectDB\ExpertCryosphereWhen) {
             return $this
-                ->addUsingAlias(ExpertsTableMap::COL_ID, $expertWhen->getExpertId(), $comparison);
-        } elseif ($expertWhen instanceof ObjectCollection) {
+                ->addUsingAlias(ExpertsTableMap::COL_ID, $expertCryosphereWhen->getExpertId(), $comparison);
+        } elseif ($expertCryosphereWhen instanceof ObjectCollection) {
             return $this
-                ->useExpertWhenQuery()
-                ->filterByPrimaryKeys($expertWhen->getPrimaryKeys())
+                ->useExpertCryosphereWhenQuery()
+                ->filterByPrimaryKeys($expertCryosphereWhen->getPrimaryKeys())
                 ->endUse();
         } else {
-            throw new PropelException('filterByExpertWhen() only accepts arguments of type \CryoConnectDB\ExpertWhen or Collection');
+            throw new PropelException('filterByExpertCryosphereWhen() only accepts arguments of type \CryoConnectDB\ExpertCryosphereWhen or Collection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the ExpertWhen relation
+     * Adds a JOIN clause to the query using the ExpertCryosphereWhen relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return $this|ChildExpertsQuery The current query, for fluid interface
      */
-    public function joinExpertWhen($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinExpertCryosphereWhen($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('ExpertWhen');
+        $relationMap = $tableMap->getRelation('ExpertCryosphereWhen');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -1341,14 +1424,14 @@ abstract class ExpertsQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'ExpertWhen');
+            $this->addJoinObject($join, 'ExpertCryosphereWhen');
         }
 
         return $this;
     }
 
     /**
-     * Use the ExpertWhen relation ExpertWhen object
+     * Use the ExpertCryosphereWhen relation ExpertCryosphereWhen object
      *
      * @see useQuery()
      *
@@ -1356,50 +1439,50 @@ abstract class ExpertsQuery extends ModelCriteria
      *                                   to be used as main alias in the secondary query
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return \CryoConnectDB\ExpertWhenQuery A secondary query class using the current class as primary query
+     * @return \CryoConnectDB\ExpertCryosphereWhenQuery A secondary query class using the current class as primary query
      */
-    public function useExpertWhenQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useExpertCryosphereWhenQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
-            ->joinExpertWhen($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'ExpertWhen', '\CryoConnectDB\ExpertWhenQuery');
+            ->joinExpertCryosphereWhen($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'ExpertCryosphereWhen', '\CryoConnectDB\ExpertCryosphereWhenQuery');
     }
 
     /**
-     * Filter the query by a related \CryoConnectDB\ExpertWhere object
+     * Filter the query by a related \CryoConnectDB\ExpertCryosphereWhere object
      *
-     * @param \CryoConnectDB\ExpertWhere|ObjectCollection $expertWhere the related object to use as filter
+     * @param \CryoConnectDB\ExpertCryosphereWhere|ObjectCollection $expertCryosphereWhere the related object to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return ChildExpertsQuery The current query, for fluid interface
      */
-    public function filterByExpertWhere($expertWhere, $comparison = null)
+    public function filterByExpertCryosphereWhere($expertCryosphereWhere, $comparison = null)
     {
-        if ($expertWhere instanceof \CryoConnectDB\ExpertWhere) {
+        if ($expertCryosphereWhere instanceof \CryoConnectDB\ExpertCryosphereWhere) {
             return $this
-                ->addUsingAlias(ExpertsTableMap::COL_ID, $expertWhere->getExpertId(), $comparison);
-        } elseif ($expertWhere instanceof ObjectCollection) {
+                ->addUsingAlias(ExpertsTableMap::COL_ID, $expertCryosphereWhere->getExpertId(), $comparison);
+        } elseif ($expertCryosphereWhere instanceof ObjectCollection) {
             return $this
-                ->useExpertWhereQuery()
-                ->filterByPrimaryKeys($expertWhere->getPrimaryKeys())
+                ->useExpertCryosphereWhereQuery()
+                ->filterByPrimaryKeys($expertCryosphereWhere->getPrimaryKeys())
                 ->endUse();
         } else {
-            throw new PropelException('filterByExpertWhere() only accepts arguments of type \CryoConnectDB\ExpertWhere or Collection');
+            throw new PropelException('filterByExpertCryosphereWhere() only accepts arguments of type \CryoConnectDB\ExpertCryosphereWhere or Collection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the ExpertWhere relation
+     * Adds a JOIN clause to the query using the ExpertCryosphereWhere relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return $this|ChildExpertsQuery The current query, for fluid interface
      */
-    public function joinExpertWhere($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinExpertCryosphereWhere($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('ExpertWhere');
+        $relationMap = $tableMap->getRelation('ExpertCryosphereWhere');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -1414,14 +1497,14 @@ abstract class ExpertsQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'ExpertWhere');
+            $this->addJoinObject($join, 'ExpertCryosphereWhere');
         }
 
         return $this;
     }
 
     /**
-     * Use the ExpertWhere relation ExpertWhere object
+     * Use the ExpertCryosphereWhere relation ExpertCryosphereWhere object
      *
      * @see useQuery()
      *
@@ -1429,13 +1512,13 @@ abstract class ExpertsQuery extends ModelCriteria
      *                                   to be used as main alias in the secondary query
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return \CryoConnectDB\ExpertWhereQuery A secondary query class using the current class as primary query
+     * @return \CryoConnectDB\ExpertCryosphereWhereQuery A secondary query class using the current class as primary query
      */
-    public function useExpertWhereQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useExpertCryosphereWhereQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
-            ->joinExpertWhere($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'ExpertWhere', '\CryoConnectDB\ExpertWhereQuery');
+            ->joinExpertCryosphereWhere($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'ExpertCryosphereWhere', '\CryoConnectDB\ExpertCryosphereWhereQuery');
     }
 
     /**

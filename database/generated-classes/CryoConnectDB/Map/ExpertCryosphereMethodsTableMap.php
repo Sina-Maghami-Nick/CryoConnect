@@ -2,8 +2,8 @@
 
 namespace CryoConnectDB\Map;
 
-use CryoConnectDB\ExpertWhere;
-use CryoConnectDB\ExpertWhereQuery;
+use CryoConnectDB\ExpertCryosphereMethods;
+use CryoConnectDB\ExpertCryosphereMethodsQuery;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
@@ -17,7 +17,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the 'expert_where' table.
+ * This class defines the structure of the 'expert_cryosphere_methods' table.
  *
  *
  *
@@ -27,7 +27,7 @@ use Propel\Runtime\Map\TableMapTrait;
  * (i.e. if it's a text column type).
  *
  */
-class ExpertWhereTableMap extends TableMap
+class ExpertCryosphereMethodsTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
@@ -35,7 +35,7 @@ class ExpertWhereTableMap extends TableMap
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'CryoConnectDB.Map.ExpertWhereTableMap';
+    const CLASS_NAME = 'CryoConnectDB.Map.ExpertCryosphereMethodsTableMap';
 
     /**
      * The default database name for this class
@@ -45,17 +45,17 @@ class ExpertWhereTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'expert_where';
+    const TABLE_NAME = 'expert_cryosphere_methods';
 
     /**
      * The related Propel class for this table
      */
-    const OM_CLASS = '\\CryoConnectDB\\ExpertWhere';
+    const OM_CLASS = '\\CryoConnectDB\\ExpertCryosphereMethods';
 
     /**
      * A class that can be returned by this tableMap
      */
-    const CLASS_DEFAULT = 'CryoConnectDB.ExpertWhere';
+    const CLASS_DEFAULT = 'CryoConnectDB.ExpertCryosphereMethods';
 
     /**
      * The total number of columns
@@ -75,17 +75,17 @@ class ExpertWhereTableMap extends TableMap
     /**
      * the column name for the expert_id field
      */
-    const COL_EXPERT_ID = 'expert_where.expert_id';
+    const COL_EXPERT_ID = 'expert_cryosphere_methods.expert_id';
 
     /**
-     * the column name for the cryosphere_where_id field
+     * the column name for the method_id field
      */
-    const COL_CRYOSPHERE_WHERE_ID = 'expert_where.cryosphere_where_id';
+    const COL_METHOD_ID = 'expert_cryosphere_methods.method_id';
 
     /**
      * the column name for the timestamp field
      */
-    const COL_TIMESTAMP = 'expert_where.timestamp';
+    const COL_TIMESTAMP = 'expert_cryosphere_methods.timestamp';
 
     /**
      * The default string format for model objects of the related table
@@ -99,10 +99,10 @@ class ExpertWhereTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('ExpertId', 'CryosphereWhereId', 'Timestamp', ),
-        self::TYPE_CAMELNAME     => array('expertId', 'cryosphereWhereId', 'timestamp', ),
-        self::TYPE_COLNAME       => array(ExpertWhereTableMap::COL_EXPERT_ID, ExpertWhereTableMap::COL_CRYOSPHERE_WHERE_ID, ExpertWhereTableMap::COL_TIMESTAMP, ),
-        self::TYPE_FIELDNAME     => array('expert_id', 'cryosphere_where_id', 'timestamp', ),
+        self::TYPE_PHPNAME       => array('ExpertId', 'MethodId', 'Timestamp', ),
+        self::TYPE_CAMELNAME     => array('expertId', 'methodId', 'timestamp', ),
+        self::TYPE_COLNAME       => array(ExpertCryosphereMethodsTableMap::COL_EXPERT_ID, ExpertCryosphereMethodsTableMap::COL_METHOD_ID, ExpertCryosphereMethodsTableMap::COL_TIMESTAMP, ),
+        self::TYPE_FIELDNAME     => array('expert_id', 'method_id', 'timestamp', ),
         self::TYPE_NUM           => array(0, 1, 2, )
     );
 
@@ -113,10 +113,10 @@ class ExpertWhereTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('ExpertId' => 0, 'CryosphereWhereId' => 1, 'Timestamp' => 2, ),
-        self::TYPE_CAMELNAME     => array('expertId' => 0, 'cryosphereWhereId' => 1, 'timestamp' => 2, ),
-        self::TYPE_COLNAME       => array(ExpertWhereTableMap::COL_EXPERT_ID => 0, ExpertWhereTableMap::COL_CRYOSPHERE_WHERE_ID => 1, ExpertWhereTableMap::COL_TIMESTAMP => 2, ),
-        self::TYPE_FIELDNAME     => array('expert_id' => 0, 'cryosphere_where_id' => 1, 'timestamp' => 2, ),
+        self::TYPE_PHPNAME       => array('ExpertId' => 0, 'MethodId' => 1, 'Timestamp' => 2, ),
+        self::TYPE_CAMELNAME     => array('expertId' => 0, 'methodId' => 1, 'timestamp' => 2, ),
+        self::TYPE_COLNAME       => array(ExpertCryosphereMethodsTableMap::COL_EXPERT_ID => 0, ExpertCryosphereMethodsTableMap::COL_METHOD_ID => 1, ExpertCryosphereMethodsTableMap::COL_TIMESTAMP => 2, ),
+        self::TYPE_FIELDNAME     => array('expert_id' => 0, 'method_id' => 1, 'timestamp' => 2, ),
         self::TYPE_NUM           => array(0, 1, 2, )
     );
 
@@ -130,15 +130,15 @@ class ExpertWhereTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('expert_where');
-        $this->setPhpName('ExpertWhere');
+        $this->setName('expert_cryosphere_methods');
+        $this->setPhpName('ExpertCryosphereMethods');
         $this->setIdentifierQuoting(false);
-        $this->setClassName('\\CryoConnectDB\\ExpertWhere');
+        $this->setClassName('\\CryoConnectDB\\ExpertCryosphereMethods');
         $this->setPackage('CryoConnectDB');
         $this->setUseIdGenerator(false);
         // columns
         $this->addForeignKey('expert_id', 'ExpertId', 'INTEGER', 'experts', 'id', true, 10, null);
-        $this->addForeignKey('cryosphere_where_id', 'CryosphereWhereId', 'INTEGER', 'cryosphere_where', 'id', true, 10, null);
+        $this->addForeignKey('method_id', 'MethodId', 'INTEGER', 'cryosphere_methods', 'id', true, 10, null);
         $this->addColumn('timestamp', 'Timestamp', 'TIMESTAMP', true, null, 'CURRENT_TIMESTAMP');
     } // initialize()
 
@@ -154,13 +154,13 @@ class ExpertWhereTableMap extends TableMap
     1 => ':id',
   ),
 ), 'CASCADE', 'CASCADE', null, false);
-        $this->addRelation('CryosphereWhere', '\\CryoConnectDB\\CryosphereWhere', RelationMap::MANY_TO_ONE, array (
+        $this->addRelation('CryosphereMethods', '\\CryoConnectDB\\CryosphereMethods', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
-    0 => ':cryosphere_where_id',
+    0 => ':method_id',
     1 => ':id',
   ),
-), 'CASCADE', 'CASCADE', null, false);
+), null, 'CASCADE', null, false);
     } // buildRelations()
 
     /**
@@ -211,7 +211,7 @@ class ExpertWhereTableMap extends TableMap
      */
     public static function getOMClass($withPrefix = true)
     {
-        return $withPrefix ? ExpertWhereTableMap::CLASS_DEFAULT : ExpertWhereTableMap::OM_CLASS;
+        return $withPrefix ? ExpertCryosphereMethodsTableMap::CLASS_DEFAULT : ExpertCryosphereMethodsTableMap::OM_CLASS;
     }
 
     /**
@@ -225,22 +225,22 @@ class ExpertWhereTableMap extends TableMap
      *
      * @throws PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
-     * @return array           (ExpertWhere object, last column rank)
+     * @return array           (ExpertCryosphereMethods object, last column rank)
      */
     public static function populateObject($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        $key = ExpertWhereTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
-        if (null !== ($obj = ExpertWhereTableMap::getInstanceFromPool($key))) {
+        $key = ExpertCryosphereMethodsTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
+        if (null !== ($obj = ExpertCryosphereMethodsTableMap::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $offset, true); // rehydrate
-            $col = $offset + ExpertWhereTableMap::NUM_HYDRATE_COLUMNS;
+            $col = $offset + ExpertCryosphereMethodsTableMap::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = ExpertWhereTableMap::OM_CLASS;
-            /** @var ExpertWhere $obj */
+            $cls = ExpertCryosphereMethodsTableMap::OM_CLASS;
+            /** @var ExpertCryosphereMethods $obj */
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
-            ExpertWhereTableMap::addInstanceToPool($obj, $key);
+            ExpertCryosphereMethodsTableMap::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -263,18 +263,18 @@ class ExpertWhereTableMap extends TableMap
         $cls = static::getOMClass(false);
         // populate the object(s)
         while ($row = $dataFetcher->fetch()) {
-            $key = ExpertWhereTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
-            if (null !== ($obj = ExpertWhereTableMap::getInstanceFromPool($key))) {
+            $key = ExpertCryosphereMethodsTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
+            if (null !== ($obj = ExpertCryosphereMethodsTableMap::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
-                /** @var ExpertWhere $obj */
+                /** @var ExpertCryosphereMethods $obj */
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                ExpertWhereTableMap::addInstanceToPool($obj, $key);
+                ExpertCryosphereMethodsTableMap::addInstanceToPool($obj, $key);
             } // if key exists
         }
 
@@ -295,12 +295,12 @@ class ExpertWhereTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(ExpertWhereTableMap::COL_EXPERT_ID);
-            $criteria->addSelectColumn(ExpertWhereTableMap::COL_CRYOSPHERE_WHERE_ID);
-            $criteria->addSelectColumn(ExpertWhereTableMap::COL_TIMESTAMP);
+            $criteria->addSelectColumn(ExpertCryosphereMethodsTableMap::COL_EXPERT_ID);
+            $criteria->addSelectColumn(ExpertCryosphereMethodsTableMap::COL_METHOD_ID);
+            $criteria->addSelectColumn(ExpertCryosphereMethodsTableMap::COL_TIMESTAMP);
         } else {
             $criteria->addSelectColumn($alias . '.expert_id');
-            $criteria->addSelectColumn($alias . '.cryosphere_where_id');
+            $criteria->addSelectColumn($alias . '.method_id');
             $criteria->addSelectColumn($alias . '.timestamp');
         }
     }
@@ -314,7 +314,7 @@ class ExpertWhereTableMap extends TableMap
      */
     public static function getTableMap()
     {
-        return Propel::getServiceContainer()->getDatabaseMap(ExpertWhereTableMap::DATABASE_NAME)->getTable(ExpertWhereTableMap::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(ExpertCryosphereMethodsTableMap::DATABASE_NAME)->getTable(ExpertCryosphereMethodsTableMap::TABLE_NAME);
     }
 
     /**
@@ -322,16 +322,16 @@ class ExpertWhereTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap(ExpertWhereTableMap::DATABASE_NAME);
-        if (!$dbMap->hasTable(ExpertWhereTableMap::TABLE_NAME)) {
-            $dbMap->addTableObject(new ExpertWhereTableMap());
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap(ExpertCryosphereMethodsTableMap::DATABASE_NAME);
+        if (!$dbMap->hasTable(ExpertCryosphereMethodsTableMap::TABLE_NAME)) {
+            $dbMap->addTableObject(new ExpertCryosphereMethodsTableMap());
         }
     }
 
     /**
-     * Performs a DELETE on the database, given a ExpertWhere or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a ExpertCryosphereMethods or Criteria object OR a primary key value.
      *
-     * @param mixed               $values Criteria or ExpertWhere object or primary key or array of primary keys
+     * @param mixed               $values Criteria or ExpertCryosphereMethods object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param  ConnectionInterface $con the connection to use
      * @return int             The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -342,26 +342,26 @@ class ExpertWhereTableMap extends TableMap
      public static function doDelete($values, ConnectionInterface $con = null)
      {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ExpertWhereTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ExpertCryosphereMethodsTableMap::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \CryoConnectDB\ExpertWhere) { // it's a model object
+        } elseif ($values instanceof \CryoConnectDB\ExpertCryosphereMethods) { // it's a model object
             // create criteria based on pk value
             $criteria = $values->buildCriteria();
         } else { // it's a primary key, or an array of pks
-            throw new LogicException('The ExpertWhere object has no primary key');
+            throw new LogicException('The ExpertCryosphereMethods object has no primary key');
         }
 
-        $query = ExpertWhereQuery::create()->mergeWith($criteria);
+        $query = ExpertCryosphereMethodsQuery::create()->mergeWith($criteria);
 
         if ($values instanceof Criteria) {
-            ExpertWhereTableMap::clearInstancePool();
+            ExpertCryosphereMethodsTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
             foreach ((array) $values as $singleval) {
-                ExpertWhereTableMap::removeInstanceFromPool($singleval);
+                ExpertCryosphereMethodsTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -369,20 +369,20 @@ class ExpertWhereTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the expert_where table.
+     * Deletes all rows from the expert_cryosphere_methods table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
     public static function doDeleteAll(ConnectionInterface $con = null)
     {
-        return ExpertWhereQuery::create()->doDeleteAll($con);
+        return ExpertCryosphereMethodsQuery::create()->doDeleteAll($con);
     }
 
     /**
-     * Performs an INSERT on the database, given a ExpertWhere or Criteria object.
+     * Performs an INSERT on the database, given a ExpertCryosphereMethods or Criteria object.
      *
-     * @param mixed               $criteria Criteria or ExpertWhere object containing data that is used to create the INSERT statement.
+     * @param mixed               $criteria Criteria or ExpertCryosphereMethods object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface $con the ConnectionInterface connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -391,18 +391,18 @@ class ExpertWhereTableMap extends TableMap
     public static function doInsert($criteria, ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ExpertWhereTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ExpertCryosphereMethodsTableMap::DATABASE_NAME);
         }
 
         if ($criteria instanceof Criteria) {
             $criteria = clone $criteria; // rename for clarity
         } else {
-            $criteria = $criteria->buildCriteria(); // build Criteria from ExpertWhere object
+            $criteria = $criteria->buildCriteria(); // build Criteria from ExpertCryosphereMethods object
         }
 
 
         // Set the correct dbName
-        $query = ExpertWhereQuery::create()->mergeWith($criteria);
+        $query = ExpertCryosphereMethodsQuery::create()->mergeWith($criteria);
 
         // use transaction because $criteria could contain info
         // for more than one table (I guess, conceivably)
@@ -411,7 +411,7 @@ class ExpertWhereTableMap extends TableMap
         });
     }
 
-} // ExpertWhereTableMap
+} // ExpertCryosphereMethodsTableMap
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-ExpertWhereTableMap::buildTableMap();
+ExpertCryosphereMethodsTableMap::buildTableMap();

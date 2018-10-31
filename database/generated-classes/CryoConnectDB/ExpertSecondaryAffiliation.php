@@ -2,10 +2,10 @@
 
 namespace CryoConnectDB;
 
-use CryoConnectDB\Base\ExpertWhereQuery as BaseExpertWhereQuery;
+use CryoConnectDB\Base\ExpertSecondaryAffiliation as BaseExpertSecondaryAffiliation;
 
 /**
- * Skeleton subclass for performing query and update operations on the 'expert_where' table.
+ * Skeleton subclass for representing a row from the 'expert_secondary_affiliation' table.
  *
  *
  *
@@ -14,7 +14,7 @@ use CryoConnectDB\Base\ExpertWhereQuery as BaseExpertWhereQuery;
  * long as it does not already exist in the output directory.
  *
  */
-class ExpertWhereQuery extends BaseExpertWhereQuery
+class ExpertSecondaryAffiliation extends BaseExpertSecondaryAffiliation
 {
 
 }

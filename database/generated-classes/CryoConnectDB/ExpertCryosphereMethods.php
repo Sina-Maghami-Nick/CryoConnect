@@ -2,10 +2,10 @@
 
 namespace CryoConnectDB;
 
-use CryoConnectDB\Base\CryosphereExpertMethods as BaseCryosphereExpertMethods;
+use CryoConnectDB\Base\ExpertCryosphereMethods as BaseExpertCryosphereMethods;
 
 /**
- * Skeleton subclass for representing a row from the 'cryosphere_expert_methods' table.
+ * Skeleton subclass for representing a row from the 'expert_cryosphere_methods' table.
  *
  *
  *
@@ -14,7 +14,7 @@ use CryoConnectDB\Base\CryosphereExpertMethods as BaseCryosphereExpertMethods;
  * long as it does not already exist in the output directory.
  *
  */
-class CryosphereExpertMethods extends BaseCryosphereExpertMethods
+class ExpertCryosphereMethods extends BaseExpertCryosphereMethods
 {
 
 }

@@ -2,13 +2,14 @@
 
 namespace CryoConnectDB\Map;
 
-use CryoConnectDB\CryosphereWhatSpecefic;
-use CryoConnectDB\CryosphereWhatSpeceficQuery;
+use CryoConnectDB\ExpertPrimaryAffiliation;
+use CryoConnectDB\ExpertPrimaryAffiliationQuery;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
+use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Map\TableMap;
@@ -16,7 +17,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the 'cryosphere_what_specefic' table.
+ * This class defines the structure of the 'expert_primary_affiliation' table.
  *
  *
  *
@@ -26,7 +27,7 @@ use Propel\Runtime\Map\TableMapTrait;
  * (i.e. if it's a text column type).
  *
  */
-class CryosphereWhatSpeceficTableMap extends TableMap
+class ExpertPrimaryAffiliationTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
@@ -34,7 +35,7 @@ class CryosphereWhatSpeceficTableMap extends TableMap
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'CryoConnectDB.Map.CryosphereWhatSpeceficTableMap';
+    const CLASS_NAME = 'CryoConnectDB.Map.ExpertPrimaryAffiliationTableMap';
 
     /**
      * The default database name for this class
@@ -44,22 +45,22 @@ class CryosphereWhatSpeceficTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'cryosphere_what_specefic';
+    const TABLE_NAME = 'expert_primary_affiliation';
 
     /**
      * The related Propel class for this table
      */
-    const OM_CLASS = '\\CryoConnectDB\\CryosphereWhatSpecefic';
+    const OM_CLASS = '\\CryoConnectDB\\ExpertPrimaryAffiliation';
 
     /**
      * A class that can be returned by this tableMap
      */
-    const CLASS_DEFAULT = 'CryoConnectDB.CryosphereWhatSpecefic';
+    const CLASS_DEFAULT = 'CryoConnectDB.ExpertPrimaryAffiliation';
 
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 4;
+    const NUM_COLUMNS = 5;
 
     /**
      * The number of lazy-loaded columns
@@ -69,27 +70,32 @@ class CryosphereWhatSpeceficTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 4;
+    const NUM_HYDRATE_COLUMNS = 5;
 
     /**
-     * the column name for the id field
+     * the column name for the expert_id field
      */
-    const COL_ID = 'cryosphere_what_specefic.id';
+    const COL_EXPERT_ID = 'expert_primary_affiliation.expert_id';
 
     /**
-     * the column name for the cryosphere_what_specefic_name field
+     * the column name for the primary_affiliation_name field
      */
-    const COL_CRYOSPHERE_WHAT_SPECEFIC_NAME = 'cryosphere_what_specefic.cryosphere_what_specefic_name';
+    const COL_PRIMARY_AFFILIATION_NAME = 'expert_primary_affiliation.primary_affiliation_name';
 
     /**
-     * the column name for the approved field
+     * the column name for the primary_affiliation_country_code field
      */
-    const COL_APPROVED = 'cryosphere_what_specefic.approved';
+    const COL_PRIMARY_AFFILIATION_COUNTRY_CODE = 'expert_primary_affiliation.primary_affiliation_country_code';
+
+    /**
+     * the column name for the primary_affiliation_city field
+     */
+    const COL_PRIMARY_AFFILIATION_CITY = 'expert_primary_affiliation.primary_affiliation_city';
 
     /**
      * the column name for the timestamp field
      */
-    const COL_TIMESTAMP = 'cryosphere_what_specefic.timestamp';
+    const COL_TIMESTAMP = 'expert_primary_affiliation.timestamp';
 
     /**
      * The default string format for model objects of the related table
@@ -103,11 +109,11 @@ class CryosphereWhatSpeceficTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'CryosphereWhatSpeceficName', 'Approved', 'Timestamp', ),
-        self::TYPE_CAMELNAME     => array('id', 'cryosphereWhatSpeceficName', 'approved', 'timestamp', ),
-        self::TYPE_COLNAME       => array(CryosphereWhatSpeceficTableMap::COL_ID, CryosphereWhatSpeceficTableMap::COL_CRYOSPHERE_WHAT_SPECEFIC_NAME, CryosphereWhatSpeceficTableMap::COL_APPROVED, CryosphereWhatSpeceficTableMap::COL_TIMESTAMP, ),
-        self::TYPE_FIELDNAME     => array('id', 'cryosphere_what_specefic_name', 'approved', 'timestamp', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, )
+        self::TYPE_PHPNAME       => array('ExpertId', 'PrimaryAffiliationName', 'PrimaryAffiliationCountryCode', 'PrimaryAffiliationCity', 'Timestamp', ),
+        self::TYPE_CAMELNAME     => array('expertId', 'primaryAffiliationName', 'primaryAffiliationCountryCode', 'primaryAffiliationCity', 'timestamp', ),
+        self::TYPE_COLNAME       => array(ExpertPrimaryAffiliationTableMap::COL_EXPERT_ID, ExpertPrimaryAffiliationTableMap::COL_PRIMARY_AFFILIATION_NAME, ExpertPrimaryAffiliationTableMap::COL_PRIMARY_AFFILIATION_COUNTRY_CODE, ExpertPrimaryAffiliationTableMap::COL_PRIMARY_AFFILIATION_CITY, ExpertPrimaryAffiliationTableMap::COL_TIMESTAMP, ),
+        self::TYPE_FIELDNAME     => array('expert_id', 'primary_affiliation_name', 'primary_affiliation_country_code', 'primary_affiliation_city', 'timestamp', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -117,11 +123,11 @@ class CryosphereWhatSpeceficTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'CryosphereWhatSpeceficName' => 1, 'Approved' => 2, 'Timestamp' => 3, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'cryosphereWhatSpeceficName' => 1, 'approved' => 2, 'timestamp' => 3, ),
-        self::TYPE_COLNAME       => array(CryosphereWhatSpeceficTableMap::COL_ID => 0, CryosphereWhatSpeceficTableMap::COL_CRYOSPHERE_WHAT_SPECEFIC_NAME => 1, CryosphereWhatSpeceficTableMap::COL_APPROVED => 2, CryosphereWhatSpeceficTableMap::COL_TIMESTAMP => 3, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'cryosphere_what_specefic_name' => 1, 'approved' => 2, 'timestamp' => 3, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, )
+        self::TYPE_PHPNAME       => array('ExpertId' => 0, 'PrimaryAffiliationName' => 1, 'PrimaryAffiliationCountryCode' => 2, 'PrimaryAffiliationCity' => 3, 'Timestamp' => 4, ),
+        self::TYPE_CAMELNAME     => array('expertId' => 0, 'primaryAffiliationName' => 1, 'primaryAffiliationCountryCode' => 2, 'primaryAffiliationCity' => 3, 'timestamp' => 4, ),
+        self::TYPE_COLNAME       => array(ExpertPrimaryAffiliationTableMap::COL_EXPERT_ID => 0, ExpertPrimaryAffiliationTableMap::COL_PRIMARY_AFFILIATION_NAME => 1, ExpertPrimaryAffiliationTableMap::COL_PRIMARY_AFFILIATION_COUNTRY_CODE => 2, ExpertPrimaryAffiliationTableMap::COL_PRIMARY_AFFILIATION_CITY => 3, ExpertPrimaryAffiliationTableMap::COL_TIMESTAMP => 4, ),
+        self::TYPE_FIELDNAME     => array('expert_id' => 0, 'primary_affiliation_name' => 1, 'primary_affiliation_country_code' => 2, 'primary_affiliation_city' => 3, 'timestamp' => 4, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -134,16 +140,17 @@ class CryosphereWhatSpeceficTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('cryosphere_what_specefic');
-        $this->setPhpName('CryosphereWhatSpecefic');
+        $this->setName('expert_primary_affiliation');
+        $this->setPhpName('ExpertPrimaryAffiliation');
         $this->setIdentifierQuoting(false);
-        $this->setClassName('\\CryoConnectDB\\CryosphereWhatSpecefic');
+        $this->setClassName('\\CryoConnectDB\\ExpertPrimaryAffiliation');
         $this->setPackage('CryoConnectDB');
-        $this->setUseIdGenerator(true);
+        $this->setUseIdGenerator(false);
         // columns
-        $this->addPrimaryKey('id', 'Id', 'INTEGER', true, 10, null);
-        $this->addColumn('cryosphere_what_specefic_name', 'CryosphereWhatSpeceficName', 'LONGVARCHAR', true, null, null);
-        $this->addColumn('approved', 'Approved', 'BOOLEAN', true, 1, false);
+        $this->addForeignKey('expert_id', 'ExpertId', 'INTEGER', 'experts', 'id', true, 10, null);
+        $this->addColumn('primary_affiliation_name', 'PrimaryAffiliationName', 'LONGVARCHAR', true, null, null);
+        $this->addColumn('primary_affiliation_country_code', 'PrimaryAffiliationCountryCode', 'VARCHAR', false, 2, null);
+        $this->addColumn('primary_affiliation_city', 'PrimaryAffiliationCity', 'LONGVARCHAR', false, null, null);
         $this->addColumn('timestamp', 'Timestamp', 'TIMESTAMP', true, null, 'CURRENT_TIMESTAMP');
     } // initialize()
 
@@ -152,13 +159,13 @@ class CryosphereWhatSpeceficTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('ExpertCryosphereWhatSpecefic', '\\CryoConnectDB\\ExpertCryosphereWhatSpecefic', RelationMap::ONE_TO_MANY, array (
+        $this->addRelation('Experts', '\\CryoConnectDB\\Experts', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
-    0 => ':cryosphere_what_specefic_id',
+    0 => ':expert_id',
     1 => ':id',
   ),
-), null, 'CASCADE', 'ExpertCryosphereWhatSpecefics', false);
+), 'CASCADE', 'CASCADE', null, false);
     } // buildRelations()
 
     /**
@@ -176,12 +183,7 @@ class CryosphereWhatSpeceficTableMap extends TableMap
      */
     public static function getPrimaryKeyHashFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        // If the PK cannot be derived from the row, return NULL.
-        if ($row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)] === null) {
-            return null;
-        }
-
-        return null === $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)] || is_scalar($row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)]) || is_callable([$row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)], '__toString']) ? (string) $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)] : $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
+        return null;
     }
 
     /**
@@ -198,11 +200,7 @@ class CryosphereWhatSpeceficTableMap extends TableMap
      */
     public static function getPrimaryKeyFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        return (int) $row[
-            $indexType == TableMap::TYPE_NUM
-                ? 0 + $offset
-                : self::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)
-        ];
+        return '';
     }
 
     /**
@@ -218,7 +216,7 @@ class CryosphereWhatSpeceficTableMap extends TableMap
      */
     public static function getOMClass($withPrefix = true)
     {
-        return $withPrefix ? CryosphereWhatSpeceficTableMap::CLASS_DEFAULT : CryosphereWhatSpeceficTableMap::OM_CLASS;
+        return $withPrefix ? ExpertPrimaryAffiliationTableMap::CLASS_DEFAULT : ExpertPrimaryAffiliationTableMap::OM_CLASS;
     }
 
     /**
@@ -232,22 +230,22 @@ class CryosphereWhatSpeceficTableMap extends TableMap
      *
      * @throws PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
-     * @return array           (CryosphereWhatSpecefic object, last column rank)
+     * @return array           (ExpertPrimaryAffiliation object, last column rank)
      */
     public static function populateObject($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        $key = CryosphereWhatSpeceficTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
-        if (null !== ($obj = CryosphereWhatSpeceficTableMap::getInstanceFromPool($key))) {
+        $key = ExpertPrimaryAffiliationTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
+        if (null !== ($obj = ExpertPrimaryAffiliationTableMap::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $offset, true); // rehydrate
-            $col = $offset + CryosphereWhatSpeceficTableMap::NUM_HYDRATE_COLUMNS;
+            $col = $offset + ExpertPrimaryAffiliationTableMap::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = CryosphereWhatSpeceficTableMap::OM_CLASS;
-            /** @var CryosphereWhatSpecefic $obj */
+            $cls = ExpertPrimaryAffiliationTableMap::OM_CLASS;
+            /** @var ExpertPrimaryAffiliation $obj */
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
-            CryosphereWhatSpeceficTableMap::addInstanceToPool($obj, $key);
+            ExpertPrimaryAffiliationTableMap::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -270,18 +268,18 @@ class CryosphereWhatSpeceficTableMap extends TableMap
         $cls = static::getOMClass(false);
         // populate the object(s)
         while ($row = $dataFetcher->fetch()) {
-            $key = CryosphereWhatSpeceficTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
-            if (null !== ($obj = CryosphereWhatSpeceficTableMap::getInstanceFromPool($key))) {
+            $key = ExpertPrimaryAffiliationTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
+            if (null !== ($obj = ExpertPrimaryAffiliationTableMap::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
-                /** @var CryosphereWhatSpecefic $obj */
+                /** @var ExpertPrimaryAffiliation $obj */
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                CryosphereWhatSpeceficTableMap::addInstanceToPool($obj, $key);
+                ExpertPrimaryAffiliationTableMap::addInstanceToPool($obj, $key);
             } // if key exists
         }
 
@@ -302,14 +300,16 @@ class CryosphereWhatSpeceficTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(CryosphereWhatSpeceficTableMap::COL_ID);
-            $criteria->addSelectColumn(CryosphereWhatSpeceficTableMap::COL_CRYOSPHERE_WHAT_SPECEFIC_NAME);
-            $criteria->addSelectColumn(CryosphereWhatSpeceficTableMap::COL_APPROVED);
-            $criteria->addSelectColumn(CryosphereWhatSpeceficTableMap::COL_TIMESTAMP);
+            $criteria->addSelectColumn(ExpertPrimaryAffiliationTableMap::COL_EXPERT_ID);
+            $criteria->addSelectColumn(ExpertPrimaryAffiliationTableMap::COL_PRIMARY_AFFILIATION_NAME);
+            $criteria->addSelectColumn(ExpertPrimaryAffiliationTableMap::COL_PRIMARY_AFFILIATION_COUNTRY_CODE);
+            $criteria->addSelectColumn(ExpertPrimaryAffiliationTableMap::COL_PRIMARY_AFFILIATION_CITY);
+            $criteria->addSelectColumn(ExpertPrimaryAffiliationTableMap::COL_TIMESTAMP);
         } else {
-            $criteria->addSelectColumn($alias . '.id');
-            $criteria->addSelectColumn($alias . '.cryosphere_what_specefic_name');
-            $criteria->addSelectColumn($alias . '.approved');
+            $criteria->addSelectColumn($alias . '.expert_id');
+            $criteria->addSelectColumn($alias . '.primary_affiliation_name');
+            $criteria->addSelectColumn($alias . '.primary_affiliation_country_code');
+            $criteria->addSelectColumn($alias . '.primary_affiliation_city');
             $criteria->addSelectColumn($alias . '.timestamp');
         }
     }
@@ -323,7 +323,7 @@ class CryosphereWhatSpeceficTableMap extends TableMap
      */
     public static function getTableMap()
     {
-        return Propel::getServiceContainer()->getDatabaseMap(CryosphereWhatSpeceficTableMap::DATABASE_NAME)->getTable(CryosphereWhatSpeceficTableMap::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(ExpertPrimaryAffiliationTableMap::DATABASE_NAME)->getTable(ExpertPrimaryAffiliationTableMap::TABLE_NAME);
     }
 
     /**
@@ -331,16 +331,16 @@ class CryosphereWhatSpeceficTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap(CryosphereWhatSpeceficTableMap::DATABASE_NAME);
-        if (!$dbMap->hasTable(CryosphereWhatSpeceficTableMap::TABLE_NAME)) {
-            $dbMap->addTableObject(new CryosphereWhatSpeceficTableMap());
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap(ExpertPrimaryAffiliationTableMap::DATABASE_NAME);
+        if (!$dbMap->hasTable(ExpertPrimaryAffiliationTableMap::TABLE_NAME)) {
+            $dbMap->addTableObject(new ExpertPrimaryAffiliationTableMap());
         }
     }
 
     /**
-     * Performs a DELETE on the database, given a CryosphereWhatSpecefic or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a ExpertPrimaryAffiliation or Criteria object OR a primary key value.
      *
-     * @param mixed               $values Criteria or CryosphereWhatSpecefic object or primary key or array of primary keys
+     * @param mixed               $values Criteria or ExpertPrimaryAffiliation object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param  ConnectionInterface $con the connection to use
      * @return int             The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -351,27 +351,26 @@ class CryosphereWhatSpeceficTableMap extends TableMap
      public static function doDelete($values, ConnectionInterface $con = null)
      {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(CryosphereWhatSpeceficTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ExpertPrimaryAffiliationTableMap::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \CryoConnectDB\CryosphereWhatSpecefic) { // it's a model object
-            // create criteria based on pk values
-            $criteria = $values->buildPkeyCriteria();
+        } elseif ($values instanceof \CryoConnectDB\ExpertPrimaryAffiliation) { // it's a model object
+            // create criteria based on pk value
+            $criteria = $values->buildCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(CryosphereWhatSpeceficTableMap::DATABASE_NAME);
-            $criteria->add(CryosphereWhatSpeceficTableMap::COL_ID, (array) $values, Criteria::IN);
+            throw new LogicException('The ExpertPrimaryAffiliation object has no primary key');
         }
 
-        $query = CryosphereWhatSpeceficQuery::create()->mergeWith($criteria);
+        $query = ExpertPrimaryAffiliationQuery::create()->mergeWith($criteria);
 
         if ($values instanceof Criteria) {
-            CryosphereWhatSpeceficTableMap::clearInstancePool();
+            ExpertPrimaryAffiliationTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
             foreach ((array) $values as $singleval) {
-                CryosphereWhatSpeceficTableMap::removeInstanceFromPool($singleval);
+                ExpertPrimaryAffiliationTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -379,20 +378,20 @@ class CryosphereWhatSpeceficTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the cryosphere_what_specefic table.
+     * Deletes all rows from the expert_primary_affiliation table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
     public static function doDeleteAll(ConnectionInterface $con = null)
     {
-        return CryosphereWhatSpeceficQuery::create()->doDeleteAll($con);
+        return ExpertPrimaryAffiliationQuery::create()->doDeleteAll($con);
     }
 
     /**
-     * Performs an INSERT on the database, given a CryosphereWhatSpecefic or Criteria object.
+     * Performs an INSERT on the database, given a ExpertPrimaryAffiliation or Criteria object.
      *
-     * @param mixed               $criteria Criteria or CryosphereWhatSpecefic object containing data that is used to create the INSERT statement.
+     * @param mixed               $criteria Criteria or ExpertPrimaryAffiliation object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface $con the ConnectionInterface connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -401,22 +400,18 @@ class CryosphereWhatSpeceficTableMap extends TableMap
     public static function doInsert($criteria, ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(CryosphereWhatSpeceficTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ExpertPrimaryAffiliationTableMap::DATABASE_NAME);
         }
 
         if ($criteria instanceof Criteria) {
             $criteria = clone $criteria; // rename for clarity
         } else {
-            $criteria = $criteria->buildCriteria(); // build Criteria from CryosphereWhatSpecefic object
-        }
-
-        if ($criteria->containsKey(CryosphereWhatSpeceficTableMap::COL_ID) && $criteria->keyContainsValue(CryosphereWhatSpeceficTableMap::COL_ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.CryosphereWhatSpeceficTableMap::COL_ID.')');
+            $criteria = $criteria->buildCriteria(); // build Criteria from ExpertPrimaryAffiliation object
         }
 
 
         // Set the correct dbName
-        $query = CryosphereWhatSpeceficQuery::create()->mergeWith($criteria);
+        $query = ExpertPrimaryAffiliationQuery::create()->mergeWith($criteria);
 
         // use transaction because $criteria could contain info
         // for more than one table (I guess, conceivably)
@@ -425,7 +420,7 @@ class CryosphereWhatSpeceficTableMap extends TableMap
         });
     }
 
-} // CryosphereWhatSpeceficTableMap
+} // ExpertPrimaryAffiliationTableMap
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-CryosphereWhatSpeceficTableMap::buildTableMap();
+ExpertPrimaryAffiliationTableMap::buildTableMap();

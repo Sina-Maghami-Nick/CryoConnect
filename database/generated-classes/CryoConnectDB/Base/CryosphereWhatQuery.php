@@ -22,10 +22,12 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildCryosphereWhatQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildCryosphereWhatQuery orderByCryosphereWhatName($order = Criteria::ASC) Order by the cryosphere_what_name column
+ * @method     ChildCryosphereWhatQuery orderByApproved($order = Criteria::ASC) Order by the approved column
  * @method     ChildCryosphereWhatQuery orderByTimestamp($order = Criteria::ASC) Order by the timestamp column
  *
  * @method     ChildCryosphereWhatQuery groupById() Group by the id column
  * @method     ChildCryosphereWhatQuery groupByCryosphereWhatName() Group by the cryosphere_what_name column
+ * @method     ChildCryosphereWhatQuery groupByApproved() Group by the approved column
  * @method     ChildCryosphereWhatQuery groupByTimestamp() Group by the timestamp column
  *
  * @method     ChildCryosphereWhatQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
@@ -63,6 +65,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildCryosphereWhat findOneById(int $id) Return the first ChildCryosphereWhat filtered by the id column
  * @method     ChildCryosphereWhat findOneByCryosphereWhatName(string $cryosphere_what_name) Return the first ChildCryosphereWhat filtered by the cryosphere_what_name column
+ * @method     ChildCryosphereWhat findOneByApproved(boolean $approved) Return the first ChildCryosphereWhat filtered by the approved column
  * @method     ChildCryosphereWhat findOneByTimestamp(string $timestamp) Return the first ChildCryosphereWhat filtered by the timestamp column *
 
  * @method     ChildCryosphereWhat requirePk($key, ConnectionInterface $con = null) Return the ChildCryosphereWhat by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -70,11 +73,13 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildCryosphereWhat requireOneById(int $id) Return the first ChildCryosphereWhat filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildCryosphereWhat requireOneByCryosphereWhatName(string $cryosphere_what_name) Return the first ChildCryosphereWhat filtered by the cryosphere_what_name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildCryosphereWhat requireOneByApproved(boolean $approved) Return the first ChildCryosphereWhat filtered by the approved column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildCryosphereWhat requireOneByTimestamp(string $timestamp) Return the first ChildCryosphereWhat filtered by the timestamp column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildCryosphereWhat[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildCryosphereWhat objects based on current ModelCriteria
  * @method     ChildCryosphereWhat[]|ObjectCollection findById(int $id) Return ChildCryosphereWhat objects filtered by the id column
  * @method     ChildCryosphereWhat[]|ObjectCollection findByCryosphereWhatName(string $cryosphere_what_name) Return ChildCryosphereWhat objects filtered by the cryosphere_what_name column
+ * @method     ChildCryosphereWhat[]|ObjectCollection findByApproved(boolean $approved) Return ChildCryosphereWhat objects filtered by the approved column
  * @method     ChildCryosphereWhat[]|ObjectCollection findByTimestamp(string $timestamp) Return ChildCryosphereWhat objects filtered by the timestamp column
  * @method     ChildCryosphereWhat[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
@@ -174,7 +179,7 @@ abstract class CryosphereWhatQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, cryosphere_what_name, timestamp FROM cryosphere_what WHERE id = :p0';
+        $sql = 'SELECT id, cryosphere_what_name, approved, timestamp FROM cryosphere_what WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -328,6 +333,33 @@ abstract class CryosphereWhatQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(CryosphereWhatTableMap::COL_CRYOSPHERE_WHAT_NAME, $cryosphereWhatName, $comparison);
+    }
+
+    /**
+     * Filter the query on the approved column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByApproved(true); // WHERE approved = true
+     * $query->filterByApproved('yes'); // WHERE approved = true
+     * </code>
+     *
+     * @param     boolean|string $approved The value to use as filter.
+     *              Non-boolean arguments are converted using the following rules:
+     *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     *              Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildCryosphereWhatQuery The current query, for fluid interface
+     */
+    public function filterByApproved($approved = null, $comparison = null)
+    {
+        if (is_string($approved)) {
+            $approved = in_array(strtolower($approved), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+        }
+
+        return $this->addUsingAlias(CryosphereWhatTableMap::COL_APPROVED, $approved, $comparison);
     }
 
     /**

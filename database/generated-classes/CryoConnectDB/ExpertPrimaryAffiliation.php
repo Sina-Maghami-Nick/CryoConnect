@@ -2,10 +2,10 @@
 
 namespace CryoConnectDB;
 
-use CryoConnectDB\Base\ExpertAffiliation as BaseExpertAffiliation;
+use CryoConnectDB\Base\ExpertPrimaryAffiliation as BaseExpertPrimaryAffiliation;
 
 /**
- * Skeleton subclass for representing a row from the 'expert_affiliation' table.
+ * Skeleton subclass for representing a row from the 'expert_primary_affiliation' table.
  *
  *
  *
@@ -14,7 +14,7 @@ use CryoConnectDB\Base\ExpertAffiliation as BaseExpertAffiliation;
  * long as it does not already exist in the output directory.
  *
  */
-class ExpertAffiliation extends BaseExpertAffiliation
+class ExpertPrimaryAffiliation extends BaseExpertPrimaryAffiliation
 {
 
 }

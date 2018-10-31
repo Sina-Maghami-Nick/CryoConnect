@@ -44,24 +44,24 @@ CREATE TABLE `countries`
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
--- cryosphere_expert_methods
+-- expert_cryosphere_methods
 -- ---------------------------------------------------------------------
 
-DROP TABLE IF EXISTS `cryosphere_expert_methods`;
+DROP TABLE IF EXISTS `expert_cryosphere_methods`;
 
-CREATE TABLE `cryosphere_expert_methods`
+CREATE TABLE `expert_cryosphere_methods`
 (
     `expert_id` int(10) unsigned NOT NULL,
     `method_id` int(10) unsigned NOT NULL,
     `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     INDEX `expert_id` (`expert_id`),
     INDEX `method_id` (`method_id`),
-    CONSTRAINT `cryosphere_expert_methods_ibfk_1`
+    CONSTRAINT `expert_cryosphere_methods_ibfk_1`
         FOREIGN KEY (`expert_id`)
         REFERENCES `experts` (`id`)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
-    CONSTRAINT `cryosphere_expert_methods_ibfk_2`
+    CONSTRAINT `expert_cryosphere_methods_ibfk_2`
         FOREIGN KEY (`method_id`)
         REFERENCES `cryosphere_methods` (`id`)
         ON UPDATE CASCADE
@@ -77,6 +77,7 @@ CREATE TABLE `cryosphere_methods`
 (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `cryosphere_methods_name` TEXT NOT NULL,
+    `approved` TINYINT(1) DEFAULT 0 NOT NULL,
     `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
@@ -91,6 +92,7 @@ CREATE TABLE `cryosphere_what`
 (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `cryosphere_what_name` TEXT NOT NULL,
+    `approved` TINYINT(1) DEFAULT 0 NOT NULL,
     `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
@@ -105,6 +107,7 @@ CREATE TABLE `cryosphere_what_specefic`
 (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `cryosphere_what_specefic_name` TEXT NOT NULL,
+    `approved` TINYINT(1) DEFAULT 0 NOT NULL,
     `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
@@ -119,6 +122,7 @@ CREATE TABLE `cryosphere_when`
 (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `cryosphere_when_name` TEXT NOT NULL,
+    `approved` TINYINT(1) DEFAULT 0 NOT NULL,
     `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
@@ -138,18 +142,39 @@ CREATE TABLE `cryosphere_where`
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
--- expert_affiliation
+-- expert_primary_affiliation
 -- ---------------------------------------------------------------------
 
-DROP TABLE IF EXISTS `expert_affiliation`;
+DROP TABLE IF EXISTS `expert_primary_affiliation`;
 
-CREATE TABLE `expert_affiliation`
+CREATE TABLE `expert_primary_affiliation`
 (
     `expert_id` int(10) unsigned NOT NULL,
-    `affiliation_name` TEXT NOT NULL,
+    `primary_affiliation_name` TEXT NOT NULL,
+    `primary_affiliation_country_code` VARCHAR(2),
+    `primary_affiliation_city` TEXT,
     `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     INDEX `expert_id` (`expert_id`),
-    CONSTRAINT `expert_affiliation_ibfk_1`
+    CONSTRAINT `expert_primary_affiliation_ibfk_1`
+        FOREIGN KEY (`expert_id`)
+        REFERENCES `experts` (`id`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- expert_secondary_affiliation
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `expert_secondary_affiliation`;
+
+CREATE TABLE `expert_secondary_affiliation`
+(
+    `expert_id` int(10) unsigned NOT NULL,
+    `secondary_affiliation_name` TEXT NOT NULL,
+    `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX `expert_id` (`expert_id`),
+    CONSTRAINT `expert_secondary_affiliation_ibfk_1`
         FOREIGN KEY (`expert_id`)
         REFERENCES `experts` (`id`)
         ON UPDATE CASCADE
@@ -262,9 +287,9 @@ DROP TABLE IF EXISTS `expert_field_work`;
 CREATE TABLE `expert_field_work`
 (
     `expert_id` int(10) unsigned NOT NULL,
-    `field_work_where` TEXT NOT NULL,
-    `field_work_year` INTEGER(4) NOT NULL,
-    `field_work_month` TINYINT(2) NOT NULL,
+    `field_work_where` TEXT,
+    `field_work_year` INTEGER(4),
+    `field_work_month` TINYINT(2),
     `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     INDEX `expert_id` (`expert_id`),
     CONSTRAINT `expert_field_work_ibfk_1`
@@ -298,24 +323,24 @@ CREATE TABLE `expert_languages`
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
--- expert_when
+-- expert_cryosphere_when
 -- ---------------------------------------------------------------------
 
-DROP TABLE IF EXISTS `expert_when`;
+DROP TABLE IF EXISTS `expert_cryosphere_when`;
 
-CREATE TABLE `expert_when`
+CREATE TABLE `expert_cryosphere_when`
 (
     `expert_id` int(10) unsigned NOT NULL,
     `cryosphere_when_id` int(10) unsigned NOT NULL,
     `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     INDEX `expert_id` (`expert_id`),
     INDEX `cryosphere_when_id` (`cryosphere_when_id`),
-    CONSTRAINT `expert_when_ibfk_1`
+    CONSTRAINT `expert_cryosphere_when_ibfk_1`
         FOREIGN KEY (`expert_id`)
         REFERENCES `experts` (`id`)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
-    CONSTRAINT `expert_when_ibfk_2`
+    CONSTRAINT `expert_cryosphere_when_ibfk_2`
         FOREIGN KEY (`cryosphere_when_id`)
         REFERENCES `cryosphere_when` (`id`)
         ON UPDATE CASCADE
@@ -323,24 +348,24 @@ CREATE TABLE `expert_when`
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
--- expert_where
+-- expert_cryosphere_where
 -- ---------------------------------------------------------------------
 
-DROP TABLE IF EXISTS `expert_where`;
+DROP TABLE IF EXISTS `expert_cryosphere_where`;
 
-CREATE TABLE `expert_where`
+CREATE TABLE `expert_cryosphere_where`
 (
     `expert_id` int(10) unsigned NOT NULL,
     `cryosphere_where_id` int(10) unsigned NOT NULL,
     `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     INDEX `expert_id` (`expert_id`),
     INDEX `cryosphere_where_id` (`cryosphere_where_id`),
-    CONSTRAINT `expert_where_ibfk_1`
+    CONSTRAINT `expert_cryosphere_where_ibfk_1`
         FOREIGN KEY (`expert_id`)
         REFERENCES `experts` (`id`)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
-    CONSTRAINT `expert_where_ibfk_2`
+    CONSTRAINT `expert_cryosphere_where_ibfk_2`
         FOREIGN KEY (`cryosphere_where_id`)
         REFERENCES `cryosphere_where` (`id`)
         ON UPDATE CASCADE

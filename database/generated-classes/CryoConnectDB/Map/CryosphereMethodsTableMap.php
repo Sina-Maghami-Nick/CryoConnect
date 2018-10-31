@@ -59,7 +59,7 @@ class CryosphereMethodsTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 3;
+    const NUM_COLUMNS = 4;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class CryosphereMethodsTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 3;
+    const NUM_HYDRATE_COLUMNS = 4;
 
     /**
      * the column name for the id field
@@ -80,6 +80,11 @@ class CryosphereMethodsTableMap extends TableMap
      * the column name for the cryosphere_methods_name field
      */
     const COL_CRYOSPHERE_METHODS_NAME = 'cryosphere_methods.cryosphere_methods_name';
+
+    /**
+     * the column name for the approved field
+     */
+    const COL_APPROVED = 'cryosphere_methods.approved';
 
     /**
      * the column name for the timestamp field
@@ -98,11 +103,11 @@ class CryosphereMethodsTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'CryosphereMethodsName', 'Timestamp', ),
-        self::TYPE_CAMELNAME     => array('id', 'cryosphereMethodsName', 'timestamp', ),
-        self::TYPE_COLNAME       => array(CryosphereMethodsTableMap::COL_ID, CryosphereMethodsTableMap::COL_CRYOSPHERE_METHODS_NAME, CryosphereMethodsTableMap::COL_TIMESTAMP, ),
-        self::TYPE_FIELDNAME     => array('id', 'cryosphere_methods_name', 'timestamp', ),
-        self::TYPE_NUM           => array(0, 1, 2, )
+        self::TYPE_PHPNAME       => array('Id', 'CryosphereMethodsName', 'Approved', 'Timestamp', ),
+        self::TYPE_CAMELNAME     => array('id', 'cryosphereMethodsName', 'approved', 'timestamp', ),
+        self::TYPE_COLNAME       => array(CryosphereMethodsTableMap::COL_ID, CryosphereMethodsTableMap::COL_CRYOSPHERE_METHODS_NAME, CryosphereMethodsTableMap::COL_APPROVED, CryosphereMethodsTableMap::COL_TIMESTAMP, ),
+        self::TYPE_FIELDNAME     => array('id', 'cryosphere_methods_name', 'approved', 'timestamp', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
     /**
@@ -112,11 +117,11 @@ class CryosphereMethodsTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'CryosphereMethodsName' => 1, 'Timestamp' => 2, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'cryosphereMethodsName' => 1, 'timestamp' => 2, ),
-        self::TYPE_COLNAME       => array(CryosphereMethodsTableMap::COL_ID => 0, CryosphereMethodsTableMap::COL_CRYOSPHERE_METHODS_NAME => 1, CryosphereMethodsTableMap::COL_TIMESTAMP => 2, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'cryosphere_methods_name' => 1, 'timestamp' => 2, ),
-        self::TYPE_NUM           => array(0, 1, 2, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'CryosphereMethodsName' => 1, 'Approved' => 2, 'Timestamp' => 3, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'cryosphereMethodsName' => 1, 'approved' => 2, 'timestamp' => 3, ),
+        self::TYPE_COLNAME       => array(CryosphereMethodsTableMap::COL_ID => 0, CryosphereMethodsTableMap::COL_CRYOSPHERE_METHODS_NAME => 1, CryosphereMethodsTableMap::COL_APPROVED => 2, CryosphereMethodsTableMap::COL_TIMESTAMP => 3, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'cryosphere_methods_name' => 1, 'approved' => 2, 'timestamp' => 3, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
     /**
@@ -134,10 +139,11 @@ class CryosphereMethodsTableMap extends TableMap
         $this->setIdentifierQuoting(false);
         $this->setClassName('\\CryoConnectDB\\CryosphereMethods');
         $this->setPackage('CryoConnectDB');
-        $this->setUseIdGenerator(false);
+        $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, 10, null);
         $this->addColumn('cryosphere_methods_name', 'CryosphereMethodsName', 'LONGVARCHAR', true, null, null);
+        $this->addColumn('approved', 'Approved', 'BOOLEAN', true, 1, false);
         $this->addColumn('timestamp', 'Timestamp', 'TIMESTAMP', true, null, 'CURRENT_TIMESTAMP');
     } // initialize()
 
@@ -146,13 +152,13 @@ class CryosphereMethodsTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('CryosphereExpertMethods', '\\CryoConnectDB\\CryosphereExpertMethods', RelationMap::ONE_TO_MANY, array (
+        $this->addRelation('ExpertCryosphereMethods', '\\CryoConnectDB\\ExpertCryosphereMethods', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
     0 => ':method_id',
     1 => ':id',
   ),
-), null, 'CASCADE', 'CryosphereExpertMethodss', false);
+), null, 'CASCADE', 'ExpertCryosphereMethodss', false);
     } // buildRelations()
 
     /**
@@ -298,10 +304,12 @@ class CryosphereMethodsTableMap extends TableMap
         if (null === $alias) {
             $criteria->addSelectColumn(CryosphereMethodsTableMap::COL_ID);
             $criteria->addSelectColumn(CryosphereMethodsTableMap::COL_CRYOSPHERE_METHODS_NAME);
+            $criteria->addSelectColumn(CryosphereMethodsTableMap::COL_APPROVED);
             $criteria->addSelectColumn(CryosphereMethodsTableMap::COL_TIMESTAMP);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.cryosphere_methods_name');
+            $criteria->addSelectColumn($alias . '.approved');
             $criteria->addSelectColumn($alias . '.timestamp');
         }
     }
@@ -400,6 +408,10 @@ class CryosphereMethodsTableMap extends TableMap
             $criteria = clone $criteria; // rename for clarity
         } else {
             $criteria = $criteria->buildCriteria(); // build Criteria from CryosphereMethods object
+        }
+
+        if ($criteria->containsKey(CryosphereMethodsTableMap::COL_ID) && $criteria->keyContainsValue(CryosphereMethodsTableMap::COL_ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.CryosphereMethodsTableMap::COL_ID.')');
         }
 
 

@@ -84,6 +84,14 @@ abstract class CryosphereWhat implements ActiveRecordInterface
     protected $cryosphere_what_name;
 
     /**
+     * The value for the approved field.
+     *
+     * Note: this column has a database default value of: false
+     * @var        boolean
+     */
+    protected $approved;
+
+    /**
      * The value for the timestamp field.
      *
      * Note: this column has a database default value of: (expression) CURRENT_TIMESTAMP
@@ -131,6 +139,7 @@ abstract class CryosphereWhat implements ActiveRecordInterface
      */
     public function applyDefaultValues()
     {
+        $this->approved = false;
     }
 
     /**
@@ -381,6 +390,26 @@ abstract class CryosphereWhat implements ActiveRecordInterface
     }
 
     /**
+     * Get the [approved] column value.
+     *
+     * @return boolean
+     */
+    public function getApproved()
+    {
+        return $this->approved;
+    }
+
+    /**
+     * Get the [approved] column value.
+     *
+     * @return boolean
+     */
+    public function isApproved()
+    {
+        return $this->getApproved();
+    }
+
+    /**
      * Get the [optionally formatted] temporal [timestamp] column value.
      *
      *
@@ -441,6 +470,34 @@ abstract class CryosphereWhat implements ActiveRecordInterface
     } // setCryosphereWhatName()
 
     /**
+     * Sets the value of the [approved] column.
+     * Non-boolean arguments are converted using the following rules:
+     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     *
+     * @param  boolean|integer|string $v The new value
+     * @return $this|\CryoConnectDB\CryosphereWhat The current object (for fluent API support)
+     */
+    public function setApproved($v)
+    {
+        if ($v !== null) {
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
+            }
+        }
+
+        if ($this->approved !== $v) {
+            $this->approved = $v;
+            $this->modifiedColumns[CryosphereWhatTableMap::COL_APPROVED] = true;
+        }
+
+        return $this;
+    } // setApproved()
+
+    /**
      * Sets the value of [timestamp] column to a normalized version of the date/time value specified.
      *
      * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
@@ -470,6 +527,10 @@ abstract class CryosphereWhat implements ActiveRecordInterface
      */
     public function hasOnlyDefaultValues()
     {
+            if ($this->approved !== false) {
+                return false;
+            }
+
         // otherwise, everything was equal, so return TRUE
         return true;
     } // hasOnlyDefaultValues()
@@ -502,7 +563,10 @@ abstract class CryosphereWhat implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : CryosphereWhatTableMap::translateFieldName('CryosphereWhatName', TableMap::TYPE_PHPNAME, $indexType)];
             $this->cryosphere_what_name = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : CryosphereWhatTableMap::translateFieldName('Timestamp', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : CryosphereWhatTableMap::translateFieldName('Approved', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->approved = (null !== $col) ? (boolean) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : CryosphereWhatTableMap::translateFieldName('Timestamp', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
@@ -515,7 +579,7 @@ abstract class CryosphereWhat implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 3; // 3 = CryosphereWhatTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 4; // 4 = CryosphereWhatTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\CryoConnectDB\\CryosphereWhat'), 0, $e);
@@ -760,6 +824,9 @@ abstract class CryosphereWhat implements ActiveRecordInterface
         if ($this->isColumnModified(CryosphereWhatTableMap::COL_CRYOSPHERE_WHAT_NAME)) {
             $modifiedColumns[':p' . $index++]  = 'cryosphere_what_name';
         }
+        if ($this->isColumnModified(CryosphereWhatTableMap::COL_APPROVED)) {
+            $modifiedColumns[':p' . $index++]  = 'approved';
+        }
         if ($this->isColumnModified(CryosphereWhatTableMap::COL_TIMESTAMP)) {
             $modifiedColumns[':p' . $index++]  = 'timestamp';
         }
@@ -779,6 +846,9 @@ abstract class CryosphereWhat implements ActiveRecordInterface
                         break;
                     case 'cryosphere_what_name':
                         $stmt->bindValue($identifier, $this->cryosphere_what_name, PDO::PARAM_STR);
+                        break;
+                    case 'approved':
+                        $stmt->bindValue($identifier, (int) $this->approved, PDO::PARAM_INT);
                         break;
                     case 'timestamp':
                         $stmt->bindValue($identifier, $this->timestamp ? $this->timestamp->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
@@ -852,6 +922,9 @@ abstract class CryosphereWhat implements ActiveRecordInterface
                 return $this->getCryosphereWhatName();
                 break;
             case 2:
+                return $this->getApproved();
+                break;
+            case 3:
                 return $this->getTimestamp();
                 break;
             default:
@@ -886,10 +959,11 @@ abstract class CryosphereWhat implements ActiveRecordInterface
         $result = array(
             $keys[0] => $this->getId(),
             $keys[1] => $this->getCryosphereWhatName(),
-            $keys[2] => $this->getTimestamp(),
+            $keys[2] => $this->getApproved(),
+            $keys[3] => $this->getTimestamp(),
         );
-        if ($result[$keys[2]] instanceof \DateTimeInterface) {
-            $result[$keys[2]] = $result[$keys[2]]->format('c');
+        if ($result[$keys[3]] instanceof \DateTimeInterface) {
+            $result[$keys[3]] = $result[$keys[3]]->format('c');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -969,6 +1043,9 @@ abstract class CryosphereWhat implements ActiveRecordInterface
                 $this->setCryosphereWhatName($value);
                 break;
             case 2:
+                $this->setApproved($value);
+                break;
+            case 3:
                 $this->setTimestamp($value);
                 break;
         } // switch()
@@ -1004,7 +1081,10 @@ abstract class CryosphereWhat implements ActiveRecordInterface
             $this->setCryosphereWhatName($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setTimestamp($arr[$keys[2]]);
+            $this->setApproved($arr[$keys[2]]);
+        }
+        if (array_key_exists($keys[3], $arr)) {
+            $this->setTimestamp($arr[$keys[3]]);
         }
     }
 
@@ -1052,6 +1132,9 @@ abstract class CryosphereWhat implements ActiveRecordInterface
         }
         if ($this->isColumnModified(CryosphereWhatTableMap::COL_CRYOSPHERE_WHAT_NAME)) {
             $criteria->add(CryosphereWhatTableMap::COL_CRYOSPHERE_WHAT_NAME, $this->cryosphere_what_name);
+        }
+        if ($this->isColumnModified(CryosphereWhatTableMap::COL_APPROVED)) {
+            $criteria->add(CryosphereWhatTableMap::COL_APPROVED, $this->approved);
         }
         if ($this->isColumnModified(CryosphereWhatTableMap::COL_TIMESTAMP)) {
             $criteria->add(CryosphereWhatTableMap::COL_TIMESTAMP, $this->timestamp);
@@ -1143,6 +1226,7 @@ abstract class CryosphereWhat implements ActiveRecordInterface
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setCryosphereWhatName($this->getCryosphereWhatName());
+        $copyObj->setApproved($this->getApproved());
         $copyObj->setTimestamp($this->getTimestamp());
 
         if ($deepCopy) {
@@ -1722,6 +1806,7 @@ abstract class CryosphereWhat implements ActiveRecordInterface
     {
         $this->id = null;
         $this->cryosphere_what_name = null;
+        $this->approved = null;
         $this->timestamp = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();

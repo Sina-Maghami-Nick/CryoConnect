@@ -148,9 +148,9 @@ class ExpertFieldWorkTableMap extends TableMap
         $this->setUseIdGenerator(false);
         // columns
         $this->addForeignKey('expert_id', 'ExpertId', 'INTEGER', 'experts', 'id', true, 10, null);
-        $this->addColumn('field_work_where', 'FieldWorkWhere', 'LONGVARCHAR', true, null, null);
-        $this->addColumn('field_work_year', 'FieldWorkYear', 'INTEGER', true, 4, null);
-        $this->addColumn('field_work_month', 'FieldWorkMonth', 'TINYINT', true, 2, null);
+        $this->addColumn('field_work_where', 'FieldWorkWhere', 'LONGVARCHAR', false, null, null);
+        $this->addColumn('field_work_year', 'FieldWorkYear', 'INTEGER', false, 4, null);
+        $this->addColumn('field_work_month', 'FieldWorkMonth', 'TINYINT', false, 2, null);
         $this->addColumn('timestamp', 'Timestamp', 'TIMESTAMP', true, null, 'CURRENT_TIMESTAMP');
     } // initialize()
 

@@ -22,14 +22,14 @@
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
   </table>
-  <table name="cryosphere_expert_methods" idMethod="native" phpName="CryosphereExpertMethods">
+  <table name="expert_cryosphere_methods" idMethod="native" phpName="ExpertCryosphereMethods">
     <column name="expert_id" phpName="ExpertId" type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
     <column name="method_id" phpName="MethodId" type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
     <column name="timestamp" phpName="Timestamp" type="TIMESTAMP" required="true" defaultExpr="CURRENT_TIMESTAMP"/>
-    <foreign-key foreignTable="experts" name="cryosphere_expert_methods_ibfk_1" onDelete="CASCADE" onUpdate="CASCADE">
+    <foreign-key foreignTable="experts" name="expert_cryosphere_methods_ibfk_1" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="expert_id" foreign="id"/>
     </foreign-key>
-    <foreign-key foreignTable="cryosphere_methods" name="cryosphere_expert_methods_ibfk_2" onUpdate="CASCADE">
+    <foreign-key foreignTable="cryosphere_methods" name="expert_cryosphere_methods_ibfk_2" onUpdate="CASCADE">
       <reference local="method_id" foreign="id"/>
     </foreign-key>
     <index name="expert_id">
@@ -45,6 +45,7 @@
   <table name="cryosphere_methods" idMethod="native" phpName="CryosphereMethods">
     <column name="id" phpName="Id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="cryosphere_methods_name" phpName="CryosphereMethodsName" type="LONGVARCHAR" required="true"/>
+    <column name="approved" phpName="Approved" type="BOOLEAN" size="1" required="true" defaultValue="false"/>
     <column name="timestamp" phpName="Timestamp" type="TIMESTAMP" required="true" defaultExpr="CURRENT_TIMESTAMP"/>
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>
@@ -53,6 +54,7 @@
   <table name="cryosphere_what" idMethod="native" phpName="CryosphereWhat">
     <column name="id" phpName="Id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="cryosphere_what_name" phpName="CryosphereWhatName" type="LONGVARCHAR" required="true"/>
+    <column name="approved" phpName="Approved" type="BOOLEAN" size="1" required="true" defaultValue="false"/>
     <column name="timestamp" phpName="Timestamp" type="TIMESTAMP" required="true" defaultExpr="CURRENT_TIMESTAMP"/>
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>
@@ -61,6 +63,7 @@
   <table name="cryosphere_what_specefic" idMethod="native" phpName="CryosphereWhatSpecefic">
     <column name="id" phpName="Id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="cryosphere_what_specefic_name" phpName="CryosphereWhatSpeceficName" type="LONGVARCHAR" required="true"/>
+    <column name="approved" phpName="Approved" type="BOOLEAN" size="1" required="true" defaultValue="false"/>
     <column name="timestamp" phpName="Timestamp" type="TIMESTAMP" required="true" defaultExpr="CURRENT_TIMESTAMP"/>
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>
@@ -69,6 +72,7 @@
   <table name="cryosphere_when" idMethod="native" phpName="CryosphereWhen">
     <column name="id" phpName="Id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="cryosphere_when_name" phpName="CryosphereWhenName" type="LONGVARCHAR" required="true"/>
+    <column name="approved" phpName="Approved" type="BOOLEAN" size="1" required="true" defaultValue="false"/>
     <column name="timestamp" phpName="Timestamp" type="TIMESTAMP" required="true" defaultExpr="CURRENT_TIMESTAMP"/>
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>
@@ -82,11 +86,27 @@
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
   </table>
-  <table name="expert_affiliation" idMethod="native" phpName="ExpertAffiliation">
+  <table name="expert_primary_affiliation" idMethod="native" phpName="ExpertPrimaryAffiliation">
     <column name="expert_id" phpName="ExpertId" type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
-    <column name="affiliation_name" phpName="AffiliationName" type="LONGVARCHAR" required="true"/>
+    <column name="primary_affiliation_name" phpName="PrimaryAffiliationName" type="LONGVARCHAR" required="true"/>
+    <column name="primary_affiliation_country_code" phpName="PrimaryAffiliationCountryCode" type="VARCHAR" size="2" required="false"/>
+    <column name="primary_affiliation_city" phpName="PrimaryAffiliationCity" type="LONGVARCHAR" required="false"/>
     <column name="timestamp" phpName="Timestamp" type="TIMESTAMP" required="true" defaultExpr="CURRENT_TIMESTAMP"/>
-    <foreign-key foreignTable="experts" name="expert_affiliation_ibfk_1" onDelete="CASCADE" onUpdate="CASCADE">
+    <foreign-key foreignTable="experts" name="expert_primary_affiliation_ibfk_1" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="expert_id" foreign="id"/>
+    </foreign-key>
+    <index name="expert_id">
+      <index-column name="expert_id"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="expert_secondary_affiliation" idMethod="native" phpName="ExpertSecondaryAffiliation">
+    <column name="expert_id" phpName="ExpertId" type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
+    <column name="secondary_affiliation_name" phpName="SecondaryAffiliationName" type="LONGVARCHAR" required="true"/>
+    <column name="timestamp" phpName="Timestamp" type="TIMESTAMP" required="true" defaultExpr="CURRENT_TIMESTAMP"/>
+    <foreign-key foreignTable="experts" name="expert_secondary_affiliation_ibfk_1" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="expert_id" foreign="id"/>
     </foreign-key>
     <index name="expert_id">
@@ -179,9 +199,9 @@
   </table>
   <table name="expert_field_work" idMethod="native" phpName="ExpertFieldWork">
     <column name="expert_id" phpName="ExpertId" type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
-    <column name="field_work_where" phpName="FieldWorkWhere" type="LONGVARCHAR" required="true"/>
-    <column name="field_work_year" phpName="FieldWorkYear" type="INTEGER" size="4" required="true"/>
-    <column name="field_work_month" phpName="FieldWorkMonth" type="TINYINT" size="2" required="true"/>
+    <column name="field_work_where" phpName="FieldWorkWhere" type="LONGVARCHAR" required="false"/>
+    <column name="field_work_year" phpName="FieldWorkYear" type="INTEGER" size="4" required="false"/>
+    <column name="field_work_month" phpName="FieldWorkMonth" type="TINYINT" size="2" required="false"/>
     <column name="timestamp" phpName="Timestamp" type="TIMESTAMP" required="true" defaultExpr="CURRENT_TIMESTAMP"/>
     <foreign-key foreignTable="experts" name="expert_field_work_ibfk_1" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="expert_id" foreign="id"/>
@@ -213,14 +233,14 @@
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
   </table>
-  <table name="expert_when" idMethod="native" phpName="ExpertWhen">
+  <table name="expert_cryosphere_when" idMethod="native" phpName="ExpertCryosphereWhen">
     <column name="expert_id" phpName="ExpertId" type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
     <column name="cryosphere_when_id" phpName="CryosphereWhenId" type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
     <column name="timestamp" phpName="Timestamp" type="TIMESTAMP" required="true" defaultExpr="CURRENT_TIMESTAMP"/>
-    <foreign-key foreignTable="experts" name="expert_when_ibfk_1" onDelete="CASCADE" onUpdate="CASCADE">
+    <foreign-key foreignTable="experts" name="expert_cryosphere_when_ibfk_1" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="expert_id" foreign="id"/>
     </foreign-key>
-    <foreign-key foreignTable="cryosphere_when" name="expert_when_ibfk_2" onDelete="CASCADE" onUpdate="CASCADE">
+    <foreign-key foreignTable="cryosphere_when" name="expert_cryosphere_when_ibfk_2" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="cryosphere_when_id" foreign="id"/>
     </foreign-key>
     <index name="expert_id">
@@ -233,14 +253,14 @@
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
   </table>
-  <table name="expert_where" idMethod="native" phpName="ExpertWhere">
+  <table name="expert_cryosphere_where" idMethod="native" phpName="ExpertCryosphereWhere">
     <column name="expert_id" phpName="ExpertId" type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
     <column name="cryosphere_where_id" phpName="CryosphereWhereId" type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
     <column name="timestamp" phpName="Timestamp" type="TIMESTAMP" required="true" defaultExpr="CURRENT_TIMESTAMP"/>
-    <foreign-key foreignTable="experts" name="expert_where_ibfk_1" onDelete="CASCADE" onUpdate="CASCADE">
+    <foreign-key foreignTable="experts" name="expert_cryosphere_where_ibfk_1" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="expert_id" foreign="id"/>
     </foreign-key>
-    <foreign-key foreignTable="cryosphere_where" name="expert_where_ibfk_2" onDelete="CASCADE" onUpdate="CASCADE">
+    <foreign-key foreignTable="cryosphere_where" name="expert_cryosphere_where_ibfk_2" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="cryosphere_where_id" foreign="id"/>
     </foreign-key>
     <index name="expert_id">
