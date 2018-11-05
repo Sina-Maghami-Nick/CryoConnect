@@ -18,6 +18,13 @@ return [
             'path' => isset($_ENV['docker']) ? 'php://stdout' : __DIR__ . '/../logs/app.log',
             'level' => \Monolog\Logger::DEBUG,
         ],
+        // Mailer settings
+        'mailer' => [
+            'smptp' => 'slim-app',
+            'port' => isset($_ENV['docker']) ? 'php://stdout' : __DIR__ . '/../logs/app.log',
+            'username' => \Monolog\Logger::DEBUG,
+            'password' => \Monolog\Logger::DEBUG,
+        ],
         //Admin emails
         'conatcts' => [
             'technical_admin' => 'sina.nick@gmail.com',

@@ -22,9 +22,12 @@ use CryoConnectDB\ExpertCryosphereWhere;
 use CryoConnectDB\ExpertCryosphereWhen;
 use CryoConnectDB\ExpertCryosphereWhatSpecefic;
 use CryoConnectDB\ExpertCryosphereMethods;
+use CryoConnectDB\ExpertCareerStage;
 use CryoConnectDB\ExpertFieldWork;
 use CryoConnectDB\ExpertPrimaryAffiliation;
 use CryoConnectDB\ExpertSecondaryAffiliation;
+use CryoConnectDB\ContactTypesQuery;
+use CryoConnectDB\ExpertContact;
 
 class ExpertsController extends Controller {
 
@@ -84,8 +87,8 @@ class ExpertsController extends Controller {
         $fieldWorkDate = filter_var($data['fieldwork']['date'], FILTER_SANITIZE_STRING);
         $languages = filter_var_array($data['languages'], FILTER_SANITIZE_STRING);
         $careerStage = filter_var($data['caree_stage'], FILTER_SANITIZE_NUMBER_INT);
-        $primaryAffiliation = filter_var($data['affiliation']['primary']['name'], FILTER_SANITIZE_STRING);
-        $primaryAffiliationCountry = filter_var($data['affiliation']['primary']['country'], FILTER_SANITIZE_STRING);
+        $primaryAffiliationName = filter_var($data['affiliation']['primary']['name'], FILTER_SANITIZE_STRING);
+        $primaryAffiliationCountryCode = filter_var($data['affiliation']['primary']['country'], FILTER_SANITIZE_STRING);
         $primaryAffiliationCity = filter_var($data['affiliation']['primary']['city'], FILTER_SANITIZE_STRING);
         $secondryAffiliations = explode(',', filter_var($data['affiliation']['secondry']['name'], FILTER_SANITIZE_STRING));
         $phoneNumber = filter_var($data['phone_number'], FILTER_SANITIZE_STRING);
@@ -99,12 +102,13 @@ class ExpertsController extends Controller {
                 empty($lastName) ||
                 empty($emailAddress) ||
                 empty($birthYear) ||
-                empty($primaryAffiliation) ||
-                empty($primaryAffiliationCountry) ||
-                empty(CountriesQuery::create()->findByCountryCode($primaryAffiliationCountry)) ||
+                empty($primaryAffiliationName) ||
+                empty($primaryAffiliationCountryCode) ||
+                empty(CountriesQuery::create()->findByCountryCode($primaryAffiliationCountryCode)) ||
                 empty($cryosphereExistingWhere) ||
                 empty($languages) ||
                 empty($careerStage) ||
+                empty(CareerStageQuery::create()->findOneById($careerStage)) ||
                 (
                 empty($cryosphereExistingWhat) && empty($cryosphereNewWhat)
                 ) ||
@@ -115,13 +119,13 @@ class ExpertsController extends Controller {
                 empty($cryosphereExistingWhatSpecefic) && empty($cryosphereNewWhatSpecefic)
                 ) ||
                 (
-                empty($cryosphereExistingMethod) && empty($cryosphereNewMethod)
+                empty($cryosphereExistingMethods) && empty($cryosphereNewMethods)
                 )
         ) {
             $this->container->get('logger')
                     ->addError('Empty or wronge fileds for expert info recieved within the following request: ' . json_encode($data));
-            $technicalAdminEmail = $this->container->get('settings')['contacts']['technical_admin'];
-            $response->getBody()->write("Something went wrong! Please contact us at:" . $technicalAdminEmail);
+            $technicalAdminEmail = $this->container->get('settings')['conatcts']['technical_admin'];
+            $response->getBody()->write("Something went wrong! Please contact us at: " . $technicalAdminEmail);
 
             return $response;
         }
@@ -132,21 +136,35 @@ class ExpertsController extends Controller {
         $expert->setLastName($lastName);
         $expert->setEmail($emailAddress);
         $expert->setBirthYear($birthYear);
-        $expert->setCountryCode($primaryAffiliationCountry);
+        $expert->setCountryCode($primaryAffiliationCountryCode);
+
 
         $expert = $this->setExpertWhat($expert, $cryosphereExistingWhat, $cryosphereNewWhat);
         $expert = $this->setExpertWhatSpecefic($expert, $cryosphereExistingWhatSpecefic, $cryosphereNewWhatSpecefic);
         $expert = $this->setExpertWhen($expert, $cryosphereExistingWhen, $cryosphereNewWhen);
         $expert = $this->setExpertMethods($expert, $cryosphereExistingMethods, $cryosphereNewMethods);
         $expert = $this->setExpertWhere($expert, $cryosphereExistingWhere);
+        $expert = $this->setExpertCareerStage($expert, $careerStage);
         $expert = $this->setExpertFieldWork($expert, $fieldWorkLocation, $fieldWorkDate);
+        $expert = $this->setExpertAffiliations($expert, $primaryAffiliationName, $primaryAffiliationCountryCode, $primaryAffiliationCity, $secondryAffiliations);
+        $expert = $this->setExpertContact($expert, $phoneNumber, $website, $linkedIn, $googleScholar);
 
 
-        //$expert->save();
 
-        $response->getBody()->write(json_encode($data));
+        $expert->save();
 
-        return $response;
+        //$response->getBody()->write(json_encode($data));
+
+        $this->container->get('logger')
+                ->addInfo('A new unvalidated expert is added to the databse: ' . json_encode($expert->toArray()));
+         
+        
+        return $this->view->render(
+                        $response, 'expert-thank-you-page.html.twig', [
+                    'expert_first_name' => $firstName,
+                    'expert_last_name' => $lastName
+                        ]
+        );
     }
 
     public function resultAction($request, $response, $args) {
@@ -261,7 +279,7 @@ class ExpertsController extends Controller {
         if (!empty($cryosphereExistingMethods)) {
             foreach ($cryosphereExistingMethods as $cryosphereMethodsID) {
                 $expertCryosphereMethods = new ExpertCryosphereMethods();
-                $expertCryosphereMethods->setCryosphereMethodsId($cryosphereMethodsID);
+                $expertCryosphereMethods->setMethodId($cryosphereMethodsID);
                 $expert->addExpertCryosphereMethods($expertCryosphereMethods);
             }
         }
@@ -302,6 +320,21 @@ class ExpertsController extends Controller {
     /**
      * 
      * @param Experts $expert
+     * @param int $careerStage
+     * @return Experts
+     */
+    private function setExpertCareerStage(Experts $expert, int $careerStage) {
+
+        $expertCareerStage = new ExpertCareerStage();
+        $expertCareerStage->setCareerStageId($careerStage);
+        $expert->addExpertCareerStage($expertCareerStage);
+
+        return $expert;
+    }
+
+    /**
+     * 
+     * @param Experts $expert
      * @param string $fieldWorkLocation
      * @param string $fieldWorkDate
      * @return Experts
@@ -317,6 +350,90 @@ class ExpertsController extends Controller {
         }
 
         $expert->addExpertFieldWork($expertFieldWork);
+
+        return $expert;
+    }
+
+    /**
+     * 
+     * @param Experts $expert
+     * @param string $primaryAffiliation
+     * @param string $primaryAffiliationCountry
+     * @param string $primaryAffiliationCity
+     * @param array $secondryAffiliations
+     * @return Experts
+     */
+    private function setExpertAffiliations(Experts $expert, string $primaryAffiliationName, string $primaryAffiliationCountryCode, string $primaryAffiliationCity, $secondryAffiliations) {
+        //Adding experts Crysphere wheres
+        $expertPrimaryAffiliation = new ExpertPrimaryAffiliation();
+        $expertPrimaryAffiliation->setPrimaryAffiliationName($primaryAffiliationName);
+        $expertPrimaryAffiliation->setPrimaryAffiliationCountryCode($primaryAffiliationCountryCode);
+        $primaryAffiliationCity ?? $expertPrimaryAffiliation->setPrimaryAffiliationCity($primaryAffiliationCity);
+
+        if (!empty($secondryAffiliations)) {
+            foreach ($secondryAffiliations as $secondryAffiliationName) {
+                $expertSecondryAffiliation = new ExpertSecondaryAffiliation();
+                $expertSecondryAffiliation->setSecondaryAffiliationName($secondryAffiliationName);
+                $expert->addExpertSecondaryAffiliation($expertSecondryAffiliation);
+                unset($expertSecondryAffiliation);
+            }
+        }
+
+        $expert->addExpertPrimaryAffiliation($expertPrimaryAffiliation);
+
+        return $expert;
+    }
+
+    /**
+     * 
+     * @param Experts $expert
+     * @param string $phoneNumber
+     * @param string $website
+     * @param string $linkedIn
+     * @param string $googleScholar
+     * @return Experts
+     */
+    private function setExpertContact(Experts $expert, string $phoneNumber, string $website, string $linkedIn, string $googleScholar) {
+
+        //Adding expert telephone number
+        if (!empty($phoneNumber)) {
+            if ($contactTypeId = ContactTypesQuery::create()->findOneByContactType('phone')) {
+                $expertContact = new ExpertContact;
+                $expertContact->setContactTypeId($contactTypeId);
+                $expertContact->setContactInformation($phoneNumber);
+                $expert->addExpertContact($expertContact);
+            }
+        }
+
+        // Adding expert's Website
+        if (!empty($website)) {
+            if ($contactTypeId = ContactTypesQuery::create()->findOneByContactType('website')) {
+                $expertContact = new ExpertContact;
+                $expertContact->setContactTypeId($contactTypeId);
+                $expertContact->setContactInformation($website);
+                $expert->addExpertContact($expertContact);
+            }
+        }
+
+        // Adding expert's LinkedIn
+        if (!empty($linkedIn)) {
+            if ($contactTypeId = ContactTypesQuery::create()->findOneByContactType('linkedIn')) {
+                $expertContact = new ExpertContact;
+                $expertContact->setContactTypeId($contactTypeId);
+                $expertContact->setContactInformation($linkedIn);
+                $expert->addExpertContact($expertContact);
+            }
+        }
+
+        // Adding expert's GoogleScholar
+        if (!empty($googleScholar)) {
+            if ($contactTypeId = ContactTypesQuery::create()->findOneByContactType('googleScholar')) {
+                $expertContact = new ExpertContact;
+                $expertContact->setContactTypeId($contactTypeId);
+                $expertContact->setContactInformation($googleScholar);
+                $expert->addExpertContact($expertContact);
+            }
+        }
 
         return $expert;
     }
