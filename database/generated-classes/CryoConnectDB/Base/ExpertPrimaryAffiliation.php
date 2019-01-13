@@ -1121,7 +1121,8 @@ abstract class ExpertPrimaryAffiliation implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        throw new LogicException('The ExpertPrimaryAffiliation object has no primary key');
+        $criteria = ChildExpertPrimaryAffiliationQuery::create();
+        $criteria->add(ExpertPrimaryAffiliationTableMap::COL_EXPERT_ID, $this->expert_id);
 
         return $criteria;
     }
@@ -1134,10 +1135,17 @@ abstract class ExpertPrimaryAffiliation implements ActiveRecordInterface
      */
     public function hashCode()
     {
-        $validPk = false;
+        $validPk = null !== $this->getExpertId();
 
-        $validPrimaryKeyFKs = 0;
+        $validPrimaryKeyFKs = 1;
         $primaryKeyFKs = [];
+
+        //relation expert_primary_affiliation_fk_023b7c to table experts
+        if ($this->aExperts && $hash = spl_object_hash($this->aExperts)) {
+            $primaryKeyFKs[] = $hash;
+        } else {
+            $validPrimaryKeyFKs = false;
+        }
 
         if ($validPk) {
             return crc32(json_encode($this->getPrimaryKey(), JSON_UNESCAPED_UNICODE));
@@ -1149,27 +1157,23 @@ abstract class ExpertPrimaryAffiliation implements ActiveRecordInterface
     }
 
     /**
-     * Returns NULL since this table doesn't have a primary key.
-     * This method exists only for BC and is deprecated!
-     * @return null
+     * Returns the primary key for this object (row).
+     * @return int
      */
     public function getPrimaryKey()
     {
-        return null;
+        return $this->getExpertId();
     }
 
     /**
-     * Dummy primary key setter.
+     * Generic method to set the primary key (expert_id column).
      *
-     * This function only exists to preserve backwards compatibility.  It is no longer
-     * needed or required by the Persistent interface.  It will be removed in next BC-breaking
-     * release of Propel.
-     *
-     * @deprecated
+     * @param       int $key Primary key.
+     * @return void
      */
-    public function setPrimaryKey($pk)
+    public function setPrimaryKey($key)
     {
-        // do nothing, because this object doesn't have any primary keys
+        $this->setExpertId($key);
     }
 
     /**
@@ -1178,7 +1182,7 @@ abstract class ExpertPrimaryAffiliation implements ActiveRecordInterface
      */
     public function isPrimaryKeyNull()
     {
-        return ;
+        return null === $this->getExpertId();
     }
 
     /**
@@ -1243,10 +1247,9 @@ abstract class ExpertPrimaryAffiliation implements ActiveRecordInterface
 
         $this->aExperts = $v;
 
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildExperts object, it will not be re-added.
+        // Add binding for other direction of this 1:1 relationship.
         if ($v !== null) {
-            $v->addExpertPrimaryAffiliation($this);
+            $v->setExpertPrimaryAffiliation($this);
         }
 
 
@@ -1265,13 +1268,8 @@ abstract class ExpertPrimaryAffiliation implements ActiveRecordInterface
     {
         if ($this->aExperts === null && ($this->expert_id != 0)) {
             $this->aExperts = ChildExpertsQuery::create()->findPk($this->expert_id, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aExperts->addExpertPrimaryAffiliations($this);
-             */
+            // Because this foreign key represents a one-to-one relationship, we will create a bi-directional association.
+            $this->aExperts->setExpertPrimaryAffiliation($this);
         }
 
         return $this->aExperts;

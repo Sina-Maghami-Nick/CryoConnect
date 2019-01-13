@@ -39,7 +39,7 @@ class ExpertsTableMap extends TableMap
     /**
      * The default database name for this class
      */
-    const DATABASE_NAME = 'cryo_connect';
+    const DATABASE_NAME = 'default';
 
     /**
      * The table name for this class
@@ -183,27 +183,6 @@ class ExpertsTableMap extends TableMap
     1 => ':country_code',
   ),
 ), null, 'CASCADE', null, false);
-        $this->addRelation('ExpertCryosphereMethods', '\\CryoConnectDB\\ExpertCryosphereMethods', RelationMap::ONE_TO_MANY, array (
-  0 =>
-  array (
-    0 => ':expert_id',
-    1 => ':id',
-  ),
-), 'CASCADE', 'CASCADE', 'ExpertCryosphereMethodss', false);
-        $this->addRelation('ExpertPrimaryAffiliation', '\\CryoConnectDB\\ExpertPrimaryAffiliation', RelationMap::ONE_TO_MANY, array (
-  0 =>
-  array (
-    0 => ':expert_id',
-    1 => ':id',
-  ),
-), 'CASCADE', 'CASCADE', 'ExpertPrimaryAffiliations', false);
-        $this->addRelation('ExpertSecondaryAffiliation', '\\CryoConnectDB\\ExpertSecondaryAffiliation', RelationMap::ONE_TO_MANY, array (
-  0 =>
-  array (
-    0 => ':expert_id',
-    1 => ':id',
-  ),
-), 'CASCADE', 'CASCADE', 'ExpertSecondaryAffiliations', false);
         $this->addRelation('ExpertCareerStage', '\\CryoConnectDB\\ExpertCareerStage', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
@@ -218,6 +197,13 @@ class ExpertsTableMap extends TableMap
     1 => ':id',
   ),
 ), 'CASCADE', 'CASCADE', 'ExpertContacts', false);
+        $this->addRelation('ExpertCryosphereMethods', '\\CryoConnectDB\\ExpertCryosphereMethods', RelationMap::ONE_TO_MANY, array (
+  0 =>
+  array (
+    0 => ':expert_id',
+    1 => ':id',
+  ),
+), 'CASCADE', 'CASCADE', 'ExpertCryosphereMethodss', false);
         $this->addRelation('ExpertCryosphereWhat', '\\CryoConnectDB\\ExpertCryosphereWhat', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
@@ -232,20 +218,6 @@ class ExpertsTableMap extends TableMap
     1 => ':id',
   ),
 ), 'CASCADE', 'CASCADE', 'ExpertCryosphereWhatSpecefics', false);
-        $this->addRelation('ExpertFieldWork', '\\CryoConnectDB\\ExpertFieldWork', RelationMap::ONE_TO_MANY, array (
-  0 =>
-  array (
-    0 => ':expert_id',
-    1 => ':id',
-  ),
-), 'CASCADE', 'CASCADE', 'ExpertFieldWorks', false);
-        $this->addRelation('ExpertLanguages', '\\CryoConnectDB\\ExpertLanguages', RelationMap::ONE_TO_MANY, array (
-  0 =>
-  array (
-    0 => ':expert_id',
-    1 => ':id',
-  ),
-), 'CASCADE', 'CASCADE', 'ExpertLanguagess', false);
         $this->addRelation('ExpertCryosphereWhen', '\\CryoConnectDB\\ExpertCryosphereWhen', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
@@ -260,6 +232,42 @@ class ExpertsTableMap extends TableMap
     1 => ':id',
   ),
 ), 'CASCADE', 'CASCADE', 'ExpertCryosphereWheres', false);
+        $this->addRelation('ExpertFieldWork', '\\CryoConnectDB\\ExpertFieldWork', RelationMap::ONE_TO_MANY, array (
+  0 =>
+  array (
+    0 => ':expert_id',
+    1 => ':id',
+  ),
+), 'CASCADE', 'CASCADE', 'ExpertFieldWorks', false);
+        $this->addRelation('ExpertLanguages', '\\CryoConnectDB\\ExpertLanguages', RelationMap::ONE_TO_MANY, array (
+  0 =>
+  array (
+    0 => ':expert_id',
+    1 => ':id',
+  ),
+), 'CASCADE', 'CASCADE', 'ExpertLanguagess', false);
+        $this->addRelation('ExpertPrimaryAffiliation', '\\CryoConnectDB\\ExpertPrimaryAffiliation', RelationMap::ONE_TO_ONE, array (
+  0 =>
+  array (
+    0 => ':expert_id',
+    1 => ':id',
+  ),
+), 'CASCADE', 'CASCADE', null, false);
+        $this->addRelation('ExpertSecondaryAffiliation', '\\CryoConnectDB\\ExpertSecondaryAffiliation', RelationMap::ONE_TO_MANY, array (
+  0 =>
+  array (
+    0 => ':expert_id',
+    1 => ':id',
+  ),
+), 'CASCADE', 'CASCADE', 'ExpertSecondaryAffiliations', false);
+        $this->addRelation('CareerStage', '\\CryoConnectDB\\CareerStage', RelationMap::MANY_TO_MANY, array(), null, 'CASCADE', 'CareerStages');
+        $this->addRelation('ContactTypes', '\\CryoConnectDB\\ContactTypes', RelationMap::MANY_TO_MANY, array(), null, 'CASCADE', 'ContactTypess');
+        $this->addRelation('CryosphereMethods', '\\CryoConnectDB\\CryosphereMethods', RelationMap::MANY_TO_MANY, array(), null, 'CASCADE', 'CryosphereMethodss');
+        $this->addRelation('CryosphereWhat', '\\CryoConnectDB\\CryosphereWhat', RelationMap::MANY_TO_MANY, array(), null, 'CASCADE', 'CryosphereWhats');
+        $this->addRelation('CryosphereWhatSpecefic', '\\CryoConnectDB\\CryosphereWhatSpecefic', RelationMap::MANY_TO_MANY, array(), null, 'CASCADE', 'CryosphereWhatSpecefics');
+        $this->addRelation('CryosphereWhen', '\\CryoConnectDB\\CryosphereWhen', RelationMap::MANY_TO_MANY, array(), 'CASCADE', 'CASCADE', 'CryosphereWhens');
+        $this->addRelation('CryosphereWhere', '\\CryoConnectDB\\CryosphereWhere', RelationMap::MANY_TO_MANY, array(), 'CASCADE', 'CASCADE', 'CryosphereWheres');
+        $this->addRelation('Languages', '\\CryoConnectDB\\Languages', RelationMap::MANY_TO_MANY, array(), null, null, 'Languagess');
     } // buildRelations()
     /**
      * Method to invalidate the instance pool of all tables related to experts     * by a foreign key with ON DELETE CASCADE
@@ -268,17 +276,17 @@ class ExpertsTableMap extends TableMap
     {
         // Invalidate objects in related instance pools,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        ExpertCryosphereMethodsTableMap::clearInstancePool();
-        ExpertPrimaryAffiliationTableMap::clearInstancePool();
-        ExpertSecondaryAffiliationTableMap::clearInstancePool();
         ExpertCareerStageTableMap::clearInstancePool();
         ExpertContactTableMap::clearInstancePool();
+        ExpertCryosphereMethodsTableMap::clearInstancePool();
         ExpertCryosphereWhatTableMap::clearInstancePool();
         ExpertCryosphereWhatSpeceficTableMap::clearInstancePool();
-        ExpertFieldWorkTableMap::clearInstancePool();
-        ExpertLanguagesTableMap::clearInstancePool();
         ExpertCryosphereWhenTableMap::clearInstancePool();
         ExpertCryosphereWhereTableMap::clearInstancePool();
+        ExpertFieldWorkTableMap::clearInstancePool();
+        ExpertLanguagesTableMap::clearInstancePool();
+        ExpertPrimaryAffiliationTableMap::clearInstancePool();
+        ExpertSecondaryAffiliationTableMap::clearInstancePool();
     }
 
     /**

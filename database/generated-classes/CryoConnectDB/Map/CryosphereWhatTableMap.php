@@ -39,7 +39,7 @@ class CryosphereWhatTableMap extends TableMap
     /**
      * The default database name for this class
      */
-    const DATABASE_NAME = 'cryo_connect';
+    const DATABASE_NAME = 'default';
 
     /**
      * The table name for this class
@@ -166,6 +166,8 @@ class CryosphereWhatTableMap extends TableMap
     1 => ':id',
   ),
 ), null, 'CASCADE', 'InformationSeekerConnectRequestCryosphereWhats', false);
+        $this->addRelation('Experts', '\\CryoConnectDB\\Experts', RelationMap::MANY_TO_MANY, array(), 'CASCADE', 'CASCADE', 'Expertss');
+        $this->addRelation('InformationSeekerConnectRequest', '\\CryoConnectDB\\InformationSeekerConnectRequest', RelationMap::MANY_TO_MANY, array(), 'CASCADE', 'CASCADE', 'InformationSeekerConnectRequests');
     } // buildRelations()
 
     /**

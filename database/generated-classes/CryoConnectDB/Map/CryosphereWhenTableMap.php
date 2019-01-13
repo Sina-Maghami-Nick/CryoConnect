@@ -39,7 +39,7 @@ class CryosphereWhenTableMap extends TableMap
     /**
      * The default database name for this class
      */
-    const DATABASE_NAME = 'cryo_connect';
+    const DATABASE_NAME = 'default';
 
     /**
      * The table name for this class
@@ -159,6 +159,7 @@ class CryosphereWhenTableMap extends TableMap
     1 => ':id',
   ),
 ), 'CASCADE', 'CASCADE', 'ExpertCryosphereWhens', false);
+        $this->addRelation('Experts', '\\CryoConnectDB\\Experts', RelationMap::MANY_TO_MANY, array(), 'CASCADE', 'CASCADE', 'Expertss');
     } // buildRelations()
     /**
      * Method to invalidate the instance pool of all tables related to cryosphere_when     * by a foreign key with ON DELETE CASCADE

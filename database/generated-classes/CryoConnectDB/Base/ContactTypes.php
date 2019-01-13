@@ -8,8 +8,12 @@ use CryoConnectDB\ContactTypes as ChildContactTypes;
 use CryoConnectDB\ContactTypesQuery as ChildContactTypesQuery;
 use CryoConnectDB\ExpertContact as ChildExpertContact;
 use CryoConnectDB\ExpertContactQuery as ChildExpertContactQuery;
+use CryoConnectDB\Experts as ChildExperts;
+use CryoConnectDB\ExpertsQuery as ChildExpertsQuery;
 use CryoConnectDB\InformationSeekerContact as ChildInformationSeekerContact;
 use CryoConnectDB\InformationSeekerContactQuery as ChildInformationSeekerContactQuery;
+use CryoConnectDB\InformationSeekers as ChildInformationSeekers;
+use CryoConnectDB\InformationSeekersQuery as ChildInformationSeekersQuery;
 use CryoConnectDB\Map\ContactTypesTableMap;
 use CryoConnectDB\Map\ExpertContactTableMap;
 use CryoConnectDB\Map\InformationSeekerContactTableMap;
@@ -19,6 +23,7 @@ use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
 use Propel\Runtime\Collection\ObjectCollection;
+use Propel\Runtime\Collection\ObjectCombinationCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\LogicException;
@@ -94,12 +99,53 @@ abstract class ContactTypes implements ActiveRecordInterface
     protected $collInformationSeekerContactsPartial;
 
     /**
+     * @var        ObjectCollection|ChildExperts[] Cross Collection to store aggregation of ChildExperts objects.
+     */
+    protected $collExpertss;
+
+    /**
+     * @var bool
+     */
+    protected $collExpertssPartial;
+
+    /**
+     * @var ObjectCombinationCollection Cross CombinationCollection to store aggregation of ChildInformationSeekers combinations.
+     */
+    protected $combinationCollInformationSeekersIds;
+
+    /**
+     * @var bool
+     */
+    protected $combinationCollInformationSeekersIdsPartial;
+
+    /**
+     * @var        ObjectCollection|ChildInformationSeekers[] Cross Collection to store aggregation of ChildInformationSeekers objects.
+     */
+    protected $collInformationSeekerss;
+
+    /**
+     * @var bool
+     */
+    protected $collInformationSeekerssPartial;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      *
      * @var boolean
      */
     protected $alreadyInSave = false;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildExperts[]
+     */
+    protected $expertssScheduledForDeletion = null;
+
+    /**
+     * @var ObjectCombinationCollection Cross CombinationCollection to store aggregation of ChildInformationSeekers combinations.
+     */
+    protected $combinationCollInformationSeekersIdsScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -512,6 +558,8 @@ abstract class ContactTypes implements ActiveRecordInterface
 
             $this->collInformationSeekerContacts = null;
 
+            $this->collExpertss = null;
+            $this->collInformationSeekersIds = null;
         } // if (deep)
     }
 
@@ -625,6 +673,71 @@ abstract class ContactTypes implements ActiveRecordInterface
                 }
                 $this->resetModified();
             }
+
+            if ($this->expertssScheduledForDeletion !== null) {
+                if (!$this->expertssScheduledForDeletion->isEmpty()) {
+                    $pks = array();
+                    foreach ($this->expertssScheduledForDeletion as $entry) {
+                        $entryPk = [];
+
+                        $entryPk[1] = $this->getId();
+                        $entryPk[0] = $entry->getId();
+                        $pks[] = $entryPk;
+                    }
+
+                    \CryoConnectDB\ExpertContactQuery::create()
+                        ->filterByPrimaryKeys($pks)
+                        ->delete($con);
+
+                    $this->expertssScheduledForDeletion = null;
+                }
+
+            }
+
+            if ($this->collExpertss) {
+                foreach ($this->collExpertss as $experts) {
+                    if (!$experts->isDeleted() && ($experts->isNew() || $experts->isModified())) {
+                        $experts->save($con);
+                    }
+                }
+            }
+
+
+            if ($this->combinationCollInformationSeekersIdsScheduledForDeletion !== null) {
+                if (!$this->combinationCollInformationSeekersIdsScheduledForDeletion->isEmpty()) {
+                    $pks = array();
+                    foreach ($this->combinationCollInformationSeekersIdsScheduledForDeletion as $combination) {
+                        $entryPk = [];
+
+                        $entryPk[2] = $this->getId();
+                        $entryPk[1] = $combination[0]->getId();
+                        //$combination[1] = Id;
+                        $entryPk[0] = $combination[1];
+
+                        $pks[] = $entryPk;
+                    }
+
+                    \CryoConnectDB\InformationSeekerContactQuery::create()
+                        ->filterByPrimaryKeys($pks)
+                        ->delete($con);
+
+                    $this->combinationCollInformationSeekersIdsScheduledForDeletion = null;
+                }
+
+            }
+
+            if (null !== $this->combinationCollInformationSeekersIds) {
+                foreach ($this->combinationCollInformationSeekersIds as $combination) {
+
+                    //$combination[0] = InformationSeekers (information_seeker_contact_fk_77d198)
+                    if (!$combination[0]->isDeleted() && ($combination[0]->isNew() || $combination[0]->isModified())) {
+                        $combination[0]->save($con);
+                    }
+
+                    //$combination[1] = Id; Nothing to save.
+                }
+            }
+
 
             if ($this->expertContactsScheduledForDeletion !== null) {
                 if (!$this->expertContactsScheduledForDeletion->isEmpty()) {
@@ -1241,7 +1354,10 @@ abstract class ContactTypes implements ActiveRecordInterface
         $expertContactsToDelete = $this->getExpertContacts(new Criteria(), $con)->diff($expertContacts);
 
 
-        $this->expertContactsScheduledForDeletion = $expertContactsToDelete;
+        //since at least one column in the foreign key is at the same time a PK
+        //we can not just set a PK to NULL in the lines below. We have to store
+        //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
+        $this->expertContactsScheduledForDeletion = clone $expertContactsToDelete;
 
         foreach ($expertContactsToDelete as $expertContactRemoved) {
             $expertContactRemoved->setContactTypes(null);
@@ -1491,7 +1607,10 @@ abstract class ContactTypes implements ActiveRecordInterface
         $informationSeekerContactsToDelete = $this->getInformationSeekerContacts(new Criteria(), $con)->diff($informationSeekerContacts);
 
 
-        $this->informationSeekerContactsScheduledForDeletion = $informationSeekerContactsToDelete;
+        //since at least one column in the foreign key is at the same time a PK
+        //we can not just set a PK to NULL in the lines below. We have to store
+        //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
+        $this->informationSeekerContactsScheduledForDeletion = clone $informationSeekerContactsToDelete;
 
         foreach ($informationSeekerContactsToDelete as $informationSeekerContactRemoved) {
             $informationSeekerContactRemoved->setContactTypes(null);
@@ -1622,6 +1741,563 @@ abstract class ContactTypes implements ActiveRecordInterface
     }
 
     /**
+     * Clears out the collExpertss collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addExpertss()
+     */
+    public function clearExpertss()
+    {
+        $this->collExpertss = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Initializes the collExpertss crossRef collection.
+     *
+     * By default this just sets the collExpertss collection to an empty collection (like clearExpertss());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @return void
+     */
+    public function initExpertss()
+    {
+        $collectionClassName = ExpertContactTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collExpertss = new $collectionClassName;
+        $this->collExpertssPartial = true;
+        $this->collExpertss->setModel('\CryoConnectDB\Experts');
+    }
+
+    /**
+     * Checks if the collExpertss collection is loaded.
+     *
+     * @return bool
+     */
+    public function isExpertssLoaded()
+    {
+        return null !== $this->collExpertss;
+    }
+
+    /**
+     * Gets a collection of ChildExperts objects related by a many-to-many relationship
+     * to the current object by way of the expert_contact cross-reference table.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildContactTypes is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return ObjectCollection|ChildExperts[] List of ChildExperts objects
+     */
+    public function getExpertss(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collExpertssPartial && !$this->isNew();
+        if (null === $this->collExpertss || null !== $criteria || $partial) {
+            if ($this->isNew()) {
+                // return empty collection
+                if (null === $this->collExpertss) {
+                    $this->initExpertss();
+                }
+            } else {
+
+                $query = ChildExpertsQuery::create(null, $criteria)
+                    ->filterByContactTypes($this);
+                $collExpertss = $query->find($con);
+                if (null !== $criteria) {
+                    return $collExpertss;
+                }
+
+                if ($partial && $this->collExpertss) {
+                    //make sure that already added objects gets added to the list of the database.
+                    foreach ($this->collExpertss as $obj) {
+                        if (!$collExpertss->contains($obj)) {
+                            $collExpertss[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collExpertss = $collExpertss;
+                $this->collExpertssPartial = false;
+            }
+        }
+
+        return $this->collExpertss;
+    }
+
+    /**
+     * Sets a collection of Experts objects related by a many-to-many relationship
+     * to the current object by way of the expert_contact cross-reference table.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param  Collection $expertss A Propel collection.
+     * @param  ConnectionInterface $con Optional connection object
+     * @return $this|ChildContactTypes The current object (for fluent API support)
+     */
+    public function setExpertss(Collection $expertss, ConnectionInterface $con = null)
+    {
+        $this->clearExpertss();
+        $currentExpertss = $this->getExpertss();
+
+        $expertssScheduledForDeletion = $currentExpertss->diff($expertss);
+
+        foreach ($expertssScheduledForDeletion as $toDelete) {
+            $this->removeExperts($toDelete);
+        }
+
+        foreach ($expertss as $experts) {
+            if (!$currentExpertss->contains($experts)) {
+                $this->doAddExperts($experts);
+            }
+        }
+
+        $this->collExpertssPartial = false;
+        $this->collExpertss = $expertss;
+
+        return $this;
+    }
+
+    /**
+     * Gets the number of Experts objects related by a many-to-many relationship
+     * to the current object by way of the expert_contact cross-reference table.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      boolean $distinct Set to true to force count distinct
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return int the number of related Experts objects
+     */
+    public function countExpertss(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collExpertssPartial && !$this->isNew();
+        if (null === $this->collExpertss || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collExpertss) {
+                return 0;
+            } else {
+
+                if ($partial && !$criteria) {
+                    return count($this->getExpertss());
+                }
+
+                $query = ChildExpertsQuery::create(null, $criteria);
+                if ($distinct) {
+                    $query->distinct();
+                }
+
+                return $query
+                    ->filterByContactTypes($this)
+                    ->count($con);
+            }
+        } else {
+            return count($this->collExpertss);
+        }
+    }
+
+    /**
+     * Associate a ChildExperts to this object
+     * through the expert_contact cross reference table.
+     *
+     * @param ChildExperts $experts
+     * @return ChildContactTypes The current object (for fluent API support)
+     */
+    public function addExperts(ChildExperts $experts)
+    {
+        if ($this->collExpertss === null) {
+            $this->initExpertss();
+        }
+
+        if (!$this->getExpertss()->contains($experts)) {
+            // only add it if the **same** object is not already associated
+            $this->collExpertss->push($experts);
+            $this->doAddExperts($experts);
+        }
+
+        return $this;
+    }
+
+    /**
+     *
+     * @param ChildExperts $experts
+     */
+    protected function doAddExperts(ChildExperts $experts)
+    {
+        $expertContact = new ChildExpertContact();
+
+        $expertContact->setExperts($experts);
+
+        $expertContact->setContactTypes($this);
+
+        $this->addExpertContact($expertContact);
+
+        // set the back reference to this object directly as using provided method either results
+        // in endless loop or in multiple relations
+        if (!$experts->isContactTypessLoaded()) {
+            $experts->initContactTypess();
+            $experts->getContactTypess()->push($this);
+        } elseif (!$experts->getContactTypess()->contains($this)) {
+            $experts->getContactTypess()->push($this);
+        }
+
+    }
+
+    /**
+     * Remove experts of this object
+     * through the expert_contact cross reference table.
+     *
+     * @param ChildExperts $experts
+     * @return ChildContactTypes The current object (for fluent API support)
+     */
+    public function removeExperts(ChildExperts $experts)
+    {
+        if ($this->getExpertss()->contains($experts)) {
+            $expertContact = new ChildExpertContact();
+            $expertContact->setExperts($experts);
+            if ($experts->isContactTypessLoaded()) {
+                //remove the back reference if available
+                $experts->getContactTypess()->removeObject($this);
+            }
+
+            $expertContact->setContactTypes($this);
+            $this->removeExpertContact(clone $expertContact);
+            $expertContact->clear();
+
+            $this->collExpertss->remove($this->collExpertss->search($experts));
+
+            if (null === $this->expertssScheduledForDeletion) {
+                $this->expertssScheduledForDeletion = clone $this->collExpertss;
+                $this->expertssScheduledForDeletion->clear();
+            }
+
+            $this->expertssScheduledForDeletion->push($experts);
+        }
+
+
+        return $this;
+    }
+
+    /**
+     * Clears out the collInformationSeekersIds collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addInformationSeekersIds()
+     */
+    public function clearInformationSeekersIds()
+    {
+        $this->collInformationSeekersIds = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Initializes the combinationCollInformationSeekersIds crossRef collection.
+     *
+     * By default this just sets the combinationCollInformationSeekersIds collection to an empty collection (like clearInformationSeekersIds());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @return void
+     */
+    public function initInformationSeekersIds()
+    {
+        $this->combinationCollInformationSeekersIds = new ObjectCombinationCollection;
+        $this->combinationCollInformationSeekersIdsPartial = true;
+    }
+
+    /**
+     * Checks if the combinationCollInformationSeekersIds collection is loaded.
+     *
+     * @return bool
+     */
+    public function isInformationSeekersIdsLoaded()
+    {
+        return null !== $this->combinationCollInformationSeekersIds;
+    }
+
+    /**
+     * Returns a new query object pre configured with filters from current object and given arguments to query the database.
+     *
+     * @param int $id
+     * @param Criteria $criteria
+     *
+     * @return ChildInformationSeekersQuery
+     */
+    public function createInformationSeekerssQuery($id = null, Criteria $criteria = null)
+    {
+        $criteria = ChildInformationSeekersQuery::create($criteria)
+            ->filterByContactTypes($this);
+
+        $informationSeekerContactQuery = $criteria->useInformationSeekerContactQuery();
+
+        if (null !== $id) {
+            $informationSeekerContactQuery->filterById($id);
+        }
+
+        $informationSeekerContactQuery->endUse();
+
+        return $criteria;
+    }
+
+    /**
+     * Gets a combined collection of ChildInformationSeekers objects related by a many-to-many relationship
+     * to the current object by way of the information_seeker_contact cross-reference table.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildContactTypes is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return ObjectCombinationCollection Combination list of ChildInformationSeekers objects
+     */
+    public function getInformationSeekersIds($criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->combinationCollInformationSeekersIdsPartial && !$this->isNew();
+        if (null === $this->combinationCollInformationSeekersIds || null !== $criteria || $partial) {
+            if ($this->isNew()) {
+                // return empty collection
+                if (null === $this->combinationCollInformationSeekersIds) {
+                    $this->initInformationSeekersIds();
+                }
+            } else {
+
+                $query = ChildInformationSeekerContactQuery::create(null, $criteria)
+                    ->filterByContactTypes($this)
+                    ->joinInformationSeekers()
+                ;
+
+                $items = $query->find($con);
+                $combinationCollInformationSeekersIds = new ObjectCombinationCollection();
+                foreach ($items as $item) {
+                    $combination = [];
+
+                    $combination[] = $item->getInformationSeekers();
+                    $combination[] = $item->getId();
+                    $combinationCollInformationSeekersIds[] = $combination;
+                }
+
+                if (null !== $criteria) {
+                    return $combinationCollInformationSeekersIds;
+                }
+
+                if ($partial && $this->combinationCollInformationSeekersIds) {
+                    //make sure that already added objects gets added to the list of the database.
+                    foreach ($this->combinationCollInformationSeekersIds as $obj) {
+                        if (!call_user_func_array([$combinationCollInformationSeekersIds, 'contains'], $obj)) {
+                            $combinationCollInformationSeekersIds[] = $obj;
+                        }
+                    }
+                }
+
+                $this->combinationCollInformationSeekersIds = $combinationCollInformationSeekersIds;
+                $this->combinationCollInformationSeekersIdsPartial = false;
+            }
+        }
+
+        return $this->combinationCollInformationSeekersIds;
+    }
+
+    /**
+     * Returns a not cached ObjectCollection of ChildInformationSeekers objects. This will hit always the databases.
+     * If you have attached new ChildInformationSeekers object to this object you need to call `save` first to get
+     * the correct return value. Use getInformationSeekersIds() to get the current internal state.
+     *
+     * @param int $id
+     * @param Criteria $criteria
+     * @param ConnectionInterface $con
+     *
+     * @return ChildInformationSeekers[]|ObjectCollection
+     */
+    public function getInformationSeekerss($id = null, Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        return $this->createInformationSeekerssQuery($id, $criteria)->find($con);
+    }
+
+    /**
+     * Sets a collection of ChildInformationSeekers objects related by a many-to-many relationship
+     * to the current object by way of the information_seeker_contact cross-reference table.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param  Collection $informationSeekersIds A Propel collection.
+     * @param  ConnectionInterface $con Optional connection object
+     * @return $this|ChildContactTypes The current object (for fluent API support)
+     */
+    public function setInformationSeekersIds(Collection $informationSeekersIds, ConnectionInterface $con = null)
+    {
+        $this->clearInformationSeekersIds();
+        $currentInformationSeekersIds = $this->getInformationSeekersIds();
+
+        $combinationCollInformationSeekersIdsScheduledForDeletion = $currentInformationSeekersIds->diff($informationSeekersIds);
+
+        foreach ($combinationCollInformationSeekersIdsScheduledForDeletion as $toDelete) {
+            call_user_func_array([$this, 'removeInformationSeekersId'], $toDelete);
+        }
+
+        foreach ($informationSeekersIds as $informationSeekersId) {
+            if (!call_user_func_array([$currentInformationSeekersIds, 'contains'], $informationSeekersId)) {
+                call_user_func_array([$this, 'doAddInformationSeekersId'], $informationSeekersId);
+            }
+        }
+
+        $this->combinationCollInformationSeekersIdsPartial = false;
+        $this->combinationCollInformationSeekersIds = $informationSeekersIds;
+
+        return $this;
+    }
+
+    /**
+     * Gets the number of ChildInformationSeekers objects related by a many-to-many relationship
+     * to the current object by way of the information_seeker_contact cross-reference table.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      boolean $distinct Set to true to force count distinct
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return int the number of related ChildInformationSeekers objects
+     */
+    public function countInformationSeekersIds(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->combinationCollInformationSeekersIdsPartial && !$this->isNew();
+        if (null === $this->combinationCollInformationSeekersIds || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->combinationCollInformationSeekersIds) {
+                return 0;
+            } else {
+
+                if ($partial && !$criteria) {
+                    return count($this->getInformationSeekersIds());
+                }
+
+                $query = ChildInformationSeekerContactQuery::create(null, $criteria);
+                if ($distinct) {
+                    $query->distinct();
+                }
+
+                return $query
+                    ->filterByContactTypes($this)
+                    ->count($con);
+            }
+        } else {
+            return count($this->combinationCollInformationSeekersIds);
+        }
+    }
+
+    /**
+     * Returns the not cached count of ChildInformationSeekers objects. This will hit always the databases.
+     * If you have attached new ChildInformationSeekers object to this object you need to call `save` first to get
+     * the correct return value. Use getInformationSeekersIds() to get the current internal state.
+     *
+     * @param int $id
+     * @param Criteria $criteria
+     * @param ConnectionInterface $con
+     *
+     * @return integer
+     */
+    public function countInformationSeekerss($id = null, Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        return $this->createInformationSeekerssQuery($id, $criteria)->count($con);
+    }
+
+    /**
+     * Associate a ChildInformationSeekers to this object
+     * through the information_seeker_contact cross reference table.
+     *
+     * @param ChildInformationSeekers $informationSeekers,
+     * @param int $id
+     * @return ChildContactTypes The current object (for fluent API support)
+     */
+    public function addInformationSeekers(ChildInformationSeekers $informationSeekers, $id)
+    {
+        if ($this->combinationCollInformationSeekersIds === null) {
+            $this->initInformationSeekersIds();
+        }
+
+        if (!$this->getInformationSeekersIds()->contains($informationSeekers, $id)) {
+            // only add it if the **same** object is not already associated
+            $this->combinationCollInformationSeekersIds->push($informationSeekers, $id);
+            $this->doAddInformationSeekersId($informationSeekers, $id);
+        }
+
+        return $this;
+    }
+
+    /**
+     *
+     * @param ChildInformationSeekers $informationSeekers,
+     * @param int $id
+     */
+    protected function doAddInformationSeekersId(ChildInformationSeekers $informationSeekers, $id)
+    {
+        $informationSeekerContact = new ChildInformationSeekerContact();
+
+        $informationSeekerContact->setInformationSeekers($informationSeekers);
+        $informationSeekerContact->setId($id);
+
+
+        $informationSeekerContact->setContactTypes($this);
+
+        $this->addInformationSeekerContact($informationSeekerContact);
+
+        // set the back reference to this object directly as using provided method either results
+        // in endless loop or in multiple relations
+        if ($informationSeekers->isContactTypesIdsLoaded()) {
+            $informationSeekers->initContactTypesIds();
+            $informationSeekers->getContactTypesIds()->push($this, $id);
+        } elseif (!$informationSeekers->getContactTypesIds()->contains($this, $id)) {
+            $informationSeekers->getContactTypesIds()->push($this, $id);
+        }
+
+    }
+
+    /**
+     * Remove informationSeekers, id of this object
+     * through the information_seeker_contact cross reference table.
+     *
+     * @param ChildInformationSeekers $informationSeekers,
+     * @param int $id
+     * @return ChildContactTypes The current object (for fluent API support)
+     */
+    public function removeInformationSeekersId(ChildInformationSeekers $informationSeekers, $id)
+    {
+        if ($this->getInformationSeekersIds()->contains($informationSeekers, $id)) {
+            $informationSeekerContact = new ChildInformationSeekerContact();
+            $informationSeekerContact->setInformationSeekers($informationSeekers);
+            if ($informationSeekers->isContactTypesIdsLoaded()) {
+                //remove the back reference if available
+                $informationSeekers->getContactTypesIds()->removeObject($this, $id);
+            }
+
+            $informationSeekerContact->setId($id);
+            $informationSeekerContact->setContactTypes($this);
+            $this->removeInformationSeekerContact(clone $informationSeekerContact);
+            $informationSeekerContact->clear();
+
+            $this->combinationCollInformationSeekersIds->remove($this->combinationCollInformationSeekersIds->search($informationSeekers, $id));
+
+            if (null === $this->combinationCollInformationSeekersIdsScheduledForDeletion) {
+                $this->combinationCollInformationSeekersIdsScheduledForDeletion = clone $this->combinationCollInformationSeekersIds;
+                $this->combinationCollInformationSeekersIdsScheduledForDeletion->clear();
+            }
+
+            $this->combinationCollInformationSeekersIdsScheduledForDeletion->push($informationSeekers, $id);
+        }
+
+
+        return $this;
+    }
+
+    /**
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
      * change of those foreign objects when you call `save` there).
@@ -1658,10 +2334,22 @@ abstract class ContactTypes implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collExpertss) {
+                foreach ($this->collExpertss as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
+            if ($this->combinationCollInformationSeekersIds) {
+                foreach ($this->combinationCollInformationSeekersIds as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
         } // if ($deep)
 
         $this->collExpertContacts = null;
         $this->collInformationSeekerContacts = null;
+        $this->collExpertss = null;
+        $this->combinationCollInformationSeekersIds = null;
     }
 
     /**

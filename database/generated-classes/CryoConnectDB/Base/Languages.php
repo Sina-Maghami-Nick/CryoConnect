@@ -6,10 +6,16 @@ use \Exception;
 use \PDO;
 use CryoConnectDB\ExpertLanguages as ChildExpertLanguages;
 use CryoConnectDB\ExpertLanguagesQuery as ChildExpertLanguagesQuery;
+use CryoConnectDB\Experts as ChildExperts;
+use CryoConnectDB\ExpertsQuery as ChildExpertsQuery;
+use CryoConnectDB\InformationSeekerConnectRequest as ChildInformationSeekerConnectRequest;
 use CryoConnectDB\InformationSeekerConnectRequestLanguages as ChildInformationSeekerConnectRequestLanguages;
 use CryoConnectDB\InformationSeekerConnectRequestLanguagesQuery as ChildInformationSeekerConnectRequestLanguagesQuery;
+use CryoConnectDB\InformationSeekerConnectRequestQuery as ChildInformationSeekerConnectRequestQuery;
 use CryoConnectDB\InformationSeekerLanguages as ChildInformationSeekerLanguages;
 use CryoConnectDB\InformationSeekerLanguagesQuery as ChildInformationSeekerLanguagesQuery;
+use CryoConnectDB\InformationSeekers as ChildInformationSeekers;
+use CryoConnectDB\InformationSeekersQuery as ChildInformationSeekersQuery;
 use CryoConnectDB\Languages as ChildLanguages;
 use CryoConnectDB\LanguagesQuery as ChildLanguagesQuery;
 use CryoConnectDB\Map\ExpertLanguagesTableMap;
@@ -103,12 +109,60 @@ abstract class Languages implements ActiveRecordInterface
     protected $collInformationSeekerLanguagessPartial;
 
     /**
+     * @var        ObjectCollection|ChildExperts[] Cross Collection to store aggregation of ChildExperts objects.
+     */
+    protected $collExpertss;
+
+    /**
+     * @var bool
+     */
+    protected $collExpertssPartial;
+
+    /**
+     * @var        ObjectCollection|ChildInformationSeekerConnectRequest[] Cross Collection to store aggregation of ChildInformationSeekerConnectRequest objects.
+     */
+    protected $collInformationSeekerConnectRequests;
+
+    /**
+     * @var bool
+     */
+    protected $collInformationSeekerConnectRequestsPartial;
+
+    /**
+     * @var        ObjectCollection|ChildInformationSeekers[] Cross Collection to store aggregation of ChildInformationSeekers objects.
+     */
+    protected $collInformationSeekerss;
+
+    /**
+     * @var bool
+     */
+    protected $collInformationSeekerssPartial;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      *
      * @var boolean
      */
     protected $alreadyInSave = false;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildExperts[]
+     */
+    protected $expertssScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildInformationSeekerConnectRequest[]
+     */
+    protected $informationSeekerConnectRequestsScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildInformationSeekers[]
+     */
+    protected $informationSeekerssScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -529,6 +583,9 @@ abstract class Languages implements ActiveRecordInterface
 
             $this->collInformationSeekerLanguagess = null;
 
+            $this->collExpertss = null;
+            $this->collInformationSeekerConnectRequests = null;
+            $this->collInformationSeekerss = null;
         } // if (deep)
     }
 
@@ -642,6 +699,93 @@ abstract class Languages implements ActiveRecordInterface
                 }
                 $this->resetModified();
             }
+
+            if ($this->expertssScheduledForDeletion !== null) {
+                if (!$this->expertssScheduledForDeletion->isEmpty()) {
+                    $pks = array();
+                    foreach ($this->expertssScheduledForDeletion as $entry) {
+                        $entryPk = [];
+
+                        $entryPk[1] = $this->getLanguageCode();
+                        $entryPk[0] = $entry->getId();
+                        $pks[] = $entryPk;
+                    }
+
+                    \CryoConnectDB\ExpertLanguagesQuery::create()
+                        ->filterByPrimaryKeys($pks)
+                        ->delete($con);
+
+                    $this->expertssScheduledForDeletion = null;
+                }
+
+            }
+
+            if ($this->collExpertss) {
+                foreach ($this->collExpertss as $experts) {
+                    if (!$experts->isDeleted() && ($experts->isNew() || $experts->isModified())) {
+                        $experts->save($con);
+                    }
+                }
+            }
+
+
+            if ($this->informationSeekerConnectRequestsScheduledForDeletion !== null) {
+                if (!$this->informationSeekerConnectRequestsScheduledForDeletion->isEmpty()) {
+                    $pks = array();
+                    foreach ($this->informationSeekerConnectRequestsScheduledForDeletion as $entry) {
+                        $entryPk = [];
+
+                        $entryPk[1] = $this->getLanguageCode();
+                        $entryPk[0] = $entry->getId();
+                        $pks[] = $entryPk;
+                    }
+
+                    \CryoConnectDB\InformationSeekerConnectRequestLanguagesQuery::create()
+                        ->filterByPrimaryKeys($pks)
+                        ->delete($con);
+
+                    $this->informationSeekerConnectRequestsScheduledForDeletion = null;
+                }
+
+            }
+
+            if ($this->collInformationSeekerConnectRequests) {
+                foreach ($this->collInformationSeekerConnectRequests as $informationSeekerConnectRequest) {
+                    if (!$informationSeekerConnectRequest->isDeleted() && ($informationSeekerConnectRequest->isNew() || $informationSeekerConnectRequest->isModified())) {
+                        $informationSeekerConnectRequest->save($con);
+                    }
+                }
+            }
+
+
+            if ($this->informationSeekerssScheduledForDeletion !== null) {
+                if (!$this->informationSeekerssScheduledForDeletion->isEmpty()) {
+                    $pks = array();
+                    foreach ($this->informationSeekerssScheduledForDeletion as $entry) {
+                        $entryPk = [];
+
+                        $entryPk[1] = $this->getLanguageCode();
+                        $entryPk[0] = $entry->getId();
+                        $pks[] = $entryPk;
+                    }
+
+                    \CryoConnectDB\InformationSeekerLanguagesQuery::create()
+                        ->filterByPrimaryKeys($pks)
+                        ->delete($con);
+
+                    $this->informationSeekerssScheduledForDeletion = null;
+                }
+
+            }
+
+            if ($this->collInformationSeekerss) {
+                foreach ($this->collInformationSeekerss as $informationSeekers) {
+                    if (!$informationSeekers->isDeleted() && ($informationSeekers->isNew() || $informationSeekers->isModified())) {
+                        $informationSeekers->save($con);
+                    }
+                }
+            }
+
 
             if ($this->expertLanguagessScheduledForDeletion !== null) {
                 if (!$this->expertLanguagessScheduledForDeletion->isEmpty()) {
@@ -1289,7 +1433,10 @@ abstract class Languages implements ActiveRecordInterface
         $expertLanguagessToDelete = $this->getExpertLanguagess(new Criteria(), $con)->diff($expertLanguagess);
 
 
-        $this->expertLanguagessScheduledForDeletion = $expertLanguagessToDelete;
+        //since at least one column in the foreign key is at the same time a PK
+        //we can not just set a PK to NULL in the lines below. We have to store
+        //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
+        $this->expertLanguagessScheduledForDeletion = clone $expertLanguagessToDelete;
 
         foreach ($expertLanguagessToDelete as $expertLanguagesRemoved) {
             $expertLanguagesRemoved->setLanguages(null);
@@ -1539,7 +1686,10 @@ abstract class Languages implements ActiveRecordInterface
         $informationSeekerConnectRequestLanguagessToDelete = $this->getInformationSeekerConnectRequestLanguagess(new Criteria(), $con)->diff($informationSeekerConnectRequestLanguagess);
 
 
-        $this->informationSeekerConnectRequestLanguagessScheduledForDeletion = $informationSeekerConnectRequestLanguagessToDelete;
+        //since at least one column in the foreign key is at the same time a PK
+        //we can not just set a PK to NULL in the lines below. We have to store
+        //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
+        $this->informationSeekerConnectRequestLanguagessScheduledForDeletion = clone $informationSeekerConnectRequestLanguagessToDelete;
 
         foreach ($informationSeekerConnectRequestLanguagessToDelete as $informationSeekerConnectRequestLanguagesRemoved) {
             $informationSeekerConnectRequestLanguagesRemoved->setLanguages(null);
@@ -1789,7 +1939,10 @@ abstract class Languages implements ActiveRecordInterface
         $informationSeekerLanguagessToDelete = $this->getInformationSeekerLanguagess(new Criteria(), $con)->diff($informationSeekerLanguagess);
 
 
-        $this->informationSeekerLanguagessScheduledForDeletion = $informationSeekerLanguagessToDelete;
+        //since at least one column in the foreign key is at the same time a PK
+        //we can not just set a PK to NULL in the lines below. We have to store
+        //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
+        $this->informationSeekerLanguagessScheduledForDeletion = clone $informationSeekerLanguagessToDelete;
 
         foreach ($informationSeekerLanguagessToDelete as $informationSeekerLanguagesRemoved) {
             $informationSeekerLanguagesRemoved->setLanguages(null);
@@ -1920,6 +2073,735 @@ abstract class Languages implements ActiveRecordInterface
     }
 
     /**
+     * Clears out the collExpertss collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addExpertss()
+     */
+    public function clearExpertss()
+    {
+        $this->collExpertss = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Initializes the collExpertss crossRef collection.
+     *
+     * By default this just sets the collExpertss collection to an empty collection (like clearExpertss());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @return void
+     */
+    public function initExpertss()
+    {
+        $collectionClassName = ExpertLanguagesTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collExpertss = new $collectionClassName;
+        $this->collExpertssPartial = true;
+        $this->collExpertss->setModel('\CryoConnectDB\Experts');
+    }
+
+    /**
+     * Checks if the collExpertss collection is loaded.
+     *
+     * @return bool
+     */
+    public function isExpertssLoaded()
+    {
+        return null !== $this->collExpertss;
+    }
+
+    /**
+     * Gets a collection of ChildExperts objects related by a many-to-many relationship
+     * to the current object by way of the expert_languages cross-reference table.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildLanguages is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return ObjectCollection|ChildExperts[] List of ChildExperts objects
+     */
+    public function getExpertss(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collExpertssPartial && !$this->isNew();
+        if (null === $this->collExpertss || null !== $criteria || $partial) {
+            if ($this->isNew()) {
+                // return empty collection
+                if (null === $this->collExpertss) {
+                    $this->initExpertss();
+                }
+            } else {
+
+                $query = ChildExpertsQuery::create(null, $criteria)
+                    ->filterByLanguages($this);
+                $collExpertss = $query->find($con);
+                if (null !== $criteria) {
+                    return $collExpertss;
+                }
+
+                if ($partial && $this->collExpertss) {
+                    //make sure that already added objects gets added to the list of the database.
+                    foreach ($this->collExpertss as $obj) {
+                        if (!$collExpertss->contains($obj)) {
+                            $collExpertss[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collExpertss = $collExpertss;
+                $this->collExpertssPartial = false;
+            }
+        }
+
+        return $this->collExpertss;
+    }
+
+    /**
+     * Sets a collection of Experts objects related by a many-to-many relationship
+     * to the current object by way of the expert_languages cross-reference table.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param  Collection $expertss A Propel collection.
+     * @param  ConnectionInterface $con Optional connection object
+     * @return $this|ChildLanguages The current object (for fluent API support)
+     */
+    public function setExpertss(Collection $expertss, ConnectionInterface $con = null)
+    {
+        $this->clearExpertss();
+        $currentExpertss = $this->getExpertss();
+
+        $expertssScheduledForDeletion = $currentExpertss->diff($expertss);
+
+        foreach ($expertssScheduledForDeletion as $toDelete) {
+            $this->removeExperts($toDelete);
+        }
+
+        foreach ($expertss as $experts) {
+            if (!$currentExpertss->contains($experts)) {
+                $this->doAddExperts($experts);
+            }
+        }
+
+        $this->collExpertssPartial = false;
+        $this->collExpertss = $expertss;
+
+        return $this;
+    }
+
+    /**
+     * Gets the number of Experts objects related by a many-to-many relationship
+     * to the current object by way of the expert_languages cross-reference table.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      boolean $distinct Set to true to force count distinct
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return int the number of related Experts objects
+     */
+    public function countExpertss(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collExpertssPartial && !$this->isNew();
+        if (null === $this->collExpertss || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collExpertss) {
+                return 0;
+            } else {
+
+                if ($partial && !$criteria) {
+                    return count($this->getExpertss());
+                }
+
+                $query = ChildExpertsQuery::create(null, $criteria);
+                if ($distinct) {
+                    $query->distinct();
+                }
+
+                return $query
+                    ->filterByLanguages($this)
+                    ->count($con);
+            }
+        } else {
+            return count($this->collExpertss);
+        }
+    }
+
+    /**
+     * Associate a ChildExperts to this object
+     * through the expert_languages cross reference table.
+     *
+     * @param ChildExperts $experts
+     * @return ChildLanguages The current object (for fluent API support)
+     */
+    public function addExperts(ChildExperts $experts)
+    {
+        if ($this->collExpertss === null) {
+            $this->initExpertss();
+        }
+
+        if (!$this->getExpertss()->contains($experts)) {
+            // only add it if the **same** object is not already associated
+            $this->collExpertss->push($experts);
+            $this->doAddExperts($experts);
+        }
+
+        return $this;
+    }
+
+    /**
+     *
+     * @param ChildExperts $experts
+     */
+    protected function doAddExperts(ChildExperts $experts)
+    {
+        $expertLanguages = new ChildExpertLanguages();
+
+        $expertLanguages->setExperts($experts);
+
+        $expertLanguages->setLanguages($this);
+
+        $this->addExpertLanguages($expertLanguages);
+
+        // set the back reference to this object directly as using provided method either results
+        // in endless loop or in multiple relations
+        if (!$experts->isLanguagessLoaded()) {
+            $experts->initLanguagess();
+            $experts->getLanguagess()->push($this);
+        } elseif (!$experts->getLanguagess()->contains($this)) {
+            $experts->getLanguagess()->push($this);
+        }
+
+    }
+
+    /**
+     * Remove experts of this object
+     * through the expert_languages cross reference table.
+     *
+     * @param ChildExperts $experts
+     * @return ChildLanguages The current object (for fluent API support)
+     */
+    public function removeExperts(ChildExperts $experts)
+    {
+        if ($this->getExpertss()->contains($experts)) {
+            $expertLanguages = new ChildExpertLanguages();
+            $expertLanguages->setExperts($experts);
+            if ($experts->isLanguagessLoaded()) {
+                //remove the back reference if available
+                $experts->getLanguagess()->removeObject($this);
+            }
+
+            $expertLanguages->setLanguages($this);
+            $this->removeExpertLanguages(clone $expertLanguages);
+            $expertLanguages->clear();
+
+            $this->collExpertss->remove($this->collExpertss->search($experts));
+
+            if (null === $this->expertssScheduledForDeletion) {
+                $this->expertssScheduledForDeletion = clone $this->collExpertss;
+                $this->expertssScheduledForDeletion->clear();
+            }
+
+            $this->expertssScheduledForDeletion->push($experts);
+        }
+
+
+        return $this;
+    }
+
+    /**
+     * Clears out the collInformationSeekerConnectRequests collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addInformationSeekerConnectRequests()
+     */
+    public function clearInformationSeekerConnectRequests()
+    {
+        $this->collInformationSeekerConnectRequests = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Initializes the collInformationSeekerConnectRequests crossRef collection.
+     *
+     * By default this just sets the collInformationSeekerConnectRequests collection to an empty collection (like clearInformationSeekerConnectRequests());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @return void
+     */
+    public function initInformationSeekerConnectRequests()
+    {
+        $collectionClassName = InformationSeekerConnectRequestLanguagesTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collInformationSeekerConnectRequests = new $collectionClassName;
+        $this->collInformationSeekerConnectRequestsPartial = true;
+        $this->collInformationSeekerConnectRequests->setModel('\CryoConnectDB\InformationSeekerConnectRequest');
+    }
+
+    /**
+     * Checks if the collInformationSeekerConnectRequests collection is loaded.
+     *
+     * @return bool
+     */
+    public function isInformationSeekerConnectRequestsLoaded()
+    {
+        return null !== $this->collInformationSeekerConnectRequests;
+    }
+
+    /**
+     * Gets a collection of ChildInformationSeekerConnectRequest objects related by a many-to-many relationship
+     * to the current object by way of the information_seeker_connect_request_languages cross-reference table.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildLanguages is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return ObjectCollection|ChildInformationSeekerConnectRequest[] List of ChildInformationSeekerConnectRequest objects
+     */
+    public function getInformationSeekerConnectRequests(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collInformationSeekerConnectRequestsPartial && !$this->isNew();
+        if (null === $this->collInformationSeekerConnectRequests || null !== $criteria || $partial) {
+            if ($this->isNew()) {
+                // return empty collection
+                if (null === $this->collInformationSeekerConnectRequests) {
+                    $this->initInformationSeekerConnectRequests();
+                }
+            } else {
+
+                $query = ChildInformationSeekerConnectRequestQuery::create(null, $criteria)
+                    ->filterByLanguages($this);
+                $collInformationSeekerConnectRequests = $query->find($con);
+                if (null !== $criteria) {
+                    return $collInformationSeekerConnectRequests;
+                }
+
+                if ($partial && $this->collInformationSeekerConnectRequests) {
+                    //make sure that already added objects gets added to the list of the database.
+                    foreach ($this->collInformationSeekerConnectRequests as $obj) {
+                        if (!$collInformationSeekerConnectRequests->contains($obj)) {
+                            $collInformationSeekerConnectRequests[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collInformationSeekerConnectRequests = $collInformationSeekerConnectRequests;
+                $this->collInformationSeekerConnectRequestsPartial = false;
+            }
+        }
+
+        return $this->collInformationSeekerConnectRequests;
+    }
+
+    /**
+     * Sets a collection of InformationSeekerConnectRequest objects related by a many-to-many relationship
+     * to the current object by way of the information_seeker_connect_request_languages cross-reference table.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param  Collection $informationSeekerConnectRequests A Propel collection.
+     * @param  ConnectionInterface $con Optional connection object
+     * @return $this|ChildLanguages The current object (for fluent API support)
+     */
+    public function setInformationSeekerConnectRequests(Collection $informationSeekerConnectRequests, ConnectionInterface $con = null)
+    {
+        $this->clearInformationSeekerConnectRequests();
+        $currentInformationSeekerConnectRequests = $this->getInformationSeekerConnectRequests();
+
+        $informationSeekerConnectRequestsScheduledForDeletion = $currentInformationSeekerConnectRequests->diff($informationSeekerConnectRequests);
+
+        foreach ($informationSeekerConnectRequestsScheduledForDeletion as $toDelete) {
+            $this->removeInformationSeekerConnectRequest($toDelete);
+        }
+
+        foreach ($informationSeekerConnectRequests as $informationSeekerConnectRequest) {
+            if (!$currentInformationSeekerConnectRequests->contains($informationSeekerConnectRequest)) {
+                $this->doAddInformationSeekerConnectRequest($informationSeekerConnectRequest);
+            }
+        }
+
+        $this->collInformationSeekerConnectRequestsPartial = false;
+        $this->collInformationSeekerConnectRequests = $informationSeekerConnectRequests;
+
+        return $this;
+    }
+
+    /**
+     * Gets the number of InformationSeekerConnectRequest objects related by a many-to-many relationship
+     * to the current object by way of the information_seeker_connect_request_languages cross-reference table.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      boolean $distinct Set to true to force count distinct
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return int the number of related InformationSeekerConnectRequest objects
+     */
+    public function countInformationSeekerConnectRequests(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collInformationSeekerConnectRequestsPartial && !$this->isNew();
+        if (null === $this->collInformationSeekerConnectRequests || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collInformationSeekerConnectRequests) {
+                return 0;
+            } else {
+
+                if ($partial && !$criteria) {
+                    return count($this->getInformationSeekerConnectRequests());
+                }
+
+                $query = ChildInformationSeekerConnectRequestQuery::create(null, $criteria);
+                if ($distinct) {
+                    $query->distinct();
+                }
+
+                return $query
+                    ->filterByLanguages($this)
+                    ->count($con);
+            }
+        } else {
+            return count($this->collInformationSeekerConnectRequests);
+        }
+    }
+
+    /**
+     * Associate a ChildInformationSeekerConnectRequest to this object
+     * through the information_seeker_connect_request_languages cross reference table.
+     *
+     * @param ChildInformationSeekerConnectRequest $informationSeekerConnectRequest
+     * @return ChildLanguages The current object (for fluent API support)
+     */
+    public function addInformationSeekerConnectRequest(ChildInformationSeekerConnectRequest $informationSeekerConnectRequest)
+    {
+        if ($this->collInformationSeekerConnectRequests === null) {
+            $this->initInformationSeekerConnectRequests();
+        }
+
+        if (!$this->getInformationSeekerConnectRequests()->contains($informationSeekerConnectRequest)) {
+            // only add it if the **same** object is not already associated
+            $this->collInformationSeekerConnectRequests->push($informationSeekerConnectRequest);
+            $this->doAddInformationSeekerConnectRequest($informationSeekerConnectRequest);
+        }
+
+        return $this;
+    }
+
+    /**
+     *
+     * @param ChildInformationSeekerConnectRequest $informationSeekerConnectRequest
+     */
+    protected function doAddInformationSeekerConnectRequest(ChildInformationSeekerConnectRequest $informationSeekerConnectRequest)
+    {
+        $informationSeekerConnectRequestLanguages = new ChildInformationSeekerConnectRequestLanguages();
+
+        $informationSeekerConnectRequestLanguages->setInformationSeekerConnectRequest($informationSeekerConnectRequest);
+
+        $informationSeekerConnectRequestLanguages->setLanguages($this);
+
+        $this->addInformationSeekerConnectRequestLanguages($informationSeekerConnectRequestLanguages);
+
+        // set the back reference to this object directly as using provided method either results
+        // in endless loop or in multiple relations
+        if (!$informationSeekerConnectRequest->isLanguagessLoaded()) {
+            $informationSeekerConnectRequest->initLanguagess();
+            $informationSeekerConnectRequest->getLanguagess()->push($this);
+        } elseif (!$informationSeekerConnectRequest->getLanguagess()->contains($this)) {
+            $informationSeekerConnectRequest->getLanguagess()->push($this);
+        }
+
+    }
+
+    /**
+     * Remove informationSeekerConnectRequest of this object
+     * through the information_seeker_connect_request_languages cross reference table.
+     *
+     * @param ChildInformationSeekerConnectRequest $informationSeekerConnectRequest
+     * @return ChildLanguages The current object (for fluent API support)
+     */
+    public function removeInformationSeekerConnectRequest(ChildInformationSeekerConnectRequest $informationSeekerConnectRequest)
+    {
+        if ($this->getInformationSeekerConnectRequests()->contains($informationSeekerConnectRequest)) {
+            $informationSeekerConnectRequestLanguages = new ChildInformationSeekerConnectRequestLanguages();
+            $informationSeekerConnectRequestLanguages->setInformationSeekerConnectRequest($informationSeekerConnectRequest);
+            if ($informationSeekerConnectRequest->isLanguagessLoaded()) {
+                //remove the back reference if available
+                $informationSeekerConnectRequest->getLanguagess()->removeObject($this);
+            }
+
+            $informationSeekerConnectRequestLanguages->setLanguages($this);
+            $this->removeInformationSeekerConnectRequestLanguages(clone $informationSeekerConnectRequestLanguages);
+            $informationSeekerConnectRequestLanguages->clear();
+
+            $this->collInformationSeekerConnectRequests->remove($this->collInformationSeekerConnectRequests->search($informationSeekerConnectRequest));
+
+            if (null === $this->informationSeekerConnectRequestsScheduledForDeletion) {
+                $this->informationSeekerConnectRequestsScheduledForDeletion = clone $this->collInformationSeekerConnectRequests;
+                $this->informationSeekerConnectRequestsScheduledForDeletion->clear();
+            }
+
+            $this->informationSeekerConnectRequestsScheduledForDeletion->push($informationSeekerConnectRequest);
+        }
+
+
+        return $this;
+    }
+
+    /**
+     * Clears out the collInformationSeekerss collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addInformationSeekerss()
+     */
+    public function clearInformationSeekerss()
+    {
+        $this->collInformationSeekerss = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Initializes the collInformationSeekerss crossRef collection.
+     *
+     * By default this just sets the collInformationSeekerss collection to an empty collection (like clearInformationSeekerss());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @return void
+     */
+    public function initInformationSeekerss()
+    {
+        $collectionClassName = InformationSeekerLanguagesTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collInformationSeekerss = new $collectionClassName;
+        $this->collInformationSeekerssPartial = true;
+        $this->collInformationSeekerss->setModel('\CryoConnectDB\InformationSeekers');
+    }
+
+    /**
+     * Checks if the collInformationSeekerss collection is loaded.
+     *
+     * @return bool
+     */
+    public function isInformationSeekerssLoaded()
+    {
+        return null !== $this->collInformationSeekerss;
+    }
+
+    /**
+     * Gets a collection of ChildInformationSeekers objects related by a many-to-many relationship
+     * to the current object by way of the information_seeker_languages cross-reference table.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildLanguages is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return ObjectCollection|ChildInformationSeekers[] List of ChildInformationSeekers objects
+     */
+    public function getInformationSeekerss(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collInformationSeekerssPartial && !$this->isNew();
+        if (null === $this->collInformationSeekerss || null !== $criteria || $partial) {
+            if ($this->isNew()) {
+                // return empty collection
+                if (null === $this->collInformationSeekerss) {
+                    $this->initInformationSeekerss();
+                }
+            } else {
+
+                $query = ChildInformationSeekersQuery::create(null, $criteria)
+                    ->filterByLanguages($this);
+                $collInformationSeekerss = $query->find($con);
+                if (null !== $criteria) {
+                    return $collInformationSeekerss;
+                }
+
+                if ($partial && $this->collInformationSeekerss) {
+                    //make sure that already added objects gets added to the list of the database.
+                    foreach ($this->collInformationSeekerss as $obj) {
+                        if (!$collInformationSeekerss->contains($obj)) {
+                            $collInformationSeekerss[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collInformationSeekerss = $collInformationSeekerss;
+                $this->collInformationSeekerssPartial = false;
+            }
+        }
+
+        return $this->collInformationSeekerss;
+    }
+
+    /**
+     * Sets a collection of InformationSeekers objects related by a many-to-many relationship
+     * to the current object by way of the information_seeker_languages cross-reference table.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param  Collection $informationSeekerss A Propel collection.
+     * @param  ConnectionInterface $con Optional connection object
+     * @return $this|ChildLanguages The current object (for fluent API support)
+     */
+    public function setInformationSeekerss(Collection $informationSeekerss, ConnectionInterface $con = null)
+    {
+        $this->clearInformationSeekerss();
+        $currentInformationSeekerss = $this->getInformationSeekerss();
+
+        $informationSeekerssScheduledForDeletion = $currentInformationSeekerss->diff($informationSeekerss);
+
+        foreach ($informationSeekerssScheduledForDeletion as $toDelete) {
+            $this->removeInformationSeekers($toDelete);
+        }
+
+        foreach ($informationSeekerss as $informationSeekers) {
+            if (!$currentInformationSeekerss->contains($informationSeekers)) {
+                $this->doAddInformationSeekers($informationSeekers);
+            }
+        }
+
+        $this->collInformationSeekerssPartial = false;
+        $this->collInformationSeekerss = $informationSeekerss;
+
+        return $this;
+    }
+
+    /**
+     * Gets the number of InformationSeekers objects related by a many-to-many relationship
+     * to the current object by way of the information_seeker_languages cross-reference table.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      boolean $distinct Set to true to force count distinct
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return int the number of related InformationSeekers objects
+     */
+    public function countInformationSeekerss(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collInformationSeekerssPartial && !$this->isNew();
+        if (null === $this->collInformationSeekerss || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collInformationSeekerss) {
+                return 0;
+            } else {
+
+                if ($partial && !$criteria) {
+                    return count($this->getInformationSeekerss());
+                }
+
+                $query = ChildInformationSeekersQuery::create(null, $criteria);
+                if ($distinct) {
+                    $query->distinct();
+                }
+
+                return $query
+                    ->filterByLanguages($this)
+                    ->count($con);
+            }
+        } else {
+            return count($this->collInformationSeekerss);
+        }
+    }
+
+    /**
+     * Associate a ChildInformationSeekers to this object
+     * through the information_seeker_languages cross reference table.
+     *
+     * @param ChildInformationSeekers $informationSeekers
+     * @return ChildLanguages The current object (for fluent API support)
+     */
+    public function addInformationSeekers(ChildInformationSeekers $informationSeekers)
+    {
+        if ($this->collInformationSeekerss === null) {
+            $this->initInformationSeekerss();
+        }
+
+        if (!$this->getInformationSeekerss()->contains($informationSeekers)) {
+            // only add it if the **same** object is not already associated
+            $this->collInformationSeekerss->push($informationSeekers);
+            $this->doAddInformationSeekers($informationSeekers);
+        }
+
+        return $this;
+    }
+
+    /**
+     *
+     * @param ChildInformationSeekers $informationSeekers
+     */
+    protected function doAddInformationSeekers(ChildInformationSeekers $informationSeekers)
+    {
+        $informationSeekerLanguages = new ChildInformationSeekerLanguages();
+
+        $informationSeekerLanguages->setInformationSeekers($informationSeekers);
+
+        $informationSeekerLanguages->setLanguages($this);
+
+        $this->addInformationSeekerLanguages($informationSeekerLanguages);
+
+        // set the back reference to this object directly as using provided method either results
+        // in endless loop or in multiple relations
+        if (!$informationSeekers->isLanguagessLoaded()) {
+            $informationSeekers->initLanguagess();
+            $informationSeekers->getLanguagess()->push($this);
+        } elseif (!$informationSeekers->getLanguagess()->contains($this)) {
+            $informationSeekers->getLanguagess()->push($this);
+        }
+
+    }
+
+    /**
+     * Remove informationSeekers of this object
+     * through the information_seeker_languages cross reference table.
+     *
+     * @param ChildInformationSeekers $informationSeekers
+     * @return ChildLanguages The current object (for fluent API support)
+     */
+    public function removeInformationSeekers(ChildInformationSeekers $informationSeekers)
+    {
+        if ($this->getInformationSeekerss()->contains($informationSeekers)) {
+            $informationSeekerLanguages = new ChildInformationSeekerLanguages();
+            $informationSeekerLanguages->setInformationSeekers($informationSeekers);
+            if ($informationSeekers->isLanguagessLoaded()) {
+                //remove the back reference if available
+                $informationSeekers->getLanguagess()->removeObject($this);
+            }
+
+            $informationSeekerLanguages->setLanguages($this);
+            $this->removeInformationSeekerLanguages(clone $informationSeekerLanguages);
+            $informationSeekerLanguages->clear();
+
+            $this->collInformationSeekerss->remove($this->collInformationSeekerss->search($informationSeekers));
+
+            if (null === $this->informationSeekerssScheduledForDeletion) {
+                $this->informationSeekerssScheduledForDeletion = clone $this->collInformationSeekerss;
+                $this->informationSeekerssScheduledForDeletion->clear();
+            }
+
+            $this->informationSeekerssScheduledForDeletion->push($informationSeekers);
+        }
+
+
+        return $this;
+    }
+
+    /**
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
      * change of those foreign objects when you call `save` there).
@@ -1961,11 +2843,29 @@ abstract class Languages implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collExpertss) {
+                foreach ($this->collExpertss as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
+            if ($this->collInformationSeekerConnectRequests) {
+                foreach ($this->collInformationSeekerConnectRequests as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
+            if ($this->collInformationSeekerss) {
+                foreach ($this->collInformationSeekerss as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
         } // if ($deep)
 
         $this->collExpertLanguagess = null;
         $this->collInformationSeekerConnectRequestLanguagess = null;
         $this->collInformationSeekerLanguagess = null;
+        $this->collExpertss = null;
+        $this->collInformationSeekerConnectRequests = null;
+        $this->collInformationSeekerss = null;
     }
 
     /**

@@ -85,7 +85,7 @@ abstract class ContactTypesQuery extends ModelCriteria
      * @param     string $modelName The phpName of a model, e.g. 'Book'
      * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
      */
-    public function __construct($dbName = 'cryo_connect', $modelName = '\\CryoConnectDB\\ContactTypes', $modelAlias = null)
+    public function __construct($dbName = 'default', $modelName = '\\CryoConnectDB\\ContactTypes', $modelAlias = null)
     {
         parent::__construct($dbName, $modelName, $modelAlias);
     }
@@ -469,6 +469,40 @@ abstract class ContactTypesQuery extends ModelCriteria
         return $this
             ->joinInformationSeekerContact($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'InformationSeekerContact', '\CryoConnectDB\InformationSeekerContactQuery');
+    }
+
+    /**
+     * Filter the query by a related Experts object
+     * using the expert_contact table as cross reference
+     *
+     * @param Experts $experts the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildContactTypesQuery The current query, for fluid interface
+     */
+    public function filterByExperts($experts, $comparison = Criteria::EQUAL)
+    {
+        return $this
+            ->useExpertContactQuery()
+            ->filterByExperts($experts, $comparison)
+            ->endUse();
+    }
+
+    /**
+     * Filter the query by a related InformationSeekers object
+     * using the information_seeker_contact table as cross reference
+     *
+     * @param InformationSeekers $informationSeekers the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildContactTypesQuery The current query, for fluid interface
+     */
+    public function filterByInformationSeekers($informationSeekers, $comparison = Criteria::EQUAL)
+    {
+        return $this
+            ->useInformationSeekerContactQuery()
+            ->filterByInformationSeekers($informationSeekers, $comparison)
+            ->endUse();
     }
 
     /**

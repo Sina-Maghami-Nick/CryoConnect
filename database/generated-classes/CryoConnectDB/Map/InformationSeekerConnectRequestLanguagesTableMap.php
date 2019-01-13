@@ -9,7 +9,6 @@ use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
-use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Map\TableMap;
@@ -40,7 +39,7 @@ class InformationSeekerConnectRequestLanguagesTableMap extends TableMap
     /**
      * The default database name for this class
      */
-    const DATABASE_NAME = 'cryo_connect';
+    const DATABASE_NAME = 'default';
 
     /**
      * The table name for this class
@@ -136,9 +135,10 @@ class InformationSeekerConnectRequestLanguagesTableMap extends TableMap
         $this->setClassName('\\CryoConnectDB\\InformationSeekerConnectRequestLanguages');
         $this->setPackage('CryoConnectDB');
         $this->setUseIdGenerator(false);
+        $this->setIsCrossRef(true);
         // columns
-        $this->addForeignKey('information_seeker_connect_request_id', 'InformationSeekerConnectRequestId', 'INTEGER', 'information_seeker_connect_request', 'id', true, 10, null);
-        $this->addForeignKey('language_code', 'LanguageCode', 'VARCHAR', 'languages', 'language_code', true, 2, null);
+        $this->addForeignPrimaryKey('information_seeker_connect_request_id', 'InformationSeekerConnectRequestId', 'INTEGER' , 'information_seeker_connect_request', 'id', true, 10, null);
+        $this->addForeignPrimaryKey('language_code', 'LanguageCode', 'VARCHAR' , 'languages', 'language_code', true, 2, null);
         $this->addColumn('timestamp', 'Timestamp', 'TIMESTAMP', true, null, '0000-00-00 00:00:00');
     } // initialize()
 
@@ -164,6 +164,59 @@ class InformationSeekerConnectRequestLanguagesTableMap extends TableMap
     } // buildRelations()
 
     /**
+     * Adds an object to the instance pool.
+     *
+     * Propel keeps cached copies of objects in an instance pool when they are retrieved
+     * from the database. In some cases you may need to explicitly add objects
+     * to the cache in order to ensure that the same objects are always returned by find*()
+     * and findPk*() calls.
+     *
+     * @param \CryoConnectDB\InformationSeekerConnectRequestLanguages $obj A \CryoConnectDB\InformationSeekerConnectRequestLanguages object.
+     * @param string $key             (optional) key to use for instance map (for performance boost if key was already calculated externally).
+     */
+    public static function addInstanceToPool($obj, $key = null)
+    {
+        if (Propel::isInstancePoolingEnabled()) {
+            if (null === $key) {
+                $key = serialize([(null === $obj->getInformationSeekerConnectRequestId() || is_scalar($obj->getInformationSeekerConnectRequestId()) || is_callable([$obj->getInformationSeekerConnectRequestId(), '__toString']) ? (string) $obj->getInformationSeekerConnectRequestId() : $obj->getInformationSeekerConnectRequestId()), (null === $obj->getLanguageCode() || is_scalar($obj->getLanguageCode()) || is_callable([$obj->getLanguageCode(), '__toString']) ? (string) $obj->getLanguageCode() : $obj->getLanguageCode())]);
+            } // if key === null
+            self::$instances[$key] = $obj;
+        }
+    }
+
+    /**
+     * Removes an object from the instance pool.
+     *
+     * Propel keeps cached copies of objects in an instance pool when they are retrieved
+     * from the database.  In some cases -- especially when you override doDelete
+     * methods in your stub classes -- you may need to explicitly remove objects
+     * from the cache in order to prevent returning objects that no longer exist.
+     *
+     * @param mixed $value A \CryoConnectDB\InformationSeekerConnectRequestLanguages object or a primary key value.
+     */
+    public static function removeInstanceFromPool($value)
+    {
+        if (Propel::isInstancePoolingEnabled() && null !== $value) {
+            if (is_object($value) && $value instanceof \CryoConnectDB\InformationSeekerConnectRequestLanguages) {
+                $key = serialize([(null === $value->getInformationSeekerConnectRequestId() || is_scalar($value->getInformationSeekerConnectRequestId()) || is_callable([$value->getInformationSeekerConnectRequestId(), '__toString']) ? (string) $value->getInformationSeekerConnectRequestId() : $value->getInformationSeekerConnectRequestId()), (null === $value->getLanguageCode() || is_scalar($value->getLanguageCode()) || is_callable([$value->getLanguageCode(), '__toString']) ? (string) $value->getLanguageCode() : $value->getLanguageCode())]);
+
+            } elseif (is_array($value) && count($value) === 2) {
+                // assume we've been passed a primary key";
+                $key = serialize([(null === $value[0] || is_scalar($value[0]) || is_callable([$value[0], '__toString']) ? (string) $value[0] : $value[0]), (null === $value[1] || is_scalar($value[1]) || is_callable([$value[1], '__toString']) ? (string) $value[1] : $value[1])]);
+            } elseif ($value instanceof Criteria) {
+                self::$instances = [];
+
+                return;
+            } else {
+                $e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or \CryoConnectDB\InformationSeekerConnectRequestLanguages object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value, true)));
+                throw $e;
+            }
+
+            unset(self::$instances[$key]);
+        }
+    }
+
+    /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
      *
      * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
@@ -178,7 +231,12 @@ class InformationSeekerConnectRequestLanguagesTableMap extends TableMap
      */
     public static function getPrimaryKeyHashFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        return null;
+        // If the PK cannot be derived from the row, return NULL.
+        if ($row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('InformationSeekerConnectRequestId', TableMap::TYPE_PHPNAME, $indexType)] === null && $row[TableMap::TYPE_NUM == $indexType ? 1 + $offset : static::translateFieldName('LanguageCode', TableMap::TYPE_PHPNAME, $indexType)] === null) {
+            return null;
+        }
+
+        return serialize([(null === $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('InformationSeekerConnectRequestId', TableMap::TYPE_PHPNAME, $indexType)] || is_scalar($row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('InformationSeekerConnectRequestId', TableMap::TYPE_PHPNAME, $indexType)]) || is_callable([$row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('InformationSeekerConnectRequestId', TableMap::TYPE_PHPNAME, $indexType)], '__toString']) ? (string) $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('InformationSeekerConnectRequestId', TableMap::TYPE_PHPNAME, $indexType)] : $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('InformationSeekerConnectRequestId', TableMap::TYPE_PHPNAME, $indexType)]), (null === $row[TableMap::TYPE_NUM == $indexType ? 1 + $offset : static::translateFieldName('LanguageCode', TableMap::TYPE_PHPNAME, $indexType)] || is_scalar($row[TableMap::TYPE_NUM == $indexType ? 1 + $offset : static::translateFieldName('LanguageCode', TableMap::TYPE_PHPNAME, $indexType)]) || is_callable([$row[TableMap::TYPE_NUM == $indexType ? 1 + $offset : static::translateFieldName('LanguageCode', TableMap::TYPE_PHPNAME, $indexType)], '__toString']) ? (string) $row[TableMap::TYPE_NUM == $indexType ? 1 + $offset : static::translateFieldName('LanguageCode', TableMap::TYPE_PHPNAME, $indexType)] : $row[TableMap::TYPE_NUM == $indexType ? 1 + $offset : static::translateFieldName('LanguageCode', TableMap::TYPE_PHPNAME, $indexType)])]);
     }
 
     /**
@@ -195,7 +253,20 @@ class InformationSeekerConnectRequestLanguagesTableMap extends TableMap
      */
     public static function getPrimaryKeyFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        return '';
+            $pks = [];
+
+        $pks[] = (int) $row[
+            $indexType == TableMap::TYPE_NUM
+                ? 0 + $offset
+                : self::translateFieldName('InformationSeekerConnectRequestId', TableMap::TYPE_PHPNAME, $indexType)
+        ];
+        $pks[] = (string) $row[
+            $indexType == TableMap::TYPE_NUM
+                ? 1 + $offset
+                : self::translateFieldName('LanguageCode', TableMap::TYPE_PHPNAME, $indexType)
+        ];
+
+        return $pks;
     }
 
     /**
@@ -349,10 +420,21 @@ class InformationSeekerConnectRequestLanguagesTableMap extends TableMap
             // rename for clarity
             $criteria = $values;
         } elseif ($values instanceof \CryoConnectDB\InformationSeekerConnectRequestLanguages) { // it's a model object
-            // create criteria based on pk value
-            $criteria = $values->buildCriteria();
+            // create criteria based on pk values
+            $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            throw new LogicException('The InformationSeekerConnectRequestLanguages object has no primary key');
+            $criteria = new Criteria(InformationSeekerConnectRequestLanguagesTableMap::DATABASE_NAME);
+            // primary key is composite; we therefore, expect
+            // the primary key passed to be an array of pkey values
+            if (count($values) == count($values, COUNT_RECURSIVE)) {
+                // array is not multi-dimensional
+                $values = array($values);
+            }
+            foreach ($values as $value) {
+                $criterion = $criteria->getNewCriterion(InformationSeekerConnectRequestLanguagesTableMap::COL_INFORMATION_SEEKER_CONNECT_REQUEST_ID, $value[0]);
+                $criterion->addAnd($criteria->getNewCriterion(InformationSeekerConnectRequestLanguagesTableMap::COL_LANGUAGE_CODE, $value[1]));
+                $criteria->addOr($criterion);
+            }
         }
 
         $query = InformationSeekerConnectRequestLanguagesQuery::create()->mergeWith($criteria);

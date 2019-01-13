@@ -1171,6 +1171,8 @@ abstract class InformationSeekerContact implements ActiveRecordInterface
     {
         $criteria = ChildInformationSeekerContactQuery::create();
         $criteria->add(InformationSeekerContactTableMap::COL_ID, $this->id);
+        $criteria->add(InformationSeekerContactTableMap::COL_INFORMATION_SEEKER_ID, $this->information_seeker_id);
+        $criteria->add(InformationSeekerContactTableMap::COL_CONTACT_TYPE_ID, $this->contact_type_id);
 
         return $criteria;
     }
@@ -1183,10 +1185,26 @@ abstract class InformationSeekerContact implements ActiveRecordInterface
      */
     public function hashCode()
     {
-        $validPk = null !== $this->getId();
+        $validPk = null !== $this->getId() &&
+            null !== $this->getInformationSeekerId() &&
+            null !== $this->getContactTypeId();
 
-        $validPrimaryKeyFKs = 0;
+        $validPrimaryKeyFKs = 2;
         $primaryKeyFKs = [];
+
+        //relation information_seeker_contact_fk_77d198 to table information_seekers
+        if ($this->aInformationSeekers && $hash = spl_object_hash($this->aInformationSeekers)) {
+            $primaryKeyFKs[] = $hash;
+        } else {
+            $validPrimaryKeyFKs = false;
+        }
+
+        //relation information_seeker_contact_fk_88838f to table contact_types
+        if ($this->aContactTypes && $hash = spl_object_hash($this->aContactTypes)) {
+            $primaryKeyFKs[] = $hash;
+        } else {
+            $validPrimaryKeyFKs = false;
+        }
 
         if ($validPk) {
             return crc32(json_encode($this->getPrimaryKey(), JSON_UNESCAPED_UNICODE));
@@ -1198,23 +1216,31 @@ abstract class InformationSeekerContact implements ActiveRecordInterface
     }
 
     /**
-     * Returns the primary key for this object (row).
-     * @return int
+     * Returns the composite primary key for this object.
+     * The array elements will be in same order as specified in XML.
+     * @return array
      */
     public function getPrimaryKey()
     {
-        return $this->getId();
+        $pks = array();
+        $pks[0] = $this->getId();
+        $pks[1] = $this->getInformationSeekerId();
+        $pks[2] = $this->getContactTypeId();
+
+        return $pks;
     }
 
     /**
-     * Generic method to set the primary key (id column).
+     * Set the [composite] primary key.
      *
-     * @param       int $key Primary key.
+     * @param      array $keys The elements of the composite key (order must match the order in XML file).
      * @return void
      */
-    public function setPrimaryKey($key)
+    public function setPrimaryKey($keys)
     {
-        $this->setId($key);
+        $this->setId($keys[0]);
+        $this->setInformationSeekerId($keys[1]);
+        $this->setContactTypeId($keys[2]);
     }
 
     /**
@@ -1223,7 +1249,7 @@ abstract class InformationSeekerContact implements ActiveRecordInterface
      */
     public function isPrimaryKeyNull()
     {
-        return null === $this->getId();
+        return (null === $this->getId()) && (null === $this->getInformationSeekerId()) && (null === $this->getContactTypeId());
     }
 
     /**

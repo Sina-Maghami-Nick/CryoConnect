@@ -100,7 +100,7 @@ abstract class InformationSeekerContactQuery extends ModelCriteria
      * @param     string $modelName The phpName of a model, e.g. 'Book'
      * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
      */
-    public function __construct($dbName = 'cryo_connect', $modelName = '\\CryoConnectDB\\InformationSeekerContact', $modelAlias = null)
+    public function __construct($dbName = 'default', $modelName = '\\CryoConnectDB\\InformationSeekerContact', $modelAlias = null)
     {
         parent::__construct($dbName, $modelName, $modelAlias);
     }
@@ -135,10 +135,10 @@ abstract class InformationSeekerContactQuery extends ModelCriteria
      * Go fast if the query is untouched.
      *
      * <code>
-     * $obj  = $c->findPk(12, $con);
+     * $obj = $c->findPk(array(12, 34, 56), $con);
      * </code>
      *
-     * @param mixed $key Primary key to use for the query
+     * @param array[$id, $information_seeker_id, $contact_type_id] $key Primary key to use for the query
      * @param ConnectionInterface $con an optional connection object
      *
      * @return ChildInformationSeekerContact|array|mixed the result, formatted by the current formatter
@@ -163,7 +163,7 @@ abstract class InformationSeekerContactQuery extends ModelCriteria
             return $this->findPkComplex($key, $con);
         }
 
-        if ((null !== ($obj = InformationSeekerContactTableMap::getInstanceFromPool(null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key)))) {
+        if ((null !== ($obj = InformationSeekerContactTableMap::getInstanceFromPool(serialize([(null === $key[0] || is_scalar($key[0]) || is_callable([$key[0], '__toString']) ? (string) $key[0] : $key[0]), (null === $key[1] || is_scalar($key[1]) || is_callable([$key[1], '__toString']) ? (string) $key[1] : $key[1]), (null === $key[2] || is_scalar($key[2]) || is_callable([$key[2], '__toString']) ? (string) $key[2] : $key[2])]))))) {
             // the object is already in the instance pool
             return $obj;
         }
@@ -184,10 +184,12 @@ abstract class InformationSeekerContactQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, contact_information, information_seeker_id, contact_type_id, timestamp FROM information_seeker_contact WHERE id = :p0';
+        $sql = 'SELECT id, contact_information, information_seeker_id, contact_type_id, timestamp FROM information_seeker_contact WHERE id = :p0 AND information_seeker_id = :p1 AND contact_type_id = :p2';
         try {
             $stmt = $con->prepare($sql);
-            $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
+            $stmt->bindValue(':p0', $key[0], PDO::PARAM_INT);
+            $stmt->bindValue(':p1', $key[1], PDO::PARAM_INT);
+            $stmt->bindValue(':p2', $key[2], PDO::PARAM_INT);
             $stmt->execute();
         } catch (Exception $e) {
             Propel::log($e->getMessage(), Propel::LOG_ERR);
@@ -198,7 +200,7 @@ abstract class InformationSeekerContactQuery extends ModelCriteria
             /** @var ChildInformationSeekerContact $obj */
             $obj = new ChildInformationSeekerContact();
             $obj->hydrate($row);
-            InformationSeekerContactTableMap::addInstanceToPool($obj, null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key);
+            InformationSeekerContactTableMap::addInstanceToPool($obj, serialize([(null === $key[0] || is_scalar($key[0]) || is_callable([$key[0], '__toString']) ? (string) $key[0] : $key[0]), (null === $key[1] || is_scalar($key[1]) || is_callable([$key[1], '__toString']) ? (string) $key[1] : $key[1]), (null === $key[2] || is_scalar($key[2]) || is_callable([$key[2], '__toString']) ? (string) $key[2] : $key[2])]));
         }
         $stmt->closeCursor();
 
@@ -227,7 +229,7 @@ abstract class InformationSeekerContactQuery extends ModelCriteria
     /**
      * Find objects by primary key
      * <code>
-     * $objs = $c->findPks(array(12, 56, 832), $con);
+     * $objs = $c->findPks(array(array(12, 56), array(832, 123), array(123, 456)), $con);
      * </code>
      * @param     array $keys Primary keys to use for the query
      * @param     ConnectionInterface $con an optional connection object
@@ -257,8 +259,11 @@ abstract class InformationSeekerContactQuery extends ModelCriteria
      */
     public function filterByPrimaryKey($key)
     {
+        $this->addUsingAlias(InformationSeekerContactTableMap::COL_ID, $key[0], Criteria::EQUAL);
+        $this->addUsingAlias(InformationSeekerContactTableMap::COL_INFORMATION_SEEKER_ID, $key[1], Criteria::EQUAL);
+        $this->addUsingAlias(InformationSeekerContactTableMap::COL_CONTACT_TYPE_ID, $key[2], Criteria::EQUAL);
 
-        return $this->addUsingAlias(InformationSeekerContactTableMap::COL_ID, $key, Criteria::EQUAL);
+        return $this;
     }
 
     /**
@@ -270,8 +275,19 @@ abstract class InformationSeekerContactQuery extends ModelCriteria
      */
     public function filterByPrimaryKeys($keys)
     {
+        if (empty($keys)) {
+            return $this->add(null, '1<>1', Criteria::CUSTOM);
+        }
+        foreach ($keys as $key) {
+            $cton0 = $this->getNewCriterion(InformationSeekerContactTableMap::COL_ID, $key[0], Criteria::EQUAL);
+            $cton1 = $this->getNewCriterion(InformationSeekerContactTableMap::COL_INFORMATION_SEEKER_ID, $key[1], Criteria::EQUAL);
+            $cton0->addAnd($cton1);
+            $cton2 = $this->getNewCriterion(InformationSeekerContactTableMap::COL_CONTACT_TYPE_ID, $key[2], Criteria::EQUAL);
+            $cton0->addAnd($cton2);
+            $this->addOr($cton0);
+        }
 
-        return $this->addUsingAlias(InformationSeekerContactTableMap::COL_ID, $keys, Criteria::IN);
+        return $this;
     }
 
     /**
@@ -633,7 +649,10 @@ abstract class InformationSeekerContactQuery extends ModelCriteria
     public function prune($informationSeekerContact = null)
     {
         if ($informationSeekerContact) {
-            $this->addUsingAlias(InformationSeekerContactTableMap::COL_ID, $informationSeekerContact->getId(), Criteria::NOT_EQUAL);
+            $this->addCond('pruneCond0', $this->getAliasedColName(InformationSeekerContactTableMap::COL_ID), $informationSeekerContact->getId(), Criteria::NOT_EQUAL);
+            $this->addCond('pruneCond1', $this->getAliasedColName(InformationSeekerContactTableMap::COL_INFORMATION_SEEKER_ID), $informationSeekerContact->getInformationSeekerId(), Criteria::NOT_EQUAL);
+            $this->addCond('pruneCond2', $this->getAliasedColName(InformationSeekerContactTableMap::COL_CONTACT_TYPE_ID), $informationSeekerContact->getContactTypeId(), Criteria::NOT_EQUAL);
+            $this->combine(array('pruneCond0', 'pruneCond1', 'pruneCond2'), Criteria::LOGICAL_OR);
         }
 
         return $this;

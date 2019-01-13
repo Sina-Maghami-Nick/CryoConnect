@@ -95,7 +95,7 @@ abstract class CryosphereWhatQuery extends ModelCriteria
      * @param     string $modelName The phpName of a model, e.g. 'Book'
      * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
      */
-    public function __construct($dbName = 'cryo_connect', $modelName = '\\CryoConnectDB\\CryosphereWhat', $modelAlias = null)
+    public function __construct($dbName = 'default', $modelName = '\\CryoConnectDB\\CryosphereWhat', $modelAlias = null)
     {
         parent::__construct($dbName, $modelName, $modelAlias);
     }
@@ -549,6 +549,40 @@ abstract class CryosphereWhatQuery extends ModelCriteria
         return $this
             ->joinInformationSeekerConnectRequestCryosphereWhat($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'InformationSeekerConnectRequestCryosphereWhat', '\CryoConnectDB\InformationSeekerConnectRequestCryosphereWhatQuery');
+    }
+
+    /**
+     * Filter the query by a related Experts object
+     * using the expert_cryosphere_what table as cross reference
+     *
+     * @param Experts $experts the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildCryosphereWhatQuery The current query, for fluid interface
+     */
+    public function filterByExperts($experts, $comparison = Criteria::EQUAL)
+    {
+        return $this
+            ->useExpertCryosphereWhatQuery()
+            ->filterByExperts($experts, $comparison)
+            ->endUse();
+    }
+
+    /**
+     * Filter the query by a related InformationSeekerConnectRequest object
+     * using the information_seeker_connect_request_cryosphere_what table as cross reference
+     *
+     * @param InformationSeekerConnectRequest $informationSeekerConnectRequest the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildCryosphereWhatQuery The current query, for fluid interface
+     */
+    public function filterByInformationSeekerConnectRequest($informationSeekerConnectRequest, $comparison = Criteria::EQUAL)
+    {
+        return $this
+            ->useInformationSeekerConnectRequestCryosphereWhatQuery()
+            ->filterByInformationSeekerConnectRequest($informationSeekerConnectRequest, $comparison)
+            ->endUse();
     }
 
     /**

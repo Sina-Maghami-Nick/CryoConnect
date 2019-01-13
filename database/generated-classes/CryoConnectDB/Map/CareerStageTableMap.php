@@ -39,7 +39,7 @@ class CareerStageTableMap extends TableMap
     /**
      * The default database name for this class
      */
-    const DATABASE_NAME = 'cryo_connect';
+    const DATABASE_NAME = 'default';
 
     /**
      * The table name for this class
@@ -153,6 +153,7 @@ class CareerStageTableMap extends TableMap
     1 => ':id',
   ),
 ), null, 'CASCADE', 'ExpertCareerStages', false);
+        $this->addRelation('Experts', '\\CryoConnectDB\\Experts', RelationMap::MANY_TO_MANY, array(), 'CASCADE', 'CASCADE', 'Expertss');
     } // buildRelations()
 
     /**

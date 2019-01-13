@@ -1040,7 +1040,9 @@ abstract class ExpertCryosphereWhat implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        throw new LogicException('The ExpertCryosphereWhat object has no primary key');
+        $criteria = ChildExpertCryosphereWhatQuery::create();
+        $criteria->add(ExpertCryosphereWhatTableMap::COL_EXPERT_ID, $this->expert_id);
+        $criteria->add(ExpertCryosphereWhatTableMap::COL_CRYOSPHERE_WHAT_ID, $this->cryosphere_what_id);
 
         return $criteria;
     }
@@ -1053,10 +1055,25 @@ abstract class ExpertCryosphereWhat implements ActiveRecordInterface
      */
     public function hashCode()
     {
-        $validPk = false;
+        $validPk = null !== $this->getExpertId() &&
+            null !== $this->getCryosphereWhatId();
 
-        $validPrimaryKeyFKs = 0;
+        $validPrimaryKeyFKs = 2;
         $primaryKeyFKs = [];
+
+        //relation expert_cryosphere_what_fk_023b7c to table experts
+        if ($this->aExperts && $hash = spl_object_hash($this->aExperts)) {
+            $primaryKeyFKs[] = $hash;
+        } else {
+            $validPrimaryKeyFKs = false;
+        }
+
+        //relation expert_cryosphere_what_fk_e45748 to table cryosphere_what
+        if ($this->aCryosphereWhat && $hash = spl_object_hash($this->aCryosphereWhat)) {
+            $primaryKeyFKs[] = $hash;
+        } else {
+            $validPrimaryKeyFKs = false;
+        }
 
         if ($validPk) {
             return crc32(json_encode($this->getPrimaryKey(), JSON_UNESCAPED_UNICODE));
@@ -1068,27 +1085,29 @@ abstract class ExpertCryosphereWhat implements ActiveRecordInterface
     }
 
     /**
-     * Returns NULL since this table doesn't have a primary key.
-     * This method exists only for BC and is deprecated!
-     * @return null
+     * Returns the composite primary key for this object.
+     * The array elements will be in same order as specified in XML.
+     * @return array
      */
     public function getPrimaryKey()
     {
-        return null;
+        $pks = array();
+        $pks[0] = $this->getExpertId();
+        $pks[1] = $this->getCryosphereWhatId();
+
+        return $pks;
     }
 
     /**
-     * Dummy primary key setter.
+     * Set the [composite] primary key.
      *
-     * This function only exists to preserve backwards compatibility.  It is no longer
-     * needed or required by the Persistent interface.  It will be removed in next BC-breaking
-     * release of Propel.
-     *
-     * @deprecated
+     * @param      array $keys The elements of the composite key (order must match the order in XML file).
+     * @return void
      */
-    public function setPrimaryKey($pk)
+    public function setPrimaryKey($keys)
     {
-        // do nothing, because this object doesn't have any primary keys
+        $this->setExpertId($keys[0]);
+        $this->setCryosphereWhatId($keys[1]);
     }
 
     /**
@@ -1097,7 +1116,7 @@ abstract class ExpertCryosphereWhat implements ActiveRecordInterface
      */
     public function isPrimaryKeyNull()
     {
-        return ;
+        return (null === $this->getExpertId()) && (null === $this->getCryosphereWhatId());
     }
 
     /**

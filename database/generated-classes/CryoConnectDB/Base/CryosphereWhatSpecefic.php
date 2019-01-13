@@ -9,6 +9,8 @@ use CryoConnectDB\CryosphereWhatSpecefic as ChildCryosphereWhatSpecefic;
 use CryoConnectDB\CryosphereWhatSpeceficQuery as ChildCryosphereWhatSpeceficQuery;
 use CryoConnectDB\ExpertCryosphereWhatSpecefic as ChildExpertCryosphereWhatSpecefic;
 use CryoConnectDB\ExpertCryosphereWhatSpeceficQuery as ChildExpertCryosphereWhatSpeceficQuery;
+use CryoConnectDB\Experts as ChildExperts;
+use CryoConnectDB\ExpertsQuery as ChildExpertsQuery;
 use CryoConnectDB\Map\CryosphereWhatSpeceficTableMap;
 use CryoConnectDB\Map\ExpertCryosphereWhatSpeceficTableMap;
 use Propel\Runtime\Propel;
@@ -103,12 +105,28 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
     protected $collExpertCryosphereWhatSpeceficsPartial;
 
     /**
+     * @var        ObjectCollection|ChildExperts[] Cross Collection to store aggregation of ChildExperts objects.
+     */
+    protected $collExpertss;
+
+    /**
+     * @var bool
+     */
+    protected $collExpertssPartial;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      *
      * @var boolean
      */
     protected $alreadyInSave = false;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildExperts[]
+     */
+    protected $expertssScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -627,6 +645,7 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
 
             $this->collExpertCryosphereWhatSpecefics = null;
 
+            $this->collExpertss = null;
         } // if (deep)
     }
 
@@ -740,6 +759,35 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
                 }
                 $this->resetModified();
             }
+
+            if ($this->expertssScheduledForDeletion !== null) {
+                if (!$this->expertssScheduledForDeletion->isEmpty()) {
+                    $pks = array();
+                    foreach ($this->expertssScheduledForDeletion as $entry) {
+                        $entryPk = [];
+
+                        $entryPk[1] = $this->getId();
+                        $entryPk[0] = $entry->getId();
+                        $pks[] = $entryPk;
+                    }
+
+                    \CryoConnectDB\ExpertCryosphereWhatSpeceficQuery::create()
+                        ->filterByPrimaryKeys($pks)
+                        ->delete($con);
+
+                    $this->expertssScheduledForDeletion = null;
+                }
+
+            }
+
+            if ($this->collExpertss) {
+                foreach ($this->collExpertss as $experts) {
+                    if (!$experts->isDeleted() && ($experts->isNew() || $experts->isModified())) {
+                        $experts->save($con);
+                    }
+                }
+            }
+
 
             if ($this->expertCryosphereWhatSpeceficsScheduledForDeletion !== null) {
                 if (!$this->expertCryosphereWhatSpeceficsScheduledForDeletion->isEmpty()) {
@@ -1358,7 +1406,10 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
         $expertCryosphereWhatSpeceficsToDelete = $this->getExpertCryosphereWhatSpecefics(new Criteria(), $con)->diff($expertCryosphereWhatSpecefics);
 
 
-        $this->expertCryosphereWhatSpeceficsScheduledForDeletion = $expertCryosphereWhatSpeceficsToDelete;
+        //since at least one column in the foreign key is at the same time a PK
+        //we can not just set a PK to NULL in the lines below. We have to store
+        //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
+        $this->expertCryosphereWhatSpeceficsScheduledForDeletion = clone $expertCryosphereWhatSpeceficsToDelete;
 
         foreach ($expertCryosphereWhatSpeceficsToDelete as $expertCryosphereWhatSpeceficRemoved) {
             $expertCryosphereWhatSpeceficRemoved->setCryosphereWhatSpecefic(null);
@@ -1489,6 +1540,249 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
     }
 
     /**
+     * Clears out the collExpertss collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addExpertss()
+     */
+    public function clearExpertss()
+    {
+        $this->collExpertss = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Initializes the collExpertss crossRef collection.
+     *
+     * By default this just sets the collExpertss collection to an empty collection (like clearExpertss());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @return void
+     */
+    public function initExpertss()
+    {
+        $collectionClassName = ExpertCryosphereWhatSpeceficTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collExpertss = new $collectionClassName;
+        $this->collExpertssPartial = true;
+        $this->collExpertss->setModel('\CryoConnectDB\Experts');
+    }
+
+    /**
+     * Checks if the collExpertss collection is loaded.
+     *
+     * @return bool
+     */
+    public function isExpertssLoaded()
+    {
+        return null !== $this->collExpertss;
+    }
+
+    /**
+     * Gets a collection of ChildExperts objects related by a many-to-many relationship
+     * to the current object by way of the expert_cryosphere_what_specefic cross-reference table.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildCryosphereWhatSpecefic is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return ObjectCollection|ChildExperts[] List of ChildExperts objects
+     */
+    public function getExpertss(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collExpertssPartial && !$this->isNew();
+        if (null === $this->collExpertss || null !== $criteria || $partial) {
+            if ($this->isNew()) {
+                // return empty collection
+                if (null === $this->collExpertss) {
+                    $this->initExpertss();
+                }
+            } else {
+
+                $query = ChildExpertsQuery::create(null, $criteria)
+                    ->filterByCryosphereWhatSpecefic($this);
+                $collExpertss = $query->find($con);
+                if (null !== $criteria) {
+                    return $collExpertss;
+                }
+
+                if ($partial && $this->collExpertss) {
+                    //make sure that already added objects gets added to the list of the database.
+                    foreach ($this->collExpertss as $obj) {
+                        if (!$collExpertss->contains($obj)) {
+                            $collExpertss[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collExpertss = $collExpertss;
+                $this->collExpertssPartial = false;
+            }
+        }
+
+        return $this->collExpertss;
+    }
+
+    /**
+     * Sets a collection of Experts objects related by a many-to-many relationship
+     * to the current object by way of the expert_cryosphere_what_specefic cross-reference table.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param  Collection $expertss A Propel collection.
+     * @param  ConnectionInterface $con Optional connection object
+     * @return $this|ChildCryosphereWhatSpecefic The current object (for fluent API support)
+     */
+    public function setExpertss(Collection $expertss, ConnectionInterface $con = null)
+    {
+        $this->clearExpertss();
+        $currentExpertss = $this->getExpertss();
+
+        $expertssScheduledForDeletion = $currentExpertss->diff($expertss);
+
+        foreach ($expertssScheduledForDeletion as $toDelete) {
+            $this->removeExperts($toDelete);
+        }
+
+        foreach ($expertss as $experts) {
+            if (!$currentExpertss->contains($experts)) {
+                $this->doAddExperts($experts);
+            }
+        }
+
+        $this->collExpertssPartial = false;
+        $this->collExpertss = $expertss;
+
+        return $this;
+    }
+
+    /**
+     * Gets the number of Experts objects related by a many-to-many relationship
+     * to the current object by way of the expert_cryosphere_what_specefic cross-reference table.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      boolean $distinct Set to true to force count distinct
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return int the number of related Experts objects
+     */
+    public function countExpertss(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collExpertssPartial && !$this->isNew();
+        if (null === $this->collExpertss || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collExpertss) {
+                return 0;
+            } else {
+
+                if ($partial && !$criteria) {
+                    return count($this->getExpertss());
+                }
+
+                $query = ChildExpertsQuery::create(null, $criteria);
+                if ($distinct) {
+                    $query->distinct();
+                }
+
+                return $query
+                    ->filterByCryosphereWhatSpecefic($this)
+                    ->count($con);
+            }
+        } else {
+            return count($this->collExpertss);
+        }
+    }
+
+    /**
+     * Associate a ChildExperts to this object
+     * through the expert_cryosphere_what_specefic cross reference table.
+     *
+     * @param ChildExperts $experts
+     * @return ChildCryosphereWhatSpecefic The current object (for fluent API support)
+     */
+    public function addExperts(ChildExperts $experts)
+    {
+        if ($this->collExpertss === null) {
+            $this->initExpertss();
+        }
+
+        if (!$this->getExpertss()->contains($experts)) {
+            // only add it if the **same** object is not already associated
+            $this->collExpertss->push($experts);
+            $this->doAddExperts($experts);
+        }
+
+        return $this;
+    }
+
+    /**
+     *
+     * @param ChildExperts $experts
+     */
+    protected function doAddExperts(ChildExperts $experts)
+    {
+        $expertCryosphereWhatSpecefic = new ChildExpertCryosphereWhatSpecefic();
+
+        $expertCryosphereWhatSpecefic->setExperts($experts);
+
+        $expertCryosphereWhatSpecefic->setCryosphereWhatSpecefic($this);
+
+        $this->addExpertCryosphereWhatSpecefic($expertCryosphereWhatSpecefic);
+
+        // set the back reference to this object directly as using provided method either results
+        // in endless loop or in multiple relations
+        if (!$experts->isCryosphereWhatSpeceficsLoaded()) {
+            $experts->initCryosphereWhatSpecefics();
+            $experts->getCryosphereWhatSpecefics()->push($this);
+        } elseif (!$experts->getCryosphereWhatSpecefics()->contains($this)) {
+            $experts->getCryosphereWhatSpecefics()->push($this);
+        }
+
+    }
+
+    /**
+     * Remove experts of this object
+     * through the expert_cryosphere_what_specefic cross reference table.
+     *
+     * @param ChildExperts $experts
+     * @return ChildCryosphereWhatSpecefic The current object (for fluent API support)
+     */
+    public function removeExperts(ChildExperts $experts)
+    {
+        if ($this->getExpertss()->contains($experts)) {
+            $expertCryosphereWhatSpecefic = new ChildExpertCryosphereWhatSpecefic();
+            $expertCryosphereWhatSpecefic->setExperts($experts);
+            if ($experts->isCryosphereWhatSpeceficsLoaded()) {
+                //remove the back reference if available
+                $experts->getCryosphereWhatSpecefics()->removeObject($this);
+            }
+
+            $expertCryosphereWhatSpecefic->setCryosphereWhatSpecefic($this);
+            $this->removeExpertCryosphereWhatSpecefic(clone $expertCryosphereWhatSpecefic);
+            $expertCryosphereWhatSpecefic->clear();
+
+            $this->collExpertss->remove($this->collExpertss->search($experts));
+
+            if (null === $this->expertssScheduledForDeletion) {
+                $this->expertssScheduledForDeletion = clone $this->collExpertss;
+                $this->expertssScheduledForDeletion->clear();
+            }
+
+            $this->expertssScheduledForDeletion->push($experts);
+        }
+
+
+        return $this;
+    }
+
+    /**
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
      * change of those foreign objects when you call `save` there).
@@ -1523,9 +1817,15 @@ abstract class CryosphereWhatSpecefic implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collExpertss) {
+                foreach ($this->collExpertss as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
         } // if ($deep)
 
         $this->collExpertCryosphereWhatSpecefics = null;
+        $this->collExpertss = null;
     }
 
     /**

@@ -39,7 +39,7 @@ class InformationSeekerConnectRequestTableMap extends TableMap
     /**
      * The default database name for this class
      */
-    const DATABASE_NAME = 'cryo_connect';
+    const DATABASE_NAME = 'default';
 
     /**
      * The table name for this class
@@ -180,6 +180,9 @@ class InformationSeekerConnectRequestTableMap extends TableMap
     1 => ':id',
   ),
 ), 'CASCADE', 'CASCADE', 'InformationSeekerConnectRequestLanguagess', false);
+        $this->addRelation('CryosphereWhat', '\\CryoConnectDB\\CryosphereWhat', RelationMap::MANY_TO_MANY, array(), null, 'CASCADE', 'CryosphereWhats');
+        $this->addRelation('CryosphereWhere', '\\CryoConnectDB\\CryosphereWhere', RelationMap::MANY_TO_MANY, array(), null, 'CASCADE', 'CryosphereWheres');
+        $this->addRelation('Languages', '\\CryoConnectDB\\Languages', RelationMap::MANY_TO_MANY, array(), null, 'CASCADE', 'Languagess');
     } // buildRelations()
     /**
      * Method to invalidate the instance pool of all tables related to information_seeker_connect_request     * by a foreign key with ON DELETE CASCADE

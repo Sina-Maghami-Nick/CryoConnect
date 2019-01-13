@@ -5,6 +5,8 @@ namespace CryoConnectDB\Base;
 use \DateTime;
 use \Exception;
 use \PDO;
+use CryoConnectDB\ContactTypes as ChildContactTypes;
+use CryoConnectDB\ContactTypesQuery as ChildContactTypesQuery;
 use CryoConnectDB\Countries as ChildCountries;
 use CryoConnectDB\CountriesQuery as ChildCountriesQuery;
 use CryoConnectDB\InformationSeekerAffiliation as ChildInformationSeekerAffiliation;
@@ -19,6 +21,8 @@ use CryoConnectDB\InformationSeekerProfession as ChildInformationSeekerProfessio
 use CryoConnectDB\InformationSeekerProfessionQuery as ChildInformationSeekerProfessionQuery;
 use CryoConnectDB\InformationSeekers as ChildInformationSeekers;
 use CryoConnectDB\InformationSeekersQuery as ChildInformationSeekersQuery;
+use CryoConnectDB\Languages as ChildLanguages;
+use CryoConnectDB\LanguagesQuery as ChildLanguagesQuery;
 use CryoConnectDB\Map\InformationSeekerAffiliationTableMap;
 use CryoConnectDB\Map\InformationSeekerConnectRequestTableMap;
 use CryoConnectDB\Map\InformationSeekerContactTableMap;
@@ -31,6 +35,7 @@ use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
 use Propel\Runtime\Collection\ObjectCollection;
+use Propel\Runtime\Collection\ObjectCombinationCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\LogicException;
@@ -167,12 +172,53 @@ abstract class InformationSeekers implements ActiveRecordInterface
     protected $collInformationSeekerProfessionsPartial;
 
     /**
+     * @var ObjectCombinationCollection Cross CombinationCollection to store aggregation of ChildContactTypes combinations.
+     */
+    protected $combinationCollContactTypesIds;
+
+    /**
+     * @var bool
+     */
+    protected $combinationCollContactTypesIdsPartial;
+
+    /**
+     * @var        ObjectCollection|ChildContactTypes[] Cross Collection to store aggregation of ChildContactTypes objects.
+     */
+    protected $collContactTypess;
+
+    /**
+     * @var bool
+     */
+    protected $collContactTypessPartial;
+
+    /**
+     * @var        ObjectCollection|ChildLanguages[] Cross Collection to store aggregation of ChildLanguages objects.
+     */
+    protected $collLanguagess;
+
+    /**
+     * @var bool
+     */
+    protected $collLanguagessPartial;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      *
      * @var boolean
      */
     protected $alreadyInSave = false;
+
+    /**
+     * @var ObjectCombinationCollection Cross CombinationCollection to store aggregation of ChildContactTypes combinations.
+     */
+    protected $combinationCollContactTypesIdsScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildLanguages[]
+     */
+    protected $languagessScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -830,6 +876,8 @@ abstract class InformationSeekers implements ActiveRecordInterface
 
             $this->collInformationSeekerProfessions = null;
 
+            $this->collContactTypesIds = null;
+            $this->collLanguagess = null;
         } // if (deep)
     }
 
@@ -955,6 +1003,71 @@ abstract class InformationSeekers implements ActiveRecordInterface
                 }
                 $this->resetModified();
             }
+
+            if ($this->combinationCollContactTypesIdsScheduledForDeletion !== null) {
+                if (!$this->combinationCollContactTypesIdsScheduledForDeletion->isEmpty()) {
+                    $pks = array();
+                    foreach ($this->combinationCollContactTypesIdsScheduledForDeletion as $combination) {
+                        $entryPk = [];
+
+                        $entryPk[1] = $this->getId();
+                        $entryPk[2] = $combination[0]->getId();
+                        //$combination[1] = Id;
+                        $entryPk[0] = $combination[1];
+
+                        $pks[] = $entryPk;
+                    }
+
+                    \CryoConnectDB\InformationSeekerContactQuery::create()
+                        ->filterByPrimaryKeys($pks)
+                        ->delete($con);
+
+                    $this->combinationCollContactTypesIdsScheduledForDeletion = null;
+                }
+
+            }
+
+            if (null !== $this->combinationCollContactTypesIds) {
+                foreach ($this->combinationCollContactTypesIds as $combination) {
+
+                    //$combination[0] = ContactTypes (information_seeker_contact_fk_88838f)
+                    if (!$combination[0]->isDeleted() && ($combination[0]->isNew() || $combination[0]->isModified())) {
+                        $combination[0]->save($con);
+                    }
+
+                    //$combination[1] = Id; Nothing to save.
+                }
+            }
+
+
+            if ($this->languagessScheduledForDeletion !== null) {
+                if (!$this->languagessScheduledForDeletion->isEmpty()) {
+                    $pks = array();
+                    foreach ($this->languagessScheduledForDeletion as $entry) {
+                        $entryPk = [];
+
+                        $entryPk[0] = $this->getId();
+                        $entryPk[1] = $entry->getLanguageCode();
+                        $pks[] = $entryPk;
+                    }
+
+                    \CryoConnectDB\InformationSeekerLanguagesQuery::create()
+                        ->filterByPrimaryKeys($pks)
+                        ->delete($con);
+
+                    $this->languagessScheduledForDeletion = null;
+                }
+
+            }
+
+            if ($this->collLanguagess) {
+                foreach ($this->collLanguagess as $languages) {
+                    if (!$languages->isDeleted() && ($languages->isNew() || $languages->isModified())) {
+                        $languages->save($con);
+                    }
+                }
+            }
+
 
             if ($this->informationSeekerAffiliationsScheduledForDeletion !== null) {
                 if (!$this->informationSeekerAffiliationsScheduledForDeletion->isEmpty()) {
@@ -2317,7 +2430,10 @@ abstract class InformationSeekers implements ActiveRecordInterface
         $informationSeekerContactsToDelete = $this->getInformationSeekerContacts(new Criteria(), $con)->diff($informationSeekerContacts);
 
 
-        $this->informationSeekerContactsScheduledForDeletion = $informationSeekerContactsToDelete;
+        //since at least one column in the foreign key is at the same time a PK
+        //we can not just set a PK to NULL in the lines below. We have to store
+        //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
+        $this->informationSeekerContactsScheduledForDeletion = clone $informationSeekerContactsToDelete;
 
         foreach ($informationSeekerContactsToDelete as $informationSeekerContactRemoved) {
             $informationSeekerContactRemoved->setInformationSeekers(null);
@@ -2567,7 +2683,10 @@ abstract class InformationSeekers implements ActiveRecordInterface
         $informationSeekerLanguagessToDelete = $this->getInformationSeekerLanguagess(new Criteria(), $con)->diff($informationSeekerLanguagess);
 
 
-        $this->informationSeekerLanguagessScheduledForDeletion = $informationSeekerLanguagessToDelete;
+        //since at least one column in the foreign key is at the same time a PK
+        //we can not just set a PK to NULL in the lines below. We have to store
+        //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
+        $this->informationSeekerLanguagessScheduledForDeletion = clone $informationSeekerLanguagessToDelete;
 
         foreach ($informationSeekerLanguagessToDelete as $informationSeekerLanguagesRemoved) {
             $informationSeekerLanguagesRemoved->setInformationSeekers(null);
@@ -2923,6 +3042,563 @@ abstract class InformationSeekers implements ActiveRecordInterface
     }
 
     /**
+     * Clears out the collContactTypesIds collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addContactTypesIds()
+     */
+    public function clearContactTypesIds()
+    {
+        $this->collContactTypesIds = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Initializes the combinationCollContactTypesIds crossRef collection.
+     *
+     * By default this just sets the combinationCollContactTypesIds collection to an empty collection (like clearContactTypesIds());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @return void
+     */
+    public function initContactTypesIds()
+    {
+        $this->combinationCollContactTypesIds = new ObjectCombinationCollection;
+        $this->combinationCollContactTypesIdsPartial = true;
+    }
+
+    /**
+     * Checks if the combinationCollContactTypesIds collection is loaded.
+     *
+     * @return bool
+     */
+    public function isContactTypesIdsLoaded()
+    {
+        return null !== $this->combinationCollContactTypesIds;
+    }
+
+    /**
+     * Returns a new query object pre configured with filters from current object and given arguments to query the database.
+     *
+     * @param int $id
+     * @param Criteria $criteria
+     *
+     * @return ChildContactTypesQuery
+     */
+    public function createContactTypessQuery($id = null, Criteria $criteria = null)
+    {
+        $criteria = ChildContactTypesQuery::create($criteria)
+            ->filterByInformationSeekers($this);
+
+        $informationSeekerContactQuery = $criteria->useInformationSeekerContactQuery();
+
+        if (null !== $id) {
+            $informationSeekerContactQuery->filterById($id);
+        }
+
+        $informationSeekerContactQuery->endUse();
+
+        return $criteria;
+    }
+
+    /**
+     * Gets a combined collection of ChildContactTypes objects related by a many-to-many relationship
+     * to the current object by way of the information_seeker_contact cross-reference table.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildInformationSeekers is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return ObjectCombinationCollection Combination list of ChildContactTypes objects
+     */
+    public function getContactTypesIds($criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->combinationCollContactTypesIdsPartial && !$this->isNew();
+        if (null === $this->combinationCollContactTypesIds || null !== $criteria || $partial) {
+            if ($this->isNew()) {
+                // return empty collection
+                if (null === $this->combinationCollContactTypesIds) {
+                    $this->initContactTypesIds();
+                }
+            } else {
+
+                $query = ChildInformationSeekerContactQuery::create(null, $criteria)
+                    ->filterByInformationSeekers($this)
+                    ->joinContactTypes()
+                ;
+
+                $items = $query->find($con);
+                $combinationCollContactTypesIds = new ObjectCombinationCollection();
+                foreach ($items as $item) {
+                    $combination = [];
+
+                    $combination[] = $item->getContactTypes();
+                    $combination[] = $item->getId();
+                    $combinationCollContactTypesIds[] = $combination;
+                }
+
+                if (null !== $criteria) {
+                    return $combinationCollContactTypesIds;
+                }
+
+                if ($partial && $this->combinationCollContactTypesIds) {
+                    //make sure that already added objects gets added to the list of the database.
+                    foreach ($this->combinationCollContactTypesIds as $obj) {
+                        if (!call_user_func_array([$combinationCollContactTypesIds, 'contains'], $obj)) {
+                            $combinationCollContactTypesIds[] = $obj;
+                        }
+                    }
+                }
+
+                $this->combinationCollContactTypesIds = $combinationCollContactTypesIds;
+                $this->combinationCollContactTypesIdsPartial = false;
+            }
+        }
+
+        return $this->combinationCollContactTypesIds;
+    }
+
+    /**
+     * Returns a not cached ObjectCollection of ChildContactTypes objects. This will hit always the databases.
+     * If you have attached new ChildContactTypes object to this object you need to call `save` first to get
+     * the correct return value. Use getContactTypesIds() to get the current internal state.
+     *
+     * @param int $id
+     * @param Criteria $criteria
+     * @param ConnectionInterface $con
+     *
+     * @return ChildContactTypes[]|ObjectCollection
+     */
+    public function getContactTypess($id = null, Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        return $this->createContactTypessQuery($id, $criteria)->find($con);
+    }
+
+    /**
+     * Sets a collection of ChildContactTypes objects related by a many-to-many relationship
+     * to the current object by way of the information_seeker_contact cross-reference table.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param  Collection $contactTypesIds A Propel collection.
+     * @param  ConnectionInterface $con Optional connection object
+     * @return $this|ChildInformationSeekers The current object (for fluent API support)
+     */
+    public function setContactTypesIds(Collection $contactTypesIds, ConnectionInterface $con = null)
+    {
+        $this->clearContactTypesIds();
+        $currentContactTypesIds = $this->getContactTypesIds();
+
+        $combinationCollContactTypesIdsScheduledForDeletion = $currentContactTypesIds->diff($contactTypesIds);
+
+        foreach ($combinationCollContactTypesIdsScheduledForDeletion as $toDelete) {
+            call_user_func_array([$this, 'removeContactTypesId'], $toDelete);
+        }
+
+        foreach ($contactTypesIds as $contactTypesId) {
+            if (!call_user_func_array([$currentContactTypesIds, 'contains'], $contactTypesId)) {
+                call_user_func_array([$this, 'doAddContactTypesId'], $contactTypesId);
+            }
+        }
+
+        $this->combinationCollContactTypesIdsPartial = false;
+        $this->combinationCollContactTypesIds = $contactTypesIds;
+
+        return $this;
+    }
+
+    /**
+     * Gets the number of ChildContactTypes objects related by a many-to-many relationship
+     * to the current object by way of the information_seeker_contact cross-reference table.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      boolean $distinct Set to true to force count distinct
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return int the number of related ChildContactTypes objects
+     */
+    public function countContactTypesIds(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->combinationCollContactTypesIdsPartial && !$this->isNew();
+        if (null === $this->combinationCollContactTypesIds || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->combinationCollContactTypesIds) {
+                return 0;
+            } else {
+
+                if ($partial && !$criteria) {
+                    return count($this->getContactTypesIds());
+                }
+
+                $query = ChildInformationSeekerContactQuery::create(null, $criteria);
+                if ($distinct) {
+                    $query->distinct();
+                }
+
+                return $query
+                    ->filterByInformationSeekers($this)
+                    ->count($con);
+            }
+        } else {
+            return count($this->combinationCollContactTypesIds);
+        }
+    }
+
+    /**
+     * Returns the not cached count of ChildContactTypes objects. This will hit always the databases.
+     * If you have attached new ChildContactTypes object to this object you need to call `save` first to get
+     * the correct return value. Use getContactTypesIds() to get the current internal state.
+     *
+     * @param int $id
+     * @param Criteria $criteria
+     * @param ConnectionInterface $con
+     *
+     * @return integer
+     */
+    public function countContactTypess($id = null, Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        return $this->createContactTypessQuery($id, $criteria)->count($con);
+    }
+
+    /**
+     * Associate a ChildContactTypes to this object
+     * through the information_seeker_contact cross reference table.
+     *
+     * @param ChildContactTypes $contactTypes,
+     * @param int $id
+     * @return ChildInformationSeekers The current object (for fluent API support)
+     */
+    public function addContactTypes(ChildContactTypes $contactTypes, $id)
+    {
+        if ($this->combinationCollContactTypesIds === null) {
+            $this->initContactTypesIds();
+        }
+
+        if (!$this->getContactTypesIds()->contains($contactTypes, $id)) {
+            // only add it if the **same** object is not already associated
+            $this->combinationCollContactTypesIds->push($contactTypes, $id);
+            $this->doAddContactTypesId($contactTypes, $id);
+        }
+
+        return $this;
+    }
+
+    /**
+     *
+     * @param ChildContactTypes $contactTypes,
+     * @param int $id
+     */
+    protected function doAddContactTypesId(ChildContactTypes $contactTypes, $id)
+    {
+        $informationSeekerContact = new ChildInformationSeekerContact();
+
+        $informationSeekerContact->setContactTypes($contactTypes);
+        $informationSeekerContact->setId($id);
+
+
+        $informationSeekerContact->setInformationSeekers($this);
+
+        $this->addInformationSeekerContact($informationSeekerContact);
+
+        // set the back reference to this object directly as using provided method either results
+        // in endless loop or in multiple relations
+        if ($contactTypes->isInformationSeekersIdsLoaded()) {
+            $contactTypes->initInformationSeekersIds();
+            $contactTypes->getInformationSeekersIds()->push($this, $id);
+        } elseif (!$contactTypes->getInformationSeekersIds()->contains($this, $id)) {
+            $contactTypes->getInformationSeekersIds()->push($this, $id);
+        }
+
+    }
+
+    /**
+     * Remove contactTypes, id of this object
+     * through the information_seeker_contact cross reference table.
+     *
+     * @param ChildContactTypes $contactTypes,
+     * @param int $id
+     * @return ChildInformationSeekers The current object (for fluent API support)
+     */
+    public function removeContactTypesId(ChildContactTypes $contactTypes, $id)
+    {
+        if ($this->getContactTypesIds()->contains($contactTypes, $id)) {
+            $informationSeekerContact = new ChildInformationSeekerContact();
+            $informationSeekerContact->setContactTypes($contactTypes);
+            if ($contactTypes->isInformationSeekersIdsLoaded()) {
+                //remove the back reference if available
+                $contactTypes->getInformationSeekersIds()->removeObject($this, $id);
+            }
+
+            $informationSeekerContact->setId($id);
+            $informationSeekerContact->setInformationSeekers($this);
+            $this->removeInformationSeekerContact(clone $informationSeekerContact);
+            $informationSeekerContact->clear();
+
+            $this->combinationCollContactTypesIds->remove($this->combinationCollContactTypesIds->search($contactTypes, $id));
+
+            if (null === $this->combinationCollContactTypesIdsScheduledForDeletion) {
+                $this->combinationCollContactTypesIdsScheduledForDeletion = clone $this->combinationCollContactTypesIds;
+                $this->combinationCollContactTypesIdsScheduledForDeletion->clear();
+            }
+
+            $this->combinationCollContactTypesIdsScheduledForDeletion->push($contactTypes, $id);
+        }
+
+
+        return $this;
+    }
+
+    /**
+     * Clears out the collLanguagess collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addLanguagess()
+     */
+    public function clearLanguagess()
+    {
+        $this->collLanguagess = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Initializes the collLanguagess crossRef collection.
+     *
+     * By default this just sets the collLanguagess collection to an empty collection (like clearLanguagess());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @return void
+     */
+    public function initLanguagess()
+    {
+        $collectionClassName = InformationSeekerLanguagesTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collLanguagess = new $collectionClassName;
+        $this->collLanguagessPartial = true;
+        $this->collLanguagess->setModel('\CryoConnectDB\Languages');
+    }
+
+    /**
+     * Checks if the collLanguagess collection is loaded.
+     *
+     * @return bool
+     */
+    public function isLanguagessLoaded()
+    {
+        return null !== $this->collLanguagess;
+    }
+
+    /**
+     * Gets a collection of ChildLanguages objects related by a many-to-many relationship
+     * to the current object by way of the information_seeker_languages cross-reference table.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildInformationSeekers is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return ObjectCollection|ChildLanguages[] List of ChildLanguages objects
+     */
+    public function getLanguagess(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collLanguagessPartial && !$this->isNew();
+        if (null === $this->collLanguagess || null !== $criteria || $partial) {
+            if ($this->isNew()) {
+                // return empty collection
+                if (null === $this->collLanguagess) {
+                    $this->initLanguagess();
+                }
+            } else {
+
+                $query = ChildLanguagesQuery::create(null, $criteria)
+                    ->filterByInformationSeekers($this);
+                $collLanguagess = $query->find($con);
+                if (null !== $criteria) {
+                    return $collLanguagess;
+                }
+
+                if ($partial && $this->collLanguagess) {
+                    //make sure that already added objects gets added to the list of the database.
+                    foreach ($this->collLanguagess as $obj) {
+                        if (!$collLanguagess->contains($obj)) {
+                            $collLanguagess[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collLanguagess = $collLanguagess;
+                $this->collLanguagessPartial = false;
+            }
+        }
+
+        return $this->collLanguagess;
+    }
+
+    /**
+     * Sets a collection of Languages objects related by a many-to-many relationship
+     * to the current object by way of the information_seeker_languages cross-reference table.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param  Collection $languagess A Propel collection.
+     * @param  ConnectionInterface $con Optional connection object
+     * @return $this|ChildInformationSeekers The current object (for fluent API support)
+     */
+    public function setLanguagess(Collection $languagess, ConnectionInterface $con = null)
+    {
+        $this->clearLanguagess();
+        $currentLanguagess = $this->getLanguagess();
+
+        $languagessScheduledForDeletion = $currentLanguagess->diff($languagess);
+
+        foreach ($languagessScheduledForDeletion as $toDelete) {
+            $this->removeLanguages($toDelete);
+        }
+
+        foreach ($languagess as $languages) {
+            if (!$currentLanguagess->contains($languages)) {
+                $this->doAddLanguages($languages);
+            }
+        }
+
+        $this->collLanguagessPartial = false;
+        $this->collLanguagess = $languagess;
+
+        return $this;
+    }
+
+    /**
+     * Gets the number of Languages objects related by a many-to-many relationship
+     * to the current object by way of the information_seeker_languages cross-reference table.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      boolean $distinct Set to true to force count distinct
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return int the number of related Languages objects
+     */
+    public function countLanguagess(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collLanguagessPartial && !$this->isNew();
+        if (null === $this->collLanguagess || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collLanguagess) {
+                return 0;
+            } else {
+
+                if ($partial && !$criteria) {
+                    return count($this->getLanguagess());
+                }
+
+                $query = ChildLanguagesQuery::create(null, $criteria);
+                if ($distinct) {
+                    $query->distinct();
+                }
+
+                return $query
+                    ->filterByInformationSeekers($this)
+                    ->count($con);
+            }
+        } else {
+            return count($this->collLanguagess);
+        }
+    }
+
+    /**
+     * Associate a ChildLanguages to this object
+     * through the information_seeker_languages cross reference table.
+     *
+     * @param ChildLanguages $languages
+     * @return ChildInformationSeekers The current object (for fluent API support)
+     */
+    public function addLanguages(ChildLanguages $languages)
+    {
+        if ($this->collLanguagess === null) {
+            $this->initLanguagess();
+        }
+
+        if (!$this->getLanguagess()->contains($languages)) {
+            // only add it if the **same** object is not already associated
+            $this->collLanguagess->push($languages);
+            $this->doAddLanguages($languages);
+        }
+
+        return $this;
+    }
+
+    /**
+     *
+     * @param ChildLanguages $languages
+     */
+    protected function doAddLanguages(ChildLanguages $languages)
+    {
+        $informationSeekerLanguages = new ChildInformationSeekerLanguages();
+
+        $informationSeekerLanguages->setLanguages($languages);
+
+        $informationSeekerLanguages->setInformationSeekers($this);
+
+        $this->addInformationSeekerLanguages($informationSeekerLanguages);
+
+        // set the back reference to this object directly as using provided method either results
+        // in endless loop or in multiple relations
+        if (!$languages->isInformationSeekerssLoaded()) {
+            $languages->initInformationSeekerss();
+            $languages->getInformationSeekerss()->push($this);
+        } elseif (!$languages->getInformationSeekerss()->contains($this)) {
+            $languages->getInformationSeekerss()->push($this);
+        }
+
+    }
+
+    /**
+     * Remove languages of this object
+     * through the information_seeker_languages cross reference table.
+     *
+     * @param ChildLanguages $languages
+     * @return ChildInformationSeekers The current object (for fluent API support)
+     */
+    public function removeLanguages(ChildLanguages $languages)
+    {
+        if ($this->getLanguagess()->contains($languages)) {
+            $informationSeekerLanguages = new ChildInformationSeekerLanguages();
+            $informationSeekerLanguages->setLanguages($languages);
+            if ($languages->isInformationSeekerssLoaded()) {
+                //remove the back reference if available
+                $languages->getInformationSeekerss()->removeObject($this);
+            }
+
+            $informationSeekerLanguages->setInformationSeekers($this);
+            $this->removeInformationSeekerLanguages(clone $informationSeekerLanguages);
+            $informationSeekerLanguages->clear();
+
+            $this->collLanguagess->remove($this->collLanguagess->search($languages));
+
+            if (null === $this->languagessScheduledForDeletion) {
+                $this->languagessScheduledForDeletion = clone $this->collLanguagess;
+                $this->languagessScheduledForDeletion->clear();
+            }
+
+            $this->languagessScheduledForDeletion->push($languages);
+        }
+
+
+        return $this;
+    }
+
+    /**
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
      * change of those foreign objects when you call `save` there).
@@ -2983,6 +3659,16 @@ abstract class InformationSeekers implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->combinationCollContactTypesIds) {
+                foreach ($this->combinationCollContactTypesIds as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
+            if ($this->collLanguagess) {
+                foreach ($this->collLanguagess as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
         } // if ($deep)
 
         $this->collInformationSeekerAffiliations = null;
@@ -2990,6 +3676,8 @@ abstract class InformationSeekers implements ActiveRecordInterface
         $this->collInformationSeekerContacts = null;
         $this->collInformationSeekerLanguagess = null;
         $this->collInformationSeekerProfessions = null;
+        $this->combinationCollContactTypesIds = null;
+        $this->collLanguagess = null;
         $this->aCountries = null;
     }
 

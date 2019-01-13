@@ -150,7 +150,7 @@ abstract class InformationSeekersQuery extends ModelCriteria
      * @param     string $modelName The phpName of a model, e.g. 'Book'
      * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
      */
-    public function __construct($dbName = 'cryo_connect', $modelName = '\\CryoConnectDB\\InformationSeekers', $modelAlias = null)
+    public function __construct($dbName = 'default', $modelName = '\\CryoConnectDB\\InformationSeekers', $modelAlias = null)
     {
         parent::__construct($dbName, $modelName, $modelAlias);
     }
@@ -975,6 +975,40 @@ abstract class InformationSeekersQuery extends ModelCriteria
         return $this
             ->joinInformationSeekerProfession($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'InformationSeekerProfession', '\CryoConnectDB\InformationSeekerProfessionQuery');
+    }
+
+    /**
+     * Filter the query by a related ContactTypes object
+     * using the information_seeker_contact table as cross reference
+     *
+     * @param ContactTypes $contactTypes the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildInformationSeekersQuery The current query, for fluid interface
+     */
+    public function filterByContactTypes($contactTypes, $comparison = Criteria::EQUAL)
+    {
+        return $this
+            ->useInformationSeekerContactQuery()
+            ->filterByContactTypes($contactTypes, $comparison)
+            ->endUse();
+    }
+
+    /**
+     * Filter the query by a related Languages object
+     * using the information_seeker_languages table as cross reference
+     *
+     * @param Languages $languages the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildInformationSeekersQuery The current query, for fluid interface
+     */
+    public function filterByLanguages($languages, $comparison = Criteria::EQUAL)
+    {
+        return $this
+            ->useInformationSeekerLanguagesQuery()
+            ->filterByLanguages($languages, $comparison)
+            ->endUse();
     }
 
     /**

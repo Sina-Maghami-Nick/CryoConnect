@@ -745,6 +745,10 @@ abstract class InformationSeekerAffiliation implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
+        $this->modifiedColumns[InformationSeekerAffiliationTableMap::COL_ID] = true;
+        if (null !== $this->id) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . InformationSeekerAffiliationTableMap::COL_ID . ')');
+        }
 
          // check the columns in natural order for more readable SQL queries
         if ($this->isColumnModified(InformationSeekerAffiliationTableMap::COL_ID)) {
@@ -795,6 +799,7 @@ abstract class InformationSeekerAffiliation implements ActiveRecordInterface
         } catch (Exception $e) {
             throw new PropelException('Unable to get autoincrement id.', 0, $e);
         }
+        $this->setId($pk);
 
         $this->setNew(false);
     }
@@ -1068,7 +1073,8 @@ abstract class InformationSeekerAffiliation implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        throw new LogicException('The InformationSeekerAffiliation object has no primary key');
+        $criteria = ChildInformationSeekerAffiliationQuery::create();
+        $criteria->add(InformationSeekerAffiliationTableMap::COL_ID, $this->id);
 
         return $criteria;
     }
@@ -1081,7 +1087,7 @@ abstract class InformationSeekerAffiliation implements ActiveRecordInterface
      */
     public function hashCode()
     {
-        $validPk = false;
+        $validPk = null !== $this->getId();
 
         $validPrimaryKeyFKs = 0;
         $primaryKeyFKs = [];
@@ -1096,27 +1102,23 @@ abstract class InformationSeekerAffiliation implements ActiveRecordInterface
     }
 
     /**
-     * Returns NULL since this table doesn't have a primary key.
-     * This method exists only for BC and is deprecated!
-     * @return null
+     * Returns the primary key for this object (row).
+     * @return int
      */
     public function getPrimaryKey()
     {
-        return null;
+        return $this->getId();
     }
 
     /**
-     * Dummy primary key setter.
+     * Generic method to set the primary key (id column).
      *
-     * This function only exists to preserve backwards compatibility.  It is no longer
-     * needed or required by the Persistent interface.  It will be removed in next BC-breaking
-     * release of Propel.
-     *
-     * @deprecated
+     * @param       int $key Primary key.
+     * @return void
      */
-    public function setPrimaryKey($pk)
+    public function setPrimaryKey($key)
     {
-        // do nothing, because this object doesn't have any primary keys
+        $this->setId($key);
     }
 
     /**
@@ -1125,7 +1127,7 @@ abstract class InformationSeekerAffiliation implements ActiveRecordInterface
      */
     public function isPrimaryKeyNull()
     {
-        return ;
+        return null === $this->getId();
     }
 
     /**

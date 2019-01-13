@@ -1047,7 +1047,9 @@ abstract class InformationSeekerConnectRequestLanguages implements ActiveRecordI
      */
     public function buildPkeyCriteria()
     {
-        throw new LogicException('The InformationSeekerConnectRequestLanguages object has no primary key');
+        $criteria = ChildInformationSeekerConnectRequestLanguagesQuery::create();
+        $criteria->add(InformationSeekerConnectRequestLanguagesTableMap::COL_INFORMATION_SEEKER_CONNECT_REQUEST_ID, $this->information_seeker_connect_request_id);
+        $criteria->add(InformationSeekerConnectRequestLanguagesTableMap::COL_LANGUAGE_CODE, $this->language_code);
 
         return $criteria;
     }
@@ -1060,10 +1062,25 @@ abstract class InformationSeekerConnectRequestLanguages implements ActiveRecordI
      */
     public function hashCode()
     {
-        $validPk = false;
+        $validPk = null !== $this->getInformationSeekerConnectRequestId() &&
+            null !== $this->getLanguageCode();
 
-        $validPrimaryKeyFKs = 0;
+        $validPrimaryKeyFKs = 2;
         $primaryKeyFKs = [];
+
+        //relation information_seeker_connect_request_languages_fk_185361 to table information_seeker_connect_request
+        if ($this->aInformationSeekerConnectRequest && $hash = spl_object_hash($this->aInformationSeekerConnectRequest)) {
+            $primaryKeyFKs[] = $hash;
+        } else {
+            $validPrimaryKeyFKs = false;
+        }
+
+        //relation information_seeker_connect_request_languages_fk_0fb9dd to table languages
+        if ($this->aLanguages && $hash = spl_object_hash($this->aLanguages)) {
+            $primaryKeyFKs[] = $hash;
+        } else {
+            $validPrimaryKeyFKs = false;
+        }
 
         if ($validPk) {
             return crc32(json_encode($this->getPrimaryKey(), JSON_UNESCAPED_UNICODE));
@@ -1075,27 +1092,29 @@ abstract class InformationSeekerConnectRequestLanguages implements ActiveRecordI
     }
 
     /**
-     * Returns NULL since this table doesn't have a primary key.
-     * This method exists only for BC and is deprecated!
-     * @return null
+     * Returns the composite primary key for this object.
+     * The array elements will be in same order as specified in XML.
+     * @return array
      */
     public function getPrimaryKey()
     {
-        return null;
+        $pks = array();
+        $pks[0] = $this->getInformationSeekerConnectRequestId();
+        $pks[1] = $this->getLanguageCode();
+
+        return $pks;
     }
 
     /**
-     * Dummy primary key setter.
+     * Set the [composite] primary key.
      *
-     * This function only exists to preserve backwards compatibility.  It is no longer
-     * needed or required by the Persistent interface.  It will be removed in next BC-breaking
-     * release of Propel.
-     *
-     * @deprecated
+     * @param      array $keys The elements of the composite key (order must match the order in XML file).
+     * @return void
      */
-    public function setPrimaryKey($pk)
+    public function setPrimaryKey($keys)
     {
-        // do nothing, because this object doesn't have any primary keys
+        $this->setInformationSeekerConnectRequestId($keys[0]);
+        $this->setLanguageCode($keys[1]);
     }
 
     /**
@@ -1104,7 +1123,7 @@ abstract class InformationSeekerConnectRequestLanguages implements ActiveRecordI
      */
     public function isPrimaryKeyNull()
     {
-        return ;
+        return (null === $this->getInformationSeekerConnectRequestId()) && (null === $this->getLanguageCode());
     }
 
     /**

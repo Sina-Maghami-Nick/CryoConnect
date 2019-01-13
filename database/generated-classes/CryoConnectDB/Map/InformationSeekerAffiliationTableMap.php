@@ -9,7 +9,6 @@ use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
-use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Map\TableMap;
@@ -40,7 +39,7 @@ class InformationSeekerAffiliationTableMap extends TableMap
     /**
      * The default database name for this class
      */
-    const DATABASE_NAME = 'cryo_connect';
+    const DATABASE_NAME = 'default';
 
     /**
      * The table name for this class
@@ -142,7 +141,7 @@ class InformationSeekerAffiliationTableMap extends TableMap
         $this->setPackage('CryoConnectDB');
         $this->setUseIdGenerator(true);
         // columns
-        $this->addColumn('id', 'Id', 'INTEGER', true, 10, null);
+        $this->addPrimaryKey('id', 'Id', 'INTEGER', true, 10, null);
         $this->addColumn('affiliation_name', 'AffiliationName', 'LONGVARCHAR', true, null, null);
         $this->addForeignKey('information_seeker_id', 'InformationSeekerId', 'INTEGER', 'information_seekers', 'id', true, null, null);
         $this->addColumn('timestamp', 'Timestamp', 'TIMESTAMP', true, null, 'CURRENT_TIMESTAMP');
@@ -177,7 +176,12 @@ class InformationSeekerAffiliationTableMap extends TableMap
      */
     public static function getPrimaryKeyHashFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        return null;
+        // If the PK cannot be derived from the row, return NULL.
+        if ($row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)] === null) {
+            return null;
+        }
+
+        return null === $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)] || is_scalar($row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)]) || is_callable([$row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)], '__toString']) ? (string) $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)] : $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
     }
 
     /**
@@ -194,7 +198,11 @@ class InformationSeekerAffiliationTableMap extends TableMap
      */
     public static function getPrimaryKeyFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        return '';
+        return (int) $row[
+            $indexType == TableMap::TYPE_NUM
+                ? 0 + $offset
+                : self::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)
+        ];
     }
 
     /**
@@ -350,10 +358,11 @@ class InformationSeekerAffiliationTableMap extends TableMap
             // rename for clarity
             $criteria = $values;
         } elseif ($values instanceof \CryoConnectDB\InformationSeekerAffiliation) { // it's a model object
-            // create criteria based on pk value
-            $criteria = $values->buildCriteria();
+            // create criteria based on pk values
+            $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            throw new LogicException('The InformationSeekerAffiliation object has no primary key');
+            $criteria = new Criteria(InformationSeekerAffiliationTableMap::DATABASE_NAME);
+            $criteria->add(InformationSeekerAffiliationTableMap::COL_ID, (array) $values, Criteria::IN);
         }
 
         $query = InformationSeekerAffiliationQuery::create()->mergeWith($criteria);
@@ -399,6 +408,10 @@ class InformationSeekerAffiliationTableMap extends TableMap
             $criteria = clone $criteria; // rename for clarity
         } else {
             $criteria = $criteria->buildCriteria(); // build Criteria from InformationSeekerAffiliation object
+        }
+
+        if ($criteria->containsKey(InformationSeekerAffiliationTableMap::COL_ID) && $criteria->keyContainsValue(InformationSeekerAffiliationTableMap::COL_ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.InformationSeekerAffiliationTableMap::COL_ID.')');
         }
 
 

@@ -5,6 +5,10 @@ namespace CryoConnectDB\Base;
 use \DateTime;
 use \Exception;
 use \PDO;
+use CryoConnectDB\CryosphereWhat as ChildCryosphereWhat;
+use CryoConnectDB\CryosphereWhatQuery as ChildCryosphereWhatQuery;
+use CryoConnectDB\CryosphereWhere as ChildCryosphereWhere;
+use CryoConnectDB\CryosphereWhereQuery as ChildCryosphereWhereQuery;
 use CryoConnectDB\InformationSeekerConnectRequest as ChildInformationSeekerConnectRequest;
 use CryoConnectDB\InformationSeekerConnectRequestCryosphereWhat as ChildInformationSeekerConnectRequestCryosphereWhat;
 use CryoConnectDB\InformationSeekerConnectRequestCryosphereWhatQuery as ChildInformationSeekerConnectRequestCryosphereWhatQuery;
@@ -15,6 +19,8 @@ use CryoConnectDB\InformationSeekerConnectRequestLanguagesQuery as ChildInformat
 use CryoConnectDB\InformationSeekerConnectRequestQuery as ChildInformationSeekerConnectRequestQuery;
 use CryoConnectDB\InformationSeekers as ChildInformationSeekers;
 use CryoConnectDB\InformationSeekersQuery as ChildInformationSeekersQuery;
+use CryoConnectDB\Languages as ChildLanguages;
+use CryoConnectDB\LanguagesQuery as ChildLanguagesQuery;
 use CryoConnectDB\Map\InformationSeekerConnectRequestCryosphereWhatTableMap;
 use CryoConnectDB\Map\InformationSeekerConnectRequestCryosphereWhereTableMap;
 use CryoConnectDB\Map\InformationSeekerConnectRequestLanguagesTableMap;
@@ -127,12 +133,60 @@ abstract class InformationSeekerConnectRequest implements ActiveRecordInterface
     protected $collInformationSeekerConnectRequestLanguagessPartial;
 
     /**
+     * @var        ObjectCollection|ChildCryosphereWhat[] Cross Collection to store aggregation of ChildCryosphereWhat objects.
+     */
+    protected $collCryosphereWhats;
+
+    /**
+     * @var bool
+     */
+    protected $collCryosphereWhatsPartial;
+
+    /**
+     * @var        ObjectCollection|ChildCryosphereWhere[] Cross Collection to store aggregation of ChildCryosphereWhere objects.
+     */
+    protected $collCryosphereWheres;
+
+    /**
+     * @var bool
+     */
+    protected $collCryosphereWheresPartial;
+
+    /**
+     * @var        ObjectCollection|ChildLanguages[] Cross Collection to store aggregation of ChildLanguages objects.
+     */
+    protected $collLanguagess;
+
+    /**
+     * @var bool
+     */
+    protected $collLanguagessPartial;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      *
      * @var boolean
      */
     protected $alreadyInSave = false;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildCryosphereWhat[]
+     */
+    protected $cryosphereWhatsScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildCryosphereWhere[]
+     */
+    protected $cryosphereWheresScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildLanguages[]
+     */
+    protected $languagessScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -652,6 +706,9 @@ abstract class InformationSeekerConnectRequest implements ActiveRecordInterface
 
             $this->collInformationSeekerConnectRequestLanguagess = null;
 
+            $this->collCryosphereWhats = null;
+            $this->collCryosphereWheres = null;
+            $this->collLanguagess = null;
         } // if (deep)
     }
 
@@ -777,6 +834,93 @@ abstract class InformationSeekerConnectRequest implements ActiveRecordInterface
                 }
                 $this->resetModified();
             }
+
+            if ($this->cryosphereWhatsScheduledForDeletion !== null) {
+                if (!$this->cryosphereWhatsScheduledForDeletion->isEmpty()) {
+                    $pks = array();
+                    foreach ($this->cryosphereWhatsScheduledForDeletion as $entry) {
+                        $entryPk = [];
+
+                        $entryPk[0] = $this->getId();
+                        $entryPk[1] = $entry->getId();
+                        $pks[] = $entryPk;
+                    }
+
+                    \CryoConnectDB\InformationSeekerConnectRequestCryosphereWhatQuery::create()
+                        ->filterByPrimaryKeys($pks)
+                        ->delete($con);
+
+                    $this->cryosphereWhatsScheduledForDeletion = null;
+                }
+
+            }
+
+            if ($this->collCryosphereWhats) {
+                foreach ($this->collCryosphereWhats as $cryosphereWhat) {
+                    if (!$cryosphereWhat->isDeleted() && ($cryosphereWhat->isNew() || $cryosphereWhat->isModified())) {
+                        $cryosphereWhat->save($con);
+                    }
+                }
+            }
+
+
+            if ($this->cryosphereWheresScheduledForDeletion !== null) {
+                if (!$this->cryosphereWheresScheduledForDeletion->isEmpty()) {
+                    $pks = array();
+                    foreach ($this->cryosphereWheresScheduledForDeletion as $entry) {
+                        $entryPk = [];
+
+                        $entryPk[0] = $this->getId();
+                        $entryPk[1] = $entry->getId();
+                        $pks[] = $entryPk;
+                    }
+
+                    \CryoConnectDB\InformationSeekerConnectRequestCryosphereWhereQuery::create()
+                        ->filterByPrimaryKeys($pks)
+                        ->delete($con);
+
+                    $this->cryosphereWheresScheduledForDeletion = null;
+                }
+
+            }
+
+            if ($this->collCryosphereWheres) {
+                foreach ($this->collCryosphereWheres as $cryosphereWhere) {
+                    if (!$cryosphereWhere->isDeleted() && ($cryosphereWhere->isNew() || $cryosphereWhere->isModified())) {
+                        $cryosphereWhere->save($con);
+                    }
+                }
+            }
+
+
+            if ($this->languagessScheduledForDeletion !== null) {
+                if (!$this->languagessScheduledForDeletion->isEmpty()) {
+                    $pks = array();
+                    foreach ($this->languagessScheduledForDeletion as $entry) {
+                        $entryPk = [];
+
+                        $entryPk[0] = $this->getId();
+                        $entryPk[1] = $entry->getLanguageCode();
+                        $pks[] = $entryPk;
+                    }
+
+                    \CryoConnectDB\InformationSeekerConnectRequestLanguagesQuery::create()
+                        ->filterByPrimaryKeys($pks)
+                        ->delete($con);
+
+                    $this->languagessScheduledForDeletion = null;
+                }
+
+            }
+
+            if ($this->collLanguagess) {
+                foreach ($this->collLanguagess as $languages) {
+                    if (!$languages->isDeleted() && ($languages->isNew() || $languages->isModified())) {
+                        $languages->save($con);
+                    }
+                }
+            }
+
 
             if ($this->informationSeekerConnectRequestCryosphereWhatsScheduledForDeletion !== null) {
                 if (!$this->informationSeekerConnectRequestCryosphereWhatsScheduledForDeletion->isEmpty()) {
@@ -1545,7 +1689,10 @@ abstract class InformationSeekerConnectRequest implements ActiveRecordInterface
         $informationSeekerConnectRequestCryosphereWhatsToDelete = $this->getInformationSeekerConnectRequestCryosphereWhats(new Criteria(), $con)->diff($informationSeekerConnectRequestCryosphereWhats);
 
 
-        $this->informationSeekerConnectRequestCryosphereWhatsScheduledForDeletion = $informationSeekerConnectRequestCryosphereWhatsToDelete;
+        //since at least one column in the foreign key is at the same time a PK
+        //we can not just set a PK to NULL in the lines below. We have to store
+        //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
+        $this->informationSeekerConnectRequestCryosphereWhatsScheduledForDeletion = clone $informationSeekerConnectRequestCryosphereWhatsToDelete;
 
         foreach ($informationSeekerConnectRequestCryosphereWhatsToDelete as $informationSeekerConnectRequestCryosphereWhatRemoved) {
             $informationSeekerConnectRequestCryosphereWhatRemoved->setInformationSeekerConnectRequest(null);
@@ -1795,7 +1942,10 @@ abstract class InformationSeekerConnectRequest implements ActiveRecordInterface
         $informationSeekerConnectRequestCryosphereWheresToDelete = $this->getInformationSeekerConnectRequestCryosphereWheres(new Criteria(), $con)->diff($informationSeekerConnectRequestCryosphereWheres);
 
 
-        $this->informationSeekerConnectRequestCryosphereWheresScheduledForDeletion = $informationSeekerConnectRequestCryosphereWheresToDelete;
+        //since at least one column in the foreign key is at the same time a PK
+        //we can not just set a PK to NULL in the lines below. We have to store
+        //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
+        $this->informationSeekerConnectRequestCryosphereWheresScheduledForDeletion = clone $informationSeekerConnectRequestCryosphereWheresToDelete;
 
         foreach ($informationSeekerConnectRequestCryosphereWheresToDelete as $informationSeekerConnectRequestCryosphereWhereRemoved) {
             $informationSeekerConnectRequestCryosphereWhereRemoved->setInformationSeekerConnectRequest(null);
@@ -2045,7 +2195,10 @@ abstract class InformationSeekerConnectRequest implements ActiveRecordInterface
         $informationSeekerConnectRequestLanguagessToDelete = $this->getInformationSeekerConnectRequestLanguagess(new Criteria(), $con)->diff($informationSeekerConnectRequestLanguagess);
 
 
-        $this->informationSeekerConnectRequestLanguagessScheduledForDeletion = $informationSeekerConnectRequestLanguagessToDelete;
+        //since at least one column in the foreign key is at the same time a PK
+        //we can not just set a PK to NULL in the lines below. We have to store
+        //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
+        $this->informationSeekerConnectRequestLanguagessScheduledForDeletion = clone $informationSeekerConnectRequestLanguagessToDelete;
 
         foreach ($informationSeekerConnectRequestLanguagessToDelete as $informationSeekerConnectRequestLanguagesRemoved) {
             $informationSeekerConnectRequestLanguagesRemoved->setInformationSeekerConnectRequest(null);
@@ -2176,6 +2329,735 @@ abstract class InformationSeekerConnectRequest implements ActiveRecordInterface
     }
 
     /**
+     * Clears out the collCryosphereWhats collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addCryosphereWhats()
+     */
+    public function clearCryosphereWhats()
+    {
+        $this->collCryosphereWhats = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Initializes the collCryosphereWhats crossRef collection.
+     *
+     * By default this just sets the collCryosphereWhats collection to an empty collection (like clearCryosphereWhats());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @return void
+     */
+    public function initCryosphereWhats()
+    {
+        $collectionClassName = InformationSeekerConnectRequestCryosphereWhatTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collCryosphereWhats = new $collectionClassName;
+        $this->collCryosphereWhatsPartial = true;
+        $this->collCryosphereWhats->setModel('\CryoConnectDB\CryosphereWhat');
+    }
+
+    /**
+     * Checks if the collCryosphereWhats collection is loaded.
+     *
+     * @return bool
+     */
+    public function isCryosphereWhatsLoaded()
+    {
+        return null !== $this->collCryosphereWhats;
+    }
+
+    /**
+     * Gets a collection of ChildCryosphereWhat objects related by a many-to-many relationship
+     * to the current object by way of the information_seeker_connect_request_cryosphere_what cross-reference table.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildInformationSeekerConnectRequest is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return ObjectCollection|ChildCryosphereWhat[] List of ChildCryosphereWhat objects
+     */
+    public function getCryosphereWhats(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collCryosphereWhatsPartial && !$this->isNew();
+        if (null === $this->collCryosphereWhats || null !== $criteria || $partial) {
+            if ($this->isNew()) {
+                // return empty collection
+                if (null === $this->collCryosphereWhats) {
+                    $this->initCryosphereWhats();
+                }
+            } else {
+
+                $query = ChildCryosphereWhatQuery::create(null, $criteria)
+                    ->filterByInformationSeekerConnectRequest($this);
+                $collCryosphereWhats = $query->find($con);
+                if (null !== $criteria) {
+                    return $collCryosphereWhats;
+                }
+
+                if ($partial && $this->collCryosphereWhats) {
+                    //make sure that already added objects gets added to the list of the database.
+                    foreach ($this->collCryosphereWhats as $obj) {
+                        if (!$collCryosphereWhats->contains($obj)) {
+                            $collCryosphereWhats[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collCryosphereWhats = $collCryosphereWhats;
+                $this->collCryosphereWhatsPartial = false;
+            }
+        }
+
+        return $this->collCryosphereWhats;
+    }
+
+    /**
+     * Sets a collection of CryosphereWhat objects related by a many-to-many relationship
+     * to the current object by way of the information_seeker_connect_request_cryosphere_what cross-reference table.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param  Collection $cryosphereWhats A Propel collection.
+     * @param  ConnectionInterface $con Optional connection object
+     * @return $this|ChildInformationSeekerConnectRequest The current object (for fluent API support)
+     */
+    public function setCryosphereWhats(Collection $cryosphereWhats, ConnectionInterface $con = null)
+    {
+        $this->clearCryosphereWhats();
+        $currentCryosphereWhats = $this->getCryosphereWhats();
+
+        $cryosphereWhatsScheduledForDeletion = $currentCryosphereWhats->diff($cryosphereWhats);
+
+        foreach ($cryosphereWhatsScheduledForDeletion as $toDelete) {
+            $this->removeCryosphereWhat($toDelete);
+        }
+
+        foreach ($cryosphereWhats as $cryosphereWhat) {
+            if (!$currentCryosphereWhats->contains($cryosphereWhat)) {
+                $this->doAddCryosphereWhat($cryosphereWhat);
+            }
+        }
+
+        $this->collCryosphereWhatsPartial = false;
+        $this->collCryosphereWhats = $cryosphereWhats;
+
+        return $this;
+    }
+
+    /**
+     * Gets the number of CryosphereWhat objects related by a many-to-many relationship
+     * to the current object by way of the information_seeker_connect_request_cryosphere_what cross-reference table.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      boolean $distinct Set to true to force count distinct
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return int the number of related CryosphereWhat objects
+     */
+    public function countCryosphereWhats(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collCryosphereWhatsPartial && !$this->isNew();
+        if (null === $this->collCryosphereWhats || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collCryosphereWhats) {
+                return 0;
+            } else {
+
+                if ($partial && !$criteria) {
+                    return count($this->getCryosphereWhats());
+                }
+
+                $query = ChildCryosphereWhatQuery::create(null, $criteria);
+                if ($distinct) {
+                    $query->distinct();
+                }
+
+                return $query
+                    ->filterByInformationSeekerConnectRequest($this)
+                    ->count($con);
+            }
+        } else {
+            return count($this->collCryosphereWhats);
+        }
+    }
+
+    /**
+     * Associate a ChildCryosphereWhat to this object
+     * through the information_seeker_connect_request_cryosphere_what cross reference table.
+     *
+     * @param ChildCryosphereWhat $cryosphereWhat
+     * @return ChildInformationSeekerConnectRequest The current object (for fluent API support)
+     */
+    public function addCryosphereWhat(ChildCryosphereWhat $cryosphereWhat)
+    {
+        if ($this->collCryosphereWhats === null) {
+            $this->initCryosphereWhats();
+        }
+
+        if (!$this->getCryosphereWhats()->contains($cryosphereWhat)) {
+            // only add it if the **same** object is not already associated
+            $this->collCryosphereWhats->push($cryosphereWhat);
+            $this->doAddCryosphereWhat($cryosphereWhat);
+        }
+
+        return $this;
+    }
+
+    /**
+     *
+     * @param ChildCryosphereWhat $cryosphereWhat
+     */
+    protected function doAddCryosphereWhat(ChildCryosphereWhat $cryosphereWhat)
+    {
+        $informationSeekerConnectRequestCryosphereWhat = new ChildInformationSeekerConnectRequestCryosphereWhat();
+
+        $informationSeekerConnectRequestCryosphereWhat->setCryosphereWhat($cryosphereWhat);
+
+        $informationSeekerConnectRequestCryosphereWhat->setInformationSeekerConnectRequest($this);
+
+        $this->addInformationSeekerConnectRequestCryosphereWhat($informationSeekerConnectRequestCryosphereWhat);
+
+        // set the back reference to this object directly as using provided method either results
+        // in endless loop or in multiple relations
+        if (!$cryosphereWhat->isInformationSeekerConnectRequestsLoaded()) {
+            $cryosphereWhat->initInformationSeekerConnectRequests();
+            $cryosphereWhat->getInformationSeekerConnectRequests()->push($this);
+        } elseif (!$cryosphereWhat->getInformationSeekerConnectRequests()->contains($this)) {
+            $cryosphereWhat->getInformationSeekerConnectRequests()->push($this);
+        }
+
+    }
+
+    /**
+     * Remove cryosphereWhat of this object
+     * through the information_seeker_connect_request_cryosphere_what cross reference table.
+     *
+     * @param ChildCryosphereWhat $cryosphereWhat
+     * @return ChildInformationSeekerConnectRequest The current object (for fluent API support)
+     */
+    public function removeCryosphereWhat(ChildCryosphereWhat $cryosphereWhat)
+    {
+        if ($this->getCryosphereWhats()->contains($cryosphereWhat)) {
+            $informationSeekerConnectRequestCryosphereWhat = new ChildInformationSeekerConnectRequestCryosphereWhat();
+            $informationSeekerConnectRequestCryosphereWhat->setCryosphereWhat($cryosphereWhat);
+            if ($cryosphereWhat->isInformationSeekerConnectRequestsLoaded()) {
+                //remove the back reference if available
+                $cryosphereWhat->getInformationSeekerConnectRequests()->removeObject($this);
+            }
+
+            $informationSeekerConnectRequestCryosphereWhat->setInformationSeekerConnectRequest($this);
+            $this->removeInformationSeekerConnectRequestCryosphereWhat(clone $informationSeekerConnectRequestCryosphereWhat);
+            $informationSeekerConnectRequestCryosphereWhat->clear();
+
+            $this->collCryosphereWhats->remove($this->collCryosphereWhats->search($cryosphereWhat));
+
+            if (null === $this->cryosphereWhatsScheduledForDeletion) {
+                $this->cryosphereWhatsScheduledForDeletion = clone $this->collCryosphereWhats;
+                $this->cryosphereWhatsScheduledForDeletion->clear();
+            }
+
+            $this->cryosphereWhatsScheduledForDeletion->push($cryosphereWhat);
+        }
+
+
+        return $this;
+    }
+
+    /**
+     * Clears out the collCryosphereWheres collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addCryosphereWheres()
+     */
+    public function clearCryosphereWheres()
+    {
+        $this->collCryosphereWheres = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Initializes the collCryosphereWheres crossRef collection.
+     *
+     * By default this just sets the collCryosphereWheres collection to an empty collection (like clearCryosphereWheres());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @return void
+     */
+    public function initCryosphereWheres()
+    {
+        $collectionClassName = InformationSeekerConnectRequestCryosphereWhereTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collCryosphereWheres = new $collectionClassName;
+        $this->collCryosphereWheresPartial = true;
+        $this->collCryosphereWheres->setModel('\CryoConnectDB\CryosphereWhere');
+    }
+
+    /**
+     * Checks if the collCryosphereWheres collection is loaded.
+     *
+     * @return bool
+     */
+    public function isCryosphereWheresLoaded()
+    {
+        return null !== $this->collCryosphereWheres;
+    }
+
+    /**
+     * Gets a collection of ChildCryosphereWhere objects related by a many-to-many relationship
+     * to the current object by way of the information_seeker_connect_request_cryosphere_where cross-reference table.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildInformationSeekerConnectRequest is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return ObjectCollection|ChildCryosphereWhere[] List of ChildCryosphereWhere objects
+     */
+    public function getCryosphereWheres(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collCryosphereWheresPartial && !$this->isNew();
+        if (null === $this->collCryosphereWheres || null !== $criteria || $partial) {
+            if ($this->isNew()) {
+                // return empty collection
+                if (null === $this->collCryosphereWheres) {
+                    $this->initCryosphereWheres();
+                }
+            } else {
+
+                $query = ChildCryosphereWhereQuery::create(null, $criteria)
+                    ->filterByInformationSeekerConnectRequest($this);
+                $collCryosphereWheres = $query->find($con);
+                if (null !== $criteria) {
+                    return $collCryosphereWheres;
+                }
+
+                if ($partial && $this->collCryosphereWheres) {
+                    //make sure that already added objects gets added to the list of the database.
+                    foreach ($this->collCryosphereWheres as $obj) {
+                        if (!$collCryosphereWheres->contains($obj)) {
+                            $collCryosphereWheres[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collCryosphereWheres = $collCryosphereWheres;
+                $this->collCryosphereWheresPartial = false;
+            }
+        }
+
+        return $this->collCryosphereWheres;
+    }
+
+    /**
+     * Sets a collection of CryosphereWhere objects related by a many-to-many relationship
+     * to the current object by way of the information_seeker_connect_request_cryosphere_where cross-reference table.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param  Collection $cryosphereWheres A Propel collection.
+     * @param  ConnectionInterface $con Optional connection object
+     * @return $this|ChildInformationSeekerConnectRequest The current object (for fluent API support)
+     */
+    public function setCryosphereWheres(Collection $cryosphereWheres, ConnectionInterface $con = null)
+    {
+        $this->clearCryosphereWheres();
+        $currentCryosphereWheres = $this->getCryosphereWheres();
+
+        $cryosphereWheresScheduledForDeletion = $currentCryosphereWheres->diff($cryosphereWheres);
+
+        foreach ($cryosphereWheresScheduledForDeletion as $toDelete) {
+            $this->removeCryosphereWhere($toDelete);
+        }
+
+        foreach ($cryosphereWheres as $cryosphereWhere) {
+            if (!$currentCryosphereWheres->contains($cryosphereWhere)) {
+                $this->doAddCryosphereWhere($cryosphereWhere);
+            }
+        }
+
+        $this->collCryosphereWheresPartial = false;
+        $this->collCryosphereWheres = $cryosphereWheres;
+
+        return $this;
+    }
+
+    /**
+     * Gets the number of CryosphereWhere objects related by a many-to-many relationship
+     * to the current object by way of the information_seeker_connect_request_cryosphere_where cross-reference table.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      boolean $distinct Set to true to force count distinct
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return int the number of related CryosphereWhere objects
+     */
+    public function countCryosphereWheres(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collCryosphereWheresPartial && !$this->isNew();
+        if (null === $this->collCryosphereWheres || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collCryosphereWheres) {
+                return 0;
+            } else {
+
+                if ($partial && !$criteria) {
+                    return count($this->getCryosphereWheres());
+                }
+
+                $query = ChildCryosphereWhereQuery::create(null, $criteria);
+                if ($distinct) {
+                    $query->distinct();
+                }
+
+                return $query
+                    ->filterByInformationSeekerConnectRequest($this)
+                    ->count($con);
+            }
+        } else {
+            return count($this->collCryosphereWheres);
+        }
+    }
+
+    /**
+     * Associate a ChildCryosphereWhere to this object
+     * through the information_seeker_connect_request_cryosphere_where cross reference table.
+     *
+     * @param ChildCryosphereWhere $cryosphereWhere
+     * @return ChildInformationSeekerConnectRequest The current object (for fluent API support)
+     */
+    public function addCryosphereWhere(ChildCryosphereWhere $cryosphereWhere)
+    {
+        if ($this->collCryosphereWheres === null) {
+            $this->initCryosphereWheres();
+        }
+
+        if (!$this->getCryosphereWheres()->contains($cryosphereWhere)) {
+            // only add it if the **same** object is not already associated
+            $this->collCryosphereWheres->push($cryosphereWhere);
+            $this->doAddCryosphereWhere($cryosphereWhere);
+        }
+
+        return $this;
+    }
+
+    /**
+     *
+     * @param ChildCryosphereWhere $cryosphereWhere
+     */
+    protected function doAddCryosphereWhere(ChildCryosphereWhere $cryosphereWhere)
+    {
+        $informationSeekerConnectRequestCryosphereWhere = new ChildInformationSeekerConnectRequestCryosphereWhere();
+
+        $informationSeekerConnectRequestCryosphereWhere->setCryosphereWhere($cryosphereWhere);
+
+        $informationSeekerConnectRequestCryosphereWhere->setInformationSeekerConnectRequest($this);
+
+        $this->addInformationSeekerConnectRequestCryosphereWhere($informationSeekerConnectRequestCryosphereWhere);
+
+        // set the back reference to this object directly as using provided method either results
+        // in endless loop or in multiple relations
+        if (!$cryosphereWhere->isInformationSeekerConnectRequestsLoaded()) {
+            $cryosphereWhere->initInformationSeekerConnectRequests();
+            $cryosphereWhere->getInformationSeekerConnectRequests()->push($this);
+        } elseif (!$cryosphereWhere->getInformationSeekerConnectRequests()->contains($this)) {
+            $cryosphereWhere->getInformationSeekerConnectRequests()->push($this);
+        }
+
+    }
+
+    /**
+     * Remove cryosphereWhere of this object
+     * through the information_seeker_connect_request_cryosphere_where cross reference table.
+     *
+     * @param ChildCryosphereWhere $cryosphereWhere
+     * @return ChildInformationSeekerConnectRequest The current object (for fluent API support)
+     */
+    public function removeCryosphereWhere(ChildCryosphereWhere $cryosphereWhere)
+    {
+        if ($this->getCryosphereWheres()->contains($cryosphereWhere)) {
+            $informationSeekerConnectRequestCryosphereWhere = new ChildInformationSeekerConnectRequestCryosphereWhere();
+            $informationSeekerConnectRequestCryosphereWhere->setCryosphereWhere($cryosphereWhere);
+            if ($cryosphereWhere->isInformationSeekerConnectRequestsLoaded()) {
+                //remove the back reference if available
+                $cryosphereWhere->getInformationSeekerConnectRequests()->removeObject($this);
+            }
+
+            $informationSeekerConnectRequestCryosphereWhere->setInformationSeekerConnectRequest($this);
+            $this->removeInformationSeekerConnectRequestCryosphereWhere(clone $informationSeekerConnectRequestCryosphereWhere);
+            $informationSeekerConnectRequestCryosphereWhere->clear();
+
+            $this->collCryosphereWheres->remove($this->collCryosphereWheres->search($cryosphereWhere));
+
+            if (null === $this->cryosphereWheresScheduledForDeletion) {
+                $this->cryosphereWheresScheduledForDeletion = clone $this->collCryosphereWheres;
+                $this->cryosphereWheresScheduledForDeletion->clear();
+            }
+
+            $this->cryosphereWheresScheduledForDeletion->push($cryosphereWhere);
+        }
+
+
+        return $this;
+    }
+
+    /**
+     * Clears out the collLanguagess collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addLanguagess()
+     */
+    public function clearLanguagess()
+    {
+        $this->collLanguagess = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Initializes the collLanguagess crossRef collection.
+     *
+     * By default this just sets the collLanguagess collection to an empty collection (like clearLanguagess());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @return void
+     */
+    public function initLanguagess()
+    {
+        $collectionClassName = InformationSeekerConnectRequestLanguagesTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collLanguagess = new $collectionClassName;
+        $this->collLanguagessPartial = true;
+        $this->collLanguagess->setModel('\CryoConnectDB\Languages');
+    }
+
+    /**
+     * Checks if the collLanguagess collection is loaded.
+     *
+     * @return bool
+     */
+    public function isLanguagessLoaded()
+    {
+        return null !== $this->collLanguagess;
+    }
+
+    /**
+     * Gets a collection of ChildLanguages objects related by a many-to-many relationship
+     * to the current object by way of the information_seeker_connect_request_languages cross-reference table.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildInformationSeekerConnectRequest is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return ObjectCollection|ChildLanguages[] List of ChildLanguages objects
+     */
+    public function getLanguagess(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collLanguagessPartial && !$this->isNew();
+        if (null === $this->collLanguagess || null !== $criteria || $partial) {
+            if ($this->isNew()) {
+                // return empty collection
+                if (null === $this->collLanguagess) {
+                    $this->initLanguagess();
+                }
+            } else {
+
+                $query = ChildLanguagesQuery::create(null, $criteria)
+                    ->filterByInformationSeekerConnectRequest($this);
+                $collLanguagess = $query->find($con);
+                if (null !== $criteria) {
+                    return $collLanguagess;
+                }
+
+                if ($partial && $this->collLanguagess) {
+                    //make sure that already added objects gets added to the list of the database.
+                    foreach ($this->collLanguagess as $obj) {
+                        if (!$collLanguagess->contains($obj)) {
+                            $collLanguagess[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collLanguagess = $collLanguagess;
+                $this->collLanguagessPartial = false;
+            }
+        }
+
+        return $this->collLanguagess;
+    }
+
+    /**
+     * Sets a collection of Languages objects related by a many-to-many relationship
+     * to the current object by way of the information_seeker_connect_request_languages cross-reference table.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param  Collection $languagess A Propel collection.
+     * @param  ConnectionInterface $con Optional connection object
+     * @return $this|ChildInformationSeekerConnectRequest The current object (for fluent API support)
+     */
+    public function setLanguagess(Collection $languagess, ConnectionInterface $con = null)
+    {
+        $this->clearLanguagess();
+        $currentLanguagess = $this->getLanguagess();
+
+        $languagessScheduledForDeletion = $currentLanguagess->diff($languagess);
+
+        foreach ($languagessScheduledForDeletion as $toDelete) {
+            $this->removeLanguages($toDelete);
+        }
+
+        foreach ($languagess as $languages) {
+            if (!$currentLanguagess->contains($languages)) {
+                $this->doAddLanguages($languages);
+            }
+        }
+
+        $this->collLanguagessPartial = false;
+        $this->collLanguagess = $languagess;
+
+        return $this;
+    }
+
+    /**
+     * Gets the number of Languages objects related by a many-to-many relationship
+     * to the current object by way of the information_seeker_connect_request_languages cross-reference table.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      boolean $distinct Set to true to force count distinct
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return int the number of related Languages objects
+     */
+    public function countLanguagess(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collLanguagessPartial && !$this->isNew();
+        if (null === $this->collLanguagess || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collLanguagess) {
+                return 0;
+            } else {
+
+                if ($partial && !$criteria) {
+                    return count($this->getLanguagess());
+                }
+
+                $query = ChildLanguagesQuery::create(null, $criteria);
+                if ($distinct) {
+                    $query->distinct();
+                }
+
+                return $query
+                    ->filterByInformationSeekerConnectRequest($this)
+                    ->count($con);
+            }
+        } else {
+            return count($this->collLanguagess);
+        }
+    }
+
+    /**
+     * Associate a ChildLanguages to this object
+     * through the information_seeker_connect_request_languages cross reference table.
+     *
+     * @param ChildLanguages $languages
+     * @return ChildInformationSeekerConnectRequest The current object (for fluent API support)
+     */
+    public function addLanguages(ChildLanguages $languages)
+    {
+        if ($this->collLanguagess === null) {
+            $this->initLanguagess();
+        }
+
+        if (!$this->getLanguagess()->contains($languages)) {
+            // only add it if the **same** object is not already associated
+            $this->collLanguagess->push($languages);
+            $this->doAddLanguages($languages);
+        }
+
+        return $this;
+    }
+
+    /**
+     *
+     * @param ChildLanguages $languages
+     */
+    protected function doAddLanguages(ChildLanguages $languages)
+    {
+        $informationSeekerConnectRequestLanguages = new ChildInformationSeekerConnectRequestLanguages();
+
+        $informationSeekerConnectRequestLanguages->setLanguages($languages);
+
+        $informationSeekerConnectRequestLanguages->setInformationSeekerConnectRequest($this);
+
+        $this->addInformationSeekerConnectRequestLanguages($informationSeekerConnectRequestLanguages);
+
+        // set the back reference to this object directly as using provided method either results
+        // in endless loop or in multiple relations
+        if (!$languages->isInformationSeekerConnectRequestsLoaded()) {
+            $languages->initInformationSeekerConnectRequests();
+            $languages->getInformationSeekerConnectRequests()->push($this);
+        } elseif (!$languages->getInformationSeekerConnectRequests()->contains($this)) {
+            $languages->getInformationSeekerConnectRequests()->push($this);
+        }
+
+    }
+
+    /**
+     * Remove languages of this object
+     * through the information_seeker_connect_request_languages cross reference table.
+     *
+     * @param ChildLanguages $languages
+     * @return ChildInformationSeekerConnectRequest The current object (for fluent API support)
+     */
+    public function removeLanguages(ChildLanguages $languages)
+    {
+        if ($this->getLanguagess()->contains($languages)) {
+            $informationSeekerConnectRequestLanguages = new ChildInformationSeekerConnectRequestLanguages();
+            $informationSeekerConnectRequestLanguages->setLanguages($languages);
+            if ($languages->isInformationSeekerConnectRequestsLoaded()) {
+                //remove the back reference if available
+                $languages->getInformationSeekerConnectRequests()->removeObject($this);
+            }
+
+            $informationSeekerConnectRequestLanguages->setInformationSeekerConnectRequest($this);
+            $this->removeInformationSeekerConnectRequestLanguages(clone $informationSeekerConnectRequestLanguages);
+            $informationSeekerConnectRequestLanguages->clear();
+
+            $this->collLanguagess->remove($this->collLanguagess->search($languages));
+
+            if (null === $this->languagessScheduledForDeletion) {
+                $this->languagessScheduledForDeletion = clone $this->collLanguagess;
+                $this->languagessScheduledForDeletion->clear();
+            }
+
+            $this->languagessScheduledForDeletion->push($languages);
+        }
+
+
+        return $this;
+    }
+
+    /**
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
      * change of those foreign objects when you call `save` there).
@@ -2223,11 +3105,29 @@ abstract class InformationSeekerConnectRequest implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collCryosphereWhats) {
+                foreach ($this->collCryosphereWhats as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
+            if ($this->collCryosphereWheres) {
+                foreach ($this->collCryosphereWheres as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
+            if ($this->collLanguagess) {
+                foreach ($this->collLanguagess as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
         } // if ($deep)
 
         $this->collInformationSeekerConnectRequestCryosphereWhats = null;
         $this->collInformationSeekerConnectRequestCryosphereWheres = null;
         $this->collInformationSeekerConnectRequestLanguagess = null;
+        $this->collCryosphereWhats = null;
+        $this->collCryosphereWheres = null;
+        $this->collLanguagess = null;
         $this->aInformationSeekers = null;
     }
 

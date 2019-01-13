@@ -9,7 +9,6 @@ use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
-use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Map\TableMap;
@@ -40,7 +39,7 @@ class ExpertPrimaryAffiliationTableMap extends TableMap
     /**
      * The default database name for this class
      */
-    const DATABASE_NAME = 'cryo_connect';
+    const DATABASE_NAME = 'default';
 
     /**
      * The table name for this class
@@ -147,7 +146,7 @@ class ExpertPrimaryAffiliationTableMap extends TableMap
         $this->setPackage('CryoConnectDB');
         $this->setUseIdGenerator(false);
         // columns
-        $this->addForeignKey('expert_id', 'ExpertId', 'INTEGER', 'experts', 'id', true, 10, null);
+        $this->addForeignPrimaryKey('expert_id', 'ExpertId', 'INTEGER' , 'experts', 'id', true, 10, null);
         $this->addColumn('primary_affiliation_name', 'PrimaryAffiliationName', 'LONGVARCHAR', true, null, null);
         $this->addColumn('primary_affiliation_country_code', 'PrimaryAffiliationCountryCode', 'VARCHAR', false, 2, null);
         $this->addColumn('primary_affiliation_city', 'PrimaryAffiliationCity', 'LONGVARCHAR', false, null, null);
@@ -183,7 +182,12 @@ class ExpertPrimaryAffiliationTableMap extends TableMap
      */
     public static function getPrimaryKeyHashFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        return null;
+        // If the PK cannot be derived from the row, return NULL.
+        if ($row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('ExpertId', TableMap::TYPE_PHPNAME, $indexType)] === null) {
+            return null;
+        }
+
+        return null === $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('ExpertId', TableMap::TYPE_PHPNAME, $indexType)] || is_scalar($row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('ExpertId', TableMap::TYPE_PHPNAME, $indexType)]) || is_callable([$row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('ExpertId', TableMap::TYPE_PHPNAME, $indexType)], '__toString']) ? (string) $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('ExpertId', TableMap::TYPE_PHPNAME, $indexType)] : $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('ExpertId', TableMap::TYPE_PHPNAME, $indexType)];
     }
 
     /**
@@ -200,7 +204,11 @@ class ExpertPrimaryAffiliationTableMap extends TableMap
      */
     public static function getPrimaryKeyFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        return '';
+        return (int) $row[
+            $indexType == TableMap::TYPE_NUM
+                ? 0 + $offset
+                : self::translateFieldName('ExpertId', TableMap::TYPE_PHPNAME, $indexType)
+        ];
     }
 
     /**
@@ -358,10 +366,11 @@ class ExpertPrimaryAffiliationTableMap extends TableMap
             // rename for clarity
             $criteria = $values;
         } elseif ($values instanceof \CryoConnectDB\ExpertPrimaryAffiliation) { // it's a model object
-            // create criteria based on pk value
-            $criteria = $values->buildCriteria();
+            // create criteria based on pk values
+            $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            throw new LogicException('The ExpertPrimaryAffiliation object has no primary key');
+            $criteria = new Criteria(ExpertPrimaryAffiliationTableMap::DATABASE_NAME);
+            $criteria->add(ExpertPrimaryAffiliationTableMap::COL_EXPERT_ID, (array) $values, Criteria::IN);
         }
 
         $query = ExpertPrimaryAffiliationQuery::create()->mergeWith($criteria);

@@ -9,8 +9,12 @@ use CryoConnectDB\CryosphereWhat as ChildCryosphereWhat;
 use CryoConnectDB\CryosphereWhatQuery as ChildCryosphereWhatQuery;
 use CryoConnectDB\ExpertCryosphereWhat as ChildExpertCryosphereWhat;
 use CryoConnectDB\ExpertCryosphereWhatQuery as ChildExpertCryosphereWhatQuery;
+use CryoConnectDB\Experts as ChildExperts;
+use CryoConnectDB\ExpertsQuery as ChildExpertsQuery;
+use CryoConnectDB\InformationSeekerConnectRequest as ChildInformationSeekerConnectRequest;
 use CryoConnectDB\InformationSeekerConnectRequestCryosphereWhat as ChildInformationSeekerConnectRequestCryosphereWhat;
 use CryoConnectDB\InformationSeekerConnectRequestCryosphereWhatQuery as ChildInformationSeekerConnectRequestCryosphereWhatQuery;
+use CryoConnectDB\InformationSeekerConnectRequestQuery as ChildInformationSeekerConnectRequestQuery;
 use CryoConnectDB\Map\CryosphereWhatTableMap;
 use CryoConnectDB\Map\ExpertCryosphereWhatTableMap;
 use CryoConnectDB\Map\InformationSeekerConnectRequestCryosphereWhatTableMap;
@@ -112,12 +116,44 @@ abstract class CryosphereWhat implements ActiveRecordInterface
     protected $collInformationSeekerConnectRequestCryosphereWhatsPartial;
 
     /**
+     * @var        ObjectCollection|ChildExperts[] Cross Collection to store aggregation of ChildExperts objects.
+     */
+    protected $collExpertss;
+
+    /**
+     * @var bool
+     */
+    protected $collExpertssPartial;
+
+    /**
+     * @var        ObjectCollection|ChildInformationSeekerConnectRequest[] Cross Collection to store aggregation of ChildInformationSeekerConnectRequest objects.
+     */
+    protected $collInformationSeekerConnectRequests;
+
+    /**
+     * @var bool
+     */
+    protected $collInformationSeekerConnectRequestsPartial;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      *
      * @var boolean
      */
     protected $alreadyInSave = false;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildExperts[]
+     */
+    protected $expertssScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildInformationSeekerConnectRequest[]
+     */
+    protected $informationSeekerConnectRequestsScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -644,6 +680,8 @@ abstract class CryosphereWhat implements ActiveRecordInterface
 
             $this->collInformationSeekerConnectRequestCryosphereWhats = null;
 
+            $this->collExpertss = null;
+            $this->collInformationSeekerConnectRequests = null;
         } // if (deep)
     }
 
@@ -757,6 +795,64 @@ abstract class CryosphereWhat implements ActiveRecordInterface
                 }
                 $this->resetModified();
             }
+
+            if ($this->expertssScheduledForDeletion !== null) {
+                if (!$this->expertssScheduledForDeletion->isEmpty()) {
+                    $pks = array();
+                    foreach ($this->expertssScheduledForDeletion as $entry) {
+                        $entryPk = [];
+
+                        $entryPk[1] = $this->getId();
+                        $entryPk[0] = $entry->getId();
+                        $pks[] = $entryPk;
+                    }
+
+                    \CryoConnectDB\ExpertCryosphereWhatQuery::create()
+                        ->filterByPrimaryKeys($pks)
+                        ->delete($con);
+
+                    $this->expertssScheduledForDeletion = null;
+                }
+
+            }
+
+            if ($this->collExpertss) {
+                foreach ($this->collExpertss as $experts) {
+                    if (!$experts->isDeleted() && ($experts->isNew() || $experts->isModified())) {
+                        $experts->save($con);
+                    }
+                }
+            }
+
+
+            if ($this->informationSeekerConnectRequestsScheduledForDeletion !== null) {
+                if (!$this->informationSeekerConnectRequestsScheduledForDeletion->isEmpty()) {
+                    $pks = array();
+                    foreach ($this->informationSeekerConnectRequestsScheduledForDeletion as $entry) {
+                        $entryPk = [];
+
+                        $entryPk[1] = $this->getId();
+                        $entryPk[0] = $entry->getId();
+                        $pks[] = $entryPk;
+                    }
+
+                    \CryoConnectDB\InformationSeekerConnectRequestCryosphereWhatQuery::create()
+                        ->filterByPrimaryKeys($pks)
+                        ->delete($con);
+
+                    $this->informationSeekerConnectRequestsScheduledForDeletion = null;
+                }
+
+            }
+
+            if ($this->collInformationSeekerConnectRequests) {
+                foreach ($this->collInformationSeekerConnectRequests as $informationSeekerConnectRequest) {
+                    if (!$informationSeekerConnectRequest->isDeleted() && ($informationSeekerConnectRequest->isNew() || $informationSeekerConnectRequest->isModified())) {
+                        $informationSeekerConnectRequest->save($con);
+                    }
+                }
+            }
+
 
             if ($this->expertCryosphereWhatsScheduledForDeletion !== null) {
                 if (!$this->expertCryosphereWhatsScheduledForDeletion->isEmpty()) {
@@ -1417,7 +1513,10 @@ abstract class CryosphereWhat implements ActiveRecordInterface
         $expertCryosphereWhatsToDelete = $this->getExpertCryosphereWhats(new Criteria(), $con)->diff($expertCryosphereWhats);
 
 
-        $this->expertCryosphereWhatsScheduledForDeletion = $expertCryosphereWhatsToDelete;
+        //since at least one column in the foreign key is at the same time a PK
+        //we can not just set a PK to NULL in the lines below. We have to store
+        //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
+        $this->expertCryosphereWhatsScheduledForDeletion = clone $expertCryosphereWhatsToDelete;
 
         foreach ($expertCryosphereWhatsToDelete as $expertCryosphereWhatRemoved) {
             $expertCryosphereWhatRemoved->setCryosphereWhat(null);
@@ -1667,7 +1766,10 @@ abstract class CryosphereWhat implements ActiveRecordInterface
         $informationSeekerConnectRequestCryosphereWhatsToDelete = $this->getInformationSeekerConnectRequestCryosphereWhats(new Criteria(), $con)->diff($informationSeekerConnectRequestCryosphereWhats);
 
 
-        $this->informationSeekerConnectRequestCryosphereWhatsScheduledForDeletion = $informationSeekerConnectRequestCryosphereWhatsToDelete;
+        //since at least one column in the foreign key is at the same time a PK
+        //we can not just set a PK to NULL in the lines below. We have to store
+        //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
+        $this->informationSeekerConnectRequestCryosphereWhatsScheduledForDeletion = clone $informationSeekerConnectRequestCryosphereWhatsToDelete;
 
         foreach ($informationSeekerConnectRequestCryosphereWhatsToDelete as $informationSeekerConnectRequestCryosphereWhatRemoved) {
             $informationSeekerConnectRequestCryosphereWhatRemoved->setCryosphereWhat(null);
@@ -1798,6 +1900,492 @@ abstract class CryosphereWhat implements ActiveRecordInterface
     }
 
     /**
+     * Clears out the collExpertss collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addExpertss()
+     */
+    public function clearExpertss()
+    {
+        $this->collExpertss = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Initializes the collExpertss crossRef collection.
+     *
+     * By default this just sets the collExpertss collection to an empty collection (like clearExpertss());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @return void
+     */
+    public function initExpertss()
+    {
+        $collectionClassName = ExpertCryosphereWhatTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collExpertss = new $collectionClassName;
+        $this->collExpertssPartial = true;
+        $this->collExpertss->setModel('\CryoConnectDB\Experts');
+    }
+
+    /**
+     * Checks if the collExpertss collection is loaded.
+     *
+     * @return bool
+     */
+    public function isExpertssLoaded()
+    {
+        return null !== $this->collExpertss;
+    }
+
+    /**
+     * Gets a collection of ChildExperts objects related by a many-to-many relationship
+     * to the current object by way of the expert_cryosphere_what cross-reference table.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildCryosphereWhat is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return ObjectCollection|ChildExperts[] List of ChildExperts objects
+     */
+    public function getExpertss(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collExpertssPartial && !$this->isNew();
+        if (null === $this->collExpertss || null !== $criteria || $partial) {
+            if ($this->isNew()) {
+                // return empty collection
+                if (null === $this->collExpertss) {
+                    $this->initExpertss();
+                }
+            } else {
+
+                $query = ChildExpertsQuery::create(null, $criteria)
+                    ->filterByCryosphereWhat($this);
+                $collExpertss = $query->find($con);
+                if (null !== $criteria) {
+                    return $collExpertss;
+                }
+
+                if ($partial && $this->collExpertss) {
+                    //make sure that already added objects gets added to the list of the database.
+                    foreach ($this->collExpertss as $obj) {
+                        if (!$collExpertss->contains($obj)) {
+                            $collExpertss[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collExpertss = $collExpertss;
+                $this->collExpertssPartial = false;
+            }
+        }
+
+        return $this->collExpertss;
+    }
+
+    /**
+     * Sets a collection of Experts objects related by a many-to-many relationship
+     * to the current object by way of the expert_cryosphere_what cross-reference table.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param  Collection $expertss A Propel collection.
+     * @param  ConnectionInterface $con Optional connection object
+     * @return $this|ChildCryosphereWhat The current object (for fluent API support)
+     */
+    public function setExpertss(Collection $expertss, ConnectionInterface $con = null)
+    {
+        $this->clearExpertss();
+        $currentExpertss = $this->getExpertss();
+
+        $expertssScheduledForDeletion = $currentExpertss->diff($expertss);
+
+        foreach ($expertssScheduledForDeletion as $toDelete) {
+            $this->removeExperts($toDelete);
+        }
+
+        foreach ($expertss as $experts) {
+            if (!$currentExpertss->contains($experts)) {
+                $this->doAddExperts($experts);
+            }
+        }
+
+        $this->collExpertssPartial = false;
+        $this->collExpertss = $expertss;
+
+        return $this;
+    }
+
+    /**
+     * Gets the number of Experts objects related by a many-to-many relationship
+     * to the current object by way of the expert_cryosphere_what cross-reference table.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      boolean $distinct Set to true to force count distinct
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return int the number of related Experts objects
+     */
+    public function countExpertss(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collExpertssPartial && !$this->isNew();
+        if (null === $this->collExpertss || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collExpertss) {
+                return 0;
+            } else {
+
+                if ($partial && !$criteria) {
+                    return count($this->getExpertss());
+                }
+
+                $query = ChildExpertsQuery::create(null, $criteria);
+                if ($distinct) {
+                    $query->distinct();
+                }
+
+                return $query
+                    ->filterByCryosphereWhat($this)
+                    ->count($con);
+            }
+        } else {
+            return count($this->collExpertss);
+        }
+    }
+
+    /**
+     * Associate a ChildExperts to this object
+     * through the expert_cryosphere_what cross reference table.
+     *
+     * @param ChildExperts $experts
+     * @return ChildCryosphereWhat The current object (for fluent API support)
+     */
+    public function addExperts(ChildExperts $experts)
+    {
+        if ($this->collExpertss === null) {
+            $this->initExpertss();
+        }
+
+        if (!$this->getExpertss()->contains($experts)) {
+            // only add it if the **same** object is not already associated
+            $this->collExpertss->push($experts);
+            $this->doAddExperts($experts);
+        }
+
+        return $this;
+    }
+
+    /**
+     *
+     * @param ChildExperts $experts
+     */
+    protected function doAddExperts(ChildExperts $experts)
+    {
+        $expertCryosphereWhat = new ChildExpertCryosphereWhat();
+
+        $expertCryosphereWhat->setExperts($experts);
+
+        $expertCryosphereWhat->setCryosphereWhat($this);
+
+        $this->addExpertCryosphereWhat($expertCryosphereWhat);
+
+        // set the back reference to this object directly as using provided method either results
+        // in endless loop or in multiple relations
+        if (!$experts->isCryosphereWhatsLoaded()) {
+            $experts->initCryosphereWhats();
+            $experts->getCryosphereWhats()->push($this);
+        } elseif (!$experts->getCryosphereWhats()->contains($this)) {
+            $experts->getCryosphereWhats()->push($this);
+        }
+
+    }
+
+    /**
+     * Remove experts of this object
+     * through the expert_cryosphere_what cross reference table.
+     *
+     * @param ChildExperts $experts
+     * @return ChildCryosphereWhat The current object (for fluent API support)
+     */
+    public function removeExperts(ChildExperts $experts)
+    {
+        if ($this->getExpertss()->contains($experts)) {
+            $expertCryosphereWhat = new ChildExpertCryosphereWhat();
+            $expertCryosphereWhat->setExperts($experts);
+            if ($experts->isCryosphereWhatsLoaded()) {
+                //remove the back reference if available
+                $experts->getCryosphereWhats()->removeObject($this);
+            }
+
+            $expertCryosphereWhat->setCryosphereWhat($this);
+            $this->removeExpertCryosphereWhat(clone $expertCryosphereWhat);
+            $expertCryosphereWhat->clear();
+
+            $this->collExpertss->remove($this->collExpertss->search($experts));
+
+            if (null === $this->expertssScheduledForDeletion) {
+                $this->expertssScheduledForDeletion = clone $this->collExpertss;
+                $this->expertssScheduledForDeletion->clear();
+            }
+
+            $this->expertssScheduledForDeletion->push($experts);
+        }
+
+
+        return $this;
+    }
+
+    /**
+     * Clears out the collInformationSeekerConnectRequests collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addInformationSeekerConnectRequests()
+     */
+    public function clearInformationSeekerConnectRequests()
+    {
+        $this->collInformationSeekerConnectRequests = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Initializes the collInformationSeekerConnectRequests crossRef collection.
+     *
+     * By default this just sets the collInformationSeekerConnectRequests collection to an empty collection (like clearInformationSeekerConnectRequests());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @return void
+     */
+    public function initInformationSeekerConnectRequests()
+    {
+        $collectionClassName = InformationSeekerConnectRequestCryosphereWhatTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collInformationSeekerConnectRequests = new $collectionClassName;
+        $this->collInformationSeekerConnectRequestsPartial = true;
+        $this->collInformationSeekerConnectRequests->setModel('\CryoConnectDB\InformationSeekerConnectRequest');
+    }
+
+    /**
+     * Checks if the collInformationSeekerConnectRequests collection is loaded.
+     *
+     * @return bool
+     */
+    public function isInformationSeekerConnectRequestsLoaded()
+    {
+        return null !== $this->collInformationSeekerConnectRequests;
+    }
+
+    /**
+     * Gets a collection of ChildInformationSeekerConnectRequest objects related by a many-to-many relationship
+     * to the current object by way of the information_seeker_connect_request_cryosphere_what cross-reference table.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildCryosphereWhat is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return ObjectCollection|ChildInformationSeekerConnectRequest[] List of ChildInformationSeekerConnectRequest objects
+     */
+    public function getInformationSeekerConnectRequests(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collInformationSeekerConnectRequestsPartial && !$this->isNew();
+        if (null === $this->collInformationSeekerConnectRequests || null !== $criteria || $partial) {
+            if ($this->isNew()) {
+                // return empty collection
+                if (null === $this->collInformationSeekerConnectRequests) {
+                    $this->initInformationSeekerConnectRequests();
+                }
+            } else {
+
+                $query = ChildInformationSeekerConnectRequestQuery::create(null, $criteria)
+                    ->filterByCryosphereWhat($this);
+                $collInformationSeekerConnectRequests = $query->find($con);
+                if (null !== $criteria) {
+                    return $collInformationSeekerConnectRequests;
+                }
+
+                if ($partial && $this->collInformationSeekerConnectRequests) {
+                    //make sure that already added objects gets added to the list of the database.
+                    foreach ($this->collInformationSeekerConnectRequests as $obj) {
+                        if (!$collInformationSeekerConnectRequests->contains($obj)) {
+                            $collInformationSeekerConnectRequests[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collInformationSeekerConnectRequests = $collInformationSeekerConnectRequests;
+                $this->collInformationSeekerConnectRequestsPartial = false;
+            }
+        }
+
+        return $this->collInformationSeekerConnectRequests;
+    }
+
+    /**
+     * Sets a collection of InformationSeekerConnectRequest objects related by a many-to-many relationship
+     * to the current object by way of the information_seeker_connect_request_cryosphere_what cross-reference table.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param  Collection $informationSeekerConnectRequests A Propel collection.
+     * @param  ConnectionInterface $con Optional connection object
+     * @return $this|ChildCryosphereWhat The current object (for fluent API support)
+     */
+    public function setInformationSeekerConnectRequests(Collection $informationSeekerConnectRequests, ConnectionInterface $con = null)
+    {
+        $this->clearInformationSeekerConnectRequests();
+        $currentInformationSeekerConnectRequests = $this->getInformationSeekerConnectRequests();
+
+        $informationSeekerConnectRequestsScheduledForDeletion = $currentInformationSeekerConnectRequests->diff($informationSeekerConnectRequests);
+
+        foreach ($informationSeekerConnectRequestsScheduledForDeletion as $toDelete) {
+            $this->removeInformationSeekerConnectRequest($toDelete);
+        }
+
+        foreach ($informationSeekerConnectRequests as $informationSeekerConnectRequest) {
+            if (!$currentInformationSeekerConnectRequests->contains($informationSeekerConnectRequest)) {
+                $this->doAddInformationSeekerConnectRequest($informationSeekerConnectRequest);
+            }
+        }
+
+        $this->collInformationSeekerConnectRequestsPartial = false;
+        $this->collInformationSeekerConnectRequests = $informationSeekerConnectRequests;
+
+        return $this;
+    }
+
+    /**
+     * Gets the number of InformationSeekerConnectRequest objects related by a many-to-many relationship
+     * to the current object by way of the information_seeker_connect_request_cryosphere_what cross-reference table.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      boolean $distinct Set to true to force count distinct
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return int the number of related InformationSeekerConnectRequest objects
+     */
+    public function countInformationSeekerConnectRequests(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collInformationSeekerConnectRequestsPartial && !$this->isNew();
+        if (null === $this->collInformationSeekerConnectRequests || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collInformationSeekerConnectRequests) {
+                return 0;
+            } else {
+
+                if ($partial && !$criteria) {
+                    return count($this->getInformationSeekerConnectRequests());
+                }
+
+                $query = ChildInformationSeekerConnectRequestQuery::create(null, $criteria);
+                if ($distinct) {
+                    $query->distinct();
+                }
+
+                return $query
+                    ->filterByCryosphereWhat($this)
+                    ->count($con);
+            }
+        } else {
+            return count($this->collInformationSeekerConnectRequests);
+        }
+    }
+
+    /**
+     * Associate a ChildInformationSeekerConnectRequest to this object
+     * through the information_seeker_connect_request_cryosphere_what cross reference table.
+     *
+     * @param ChildInformationSeekerConnectRequest $informationSeekerConnectRequest
+     * @return ChildCryosphereWhat The current object (for fluent API support)
+     */
+    public function addInformationSeekerConnectRequest(ChildInformationSeekerConnectRequest $informationSeekerConnectRequest)
+    {
+        if ($this->collInformationSeekerConnectRequests === null) {
+            $this->initInformationSeekerConnectRequests();
+        }
+
+        if (!$this->getInformationSeekerConnectRequests()->contains($informationSeekerConnectRequest)) {
+            // only add it if the **same** object is not already associated
+            $this->collInformationSeekerConnectRequests->push($informationSeekerConnectRequest);
+            $this->doAddInformationSeekerConnectRequest($informationSeekerConnectRequest);
+        }
+
+        return $this;
+    }
+
+    /**
+     *
+     * @param ChildInformationSeekerConnectRequest $informationSeekerConnectRequest
+     */
+    protected function doAddInformationSeekerConnectRequest(ChildInformationSeekerConnectRequest $informationSeekerConnectRequest)
+    {
+        $informationSeekerConnectRequestCryosphereWhat = new ChildInformationSeekerConnectRequestCryosphereWhat();
+
+        $informationSeekerConnectRequestCryosphereWhat->setInformationSeekerConnectRequest($informationSeekerConnectRequest);
+
+        $informationSeekerConnectRequestCryosphereWhat->setCryosphereWhat($this);
+
+        $this->addInformationSeekerConnectRequestCryosphereWhat($informationSeekerConnectRequestCryosphereWhat);
+
+        // set the back reference to this object directly as using provided method either results
+        // in endless loop or in multiple relations
+        if (!$informationSeekerConnectRequest->isCryosphereWhatsLoaded()) {
+            $informationSeekerConnectRequest->initCryosphereWhats();
+            $informationSeekerConnectRequest->getCryosphereWhats()->push($this);
+        } elseif (!$informationSeekerConnectRequest->getCryosphereWhats()->contains($this)) {
+            $informationSeekerConnectRequest->getCryosphereWhats()->push($this);
+        }
+
+    }
+
+    /**
+     * Remove informationSeekerConnectRequest of this object
+     * through the information_seeker_connect_request_cryosphere_what cross reference table.
+     *
+     * @param ChildInformationSeekerConnectRequest $informationSeekerConnectRequest
+     * @return ChildCryosphereWhat The current object (for fluent API support)
+     */
+    public function removeInformationSeekerConnectRequest(ChildInformationSeekerConnectRequest $informationSeekerConnectRequest)
+    {
+        if ($this->getInformationSeekerConnectRequests()->contains($informationSeekerConnectRequest)) {
+            $informationSeekerConnectRequestCryosphereWhat = new ChildInformationSeekerConnectRequestCryosphereWhat();
+            $informationSeekerConnectRequestCryosphereWhat->setInformationSeekerConnectRequest($informationSeekerConnectRequest);
+            if ($informationSeekerConnectRequest->isCryosphereWhatsLoaded()) {
+                //remove the back reference if available
+                $informationSeekerConnectRequest->getCryosphereWhats()->removeObject($this);
+            }
+
+            $informationSeekerConnectRequestCryosphereWhat->setCryosphereWhat($this);
+            $this->removeInformationSeekerConnectRequestCryosphereWhat(clone $informationSeekerConnectRequestCryosphereWhat);
+            $informationSeekerConnectRequestCryosphereWhat->clear();
+
+            $this->collInformationSeekerConnectRequests->remove($this->collInformationSeekerConnectRequests->search($informationSeekerConnectRequest));
+
+            if (null === $this->informationSeekerConnectRequestsScheduledForDeletion) {
+                $this->informationSeekerConnectRequestsScheduledForDeletion = clone $this->collInformationSeekerConnectRequests;
+                $this->informationSeekerConnectRequestsScheduledForDeletion->clear();
+            }
+
+            $this->informationSeekerConnectRequestsScheduledForDeletion->push($informationSeekerConnectRequest);
+        }
+
+
+        return $this;
+    }
+
+    /**
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
      * change of those foreign objects when you call `save` there).
@@ -1837,10 +2425,22 @@ abstract class CryosphereWhat implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collExpertss) {
+                foreach ($this->collExpertss as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
+            if ($this->collInformationSeekerConnectRequests) {
+                foreach ($this->collInformationSeekerConnectRequests as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
         } // if ($deep)
 
         $this->collExpertCryosphereWhats = null;
         $this->collInformationSeekerConnectRequestCryosphereWhats = null;
+        $this->collExpertss = null;
+        $this->collInformationSeekerConnectRequests = null;
     }
 
     /**

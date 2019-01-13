@@ -39,7 +39,7 @@ class CryosphereWhatSpeceficTableMap extends TableMap
     /**
      * The default database name for this class
      */
-    const DATABASE_NAME = 'cryo_connect';
+    const DATABASE_NAME = 'default';
 
     /**
      * The table name for this class
@@ -159,6 +159,7 @@ class CryosphereWhatSpeceficTableMap extends TableMap
     1 => ':id',
   ),
 ), null, 'CASCADE', 'ExpertCryosphereWhatSpecefics', false);
+        $this->addRelation('Experts', '\\CryoConnectDB\\Experts', RelationMap::MANY_TO_MANY, array(), 'CASCADE', 'CASCADE', 'Expertss');
     } // buildRelations()
 
     /**

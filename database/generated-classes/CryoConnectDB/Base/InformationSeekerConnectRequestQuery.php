@@ -115,7 +115,7 @@ abstract class InformationSeekerConnectRequestQuery extends ModelCriteria
      * @param     string $modelName The phpName of a model, e.g. 'Book'
      * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
      */
-    public function __construct($dbName = 'cryo_connect', $modelName = '\\CryoConnectDB\\InformationSeekerConnectRequest', $modelAlias = null)
+    public function __construct($dbName = 'default', $modelName = '\\CryoConnectDB\\InformationSeekerConnectRequest', $modelAlias = null)
     {
         parent::__construct($dbName, $modelName, $modelAlias);
     }
@@ -735,6 +735,57 @@ abstract class InformationSeekerConnectRequestQuery extends ModelCriteria
         return $this
             ->joinInformationSeekerConnectRequestLanguages($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'InformationSeekerConnectRequestLanguages', '\CryoConnectDB\InformationSeekerConnectRequestLanguagesQuery');
+    }
+
+    /**
+     * Filter the query by a related CryosphereWhat object
+     * using the information_seeker_connect_request_cryosphere_what table as cross reference
+     *
+     * @param CryosphereWhat $cryosphereWhat the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildInformationSeekerConnectRequestQuery The current query, for fluid interface
+     */
+    public function filterByCryosphereWhat($cryosphereWhat, $comparison = Criteria::EQUAL)
+    {
+        return $this
+            ->useInformationSeekerConnectRequestCryosphereWhatQuery()
+            ->filterByCryosphereWhat($cryosphereWhat, $comparison)
+            ->endUse();
+    }
+
+    /**
+     * Filter the query by a related CryosphereWhere object
+     * using the information_seeker_connect_request_cryosphere_where table as cross reference
+     *
+     * @param CryosphereWhere $cryosphereWhere the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildInformationSeekerConnectRequestQuery The current query, for fluid interface
+     */
+    public function filterByCryosphereWhere($cryosphereWhere, $comparison = Criteria::EQUAL)
+    {
+        return $this
+            ->useInformationSeekerConnectRequestCryosphereWhereQuery()
+            ->filterByCryosphereWhere($cryosphereWhere, $comparison)
+            ->endUse();
+    }
+
+    /**
+     * Filter the query by a related Languages object
+     * using the information_seeker_connect_request_languages table as cross reference
+     *
+     * @param Languages $languages the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildInformationSeekerConnectRequestQuery The current query, for fluid interface
+     */
+    public function filterByLanguages($languages, $comparison = Criteria::EQUAL)
+    {
+        return $this
+            ->useInformationSeekerConnectRequestLanguagesQuery()
+            ->filterByLanguages($languages, $comparison)
+            ->endUse();
     }
 
     /**

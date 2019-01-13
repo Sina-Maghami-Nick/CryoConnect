@@ -1099,7 +1099,9 @@ abstract class ExpertContact implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        throw new LogicException('The ExpertContact object has no primary key');
+        $criteria = ChildExpertContactQuery::create();
+        $criteria->add(ExpertContactTableMap::COL_EXPERT_ID, $this->expert_id);
+        $criteria->add(ExpertContactTableMap::COL_CONTACT_TYPE_ID, $this->contact_type_id);
 
         return $criteria;
     }
@@ -1112,10 +1114,25 @@ abstract class ExpertContact implements ActiveRecordInterface
      */
     public function hashCode()
     {
-        $validPk = false;
+        $validPk = null !== $this->getExpertId() &&
+            null !== $this->getContactTypeId();
 
-        $validPrimaryKeyFKs = 0;
+        $validPrimaryKeyFKs = 2;
         $primaryKeyFKs = [];
+
+        //relation expert_contact_fk_023b7c to table experts
+        if ($this->aExperts && $hash = spl_object_hash($this->aExperts)) {
+            $primaryKeyFKs[] = $hash;
+        } else {
+            $validPrimaryKeyFKs = false;
+        }
+
+        //relation expert_contact_fk_88838f to table contact_types
+        if ($this->aContactTypes && $hash = spl_object_hash($this->aContactTypes)) {
+            $primaryKeyFKs[] = $hash;
+        } else {
+            $validPrimaryKeyFKs = false;
+        }
 
         if ($validPk) {
             return crc32(json_encode($this->getPrimaryKey(), JSON_UNESCAPED_UNICODE));
@@ -1127,27 +1144,29 @@ abstract class ExpertContact implements ActiveRecordInterface
     }
 
     /**
-     * Returns NULL since this table doesn't have a primary key.
-     * This method exists only for BC and is deprecated!
-     * @return null
+     * Returns the composite primary key for this object.
+     * The array elements will be in same order as specified in XML.
+     * @return array
      */
     public function getPrimaryKey()
     {
-        return null;
+        $pks = array();
+        $pks[0] = $this->getExpertId();
+        $pks[1] = $this->getContactTypeId();
+
+        return $pks;
     }
 
     /**
-     * Dummy primary key setter.
+     * Set the [composite] primary key.
      *
-     * This function only exists to preserve backwards compatibility.  It is no longer
-     * needed or required by the Persistent interface.  It will be removed in next BC-breaking
-     * release of Propel.
-     *
-     * @deprecated
+     * @param      array $keys The elements of the composite key (order must match the order in XML file).
+     * @return void
      */
-    public function setPrimaryKey($pk)
+    public function setPrimaryKey($keys)
     {
-        // do nothing, because this object doesn't have any primary keys
+        $this->setExpertId($keys[0]);
+        $this->setContactTypeId($keys[1]);
     }
 
     /**
@@ -1156,7 +1175,7 @@ abstract class ExpertContact implements ActiveRecordInterface
      */
     public function isPrimaryKeyNull()
     {
-        return ;
+        return (null === $this->getExpertId()) && (null === $this->getContactTypeId());
     }
 
     /**

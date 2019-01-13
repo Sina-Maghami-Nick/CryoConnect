@@ -85,7 +85,7 @@ abstract class CryosphereMethodsQuery extends ModelCriteria
      * @param     string $modelName The phpName of a model, e.g. 'Book'
      * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
      */
-    public function __construct($dbName = 'cryo_connect', $modelName = '\\CryoConnectDB\\CryosphereMethods', $modelAlias = null)
+    public function __construct($dbName = 'default', $modelName = '\\CryoConnectDB\\CryosphereMethods', $modelAlias = null)
     {
         parent::__construct($dbName, $modelName, $modelAlias);
     }
@@ -466,6 +466,23 @@ abstract class CryosphereMethodsQuery extends ModelCriteria
         return $this
             ->joinExpertCryosphereMethods($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'ExpertCryosphereMethods', '\CryoConnectDB\ExpertCryosphereMethodsQuery');
+    }
+
+    /**
+     * Filter the query by a related Experts object
+     * using the expert_cryosphere_methods table as cross reference
+     *
+     * @param Experts $experts the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildCryosphereMethodsQuery The current query, for fluid interface
+     */
+    public function filterByExperts($experts, $comparison = Criteria::EQUAL)
+    {
+        return $this
+            ->useExpertCryosphereMethodsQuery()
+            ->filterByExperts($experts, $comparison)
+            ->endUse();
     }
 
     /**

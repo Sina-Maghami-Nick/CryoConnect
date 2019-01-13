@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
 <config>
     <propel>
-        <generator>
-          <schema>
-            <autoPackage>true</autoPackage>
-          </schema>
-        </generator>
         <database>
             <connections>
-                <connection id="cryo_connect">
+                <connection id="default">
                     <adapter>mysql</adapter>
-                    <dsn>mysql:host=localhost;dbname=cryo_connect</dsn>
+                    <dsn>mysql:host=localhost;port=3306;dbname=cryoconnect</dsn>
                     <user>dev</user>
                     <password>password</password>
                     <settings>

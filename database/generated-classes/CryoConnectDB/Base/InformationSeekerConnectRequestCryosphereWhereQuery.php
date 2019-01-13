@@ -3,6 +3,7 @@
 namespace CryoConnectDB\Base;
 
 use \Exception;
+use \PDO;
 use CryoConnectDB\InformationSeekerConnectRequestCryosphereWhere as ChildInformationSeekerConnectRequestCryosphereWhere;
 use CryoConnectDB\InformationSeekerConnectRequestCryosphereWhereQuery as ChildInformationSeekerConnectRequestCryosphereWhereQuery;
 use CryoConnectDB\Map\InformationSeekerConnectRequestCryosphereWhereTableMap;
@@ -12,7 +13,6 @@ use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveQuery\ModelJoin;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
 
 /**
@@ -90,7 +90,7 @@ abstract class InformationSeekerConnectRequestCryosphereWhereQuery extends Model
      * @param     string $modelName The phpName of a model, e.g. 'Book'
      * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
      */
-    public function __construct($dbName = 'cryo_connect', $modelName = '\\CryoConnectDB\\InformationSeekerConnectRequestCryosphereWhere', $modelAlias = null)
+    public function __construct($dbName = 'default', $modelName = '\\CryoConnectDB\\InformationSeekerConnectRequestCryosphereWhere', $modelAlias = null)
     {
         parent::__construct($dbName, $modelName, $modelAlias);
     }
@@ -125,17 +125,94 @@ abstract class InformationSeekerConnectRequestCryosphereWhereQuery extends Model
      * Go fast if the query is untouched.
      *
      * <code>
-     * $obj  = $c->findPk(12, $con);
+     * $obj = $c->findPk(array(12, 34), $con);
      * </code>
      *
-     * @param mixed $key Primary key to use for the query
+     * @param array[$information_seeker_connect_request_id, $cryosphere_where_id] $key Primary key to use for the query
      * @param ConnectionInterface $con an optional connection object
      *
      * @return ChildInformationSeekerConnectRequestCryosphereWhere|array|mixed the result, formatted by the current formatter
      */
     public function findPk($key, ConnectionInterface $con = null)
     {
-        throw new LogicException('The InformationSeekerConnectRequestCryosphereWhere object has no primary key');
+        if ($key === null) {
+            return null;
+        }
+
+        if ($con === null) {
+            $con = Propel::getServiceContainer()->getReadConnection(InformationSeekerConnectRequestCryosphereWhereTableMap::DATABASE_NAME);
+        }
+
+        $this->basePreSelect($con);
+
+        if (
+            $this->formatter || $this->modelAlias || $this->with || $this->select
+            || $this->selectColumns || $this->asColumns || $this->selectModifiers
+            || $this->map || $this->having || $this->joins
+        ) {
+            return $this->findPkComplex($key, $con);
+        }
+
+        if ((null !== ($obj = InformationSeekerConnectRequestCryosphereWhereTableMap::getInstanceFromPool(serialize([(null === $key[0] || is_scalar($key[0]) || is_callable([$key[0], '__toString']) ? (string) $key[0] : $key[0]), (null === $key[1] || is_scalar($key[1]) || is_callable([$key[1], '__toString']) ? (string) $key[1] : $key[1])]))))) {
+            // the object is already in the instance pool
+            return $obj;
+        }
+
+        return $this->findPkSimple($key, $con);
+    }
+
+    /**
+     * Find object by primary key using raw SQL to go fast.
+     * Bypass doSelect() and the object formatter by using generated code.
+     *
+     * @param     mixed $key Primary key to use for the query
+     * @param     ConnectionInterface $con A connection object
+     *
+     * @throws \Propel\Runtime\Exception\PropelException
+     *
+     * @return ChildInformationSeekerConnectRequestCryosphereWhere A model object, or null if the key is not found
+     */
+    protected function findPkSimple($key, ConnectionInterface $con)
+    {
+        $sql = 'SELECT information_seeker_connect_request_id, cryosphere_where_id, timestamp FROM information_seeker_connect_request_cryosphere_where WHERE information_seeker_connect_request_id = :p0 AND cryosphere_where_id = :p1';
+        try {
+            $stmt = $con->prepare($sql);
+            $stmt->bindValue(':p0', $key[0], PDO::PARAM_INT);
+            $stmt->bindValue(':p1', $key[1], PDO::PARAM_INT);
+            $stmt->execute();
+        } catch (Exception $e) {
+            Propel::log($e->getMessage(), Propel::LOG_ERR);
+            throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', $sql), 0, $e);
+        }
+        $obj = null;
+        if ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
+            /** @var ChildInformationSeekerConnectRequestCryosphereWhere $obj */
+            $obj = new ChildInformationSeekerConnectRequestCryosphereWhere();
+            $obj->hydrate($row);
+            InformationSeekerConnectRequestCryosphereWhereTableMap::addInstanceToPool($obj, serialize([(null === $key[0] || is_scalar($key[0]) || is_callable([$key[0], '__toString']) ? (string) $key[0] : $key[0]), (null === $key[1] || is_scalar($key[1]) || is_callable([$key[1], '__toString']) ? (string) $key[1] : $key[1])]));
+        }
+        $stmt->closeCursor();
+
+        return $obj;
+    }
+
+    /**
+     * Find object by primary key.
+     *
+     * @param     mixed $key Primary key to use for the query
+     * @param     ConnectionInterface $con A connection object
+     *
+     * @return ChildInformationSeekerConnectRequestCryosphereWhere|array|mixed the result, formatted by the current formatter
+     */
+    protected function findPkComplex($key, ConnectionInterface $con)
+    {
+        // As the query uses a PK condition, no limit(1) is necessary.
+        $criteria = $this->isKeepQuery() ? clone $this : $this;
+        $dataFetcher = $criteria
+            ->filterByPrimaryKey($key)
+            ->doSelect($con);
+
+        return $criteria->getFormatter()->init($criteria)->formatOne($dataFetcher);
     }
 
     /**
@@ -150,7 +227,16 @@ abstract class InformationSeekerConnectRequestCryosphereWhereQuery extends Model
      */
     public function findPks($keys, ConnectionInterface $con = null)
     {
-        throw new LogicException('The InformationSeekerConnectRequestCryosphereWhere object has no primary key');
+        if (null === $con) {
+            $con = Propel::getServiceContainer()->getReadConnection($this->getDbName());
+        }
+        $this->basePreSelect($con);
+        $criteria = $this->isKeepQuery() ? clone $this : $this;
+        $dataFetcher = $criteria
+            ->filterByPrimaryKeys($keys)
+            ->doSelect($con);
+
+        return $criteria->getFormatter()->init($criteria)->format($dataFetcher);
     }
 
     /**
@@ -162,7 +248,10 @@ abstract class InformationSeekerConnectRequestCryosphereWhereQuery extends Model
      */
     public function filterByPrimaryKey($key)
     {
-        throw new LogicException('The InformationSeekerConnectRequestCryosphereWhere object has no primary key');
+        $this->addUsingAlias(InformationSeekerConnectRequestCryosphereWhereTableMap::COL_INFORMATION_SEEKER_CONNECT_REQUEST_ID, $key[0], Criteria::EQUAL);
+        $this->addUsingAlias(InformationSeekerConnectRequestCryosphereWhereTableMap::COL_CRYOSPHERE_WHERE_ID, $key[1], Criteria::EQUAL);
+
+        return $this;
     }
 
     /**
@@ -174,7 +263,17 @@ abstract class InformationSeekerConnectRequestCryosphereWhereQuery extends Model
      */
     public function filterByPrimaryKeys($keys)
     {
-        throw new LogicException('The InformationSeekerConnectRequestCryosphereWhere object has no primary key');
+        if (empty($keys)) {
+            return $this->add(null, '1<>1', Criteria::CUSTOM);
+        }
+        foreach ($keys as $key) {
+            $cton0 = $this->getNewCriterion(InformationSeekerConnectRequestCryosphereWhereTableMap::COL_INFORMATION_SEEKER_CONNECT_REQUEST_ID, $key[0], Criteria::EQUAL);
+            $cton1 = $this->getNewCriterion(InformationSeekerConnectRequestCryosphereWhereTableMap::COL_CRYOSPHERE_WHERE_ID, $key[1], Criteria::EQUAL);
+            $cton0->addAnd($cton1);
+            $this->addOr($cton0);
+        }
+
+        return $this;
     }
 
     /**
@@ -470,8 +569,9 @@ abstract class InformationSeekerConnectRequestCryosphereWhereQuery extends Model
     public function prune($informationSeekerConnectRequestCryosphereWhere = null)
     {
         if ($informationSeekerConnectRequestCryosphereWhere) {
-            throw new LogicException('InformationSeekerConnectRequestCryosphereWhere object has no primary key');
-
+            $this->addCond('pruneCond0', $this->getAliasedColName(InformationSeekerConnectRequestCryosphereWhereTableMap::COL_INFORMATION_SEEKER_CONNECT_REQUEST_ID), $informationSeekerConnectRequestCryosphereWhere->getInformationSeekerConnectRequestId(), Criteria::NOT_EQUAL);
+            $this->addCond('pruneCond1', $this->getAliasedColName(InformationSeekerConnectRequestCryosphereWhereTableMap::COL_CRYOSPHERE_WHERE_ID), $informationSeekerConnectRequestCryosphereWhere->getCryosphereWhereId(), Criteria::NOT_EQUAL);
+            $this->combine(array('pruneCond0', 'pruneCond1'), Criteria::LOGICAL_OR);
         }
 
         return $this;

@@ -39,7 +39,7 @@ class LanguagesTableMap extends TableMap
     /**
      * The default database name for this class
      */
-    const DATABASE_NAME = 'cryo_connect';
+    const DATABASE_NAME = 'default';
 
     /**
      * The table name for this class
@@ -161,6 +161,9 @@ class LanguagesTableMap extends TableMap
     1 => ':language_code',
   ),
 ), null, 'CASCADE', 'InformationSeekerLanguagess', false);
+        $this->addRelation('Experts', '\\CryoConnectDB\\Experts', RelationMap::MANY_TO_MANY, array(), 'CASCADE', 'CASCADE', 'Expertss');
+        $this->addRelation('InformationSeekerConnectRequest', '\\CryoConnectDB\\InformationSeekerConnectRequest', RelationMap::MANY_TO_MANY, array(), 'CASCADE', 'CASCADE', 'InformationSeekerConnectRequests');
+        $this->addRelation('InformationSeekers', '\\CryoConnectDB\\InformationSeekers', RelationMap::MANY_TO_MANY, array(), 'CASCADE', 'CASCADE', 'InformationSeekerss');
     } // buildRelations()
 
     /**
