@@ -152,7 +152,7 @@ class CryosphereWhereTableMap extends TableMap
     0 => ':cryosphere_where_id',
     1 => ':id',
   ),
-), 'CASCADE', 'CASCADE', 'ExpertCryosphereWheres', false);
+), 'CASCADE', null, 'ExpertCryosphereWheres', false);
         $this->addRelation('InformationSeekerConnectRequestCryosphereWhere', '\\CryoConnectDB\\InformationSeekerConnectRequestCryosphereWhere', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
@@ -160,8 +160,8 @@ class CryosphereWhereTableMap extends TableMap
     1 => ':id',
   ),
 ), null, 'CASCADE', 'InformationSeekerConnectRequestCryosphereWheres', false);
-        $this->addRelation('Experts', '\\CryoConnectDB\\Experts', RelationMap::MANY_TO_MANY, array(), 'CASCADE', 'CASCADE', 'Expertss');
-        $this->addRelation('InformationSeekerConnectRequest', '\\CryoConnectDB\\InformationSeekerConnectRequest', RelationMap::MANY_TO_MANY, array(), 'CASCADE', 'CASCADE', 'InformationSeekerConnectRequests');
+        $this->addRelation('Experts', '\\CryoConnectDB\\Experts', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'Expertss');
+        $this->addRelation('InformationSeekerConnectRequest', '\\CryoConnectDB\\InformationSeekerConnectRequest', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'InformationSeekerConnectRequests');
     } // buildRelations()
     /**
      * Method to invalidate the instance pool of all tables related to cryosphere_where     * by a foreign key with ON DELETE CASCADE

@@ -22,6 +22,14 @@ class Controller {
      * @var \Slim\Views\Twig $view
      */
     protected $view;
+    
+    
+    /**
+     *
+     * @var \Swift_Mailer 
+     */
+    protected $mailer;
+    
 
     /**
      * 
@@ -30,6 +38,7 @@ class Controller {
     public function __construct(ContainerInterface $container) {
         $this->container = $container;
         $this->view = $this->container->get('view');
+        $this->mailer = $this->container->get('mailer');
     }
 
 }

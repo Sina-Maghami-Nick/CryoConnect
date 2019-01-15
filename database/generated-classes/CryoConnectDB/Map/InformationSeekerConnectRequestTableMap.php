@@ -158,28 +158,28 @@ class InformationSeekerConnectRequestTableMap extends TableMap
     0 => ':information_seeker_id',
     1 => ':id',
   ),
-), 'CASCADE', 'CASCADE', null, false);
+), 'CASCADE', null, null, false);
         $this->addRelation('InformationSeekerConnectRequestCryosphereWhat', '\\CryoConnectDB\\InformationSeekerConnectRequestCryosphereWhat', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
     0 => ':information_seeker_connect_request_id',
     1 => ':id',
   ),
-), 'CASCADE', 'CASCADE', 'InformationSeekerConnectRequestCryosphereWhats', false);
+), 'CASCADE', null, 'InformationSeekerConnectRequestCryosphereWhats', false);
         $this->addRelation('InformationSeekerConnectRequestCryosphereWhere', '\\CryoConnectDB\\InformationSeekerConnectRequestCryosphereWhere', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
     0 => ':information_seeker_connect_request_id',
     1 => ':id',
   ),
-), 'CASCADE', 'CASCADE', 'InformationSeekerConnectRequestCryosphereWheres', false);
+), 'CASCADE', null, 'InformationSeekerConnectRequestCryosphereWheres', false);
         $this->addRelation('InformationSeekerConnectRequestLanguages', '\\CryoConnectDB\\InformationSeekerConnectRequestLanguages', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
     0 => ':information_seeker_connect_request_id',
     1 => ':id',
   ),
-), 'CASCADE', 'CASCADE', 'InformationSeekerConnectRequestLanguagess', false);
+), 'CASCADE', null, 'InformationSeekerConnectRequestLanguagess', false);
         $this->addRelation('CryosphereWhat', '\\CryoConnectDB\\CryosphereWhat', RelationMap::MANY_TO_MANY, array(), null, 'CASCADE', 'CryosphereWhats');
         $this->addRelation('CryosphereWhere', '\\CryoConnectDB\\CryosphereWhere', RelationMap::MANY_TO_MANY, array(), null, 'CASCADE', 'CryosphereWheres');
         $this->addRelation('Languages', '\\CryoConnectDB\\Languages', RelationMap::MANY_TO_MANY, array(), null, 'CASCADE', 'Languagess');

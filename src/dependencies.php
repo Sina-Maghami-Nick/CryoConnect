@@ -30,10 +30,9 @@ $container['mailer'] = function ($c) {
     $settings = $c->get('settings')['mailer'];
 
     // Create the Transport
-    $transport = (new Swift_SmtpTransport($settings['smptp'], $settings['port']))
+    $transport = (new Swift_SmtpTransport($settings['smtp'], $settings['port']))
             ->setUsername($settings['username'])
-            ->setPassword($settings['password'])
-    ;
+            ->setPassword($settings['password']);
 
     // Create the Mailer using your created Transport
     $mailer = new Swift_Mailer($transport);

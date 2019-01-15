@@ -133,12 +133,11 @@ CREATE TABLE `expert_career_stage`
     CONSTRAINT `expert_career_stage_fk_023b7c`
         FOREIGN KEY (`expert_id`)
         REFERENCES `experts` (`id`)
-        ON UPDATE CASCADE
         ON DELETE CASCADE,
     CONSTRAINT `expert_career_stage_fk_73a24b`
         FOREIGN KEY (`career_stage_id`)
         REFERENCES `career_stage` (`id`)
-        ON UPDATE CASCADE
+        ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
@@ -158,7 +157,6 @@ CREATE TABLE `expert_contact`
     CONSTRAINT `expert_contact_fk_023b7c`
         FOREIGN KEY (`expert_id`)
         REFERENCES `experts` (`id`)
-        ON UPDATE CASCADE
         ON DELETE CASCADE,
     CONSTRAINT `expert_contact_fk_88838f`
         FOREIGN KEY (`contact_type_id`)
@@ -182,12 +180,11 @@ CREATE TABLE `expert_cryosphere_methods`
     CONSTRAINT `expert_cryosphere_methods_fk_023b7c`
         FOREIGN KEY (`expert_id`)
         REFERENCES `experts` (`id`)
-        ON UPDATE CASCADE
         ON DELETE CASCADE,
     CONSTRAINT `expert_cryosphere_methods_fk_3ce64e`
         FOREIGN KEY (`method_id`)
         REFERENCES `cryosphere_methods` (`id`)
-        ON UPDATE CASCADE
+        ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
@@ -206,12 +203,11 @@ CREATE TABLE `expert_cryosphere_what`
     CONSTRAINT `expert_cryosphere_what_fk_023b7c`
         FOREIGN KEY (`expert_id`)
         REFERENCES `experts` (`id`)
-        ON UPDATE CASCADE
         ON DELETE CASCADE,
     CONSTRAINT `expert_cryosphere_what_fk_e45748`
         FOREIGN KEY (`cryosphere_what_id`)
         REFERENCES `cryosphere_what` (`id`)
-        ON UPDATE CASCADE
+        ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
@@ -230,12 +226,11 @@ CREATE TABLE `expert_cryosphere_what_specefic`
     CONSTRAINT `expert_cryosphere_what_specefic_fk_023b7c`
         FOREIGN KEY (`expert_id`)
         REFERENCES `experts` (`id`)
-        ON UPDATE CASCADE
         ON DELETE CASCADE,
     CONSTRAINT `expert_cryosphere_what_specefic_fk_0158a0`
         FOREIGN KEY (`cryosphere_what_specefic_id`)
         REFERENCES `cryosphere_what_specefic` (`id`)
-        ON UPDATE CASCADE
+        ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
@@ -254,12 +249,10 @@ CREATE TABLE `expert_cryosphere_when`
     CONSTRAINT `expert_cryosphere_when_fk_023b7c`
         FOREIGN KEY (`expert_id`)
         REFERENCES `experts` (`id`)
-        ON UPDATE CASCADE
         ON DELETE CASCADE,
     CONSTRAINT `expert_cryosphere_when_fk_008274`
         FOREIGN KEY (`cryosphere_when_id`)
         REFERENCES `cryosphere_when` (`id`)
-        ON UPDATE CASCADE
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
@@ -279,12 +272,10 @@ CREATE TABLE `expert_cryosphere_where`
     CONSTRAINT `expert_cryosphere_where_fk_023b7c`
         FOREIGN KEY (`expert_id`)
         REFERENCES `experts` (`id`)
-        ON UPDATE CASCADE
         ON DELETE CASCADE,
     CONSTRAINT `expert_cryosphere_where_fk_7f381c`
         FOREIGN KEY (`cryosphere_where_id`)
         REFERENCES `cryosphere_where` (`id`)
-        ON UPDATE CASCADE
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
@@ -305,7 +296,6 @@ CREATE TABLE `expert_field_work`
     CONSTRAINT `expert_field_work_fk_023b7c`
         FOREIGN KEY (`expert_id`)
         REFERENCES `experts` (`id`)
-        ON UPDATE CASCADE
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
@@ -325,7 +315,6 @@ CREATE TABLE `expert_languages`
     CONSTRAINT `expert_languages_fk_023b7c`
         FOREIGN KEY (`expert_id`)
         REFERENCES `experts` (`id`)
-        ON UPDATE CASCADE
         ON DELETE CASCADE,
     CONSTRAINT `expert_languages_fk_0fb9dd`
         FOREIGN KEY (`language_code`)
@@ -349,7 +338,6 @@ CREATE TABLE `expert_primary_affiliation`
     CONSTRAINT `expert_primary_affiliation_fk_023b7c`
         FOREIGN KEY (`expert_id`)
         REFERENCES `experts` (`id`)
-        ON UPDATE CASCADE
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
@@ -362,13 +350,12 @@ DROP TABLE IF EXISTS `expert_secondary_affiliation`;
 CREATE TABLE `expert_secondary_affiliation`
 (
     `expert_id` int(10) unsigned NOT NULL,
-    `secondary_affiliation_name` TEXT NOT NULL,
+    `secondary_affiliation_name` VARCHAR(255) NOT NULL,
     `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    INDEX `expert_secondary_affiliation_fi_023b7c` (`expert_id`),
+    PRIMARY KEY (`expert_id`,`secondary_affiliation_name`),
     CONSTRAINT `expert_secondary_affiliation_fk_023b7c`
         FOREIGN KEY (`expert_id`)
         REFERENCES `experts` (`id`)
-        ON UPDATE CASCADE
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
@@ -413,7 +400,6 @@ CREATE TABLE `information_seeker_affiliation`
     CONSTRAINT `information_seeker_affiliation_fk_77d198`
         FOREIGN KEY (`information_seeker_id`)
         REFERENCES `information_seekers` (`id`)
-        ON UPDATE CASCADE
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
@@ -434,7 +420,6 @@ CREATE TABLE `information_seeker_connect_request`
     CONSTRAINT `information_seeker_connect_request_fk_77d198`
         FOREIGN KEY (`information_seeker_id`)
         REFERENCES `information_seekers` (`id`)
-        ON UPDATE CASCADE
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
@@ -454,7 +439,6 @@ CREATE TABLE `information_seeker_connect_request_cryosphere_what`
     CONSTRAINT `information_seeker_connect_request_cryosphere_what_fk_185361`
         FOREIGN KEY (`information_seeker_connect_request_id`)
         REFERENCES `information_seeker_connect_request` (`id`)
-        ON UPDATE CASCADE
         ON DELETE CASCADE,
     CONSTRAINT `information_seeker_connect_request_cryosphere_what_fk_e45748`
         FOREIGN KEY (`cryosphere_what_id`)
@@ -478,7 +462,6 @@ CREATE TABLE `information_seeker_connect_request_cryosphere_where`
     CONSTRAINT `information_seeker_connect_request_cryosphere_where_fk_185361`
         FOREIGN KEY (`information_seeker_connect_request_id`)
         REFERENCES `information_seeker_connect_request` (`id`)
-        ON UPDATE CASCADE
         ON DELETE CASCADE,
     CONSTRAINT `information_seeker_connect_request_cryosphere_where_fk_7f381c`
         FOREIGN KEY (`cryosphere_where_id`)
@@ -502,7 +485,6 @@ CREATE TABLE `information_seeker_connect_request_languages`
     CONSTRAINT `information_seeker_connect_request_languages_fk_185361`
         FOREIGN KEY (`information_seeker_connect_request_id`)
         REFERENCES `information_seeker_connect_request` (`id`)
-        ON UPDATE CASCADE
         ON DELETE CASCADE,
     CONSTRAINT `information_seeker_connect_request_languages_fk_0fb9dd`
         FOREIGN KEY (`language_code`)
@@ -529,7 +511,6 @@ CREATE TABLE `information_seeker_contact`
     CONSTRAINT `information_seeker_contact_fk_77d198`
         FOREIGN KEY (`information_seeker_id`)
         REFERENCES `information_seekers` (`id`)
-        ON UPDATE CASCADE
         ON DELETE CASCADE,
     CONSTRAINT `information_seeker_contact_fk_88838f`
         FOREIGN KEY (`contact_type_id`)
@@ -553,7 +534,6 @@ CREATE TABLE `information_seeker_languages`
     CONSTRAINT `information_seeker_languages_ibfk_1`
         FOREIGN KEY (`Information_seeker_id`)
         REFERENCES `information_seekers` (`id`)
-        ON UPDATE CASCADE
         ON DELETE CASCADE,
     CONSTRAINT `information_seeker_languages_fk_0fb9dd`
         FOREIGN KEY (`language_code`)
@@ -578,7 +558,6 @@ CREATE TABLE `information_seeker_profession`
     CONSTRAINT `information_seeker_profession_fk_77d198`
         FOREIGN KEY (`information_seeker_id`)
         REFERENCES `information_seekers` (`id`)
-        ON UPDATE CASCADE
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
 

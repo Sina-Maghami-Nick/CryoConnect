@@ -158,9 +158,18 @@ class CryosphereWhatSpeceficTableMap extends TableMap
     0 => ':cryosphere_what_specefic_id',
     1 => ':id',
   ),
-), null, 'CASCADE', 'ExpertCryosphereWhatSpecefics', false);
-        $this->addRelation('Experts', '\\CryoConnectDB\\Experts', RelationMap::MANY_TO_MANY, array(), 'CASCADE', 'CASCADE', 'Expertss');
+), 'CASCADE', null, 'ExpertCryosphereWhatSpecefics', false);
+        $this->addRelation('Experts', '\\CryoConnectDB\\Experts', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'Expertss');
     } // buildRelations()
+    /**
+     * Method to invalidate the instance pool of all tables related to cryosphere_what_specefic     * by a foreign key with ON DELETE CASCADE
+     */
+    public static function clearRelatedInstancePool()
+    {
+        // Invalidate objects in related instance pools,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        ExpertCryosphereWhatSpeceficTableMap::clearInstancePool();
+    }
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.

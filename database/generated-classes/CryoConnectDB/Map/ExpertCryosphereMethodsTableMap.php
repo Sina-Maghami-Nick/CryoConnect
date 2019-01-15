@@ -153,14 +153,14 @@ class ExpertCryosphereMethodsTableMap extends TableMap
     0 => ':expert_id',
     1 => ':id',
   ),
-), 'CASCADE', 'CASCADE', null, false);
+), 'CASCADE', null, null, false);
         $this->addRelation('CryosphereMethods', '\\CryoConnectDB\\CryosphereMethods', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
     0 => ':method_id',
     1 => ':id',
   ),
-), null, 'CASCADE', null, false);
+), 'CASCADE', null, null, false);
     } // buildRelations()
 
     /**

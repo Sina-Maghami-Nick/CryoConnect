@@ -9,14 +9,13 @@ use CryoConnectDB\CryosphereWhat;
 use CryoConnectDB\CryosphereWhatSpeceficQuery;
 use CryoConnectDB\CryosphereWhatSpecefic;
 use CryoConnectDB\CryosphereWhereQuery;
-use CryoConnectDB\CryosphereWhere;
 use CryoConnectDB\CryosphereWhenQuery;
 use CryoConnectDB\CryosphereWhen;
 use CryoConnectDB\CryosphereMethodsQuery;
 use CryoConnectDB\CryosphereMethods;
 use CryoConnectDB\CareerStageQuery;
-use CryoConnectDB\CareerStage;
 use CryoConnectDB\Experts;
+use CryoConnectDB\ExpertsQuery;
 use CryoConnectDB\ExpertCryosphereWhat;
 use CryoConnectDB\ExpertCryosphereWhere;
 use CryoConnectDB\ExpertCryosphereWhen;
@@ -36,9 +35,6 @@ class ExpertsController extends Controller {
      * 
      */
     public function signupFormAction($request, $response, $args) {
-
-        //Getting list of Expertise (Cryosphere_What)
-        //$cryosphereWhatAll = CryosphereWhatQuery::create()->find();
 
         $cryosphereWhat = CryosphereWhatQuery::create()->findByApproved(True);
         $cryosphereWhatSpecefic = CryosphereWhatSpeceficQuery::create()->findByApproved(True);
@@ -96,7 +92,7 @@ class ExpertsController extends Controller {
         $linkedIn = filter_var($data['personal_linkedin'], FILTER_SANITIZE_URL);
         $googleScholar = filter_var($data['personal_google_scholar'], FILTER_SANITIZE_URL);
 
-        //validations
+        //rest of validations
         if (
                 empty($firstName) ||
                 empty($lastName) ||
@@ -124,7 +120,7 @@ class ExpertsController extends Controller {
         ) {
             $this->container->get('logger')
                     ->addError('Empty or wronge fileds for expert info recieved within the following request: ' . json_encode($data));
-            $technicalAdminEmail = $this->container->get('settings')['conatcts']['technical_admin'];
+            $technicalAdminEmail = $this->container->get('settings')['contacts']['technical_admin'];
             $response->getBody()->write("Something went wrong! Please contact us at: " . $technicalAdminEmail);
 
             return $response;
@@ -149,29 +145,179 @@ class ExpertsController extends Controller {
         $expert = $this->setExpertAffiliations($expert, $primaryAffiliationName, $primaryAffiliationCountryCode, $primaryAffiliationCity, $secondryAffiliations);
         $expert = $this->setExpertContact($expert, $phoneNumber, $website, $linkedIn, $googleScholar);
 
-
-
         $expert->save();
-
-        //$response->getBody()->write(json_encode($data));
 
         $this->container->get('logger')
                 ->addInfo('A new unvalidated expert is added to the databse: ' . json_encode($expert->toArray()));
-         
-        
+
+        $approvalMsg = (new \Swift_Message('Approval of new cryoconnect expert: ' . $firstName . ' ' . $lastName))
+                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'No-reply'])
+                ->setTo($this->container->get('settings')['contacts']['approval_admin'])
+                ->setBody(
+                $this->view->render(new \Slim\Http\Response(), 'emails/experts-approval-email.html.twig', [
+                    'expert' => $expert->toArray(),
+                    'token' => md5($expert->getEmail() . $expert->getBirthYear()),
+                        ]
+                ), 'text/html'
+        );
+
+        $this->mailer->send($approvalMsg);
+
         return $this->view->render(
-                        $response, 'expert-thank-you-page.html.twig', [
+                        $response, 'experts-thank-you-page.html.twig', [
                     'expert_first_name' => $firstName,
-                    'expert_last_name' => $lastName
+                    'expert_last_name' => $lastName,
                         ]
         );
     }
 
-    public function resultAction($request, $response, $args) {
+    /**
+     * Checking if expert email exists
+     */
+    public function expertEmailExistCheckAction($request, $response, $args) {
+        $data = $request->getParsedBody();
+        $emailAddress = trim(strtolower(filter_var($data['email'], FILTER_SANITIZE_EMAIL)));
+
+        if (
+                !ExpertsQuery::create()->findOneByEmail($emailAddress)
+        ) {
+            return $response->withStatus(400);
+        }
+
+        return $response->withStatus(200);
+    }
+
+    /**
+     * Rendering approve page for expert
+     * @param type $request
+     * @param type $response
+     * @param type $args
+     * @return type
+     */
+    public function approvalAction($request, $response, $args) {
         // your code
         // to access items in the container... $this->container->get('');
-        $response->getBody()->write($this->container->get('settings')['propel']['initializer_path']);
-        return $response;
+        $expertId = $request->getQueryParams()['id'];
+        $expert = ExpertsQuery::create()->findPk($expertId);
+
+        if (!isset($expert) || empty($expert)) {
+            $this->container->get('logger')
+                    ->addError('Wrong expert ID passed to expert validation page the query params are: ' . json_encode($request->getQueryParams()));
+            $technicalAdminEmail = $this->container->get('settings')['contacts']['technical_admin'];
+            $response->getBody()->write("Something went wrong! Please contact the technical admin at: " . $technicalAdminEmail);
+
+            return $response;
+        }
+
+        $this->container->get('logger')
+                ->addInfo('Expert Validation page was accessed by a user for expert:' . json_encode($expert->toArray()));
+        return $this->view->render(
+                        $response, 'expert-approval.html.twig', [
+                    'expert' => $expert->toArray(),
+                    'expert_what' => $expert->getExpertCryosphereWhatsJoinCryosphereWhat()->toArray(),
+                    'all_cryosphere_what' => CryosphereWhatQuery::create()->filterByApproved(true)->find()->toArray(),
+                    'expert_what_specefic' => $expert->getExpertCryosphereWhatSpeceficsJoinCryosphereWhatSpecefic()->toArray(),
+                    'all_cryosphere_what_specefic' => CryosphereWhatSpeceficQuery::create()->filterByApproved(true)->find()->toArray(),
+                    'expert_when' => $expert->getExpertCryosphereWhensJoinCryosphereWhen()->toArray(),
+                    'all_cryosphere_when' => CryosphereWhenQuery::create()->filterByApproved(true)->find()->toArray(),
+                    'expert_methods' => $expert->getExpertCryosphereMethodssJoinCryosphereMethods()->toArray(),
+                    'all_cryosphere_methods' => CryosphereMethodsQuery::create()->filterByApproved(true)->find()->toArray(),
+                    'expert_where' => $expert->getExpertCryosphereWheresJoinCryosphereWhere()->toArray(),
+                    'expert_career_stages' => $expert->getExpertCareerStagesJoinCareerStage()->toArray(),
+                    'expert_field_work' => $expert->getExpertFieldWorks()->toArray(),
+                    'expert_primary_affiliation' => $expert->getExpertPrimaryAffiliation()->toArray(),
+                    'expert_secondary_affiliation' => $expert->getExpertSecondaryAffiliations()->toArray(),
+                    'expert_contacts' => $expert->getExpertContactsJoinContactTypes()->toArray(),
+                    'expert_country' => CountriesQuery::create()->findByCountryCode($expert->getCountryCode())->toArray(),
+                        ]
+        );
+    }
+
+    /**
+     * Approving expert
+     * @param type $request
+     * @param type $response
+     * @param type $args
+     */
+    public function approveExpertAction($request, $response, $args) {
+        $data = $request->getParsedBody();
+
+        $expertId = trim(filter_var($data['id'], FILTER_SANITIZE_NUMBER_INT));
+        $expert = ExpertsQuery::create()->filterByApproved(false)->findOneById($expertId);
+
+        if (
+                empty($expertId) ||
+                empty($expert->getId())
+        ) {
+            $this->container->get('logger')
+                    ->addError('Empty or wronge expert id recieved for expert approval: ' . json_encode($data));
+            $technicalAdminEmail = $this->container->get('settings')['contacts']['technical_admin'];
+            $response->getBody()->write("Something went wrong! Please contact us at: " . $technicalAdminEmail);
+            return $response;
+        }
+
+        $expert->setApproved(true);
+        $expert->save();
+        $this->container->get('logger')
+                ->addInfo('A new expert has been approved. ExpertId =' . $expert->getId());
+
+        $emailMsg = (new \Swift_Message('Welcome to Cryoconnect experts family'))
+                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'No-reply'])
+                ->setTo($expert->getEmail())
+                ->setBody(
+                $this->view->render(new \Slim\Http\Response(), 'emails/experts-welcome-email.html.twig', [
+                    'expert_name' => $expert->getFirstName() . " " . $expert->getLastName(),
+                        ]
+                ), 'text/html'
+        );
+
+        $this->mailer->send($emailMsg);
+
+        return $response->withStatus(200);
+    }
+
+    /**
+     * Approving expert
+     * @param type $request
+     * @param type $response
+     * @param type $args
+     */
+    public function rejectExpertAction($request, $response, $args) {
+        $data = $request->getParsedBody();
+
+        $expertId = trim(filter_var($data['id'], FILTER_SANITIZE_NUMBER_INT));
+        $expert = ExpertsQuery::create()->filterByApproved(false)->findOneById($expertId);
+        $explanation = trim(filter_var($data['explanation'], FILTER_SANITIZE_STRING));
+
+        if (
+                empty($expertId) ||
+                empty($expert->getId())
+        ) {
+            $this->container->get('logger')
+                    ->addError('Empty or wronge expert id recieved for expert approval: ' . json_encode($data));
+            $technicalAdminEmail = $this->container->get('settings')['contacts']['technical_admin'];
+            $response->getBody()->write("Something went wrong! Please contact us at: " . $technicalAdminEmail);
+            return $response;
+        }
+
+
+        $this->container->get('logger')
+                ->addInfo('A expert is being deleted. ExpertEmail: ' . $expert->getEmail() . ' With explanation: ' . $explanation);
+        $expert->delete();
+        $emailMsg = (new \Swift_Message('Sorry Cryoconnect could not approve your request'))
+                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'No-reply'])
+                ->setTo($expert->getEmail())
+                ->setBody(
+                $this->view->render(new \Slim\Http\Response(), 'emails/experts-rejection-email.html.twig', [
+                    'expert_name' => $expert->getFirstName() . " " . $expert->getLastName(),
+                    'explanation' => $explanation
+                        ]
+                ), 'text/html'
+        );
+
+        $this->mailer->send($emailMsg);
+
+        return $response->withStatus(200);
     }
 
     /**
@@ -342,7 +488,10 @@ class ExpertsController extends Controller {
     private function setExpertFieldWork(Experts $expert, string $fieldWorkLocation, string $fieldWorkDate) {
         //Adding experts Crysphere wheres
         $expertFieldWork = new ExpertFieldWork();
-        $fieldWorkLocation ?? $expertFieldWork->setFieldWorkWhere($fieldWorkLocation);
+
+        if (!empty($fieldWorkLocation)) {
+            $expertFieldWork->setFieldWorkWhere($fieldWorkLocation);
+        }
 
         if (($timestamp = strtotime($fieldWorkDate)) !== false) {
             $expertFieldWork->setFieldWorkYear(date("Y", $timestamp));
@@ -379,7 +528,7 @@ class ExpertsController extends Controller {
             }
         }
 
-        $expert->addExpertPrimaryAffiliation($expertPrimaryAffiliation);
+        $expert->setExpertPrimaryAffiliation($expertPrimaryAffiliation);
 
         return $expert;
     }
@@ -397,7 +546,7 @@ class ExpertsController extends Controller {
 
         //Adding expert telephone number
         if (!empty($phoneNumber)) {
-            if ($contactTypeId = ContactTypesQuery::create()->findOneByContactType('phone')) {
+            if ($contactTypeId = ContactTypesQuery::create()->findOneByContactType('phone')->getId()) {
                 $expertContact = new ExpertContact;
                 $expertContact->setContactTypeId($contactTypeId);
                 $expertContact->setContactInformation($phoneNumber);
@@ -407,7 +556,7 @@ class ExpertsController extends Controller {
 
         // Adding expert's Website
         if (!empty($website)) {
-            if ($contactTypeId = ContactTypesQuery::create()->findOneByContactType('website')) {
+            if ($contactTypeId = ContactTypesQuery::create()->findOneByContactType('website')->getId()) {
                 $expertContact = new ExpertContact;
                 $expertContact->setContactTypeId($contactTypeId);
                 $expertContact->setContactInformation($website);
@@ -417,7 +566,7 @@ class ExpertsController extends Controller {
 
         // Adding expert's LinkedIn
         if (!empty($linkedIn)) {
-            if ($contactTypeId = ContactTypesQuery::create()->findOneByContactType('linkedIn')) {
+            if ($contactTypeId = ContactTypesQuery::create()->findOneByContactType('linkedIn')->getId()) {
                 $expertContact = new ExpertContact;
                 $expertContact->setContactTypeId($contactTypeId);
                 $expertContact->setContactInformation($linkedIn);
@@ -427,7 +576,7 @@ class ExpertsController extends Controller {
 
         // Adding expert's GoogleScholar
         if (!empty($googleScholar)) {
-            if ($contactTypeId = ContactTypesQuery::create()->findOneByContactType('googleScholar')) {
+            if ($contactTypeId = ContactTypesQuery::create()->findOneByContactType('googleScholar')->getId()) {
                 $expertContact = new ExpertContact;
                 $expertContact->setContactTypeId($contactTypeId);
                 $expertContact->setContactInformation($googleScholar);

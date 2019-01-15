@@ -1003,7 +1003,9 @@ abstract class ExpertSecondaryAffiliation implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        throw new LogicException('The ExpertSecondaryAffiliation object has no primary key');
+        $criteria = ChildExpertSecondaryAffiliationQuery::create();
+        $criteria->add(ExpertSecondaryAffiliationTableMap::COL_EXPERT_ID, $this->expert_id);
+        $criteria->add(ExpertSecondaryAffiliationTableMap::COL_SECONDARY_AFFILIATION_NAME, $this->secondary_affiliation_name);
 
         return $criteria;
     }
@@ -1016,10 +1018,18 @@ abstract class ExpertSecondaryAffiliation implements ActiveRecordInterface
      */
     public function hashCode()
     {
-        $validPk = false;
+        $validPk = null !== $this->getExpertId() &&
+            null !== $this->getSecondaryAffiliationName();
 
-        $validPrimaryKeyFKs = 0;
+        $validPrimaryKeyFKs = 1;
         $primaryKeyFKs = [];
+
+        //relation expert_secondary_affiliation_fk_023b7c to table experts
+        if ($this->aExperts && $hash = spl_object_hash($this->aExperts)) {
+            $primaryKeyFKs[] = $hash;
+        } else {
+            $validPrimaryKeyFKs = false;
+        }
 
         if ($validPk) {
             return crc32(json_encode($this->getPrimaryKey(), JSON_UNESCAPED_UNICODE));
@@ -1031,27 +1041,29 @@ abstract class ExpertSecondaryAffiliation implements ActiveRecordInterface
     }
 
     /**
-     * Returns NULL since this table doesn't have a primary key.
-     * This method exists only for BC and is deprecated!
-     * @return null
+     * Returns the composite primary key for this object.
+     * The array elements will be in same order as specified in XML.
+     * @return array
      */
     public function getPrimaryKey()
     {
-        return null;
+        $pks = array();
+        $pks[0] = $this->getExpertId();
+        $pks[1] = $this->getSecondaryAffiliationName();
+
+        return $pks;
     }
 
     /**
-     * Dummy primary key setter.
+     * Set the [composite] primary key.
      *
-     * This function only exists to preserve backwards compatibility.  It is no longer
-     * needed or required by the Persistent interface.  It will be removed in next BC-breaking
-     * release of Propel.
-     *
-     * @deprecated
+     * @param      array $keys The elements of the composite key (order must match the order in XML file).
+     * @return void
      */
-    public function setPrimaryKey($pk)
+    public function setPrimaryKey($keys)
     {
-        // do nothing, because this object doesn't have any primary keys
+        $this->setExpertId($keys[0]);
+        $this->setSecondaryAffiliationName($keys[1]);
     }
 
     /**
@@ -1060,7 +1072,7 @@ abstract class ExpertSecondaryAffiliation implements ActiveRecordInterface
      */
     public function isPrimaryKeyNull()
     {
-        return ;
+        return (null === $this->getExpertId()) && (null === $this->getSecondaryAffiliationName());
     }
 
     /**

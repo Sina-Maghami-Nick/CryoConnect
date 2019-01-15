@@ -158,7 +158,7 @@ class CryosphereWhatTableMap extends TableMap
     0 => ':cryosphere_what_id',
     1 => ':id',
   ),
-), null, 'CASCADE', 'ExpertCryosphereWhats', false);
+), 'CASCADE', null, 'ExpertCryosphereWhats', false);
         $this->addRelation('InformationSeekerConnectRequestCryosphereWhat', '\\CryoConnectDB\\InformationSeekerConnectRequestCryosphereWhat', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
@@ -166,9 +166,18 @@ class CryosphereWhatTableMap extends TableMap
     1 => ':id',
   ),
 ), null, 'CASCADE', 'InformationSeekerConnectRequestCryosphereWhats', false);
-        $this->addRelation('Experts', '\\CryoConnectDB\\Experts', RelationMap::MANY_TO_MANY, array(), 'CASCADE', 'CASCADE', 'Expertss');
-        $this->addRelation('InformationSeekerConnectRequest', '\\CryoConnectDB\\InformationSeekerConnectRequest', RelationMap::MANY_TO_MANY, array(), 'CASCADE', 'CASCADE', 'InformationSeekerConnectRequests');
+        $this->addRelation('Experts', '\\CryoConnectDB\\Experts', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'Expertss');
+        $this->addRelation('InformationSeekerConnectRequest', '\\CryoConnectDB\\InformationSeekerConnectRequest', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'InformationSeekerConnectRequests');
     } // buildRelations()
+    /**
+     * Method to invalidate the instance pool of all tables related to cryosphere_what     * by a foreign key with ON DELETE CASCADE
+     */
+    public static function clearRelatedInstancePool()
+    {
+        // Invalidate objects in related instance pools,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        ExpertCryosphereWhatTableMap::clearInstancePool();
+    }
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.

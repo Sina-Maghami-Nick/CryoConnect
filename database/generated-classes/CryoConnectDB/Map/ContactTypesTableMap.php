@@ -154,8 +154,8 @@ class ContactTypesTableMap extends TableMap
     1 => ':id',
   ),
 ), null, 'CASCADE', 'InformationSeekerContacts', false);
-        $this->addRelation('Experts', '\\CryoConnectDB\\Experts', RelationMap::MANY_TO_MANY, array(), 'CASCADE', 'CASCADE', 'Expertss');
-        $this->addRelation('InformationSeekers', '\\CryoConnectDB\\InformationSeekers', RelationMap::MANY_TO_MANY, array(), 'CASCADE', 'CASCADE', 'InformationSeekerss');
+        $this->addRelation('Experts', '\\CryoConnectDB\\Experts', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'Expertss');
+        $this->addRelation('InformationSeekers', '\\CryoConnectDB\\InformationSeekers', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'InformationSeekerss');
     } // buildRelations()
 
     /**

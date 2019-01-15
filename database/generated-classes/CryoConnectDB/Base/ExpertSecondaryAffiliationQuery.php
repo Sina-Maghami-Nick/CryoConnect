@@ -3,6 +3,7 @@
 namespace CryoConnectDB\Base;
 
 use \Exception;
+use \PDO;
 use CryoConnectDB\ExpertSecondaryAffiliation as ChildExpertSecondaryAffiliation;
 use CryoConnectDB\ExpertSecondaryAffiliationQuery as ChildExpertSecondaryAffiliationQuery;
 use CryoConnectDB\Map\ExpertSecondaryAffiliationTableMap;
@@ -12,7 +13,6 @@ use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveQuery\ModelJoin;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
 
 /**
@@ -115,17 +115,94 @@ abstract class ExpertSecondaryAffiliationQuery extends ModelCriteria
      * Go fast if the query is untouched.
      *
      * <code>
-     * $obj  = $c->findPk(12, $con);
+     * $obj = $c->findPk(array(12, 34), $con);
      * </code>
      *
-     * @param mixed $key Primary key to use for the query
+     * @param array[$expert_id, $secondary_affiliation_name] $key Primary key to use for the query
      * @param ConnectionInterface $con an optional connection object
      *
      * @return ChildExpertSecondaryAffiliation|array|mixed the result, formatted by the current formatter
      */
     public function findPk($key, ConnectionInterface $con = null)
     {
-        throw new LogicException('The ExpertSecondaryAffiliation object has no primary key');
+        if ($key === null) {
+            return null;
+        }
+
+        if ($con === null) {
+            $con = Propel::getServiceContainer()->getReadConnection(ExpertSecondaryAffiliationTableMap::DATABASE_NAME);
+        }
+
+        $this->basePreSelect($con);
+
+        if (
+            $this->formatter || $this->modelAlias || $this->with || $this->select
+            || $this->selectColumns || $this->asColumns || $this->selectModifiers
+            || $this->map || $this->having || $this->joins
+        ) {
+            return $this->findPkComplex($key, $con);
+        }
+
+        if ((null !== ($obj = ExpertSecondaryAffiliationTableMap::getInstanceFromPool(serialize([(null === $key[0] || is_scalar($key[0]) || is_callable([$key[0], '__toString']) ? (string) $key[0] : $key[0]), (null === $key[1] || is_scalar($key[1]) || is_callable([$key[1], '__toString']) ? (string) $key[1] : $key[1])]))))) {
+            // the object is already in the instance pool
+            return $obj;
+        }
+
+        return $this->findPkSimple($key, $con);
+    }
+
+    /**
+     * Find object by primary key using raw SQL to go fast.
+     * Bypass doSelect() and the object formatter by using generated code.
+     *
+     * @param     mixed $key Primary key to use for the query
+     * @param     ConnectionInterface $con A connection object
+     *
+     * @throws \Propel\Runtime\Exception\PropelException
+     *
+     * @return ChildExpertSecondaryAffiliation A model object, or null if the key is not found
+     */
+    protected function findPkSimple($key, ConnectionInterface $con)
+    {
+        $sql = 'SELECT expert_id, secondary_affiliation_name, timestamp FROM expert_secondary_affiliation WHERE expert_id = :p0 AND secondary_affiliation_name = :p1';
+        try {
+            $stmt = $con->prepare($sql);
+            $stmt->bindValue(':p0', $key[0], PDO::PARAM_INT);
+            $stmt->bindValue(':p1', $key[1], PDO::PARAM_STR);
+            $stmt->execute();
+        } catch (Exception $e) {
+            Propel::log($e->getMessage(), Propel::LOG_ERR);
+            throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', $sql), 0, $e);
+        }
+        $obj = null;
+        if ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
+            /** @var ChildExpertSecondaryAffiliation $obj */
+            $obj = new ChildExpertSecondaryAffiliation();
+            $obj->hydrate($row);
+            ExpertSecondaryAffiliationTableMap::addInstanceToPool($obj, serialize([(null === $key[0] || is_scalar($key[0]) || is_callable([$key[0], '__toString']) ? (string) $key[0] : $key[0]), (null === $key[1] || is_scalar($key[1]) || is_callable([$key[1], '__toString']) ? (string) $key[1] : $key[1])]));
+        }
+        $stmt->closeCursor();
+
+        return $obj;
+    }
+
+    /**
+     * Find object by primary key.
+     *
+     * @param     mixed $key Primary key to use for the query
+     * @param     ConnectionInterface $con A connection object
+     *
+     * @return ChildExpertSecondaryAffiliation|array|mixed the result, formatted by the current formatter
+     */
+    protected function findPkComplex($key, ConnectionInterface $con)
+    {
+        // As the query uses a PK condition, no limit(1) is necessary.
+        $criteria = $this->isKeepQuery() ? clone $this : $this;
+        $dataFetcher = $criteria
+            ->filterByPrimaryKey($key)
+            ->doSelect($con);
+
+        return $criteria->getFormatter()->init($criteria)->formatOne($dataFetcher);
     }
 
     /**
@@ -140,7 +217,16 @@ abstract class ExpertSecondaryAffiliationQuery extends ModelCriteria
      */
     public function findPks($keys, ConnectionInterface $con = null)
     {
-        throw new LogicException('The ExpertSecondaryAffiliation object has no primary key');
+        if (null === $con) {
+            $con = Propel::getServiceContainer()->getReadConnection($this->getDbName());
+        }
+        $this->basePreSelect($con);
+        $criteria = $this->isKeepQuery() ? clone $this : $this;
+        $dataFetcher = $criteria
+            ->filterByPrimaryKeys($keys)
+            ->doSelect($con);
+
+        return $criteria->getFormatter()->init($criteria)->format($dataFetcher);
     }
 
     /**
@@ -152,7 +238,10 @@ abstract class ExpertSecondaryAffiliationQuery extends ModelCriteria
      */
     public function filterByPrimaryKey($key)
     {
-        throw new LogicException('The ExpertSecondaryAffiliation object has no primary key');
+        $this->addUsingAlias(ExpertSecondaryAffiliationTableMap::COL_EXPERT_ID, $key[0], Criteria::EQUAL);
+        $this->addUsingAlias(ExpertSecondaryAffiliationTableMap::COL_SECONDARY_AFFILIATION_NAME, $key[1], Criteria::EQUAL);
+
+        return $this;
     }
 
     /**
@@ -164,7 +253,17 @@ abstract class ExpertSecondaryAffiliationQuery extends ModelCriteria
      */
     public function filterByPrimaryKeys($keys)
     {
-        throw new LogicException('The ExpertSecondaryAffiliation object has no primary key');
+        if (empty($keys)) {
+            return $this->add(null, '1<>1', Criteria::CUSTOM);
+        }
+        foreach ($keys as $key) {
+            $cton0 = $this->getNewCriterion(ExpertSecondaryAffiliationTableMap::COL_EXPERT_ID, $key[0], Criteria::EQUAL);
+            $cton1 = $this->getNewCriterion(ExpertSecondaryAffiliationTableMap::COL_SECONDARY_AFFILIATION_NAME, $key[1], Criteria::EQUAL);
+            $cton0->addAnd($cton1);
+            $this->addOr($cton0);
+        }
+
+        return $this;
     }
 
     /**
@@ -365,8 +464,9 @@ abstract class ExpertSecondaryAffiliationQuery extends ModelCriteria
     public function prune($expertSecondaryAffiliation = null)
     {
         if ($expertSecondaryAffiliation) {
-            throw new LogicException('ExpertSecondaryAffiliation object has no primary key');
-
+            $this->addCond('pruneCond0', $this->getAliasedColName(ExpertSecondaryAffiliationTableMap::COL_EXPERT_ID), $expertSecondaryAffiliation->getExpertId(), Criteria::NOT_EQUAL);
+            $this->addCond('pruneCond1', $this->getAliasedColName(ExpertSecondaryAffiliationTableMap::COL_SECONDARY_AFFILIATION_NAME), $expertSecondaryAffiliation->getSecondaryAffiliationName(), Criteria::NOT_EQUAL);
+            $this->combine(array('pruneCond0', 'pruneCond1'), Criteria::LOGICAL_OR);
         }
 
         return $this;

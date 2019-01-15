@@ -153,7 +153,7 @@ class ExpertLanguagesTableMap extends TableMap
     0 => ':expert_id',
     1 => ':id',
   ),
-), 'CASCADE', 'CASCADE', null, false);
+), 'CASCADE', null, null, false);
         $this->addRelation('Languages', '\\CryoConnectDB\\Languages', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (

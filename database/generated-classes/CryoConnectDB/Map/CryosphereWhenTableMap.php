@@ -158,8 +158,8 @@ class CryosphereWhenTableMap extends TableMap
     0 => ':cryosphere_when_id',
     1 => ':id',
   ),
-), 'CASCADE', 'CASCADE', 'ExpertCryosphereWhens', false);
-        $this->addRelation('Experts', '\\CryoConnectDB\\Experts', RelationMap::MANY_TO_MANY, array(), 'CASCADE', 'CASCADE', 'Expertss');
+), 'CASCADE', null, 'ExpertCryosphereWhens', false);
+        $this->addRelation('Experts', '\\CryoConnectDB\\Experts', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'Expertss');
     } // buildRelations()
     /**
      * Method to invalidate the instance pool of all tables related to cryosphere_when     * by a foreign key with ON DELETE CASCADE

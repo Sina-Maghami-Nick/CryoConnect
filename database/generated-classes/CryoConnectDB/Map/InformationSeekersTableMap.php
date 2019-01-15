@@ -183,35 +183,35 @@ class InformationSeekersTableMap extends TableMap
     0 => ':information_seeker_id',
     1 => ':id',
   ),
-), 'CASCADE', 'CASCADE', 'InformationSeekerAffiliations', false);
+), 'CASCADE', null, 'InformationSeekerAffiliations', false);
         $this->addRelation('InformationSeekerConnectRequest', '\\CryoConnectDB\\InformationSeekerConnectRequest', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
     0 => ':information_seeker_id',
     1 => ':id',
   ),
-), 'CASCADE', 'CASCADE', 'InformationSeekerConnectRequests', false);
+), 'CASCADE', null, 'InformationSeekerConnectRequests', false);
         $this->addRelation('InformationSeekerContact', '\\CryoConnectDB\\InformationSeekerContact', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
     0 => ':information_seeker_id',
     1 => ':id',
   ),
-), 'CASCADE', 'CASCADE', 'InformationSeekerContacts', false);
+), 'CASCADE', null, 'InformationSeekerContacts', false);
         $this->addRelation('InformationSeekerLanguages', '\\CryoConnectDB\\InformationSeekerLanguages', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
     0 => ':Information_seeker_id',
     1 => ':id',
   ),
-), 'CASCADE', 'CASCADE', 'InformationSeekerLanguagess', false);
+), 'CASCADE', null, 'InformationSeekerLanguagess', false);
         $this->addRelation('InformationSeekerProfession', '\\CryoConnectDB\\InformationSeekerProfession', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
     0 => ':information_seeker_id',
     1 => ':id',
   ),
-), 'CASCADE', 'CASCADE', 'InformationSeekerProfessions', false);
+), 'CASCADE', null, 'InformationSeekerProfessions', false);
         $this->addRelation('ContactTypes', '\\CryoConnectDB\\ContactTypes', RelationMap::MANY_TO_MANY, array(), null, 'CASCADE', 'ContactTypess');
         $this->addRelation('Languages', '\\CryoConnectDB\\Languages', RelationMap::MANY_TO_MANY, array(), null, 'CASCADE', 'Languagess');
     } // buildRelations()

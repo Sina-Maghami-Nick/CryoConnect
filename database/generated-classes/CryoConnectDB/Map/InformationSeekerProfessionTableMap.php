@@ -158,7 +158,7 @@ class InformationSeekerProfessionTableMap extends TableMap
     0 => ':information_seeker_id',
     1 => ':id',
   ),
-), 'CASCADE', 'CASCADE', null, false);
+), 'CASCADE', null, null, false);
     } // buildRelations()
 
     /**

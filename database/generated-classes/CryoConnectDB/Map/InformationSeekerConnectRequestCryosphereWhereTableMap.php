@@ -153,7 +153,7 @@ class InformationSeekerConnectRequestCryosphereWhereTableMap extends TableMap
     0 => ':information_seeker_connect_request_id',
     1 => ':id',
   ),
-), 'CASCADE', 'CASCADE', null, false);
+), 'CASCADE', null, null, false);
         $this->addRelation('CryosphereWhere', '\\CryoConnectDB\\CryosphereWhere', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (

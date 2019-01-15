@@ -20,14 +20,18 @@ return [
         ],
         // Mailer settings
         'mailer' => [
-            'smptp' => 'slim-app',
-            'port' => isset($_ENV['docker']) ? 'php://stdout' : __DIR__ . '/../logs/app.log',
-            'username' => \Monolog\Logger::DEBUG,
-            'password' => \Monolog\Logger::DEBUG,
+            'smtp' => 'mail.webruimtemail.nl',
+            'port' => 587,
+            'username' => 'no-reply@cryoconnect.net',
+            'password' => 'tshaC2eNx',
         ],
         //Admin emails
-        'conatcts' => [
+        'contacts' => [
             'technical_admin' => 'sina.nick@gmail.com',
+            'approval_admin' => 'sina.nick@gmail.com',
         ],
+        'tokens' => [
+            'expert-approval-auth' => 'QMt9neFatRqGcUEX',
+        ]
     ],
 ];

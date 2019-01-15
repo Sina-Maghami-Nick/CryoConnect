@@ -153,14 +153,14 @@ class ExpertCryosphereWhatSpeceficTableMap extends TableMap
     0 => ':expert_id',
     1 => ':id',
   ),
-), 'CASCADE', 'CASCADE', null, false);
+), 'CASCADE', null, null, false);
         $this->addRelation('CryosphereWhatSpecefic', '\\CryoConnectDB\\CryosphereWhatSpecefic', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
     0 => ':cryosphere_what_specefic_id',
     1 => ':id',
   ),
-), null, 'CASCADE', null, false);
+), 'CASCADE', null, null, false);
     } // buildRelations()
 
     /**

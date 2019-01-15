@@ -1,0 +1,754 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <title>Expert Approval Page</title>
+    </head>
+    <body>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">New Expert</th>
+                        {% if _context.expert.Approved == false %}
+
+                        <td>Not approved yet!</td>
+
+                    {% else %}
+                        <td>Already approved!</td>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">First Name</th>
+                    <td>{{_context.expert.FirstName}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Last Name</th>
+                    <td>{{_context.expert.LastName}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Email</th>
+                    <td colspan="2">{{_context.expert.Email}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Birth Year</th>
+                    <td colspan="2">{{_context.expert.BirthYear}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Location</th>
+                    <td colspan="2">{{(_context.expert_country | first).CountryName}}</td>
+                </tr>
+
+
+
+                <tr>
+                    <th scope="row">Expert Caree Stage</th>
+                    <td colspan="10">
+                        <ul class="list-group list-group-flush">
+                            {% for expert_career_stage in _context.expert_career_stages %}
+                                <li class="list-group-item">{{expert_career_stage.CareerStage.CareerStageName}} 
+                                {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th scope="row">Primary Affiliation (Name - City - Country)</th>
+                    <td colspan="10">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">{{expert_primary_affiliation.PrimaryAffiliationName}} - {{expert_primary_affiliation.PrimaryAffiliationCity}} - {{expert_primary_affiliation.PrimaryAffiliationCountryCode}} </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th scope="row">Secondry Affiliations</th>
+                    <td colspan="10">
+                        <ul class="list-group list-group-flush">
+                            {% for expert_secondary_affiliation in _context.expert_secondary_affiliation %}
+                                <li class="list-group-item">{{expert_secondary_affiliation.SecondaryAffiliationName}} 
+                                {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th scope="row">Expert What (existing)</th>
+                    <td colspan="10">
+                        <ul class="list-group list-group-flush">
+                            {% for expert_what in _context.expert_what %}
+                                {% if expert_what.CryosphereWhat.Approved == true %}
+                                    <li class="list-group-item">{{expert_what.CryosphereWhat.Id}} - {{expert_what.CryosphereWhat.CryosphereWhatName}} 
+                                    {% endif %}
+                                {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Expert What (requested by expert)</th>
+                    <td>
+                        <ul class="list-group list-group-flush">
+                            {% for expert_what in _context.expert_what %}
+                                {% if expert_what.CryosphereWhat.Approved == false %}
+                                    <input type="hidden" id="expertnotapprovable">
+                                    <li class="list-group-item">{{expert_what.CryosphereWhat.Id}} - {{expert_what.CryosphereWhat.CryosphereWhatName}} - 
+                                        <button type="button" class="crypspherewhat-approve btn btn-success btn-sm" data-toggle="modal" data-target="#approvalmodal" data-type="Expert Cryoconnect What" data-id="{{expert_what.CryosphereWhat.Id}}" data-posturl="{{path_for('cryosphere_what_approve')}}" data-value="{{expert_what.CryosphereWhat.CryosphereWhatName}}">Approve</button>
+                                        <button type="button" class="crypspherewhat-edit btn btn-info btn-sm" data-toggle="modal" data-target="#editmodal" data-esitingdatafield="CryosphereWhatName" data-type="Expert Cryoconnect What" data-existing="{{ all_cryosphere_what|json_encode() }}"  data-posturl="{{path_for('cryosphere_what_update')}}" data-id="{{expert_what.CryosphereWhat.Id}}" data-value="{{expert_what.CryosphereWhat.CryosphereWhatName}}">Edit</button>
+                                        <button type="button" class="crypspherewhat-delete btn btn-danger btn-sm" data-toggle="modal" data-target="#deletemodal" data-type="Expert Cryoconnect What" data-id="{{expert_what.CryosphereWhat.Id}}" data-posturl="{{path_for('cryosphere_what_remove')}}" data-value="{{expert_what.CryosphereWhat.CryosphereWhatName}}">Delete</button>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th scope="row">Expert What Specefic (existing)</th>
+                    <td colspan="10">
+                        <ul class="list-group list-group-flush">
+                            {% for expert_what_specefic in _context.expert_what_specefic %}
+                                {% if expert_what_specefic.CryosphereWhatSpecefic.Approved == true %}
+                                    <li class="list-group-item">{{expert_what_specefic.CryosphereWhatSpecefic.Id}} - {{expert_what_specefic.CryosphereWhatSpecefic.CryosphereWhatSpeceficName}} 
+                                    {% endif %}
+                                {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Expert What Specefic (requested by expert)</th>
+                    <td>
+                        <ul class="list-group list-group-flush">
+                            {% for expert_what_specefic in _context.expert_what_specefic %}
+                                {% if expert_what_specefic.CryosphereWhatSpecefic.Approved == false %}
+                                    <input type="hidden" id="expertnotapprovable">
+                                    <li class="list-group-item">{{expert_what_specefic.CryosphereWhatSpecefic.Id}} - {{expert_what_specefic.CryosphereWhatSpecefic.CryosphereWhatSpeceficName}} - 
+                                        <button type="button" class="crypspherewhat-approve btn btn-success btn-sm" data-toggle="modal" data-target="#approvalmodal" data-type="Expert Cryoconnect WhatSpecefic" data-id="{{expert_what_specefic.CryosphereWhatSpecefic.Id}}" data-posturl="{{path_for('cryosphere_what_specefic_approve')}}" data-value="{{expert_what_specefic.CryosphereWhatSpecefic.CryosphereWhatSpeceficName}}">Approve</button>
+                                        <button type="button" class="crypspherewhat-edit btn btn-info btn-sm" data-toggle="modal" data-target="#editmodal" data-esitingdatafield="CryosphereWhatSpeceficName" data-type="Expert Cryoconnect WhatSpecefic" data-existing="{{ all_cryosphere_what_specefic|json_encode() }}"  data-posturl="{{path_for('cryosphere_what_specefic_update')}}" data-id="{{expert_what_specefic.CryosphereWhatSpecefic.Id}}" data-value="{{expert_what_specefic.CryosphereWhatSpecefic.CryosphereWhatSpeceficName}}">Edit</button>
+                                        <button type="button" class="crypspherewhat-delete btn btn-danger btn-sm" data-toggle="modal" data-target="#deletemodal" data-type="Expert Cryoconnect WhatSpecefic" data-id="{{expert_what_specefic.CryosphereWhatSpecefic.Id}}" data-posturl="{{path_for('cryosphere_what_specefic_remove')}}" data-value="{{expert_what_specefic.CryosphereWhatSpecefic.CryosphereWhatSpeceficName}}">Delete</button>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th scope="row">Expert Where</th>
+                    <td colspan="10">
+                        <ul class="list-group list-group-flush">
+                            {% for expert_where in _context.expert_where %}
+                                <li class="list-group-item">{{expert_where.CryosphereWhere.Id}} - {{expert_where.CryosphereWhere.CryosphereWhereName}} 
+                                {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th scope="row">Expert When (existing)</th>
+                    <td colspan="10">
+                        <ul class="list-group list-group-flush">
+                            {% for expert_when in _context.expert_when %}
+                                {% if expert_when.CryosphereWhen.Approved == true %}
+                                    <li class="list-group-item">{{expert_when.CryosphereWhen.Id}} - {{expert_when.CryosphereWhen.CryosphereWhenName}} 
+                                    {% endif %}
+                                {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Expert When (requested by expert)</th>
+                    <td>
+                        <ul class="list-group list-group-flush">
+                            {% for expert_when in _context.expert_when %}
+                                {% if expert_when.CryosphereWhen.Approved == false %}
+                                    <input type="hidden" id="expertnotapprovable">
+                                    <li class="list-group-item">{{expert_when.CryosphereWhen.Id}} - {{expert_when.CryosphereWhen.CryosphereWhenName}} - 
+                                        <button type="button" class="crypspherewhen-approve btn btn-success btn-sm" data-toggle="modal" data-target="#approvalmodal" data-type="Expert Cryoconnect When" data-id="{{expert_when.CryosphereWhen.Id}}" data-posturl="{{path_for('cryosphere_when_approve')}}" data-value="{{expert_when.CryosphereWhen.CryosphereWhenName}}">Approve</button>
+                                        <button type="button" class="crypspherewhen-edit btn btn-info btn-sm" data-toggle="modal" data-target="#editmodal" data-esitingdatafield="CryosphereWhenName" data-type="Expert Cryoconnect When" data-existing="{{ all_cryosphere_when|json_encode() }}"  data-posturl="{{path_for('cryosphere_when_update')}}" data-id="{{expert_when.CryosphereWhen.Id}}" data-value="{{expert_when.CryosphereWhen.CryosphereWhenName}}">Edit</button>
+                                        <button type="button" class="crypspherewhen-delete btn btn-danger btn-sm" data-toggle="modal" data-target="#deletemodal" data-type="Expert Cryoconnect When" data-id="{{expert_when.CryosphereWhen.Id}}" data-posturl="{{path_for('cryosphere_when_remove')}}" data-value="{{expert_when.CryosphereWhen.CryosphereWhenName}}">Delete</button>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th scope="row">Expert Methods (existing)</th>
+                    <td colspan="10">
+                        <ul class="list-group list-group-flush">
+                            {% for expert_methods in _context.expert_methods %}
+                                {% if expert_methods.CryosphereMethods.Approved == true %}
+                                    <li class="list-group-item">{{expert_methods.CryosphereMethods.Id}} - {{expert_methods.CryosphereMethods.CryosphereMethodsName}} 
+                                    {% endif %}
+                                {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Expert Methods (requested by expert)</th>
+                    <td>
+                        <ul class="list-group list-group-flush">
+                            {% for expert_methods in _context.expert_methods %}
+                                {% if expert_methods.CryosphereMethods.Approved == false %}
+                                    <input type="hidden" id="expertnotapprovable">
+                                    <li class="list-group-item">{{expert_methods.CryosphereMethods.Id}} - {{expert_methods.CryosphereMethods.CryosphereMethodsName}} - 
+                                        <button type="button" class="crypspheremethods-approve btn btn-success btn-sm" data-toggle="modal" data-target="#approvalmodal" data-type="Expert Cryoconnect Methods" data-id="{{expert_methods.CryosphereMethods.Id}}" data-posturl="{{path_for('cryosphere_methods_approve')}}" data-value="{{expert_methods.CryosphereMethods.CryosphereMethodsName}}">Approve</button>
+                                        <button type="button" class="crypspheremethods-edit btn btn-info btn-sm" data-toggle="modal" data-target="#editmodal" data-esitingdatafield="CryosphereMethodsName" data-type="Expert Cryoconnect Methods" data-existing="{{ all_cryosphere_methods|json_encode() }}"  data-posturl="{{path_for('cryosphere_methods_update')}}" data-id="{{expert_methods.CryosphereMethods.Id}}" data-value="{{expert_methods.CryosphereMethods.CryosphereMethodsName}}">Edit</button>
+                                        <button type="button" class="crypspheremethods-delete btn btn-danger btn-sm" data-toggle="modal" data-target="#deletemodal" data-type="Expert Cryoconnect Methods" data-id="{{expert_methods.CryosphereMethods.Id}}" data-posturl="{{path_for('cryosphere_methods_remove')}}" data-value="{{expert_methods.CryosphereMethods.CryosphereMethodsName}}">Delete</button>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th scope="row">Field Work (Location - Date)</th>
+                    <td colspan="10">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">{{(expert_field_work | first).FieldWorkWhere}} - {{(expert_field_work | first).FieldWorkMonth}}/{{(expert_field_work | first).FieldWorkYear}} </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th scope="row">Contact Info</th>
+                    <td colspan="10">
+                        <ul class="list-group list-group-flush">
+                            {% for expert_contact in _context.expert_contacts %}
+                                <li class="list-group-item">{{expert_contact.ContactTypes.ContactType}} : {{expert_contact.ContactInformation}} 
+                                {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+
+
+            </tbody>
+        </table>
+        {% if _context.expert.Approved == false %}
+            <div class="col-md text-center"> 
+
+                <button type="button" class="expert-approve btn btn-success btn-lg" data-toggle="modal" data-target="#expertapprovemodal">Approve Expert</button>
+
+                <button type="button" class="expert-reject btn btn-danger btn-lg" data-toggle="modal" data-target="#expertrejectmodal">Reject Expert</button>
+
+            </div>
+        {% endif %}
+       {# <script>
+            console.log({{ _context | json_encode | raw }});
+        </script>#}
+
+
+        <div class="modal fade" id="expertapprovemodal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header text-center">
+                        <h4 class="modal-title w-100 font-weight-bold">Are you sure to approve this expert ?</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group row">
+                                <label for="expertName" class="col-sm-2 col-form-label">Name:</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control-plaintext" name="expertName" id="expertName" value="{{_context.expert.FirstName}} {{_context.expert.LastName}}" readonly>
+                                </div>
+                            </div>
+
+                            <input type="hidden" id="expertID" name="custId" value={{_context.expert.Id}}>
+                            <div class="modal-footer ">
+                                <button type="button" id="expertapprove" data-posturl="{{path_for('expert_approve')}}" class="btn btn-success btn-lg" style="width: 100%;"></span>Approve Expert</button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+                <!-- /.modal-content --> 
+            </div>
+            <!-- /.modal-dialog --> 
+        </div>
+
+        <div class="modal fade" id="expertrejectmodal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header text-center">
+                        <h4 class="modal-title w-100 font-weight-bold">Are you sure to reject the expert ?</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group row">
+                                <label for="expertName" class="col-sm-4 col-form-label">Name:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control-plaintext" name="expertName" id="expertName" value="{{_context.expert.FirstName}} {{_context.expert.LastName}}" readonly>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+
+                                <label for="expertName" class="col-sm-10 col-form-label">Explanation for expert:</label>
+
+                                <div class="col-lg-12">
+                                    <textarea class="form-control rounded-0" type="text" name="rejectexplanation" id="rejectexplanation" value=""></textarea>
+                                </div>
+                            </div>
+
+                            <input type="hidden" id="expertID" name="custId" value={{_context.expert.Id}}>
+                            <div class="modal-footer ">
+                                <button type="button" id="expertreject" class="btn btn-danger btn-lg" data-posturl="{{path_for('expert_reject')}}" style="width: 100%;"></span>Reject Expert</button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+                <!-- /.modal-content --> 
+            </div>
+            <!-- /.modal-dialog --> 
+        </div>
+
+        <div class="modal fade" id="approvalmodal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header text-center">
+                        <h4 class="modal-title w-100 font-weight-bold">Do you approve the following ?</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group row">
+                                <label for="expertDataType" class="col-sm-2 col-form-label">Data:</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control-plaintext" name="datatype" id="expertDataType" value="" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="expertDataValue" class="col-sm-2 col-form-label">Value:</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control-plaintext" name="datavalue" id="expertDataValue" value="" readonly>
+                                </div>
+                            </div>
+                            <input type="hidden" id="dataID" name="dataid" value="">
+                            <input type="hidden" id="expertID" name="custId" value={{_context.expert.Id}}>
+                            <div class="modal-footer ">
+                                <button type="button" id="dataapprove" class="btn btn-success btn-lg" style="width: 100%;"></span>Approve</button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+                <!-- /.modal-content --> 
+            </div>
+            <!-- /.modal-dialog --> 
+        </div>
+
+
+        <div class="modal fade" id="editmodal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header text-center">
+                        <h4 class="modal-title w-100 font-weight-bold">Please edit and approve the following:</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group row">
+                                <label for="expertDataType" class="col-sm-2 col-form-label">Data:</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control-plaintext" name="datatype" id="expertDataType" value="" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="expertDataType" class="col-sm-2 col-form-label">Given:</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control-plaintext" name="datavalue" id="expertDataValue" value="" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="expertDataValue" class="col-sm-2 col-form-label">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="exampleRadios" id="editdataexistingcheck" value="option1" checked>
+                                        <label class="form-check-label" for="editdataexistingcheck">
+                                            Existing:  
+                                        </label>
+                                    </div>
+                                </label>
+                                <div class="col-sm-10">
+                                    <div class="form-group">
+                                        <select class="form-control" id="selectexistingdata">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="expertDataValue" class="col-sm-2 col-form-label">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="exampleRadios" id="editdatanew" value="option2">
+                                        <label class="form-check-label" for="editdatanew">
+                                            New:  
+                                        </label>
+                                    </div>
+                                </label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" name="newdatavalue" id="expertNewDataValue" value="">
+                                </div>
+                            </div>
+                            <input type="hidden" id="dataID" name="dataid" value="">
+                            <input type="hidden" id="expertID" name="custId" value={{_context.expert.Id}}>
+                            <div class="modal-footer ">
+                                <button type="button" id="dataedit" class="btn btn-info btn-lg" style="width: 100%;"></span>Update and Approve</button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+                <!-- /.modal-content --> 
+            </div>
+            <!-- /.modal-dialog --> 
+        </div>
+
+
+        <div class="modal fade" id="deletemodal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header text-center">
+                        <h4 class="modal-title w-100 font-weight-bold">Do you want to remove the following record ?</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group row">
+                                <label for="expertDataType" class="col-sm-2 col-form-label">Data:</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control-plaintext" name="datatype" id="expertDataType" value="" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="expertDataValue" class="col-sm-2 col-form-label">Value:</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control-plaintext" name="datavalue" id="expertDataValue" value="" readonly>
+                                </div>
+                            </div>
+                            <input type="hidden" id="dataID" name="dataid" value="">
+                            <input type="hidden" id="expertID" name="custId" value={{_context.expert.Id}}>
+                            <div class="modal-footer ">
+                                <button type="button" id="datadelete" class="btn btn-danger btn-lg" style="width: 100%;"></span>Delete Record</button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+                <!-- /.modal-content --> 
+            </div>
+            <!-- /.modal-dialog --> 
+        </div>
+
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+
+
+        <script>
+            //triggered when modal is about to be shown
+            $('#approvalmodal').on('show.bs.modal', function (e) {
+
+                //get data-id attribute of the clicked element
+                var dataType = $(e.relatedTarget).data('type');
+                var dataId = $(e.relatedTarget).data('id');
+                var dataValue = $(e.relatedTarget).data('value');
+                var postUrl = $(e.relatedTarget).data('posturl');
+
+                //populate the textbox
+                $(e.currentTarget).find('input[name="dataid"]').val(dataId);
+                $(e.currentTarget).find('input[name="datatype"]').val(dataType);
+                $(e.currentTarget).find('input[name="datavalue"]').val(dataValue);
+                $(e.currentTarget).find('button[id="dataapprove"]').data('dataid', dataId);
+                $(e.currentTarget).find('button[id="dataapprove"]').data('datatype', dataType);
+                $(e.currentTarget).find('button[id="dataapprove"]').data('datavalue', dataValue);
+                $(e.currentTarget).find('button[id="dataapprove"]').data('posturl', postUrl);
+            });
+
+            $('#editmodal').on('show.bs.modal', function (e) {
+
+                //get data-id attribute of the clicked element
+                var dataId = $(e.relatedTarget).data('id');
+                var dataType = $(e.relatedTarget).data('type');
+                var dataValue = $(e.relatedTarget).data('value');
+                var existingDataList = $(e.relatedTarget).data('existing');
+                var exisingDataFieldName = $(e.relatedTarget).data('esitingdatafield');
+                var postUrl = $(e.relatedTarget).data('posturl');
+
+                //populate the textbox
+                $(e.currentTarget).find('input[name="dataid"]').val(dataId);
+                $(e.currentTarget).find('input[name="datatype"]').val(dataType);
+                $(e.currentTarget).find('input[name="datavalue"]').val(dataValue);
+
+                $(e.currentTarget).find('button[id="dataedit"]').data('dataid', dataId);
+                $(e.currentTarget).find('button[id="dataedit"]').data('posturl', postUrl);
+                $(e.currentTarget).find('button[id="dataedit"]').data('datavalue', dataValue);
+
+                //populating the dropdown
+                $(e.currentTarget).find('#selectexistingdata').empty();
+                $(e.currentTarget).find('#selectexistingdata').append($('<option disabled selected value>').text("Choose"));
+                console.log(existingDataList);
+                $.each(existingDataList, function (i, obj) {
+                    $(e.currentTarget).find('#selectexistingdata').append($('<option>').text(obj[exisingDataFieldName]).attr('value', obj.Id));
+                });
+            });
+
+            $('#deletemodal').on('show.bs.modal', function (e) {
+
+                //get data-id attribute of the clicked element
+                var dataType = $(e.relatedTarget).data('type');
+                var dataId = $(e.relatedTarget).data('id');
+                var dataValue = $(e.relatedTarget).data('value');
+                var postUrl = $(e.relatedTarget).data('posturl');
+
+                //populate the textbox
+                $(e.currentTarget).find('input[name="dataid"]').val(dataId);
+                $(e.currentTarget).find('input[name="datatype"]').val(dataType);
+                $(e.currentTarget).find('input[name="datavalue"]').val(dataValue);
+
+                $(e.currentTarget).find('button[id="datadelete"]').data('dataid', dataId);
+                $(e.currentTarget).find('button[id="datadelete"]').data('posturl', postUrl);
+                $(e.currentTarget).find('button[id="datadelete"]').data('datavalue', dataValue);
+
+            });
+
+            $("#expertapprove").click(function () {
+   
+                var expertId = "{{_context.expert.Id}}";
+                var token = getUrlParameter('t');
+
+                if ($('#expertnotapprovable').length) {
+                    alert('Please handle the items which are not approved first!');
+                    return false;
+                }
+
+                var postUrl = $(this).data('posturl');
+                
+                if (
+                        String(token).trim() == '' ||
+                        String(expertId).trim() == '') {
+                    alert('Something went wrong! No data has been saved. Please contact the IT Support!');
+                    return false;
+                } else {
+                    $.ajax({
+                        type: 'PUT',
+                        headers: {
+                            'Token-Authorization-X': `Bearer ${token}`,
+                        },
+                        url: postUrl,
+                        data: 'id=' + expertId,
+                        beforeSend: function () {
+                            $('.submitBtn').attr("disabled", "disabled");
+                            $('.modal-body').css('opacity', '.5');
+                        }
+                    })
+                            .done(function (data) {
+                                location.reload();
+                            })
+                            .fail(function (errMsg) {
+                                alert('Some problem occurred, please try again and make sure your enteries are correct. If problem consists please contact the IT support!');
+                                $('.submitBtn').removeAttr("disabled");
+                                $('.modal-body').css('opacity', '');
+                            });
+                }
+            });
+            
+            
+            $("#expertreject").click(function () {
+   
+                var expertId = "{{_context.expert.Id}}";
+                var token = getUrlParameter('t');
+
+                var explanation = $(this).parent().parent().find('#rejectexplanation').val();
+
+                var postUrl = $(this).data('posturl');
+                
+                if (
+                        String(token).trim() == '' ||
+                        String(expertId).trim() == '')
+                        {
+                    alert('Something went wrong! No data has been saved. Please contact the IT Support!');
+                    return false;
+                } else {
+                    $.ajax({
+                        type: 'DELETE',
+                        headers: {
+                            'Token-Authorization-X': `Bearer ${token}`,
+                        },
+                        url: postUrl,
+                        data: 'id=' + expertId + '&explanation=' + encodeURIComponent(explanation),
+                        beforeSend: function () {
+                            $('.submitBtn').attr("disabled", "disabled");
+                            $('.modal-body').css('opacity', '.5');
+                        }
+                    })
+                            .done(function (data) {
+                                window.location.href = "/";
+                            })
+                            .fail(function (errMsg) {
+                                alert('Some problem occurred, please try again and make sure your enteries are correct. If problem consists please contact the IT support!');
+                                $('.submitBtn').removeAttr("disabled");
+                                $('.modal-body').css('opacity', '');
+                            });
+                }
+            });
+
+            $("#dataapprove").click(function () {
+                var expertId = "{{_context.expert.Id}}";
+                var token = getUrlParameter('t');
+                var dataId = $(this).data('dataid');
+                var dataValue = $(this).data('datavalue');
+                var postUrl = $(this).data('posturl');
+                if (dataValue.trim() == '' || String(dataId).trim() == '' || String(expertId).trim() == '') {
+                    alert('Something went wrong! No data has been saved. Please contact the IT Support!');
+                    return false;
+                } else {
+                    $.ajax({
+                        type: 'POST',
+                        headers: {
+                            'Token-Authorization-X': `Bearer ${token}`,
+                        },
+                        url: postUrl,
+                        data: 'id=' + expertId + '&dataId=' + dataId + '&dataValue=' + encodeURIComponent(dataValue),
+                        beforeSend: function () {
+                            $('.submitBtn').attr("disabled", "disabled");
+                            $('.modal-body').css('opacity', '.5');
+                        }
+                    })
+                            .done(function (data) {
+                                location.reload();
+                            })
+                            .fail(function (errMsg) {
+                                alert('Some problem occurred, please try again and make sure your enteries are correct. If problem consists please contact the IT support!');
+                                $('.submitBtn').removeAttr("disabled");
+                                $('.modal-body').css('opacity', '');
+                            });
+                }
+            });
+
+            $("#dataedit").click(function () {
+                var expertId = "{{_context.expert.Id}}";
+                var token = getUrlParameter('t');
+                var dataId = $(this).data('dataid');
+                var dataValue = $(this).data('datavalue');
+                var newDataId = "";
+                var newDataValue = "";
+                if ($(this).parent().parent().find('#editdataexistingcheck').is(':checked')) {
+                    var newDataId = $(this).parent().parent().find('#selectexistingdata').find(":selected").val();
+                } else {
+                    var newDataValue = $(this).parent().parent().find('#expertNewDataValue').val();
+                }
+                var postUrl = $(this).data('posturl');
+                if (
+                        (dataValue.trim() == '' && !$.isNumeric(newDataId)) ||
+                        String(dataId).trim() == '' ||
+                        String(expertId).trim() == '') {
+                    alert('Something went wrong! No data has been saved. Please contact the IT Support!');
+                    return false;
+                } else {
+                    $.ajax({
+                        type: 'PUT',
+                        headers: {
+                            'Token-Authorization-X': `Bearer ${token}`,
+                        },
+                        url: postUrl,
+                        data: 'id=' + expertId + '&dataId=' + dataId + '&newDataValue=' + encodeURIComponent(newDataValue) + '&existingdataid=' + newDataId + '&dataValue=' + encodeURIComponent(dataValue),
+                        beforeSend: function () {
+                            $('.submitBtn').attr("disabled", "disabled");
+                            $('.modal-body').css('opacity', '.5');
+                        }
+                    })
+                            .done(function (data) {
+                                location.reload();
+                            })
+                            .fail(function (errMsg) {
+                                alert('Some problem occurred, please try again and make sure your enteries are correct. If problem consists please contact the IT support!');
+                                $('.submitBtn').removeAttr("disabled");
+                                $('.modal-body').css('opacity', '');
+                            });
+                }
+            });
+
+            $("#datadelete").click(function () {
+                console.log($(this).data('posturl'));
+                var expertId = "{{_context.expert.Id}}";
+                var token = getUrlParameter('t');
+                var dataId = $(this).data('dataid');
+                var postUrl = $(this).data('posturl');
+                var dataValue = $(this).data('datavalue');
+                if (String(dataId).trim() == '' || String(expertId).trim() == '') {
+                    alert('Something went wrong! No data has been saved. Please contact the IT Support!');
+                    return false;
+                } else {
+                    $.ajax({
+                        type: 'DELETE',
+                        headers: {
+                            'Token-Authorization-X': `Bearer ${token}`,
+                        },
+                        url: postUrl,
+                        data: 'id=' + expertId + '&dataId=' + dataId + '&dataValue=' + encodeURIComponent(dataValue),
+                        beforeSend: function () {
+                            $('.submitBtn').attr("disabled", "disabled");
+                            $('.modal-body').css('opacity', '.5');
+                        }
+                    })
+                            .done(function (data) {
+
+                                location.reload();
+                            })
+                            .fail(function (errMsg) {
+                                alert('Some problem occurred, please try again and make sure your enteries are correct. If problem consists please contact the IT support!');
+                                $('.submitBtn').removeAttr("disabled");
+                                $('.modal-body').css('opacity', '');
+                            });
+                }
+            });
+
+            var getUrlParameter = function getUrlParameter(sParam) {
+                var sPageURL = window.location.search.substring(1),
+                        sURLVariables = sPageURL.split('&'),
+                        sParameterName,
+                        i;
+
+                for (i = 0; i < sURLVariables.length; i++) {
+                    sParameterName = sURLVariables[i].split('=');
+
+                    if (sParameterName[0] === sParam) {
+                        return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+                    }
+                }
+            };
+
+
+        </script>
+
+
+
+
+
+
+
+    </body>
+</html>

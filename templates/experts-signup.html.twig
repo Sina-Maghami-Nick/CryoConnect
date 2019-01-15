@@ -7,143 +7,169 @@
     </head>
     <body>
 
-        
+
         <form class="pure-form pure-form-aligned" action={{path_for('expert_signup')}} method="post">
 
-                <div class="pure-control-group">
-                    <label for="email">Email Address</label>
-                    <input name="email" id="email" type="email" placeholder="Email Address" required>
-                    <span class="pure-form-message-inline">This is a required field.</span>
-                </div>
+            <div class="pure-control-group">
+                <label for="email">Email Address</label>
+                <input name="email" id="email" type="email" placeholder="Email Address" required>
+                <span class="pure-form-message-inline">This is a required field.</span>
+            </div>
 
-                <div class="pure-control-group">
-                    <label for="firstName">First Name</label>
-                    <input name="first_name" id="firstName" type="text" placeholder="First Name" required>
-                    <span class="pure-form-message-inline">This is a required field.</span>
-                </div>
+            <div class="pure-control-group">
+                <label for="firstName">First Name</label>
+                <input name="first_name" id="firstName" type="text" placeholder="First Name" required>
+                <span class="pure-form-message-inline">This is a required field.</span>
+            </div>
 
-                <div class="pure-control-group">
-                    <label for="lastName">Last Name</label>
-                    <input name="last_name" id="lastName" type="text" placeholder="Last Name" required>
-                    <span class="pure-form-message-inline">This is a required field.</span>
-                </div>
+            <div class="pure-control-group">
+                <label for="lastName">Last Name</label>
+                <input name="last_name" id="lastName" type="text" placeholder="Last Name" required>
+                <span class="pure-form-message-inline">This is a required field.</span>
+            </div>
 
-                <div class="pure-control-group">
-                    <label for="cryospherewhat">Which parts of the cryosphere are you comfortable answering questions about? </label>
-                    {% for cryosphere_what in _context.cryosphere_what %}
-                        <input name="cryosphere_what[{{cryosphere_what.CryosphereWhatName}}]" id="cryospherewhat" type="checkbox" value="{{cryosphere_what.Id}}">{{cryosphere_what.CryosphereWhatName}}</input>
+            <div class="pure-control-group">
+                <label for="cryospherewhat">Which parts of the cryosphere are you comfortable answering questions about? </label>
+                {% for cryosphere_what in _context.cryosphere_what %}
+                    <input name="cryosphere_what[{{cryosphere_what.CryosphereWhatName}}]" id="cryospherewhat" type="checkbox" value="{{cryosphere_what.Id}}">{{cryosphere_what.CryosphereWhatName}}</input>
+                {% endfor %}
+                <input name="cryosphere_what_other" id="cryospherewhat" type="text" placeholder="other seperated by comma">
+            </div>
+
+            <div class="pure-control-group">
+                <label for="cryosphere_where">In which general region(s) have you studied the cryosphere?</label>
+                {% for cryosphere_where in _context.cryosphere_where %}
+                    <input name="cryosphere_where[{{cryosphere_what.CryosphereWhereName}}]" id="cryospherewhere" type="checkbox" value="{{cryosphere_where.Id}}">{{cryosphere_where.CryosphereWhereName}}</input>
+                {% endfor %}
+            </div>
+
+            <div class="pure-control-group">
+                <label for="cryospherewhatspecefic">Which processes & subdisciplines are you comfortable answering questions about?</label>
+                {% for cryosphere_what_specefic in _context.cryosphere_what_specefic %}
+                    <input name="cryosphere_what_specefic[{{cryosphere_what_specefic.CryosphereWhatSpeceficName}}] id="cryospherewhatspecefic" type="checkbox" value="{{cryosphere_what_specefic.Id}}">{{cryosphere_what_specefic.CryosphereWhatSpeceficName}}</input>
+                {% endfor %}
+                <input name="cryosphere_what_specefic_other" id="cryospherewhatspecefic" type="text" placeholder="other seperated by comma">
+            </div>
+
+            <div class="pure-control-group">
+                <label for="cryospheremethod">Which methods are you comfortable answering questions about? </label>
+                {% for cryosphere_method in _context.cryosphere_methods %}
+                    <input name="cryosphere_method[{{cryosphere_method.CryosphereMethodsName}}] id="cryospheremethod" type="checkbox" value="{{cryosphere_method.Id}}">{{cryosphere_method.CryosphereMethodsName}}</input>
+                {% endfor %}
+                <input name="cryosphere_method_other" id="cryospheremethod" type="text" placeholder="other seperated by comma">
+            </div>
+
+            <div class="pure-control-group">
+                <label for="cryospherewhen">Which time periods are you comfortable answering questions about?</label>
+                {% for cryosphere_when in _context.cryosphere_when %}
+                    <input name="cryosphere_when[{{cryosphere_when.CryosphereWhatName}}]" id="cryospherewhen" type="checkbox" value="{{cryosphere_when.Id}}">{{cryosphere_when.CryosphereWhenName}}</input>
+                {% endfor %}
+                <input name="cryosphere_when_other" id="cryospherewhen" type="text" placeholder="other seperated by comma">
+            </div>
+
+            <div class="pure-control-group">
+                <label for="fieldwork">If your research involves fieldwork, roughly where and when will this take place?</label>
+                <input name="fieldwork[location]" id="fieldwork" type="text" placeholder="where ?">
+                <input name="fieldwork[date]" id="fieldwork" type="date" placeholder="When ?">
+            </div>
+
+            <div class="pure-control-group">
+                <label for="languages">Languages in which you are capable of answering scientific questions *</label>
+                <input name="languages[1]" id="languages" type="text" placeholder="language 1" list="languagessuggestions">
+                <input name="languages[2]" id="languages" type="text" placeholder="language 2" list="languagessuggestions">
+                <input name="languages[3]" id="languages" type="text" placeholder="language 3" list="languagessuggestions">
+                <datalist id="languagessuggestions">
+                    {% for language in _context.languages %}
+                        <option value="{{language.LanguageCode}}">{{language.Language}}</option>
                     {% endfor %}
-                    <input name="cryosphere_what_other" id="cryospherewhat" type="text" placeholder="other seperated by comma">
-                </div>
+                </datalist>
+            </div>
 
-                <div class="pure-control-group">
-                    <label for="cryosphere_where">In which general region(s) have you studied the cryosphere?</label>
-                    {% for cryosphere_where in _context.cryosphere_where %}
-                        <input name="cryosphere_where[{{cryosphere_what.CryosphereWhereName}}]" id="cryospherewhere" type="checkbox" value="{{cryosphere_where.Id}}">{{cryosphere_where.CryosphereWhereName}}</input>
+            <div class="pure-control-group">
+                <label for="birtyear">When is your birth-year</label>
+                <input name="birth_year" id="birtyear" type="number" placeholder="birtyear">
+            </div>
+
+            <div class="pure-control-group">
+                <label for="careerstage">Career stage</label>
+                <select name="caree_stage" id="careerstage">
+                    <option disabled selected value> Choose </option>
+                    {% for career_stages in _context.career_stages %}
+                        <option value="{{career_stages.Id}}">{{career_stages.CareerStageName}}</option>
                     {% endfor %}
-                </div>
+                </select>
+            </div>
 
-                <div class="pure-control-group">
-                    <label for="cryospherewhatspecefic">Which processes & subdisciplines are you comfortable answering questions about?</label>
-                    {% for cryosphere_what_specefic in _context.cryosphere_what_specefic %}
-                        <input name="cryosphere_what_specefic[{{cryosphere_what_specefic.CryosphereWhatSpeceficName}}] id="cryospherewhatspecefic" type="checkbox" value="{{cryosphere_what_specefic.Id}}">{{cryosphere_what_specefic.CryosphereWhatSpeceficName}}</input>
+            <div class="pure-control-group">
+                <label for="affiliation">Affiliations</label>
+                <input name="affiliation[primary][name]" id="affiliation" type="text" placeholder="primary affiliation">
+                <select name="affiliation[primary][country]" id="primaryaffiliationcountry">
+                    <option disabled selected value> Choose </option>
+                    {% for country in _context.countries %}
+                        <option value="{{country.CountryCode}}">{{country.CountryName}}</option>
                     {% endfor %}
-                    <input name="cryosphere_what_specefic_other" id="cryospherewhatspecefic" type="text" placeholder="other seperated by comma">
-                </div>
+                </select>
+                <input name="affiliation[primary][city]" id="primaryaffiliationcity" type="text" placeholder="City of primary affiliation">
+                <input name="affiliation[secondry][name]" id="secondryaffiliations" type="text" placeholder="secondary affiliations (seperated by comma)">
+            </div>
 
-                <div class="pure-control-group">
-                    <label for="cryospheremethod">Which methods are you comfortable answering questions about? </label>
-                    {% for cryosphere_method in _context.cryosphere_methods %}
-                        <input name="cryosphere_method[{{cryosphere_method.CryosphereMethodsName}}] id="cryospheremethod" type="checkbox" value="{{cryosphere_method.Id}}">{{cryosphere_method.CryosphereMethodsName}}</input>
-                    {% endfor %}
-                    <input name="cryosphere_method_other" id="cryospheremethod" type="text" placeholder="other seperated by comma">
-                </div>
+            <div class="pure-control-group">
+                <label for="phonenumber">Phone number (incl. country code)</label>
+                <input name="phone_number" id="phonenumber" type="tel" placeholder="number with country code">
+            </div>
 
-                <div class="pure-control-group">
-                    <label for="cryospherewhen">Which time periods are you comfortable answering questions about?</label>
-                    {% for cryosphere_when in _context.cryosphere_when %}
-                        <input name="cryosphere_when[{{cryosphere_when.CryosphereWhatName}}]" id="cryospherewhen" type="checkbox" value="{{cryosphere_when.Id}}">{{cryosphere_when.CryosphereWhenName}}</input>
-                    {% endfor %}
-                    <input name="cryosphere_when_other" id="cryospherewhen" type="text" placeholder="other seperated by comma">
-                </div>
+            <div class="pure-control-group">
+                <label for="personalwebsite">Personal Website</label>
+                <input name="personal_website" id="personalwebsite" type="url" placeholder="website">
+            </div>
 
-                <div class="pure-control-group">
-                    <label for="fieldwork">If your research involves fieldwork, roughly where and when will this take place?</label>
-                    <input name="fieldwork[location]" id="fieldwork" type="text" placeholder="where ?">
-                    <input name="fieldwork[date]" id="fieldwork" type="date" placeholder="When ?">
-                </div>
+            <div class="pure-control-group">
+                <label for="personallinkedin">Linkedin</label>
+                <input name="personal_linkedin" id="personallinkedin" type="url" placeholder="linkedin">
+            </div>
 
-                <div class="pure-control-group">
-                    <label for="languages">Languages in which you are capable of answering scientific questions *</label>
-                    <input name="languages[1]" id="languages" type="text" placeholder="language 1" list="languagessuggestions">
-                    <input name="languages[2]" id="languages" type="text" placeholder="language 2" list="languagessuggestions">
-                    <input name="languages[3]" id="languages" type="text" placeholder="language 3" list="languagessuggestions">
-                    <datalist id="languagessuggestions">
-                        {% for language in _context.languages %}
-                            <option value="{{language.LanguageCode}}">{{language.Language}}</option>
-                        {% endfor %}
-                    </datalist>
-                </div>
+            <div class="pure-control-group">
+                <label for="personalgooglescholar">Google Scholar profile</label>
+                <input name="personal_google_scholar" id="personalgooglescholar" type="url" placeholder="google scholar">
+            </div>
 
-                <div class="pure-control-group">
-                    <label for="birtyear">When is your birth-year</label>
-                    <input name="birth_year" id="birtyear" type="number" placeholder="birtyear">
-                </div>
+            <div class="pure-controls">
+                <label for="cb" class="pure-checkbox">
+                    <input id="cb" type="checkbox" required> I agree to the terms and conditions
+                </label>
 
-                <div class="pure-control-group">
-                    <label for="careerstage">Career stage</label>
-                    <select name="caree_stage" id="careerstage">
-                        <option disabled selected value> Choose </option>
-                        {% for career_stages in _context.career_stages %}
-                            <option value="{{career_stages.Id}}">{{career_stages.CareerStageName}}</option>
-                        {% endfor %}
-                    </select>
-                </div>
+                <button type="submit" id="submitBtn" class="pure-button pure-button-primary">Submit</button>
+            </div>
+        </fieldset>
+    </form>
 
-                <div class="pure-control-group">
-                    <label for="affiliation">Affiliations</label>
-                    <input name="affiliation[primary][name]" id="affiliation" type="text" placeholder="primary affiliation">
-                    <select name="affiliation[primary][country]" id="primaryaffiliationcountry">
-                        <option disabled selected value> Choose </option>
-                        {% for country in _context.countries %}
-                             <option value="{{country.CountryCode}}">{{country.CountryName}}</option>
-                        {% endfor %}
-                    </select>
-                    <input name="affiliation[primary][city]" id="primaryaffiliationcity" type="text" placeholder="City of primary affiliation">
-                    <input name="affiliation[secondry][name]" id="secondryaffiliations" type="text" placeholder="secondary affiliations (seperated by comma)">
-                </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        
+        $('#email').change(function() {
+            var email = $(this).val();
+            $.ajax({
+                        type: 'POST',
+                        url: "{{path_for('expert_check_email')}}",
+                        data: 'email=' + email,
+                        beforeSend: function () {
+                            $('#submitBtn').attr("disabled", "disabled");
+                        }
+                    })
+                            .done(function (data) {
+                            $('#submitBtn').attr("disabled", "disabled");
+                            alert("This email address is already registered!");
+                            $('#submitBtn').focus()
+                            })
+                            .fail(function (errMsg) {
+                                $('#submitBtn').removeAttr("disabled");
+                            });
+        });
+        
 
-                <div class="pure-control-group">
-                    <label for="phonenumber">Phone number (incl. country code)</label>
-                    <input name="phone_number" id="phonenumber" type="tel" placeholder="number with country code">
-                </div>
 
-                <div class="pure-control-group">
-                    <label for="personalwebsite">Personal Website</label>
-                    <input name="personal_website" id="personalwebsite" type="url" placeholder="website">
-                </div>
+    </script>
 
-                <div class="pure-control-group">
-                    <label for="personallinkedin">Linkedin</label>
-                    <input name="personal_linkedin" id="personallinkedin" type="url" placeholder="linkedin">
-                </div>
-
-                <div class="pure-control-group">
-                    <label for="personalgooglescholar">Google Scholar profile</label>
-                    <input name="personal_google_scholar" id="personalgooglescholar" type="url" placeholder="google scholar">
-                </div>
-
-                <div class="pure-controls">
-                    <label for="cb" class="pure-checkbox">
-                        <input id="cb" type="checkbox" required> I agree to the terms and conditions
-                    </label>
-
-                    <button type="submit" class="pure-button pure-button-primary">Submit</button>
-                </div>
-            </fieldset>
-        </form>
-        <script>console.log({{ _context | json_encode | raw }});</script>
-
-    </body>
+</body>
 
 </html>
