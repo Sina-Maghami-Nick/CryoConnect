@@ -3,7 +3,7 @@
 <p>Expert Name : {{_context.expert.FirstName}} {{_context.expert.LastName}}</p>
 <p>Expert Email : {{_context.expert.Email}}</p>
 <p>Could you please approve/disapprove the new expert using the following link :&nbsp;</p>
-<p><a href="{{path_for('expert_approval',{},{'id': _context.expert.Id  , 't': _context.token}) }}">{{ path_for('expert_approval',{} , {'id': _context.expert.Id , 't': _context.token}) }}</a></p>
+<p><a href="https://dev-app.cryoconnect.net{{path_for('expert_approval',{},{'id': _context.expert.Id  , 't': _context.token}) }}">https://dev-app.cryoconnect.net{{ path_for('expert_approval',{} , {'id': _context.expert.Id , 't': _context.token}) }}</a></p>
 
 <p>&nbsp;</p>
 <p>Thank you,</p>

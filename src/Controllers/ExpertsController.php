@@ -71,14 +71,14 @@ class ExpertsController extends Controller {
         $lastName = trim(filter_var($data['last_name'], FILTER_SANITIZE_STRING));
         $birthYear = filter_var($data['birth_year'], FILTER_SANITIZE_NUMBER_INT);
         $cryosphereExistingWhat = filter_var_array($data['cryosphere_what'], FILTER_SANITIZE_NUMBER_INT);
-        $cryosphereNewWhat = array_filter(array_map('trim', explode(',', filter_var($data['cryosphere_what_other'], FILTER_SANITIZE_STRING))));
+        $cryosphereNewWhat = filter_var_array($data['cryosphere_what_other'], FILTER_SANITIZE_STRING);
         $cryosphereExistingWhere = filter_var_array($data['cryosphere_where'], FILTER_SANITIZE_NUMBER_INT);
         $cryosphereExistingWhatSpecefic = filter_var_array($data['cryosphere_what_specefic'], FILTER_SANITIZE_NUMBER_INT);
-        $cryosphereNewWhatSpecefic = array_filter(array_map('trim', explode(',', filter_var($data['cryosphere_what_specefic_other'], FILTER_SANITIZE_STRING))));
+        $cryosphereNewWhatSpecefic = filter_var_array($data['cryosphere_what_specefic_other'], FILTER_SANITIZE_STRING);
         $cryosphereExistingMethods = filter_var_array($data['cryosphere_method'], FILTER_SANITIZE_NUMBER_INT);
-        $cryosphereNewMethods = array_filter(array_map('trim', explode(',', filter_var($data['cryosphere_method_other'], FILTER_SANITIZE_STRING))));
+        $cryosphereNewMethods = filter_var_array($data['cryosphere_method_other'], FILTER_SANITIZE_STRING);
         $cryosphereExistingWhen = filter_var_array($data['cryosphere_when'], FILTER_SANITIZE_NUMBER_INT);
-        $cryosphereNewWhen = array_filter(array_map('trim', explode(',', filter_var($data['cryosphere_when_other'], FILTER_SANITIZE_STRING))));
+        $cryosphereNewWhen = filter_var_array($data['cryosphere_when_other'], FILTER_SANITIZE_STRING);
         $fieldWorkLocation = filter_var($data['fieldwork']['location'], FILTER_SANITIZE_STRING);
         $fieldWorkDate = filter_var($data['fieldwork']['date'], FILTER_SANITIZE_STRING);
         $languages = filter_var_array($data['languages'], FILTER_SANITIZE_STRING);
@@ -122,8 +122,8 @@ class ExpertsController extends Controller {
                     ->addError('Empty or wronge fileds for expert info recieved within the following request: ' . json_encode($data));
             $technicalAdminEmail = $this->container->get('settings')['contacts']['technical_admin'];
             $response->getBody()->write("Something went wrong! Please contact us at: " . $technicalAdminEmail);
-
-            return $response;
+            
+            return $response->withStatus(400);
         }
 
         //Creating the new expert
@@ -205,7 +205,8 @@ class ExpertsController extends Controller {
                     ->addError('Wrong expert ID passed to expert validation page the query params are: ' . json_encode($request->getQueryParams()));
             $technicalAdminEmail = $this->container->get('settings')['contacts']['technical_admin'];
             $response->getBody()->write("Something went wrong! Please contact the technical admin at: " . $technicalAdminEmail);
-
+            $response->withStatus(400);
+            
             return $response;
         }
 
@@ -253,7 +254,9 @@ class ExpertsController extends Controller {
                     ->addError('Empty or wronge expert id recieved for expert approval: ' . json_encode($data));
             $technicalAdminEmail = $this->container->get('settings')['contacts']['technical_admin'];
             $response->getBody()->write("Something went wrong! Please contact us at: " . $technicalAdminEmail);
-            return $response;
+            
+            
+            return $response->withStatus(400);
         }
 
         $expert->setApproved(true);
@@ -297,13 +300,20 @@ class ExpertsController extends Controller {
                     ->addError('Empty or wronge expert id recieved for expert approval: ' . json_encode($data));
             $technicalAdminEmail = $this->container->get('settings')['contacts']['technical_admin'];
             $response->getBody()->write("Something went wrong! Please contact us at: " . $technicalAdminEmail);
-            return $response;
+            
+            return $response->withStatus(400);
         }
 
 
         $this->container->get('logger')
                 ->addInfo('A expert is being deleted. ExpertEmail: ' . $expert->getEmail() . ' With explanation: ' . $explanation);
+        
+        CryosphereMethodsQuery::create()->filterByExperts($expert)->findByApproved(false)->delete();
+        CryosphereWhenQuery::create()->filterByExperts($expert)->findByApproved(false)->delete();
+        CryosphereWhatQuery::create()->filterByExperts($expert)->findByApproved(false)->delete();
+        CryosphereWhatSpeceficQuery::create()->filterByExperts($expert)->findByApproved(false)->delete();
         $expert->delete();
+        
         $emailMsg = (new \Swift_Message('Sorry Cryoconnect could not approve your request'))
                 ->setFrom([$this->container->get('settings')['mailer']['username'] => 'No-reply'])
                 ->setTo($expert->getEmail())
