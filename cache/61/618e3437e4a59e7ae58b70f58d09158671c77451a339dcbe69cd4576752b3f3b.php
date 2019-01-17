@@ -234,18 +234,14 @@ class __TwigTemplate_104cff0095c3c3c7aa26fe9c91876368807224faa66bb852f5d645ca1aa
                     <div class=\"pure-control-group\">
                         <label for=\"languages\">Languages in which you are capable of answering scientific questions *</label>
                         <div class=\"pure-u\" id=\"languages\">
-                            <input name=\"languages[1]\"  type=\"text\" placeholder=\"language 1\" list=\"languagessuggestions\" required>
-                            <br>
-                            <input name=\"languages[2]\" type=\"text\" placeholder=\"language 2\" list=\"languagessuggestions\">
-                            <br>
-                            <input name=\"languages[3]\" type=\"text\" placeholder=\"language 3\" list=\"languagessuggestions\">
-                            <datalist id=\"languagessuggestions\">
+                            <select name=\"languages[1]\" style=\"width: 13em\" required>
+                                <option disabled selected value>Choose 1st language </option>
                                 ";
-        // line 137
+        // line 133
         $context['_parent'] = $context;
         $context['_seq'] = twig_ensure_traversable(twig_get_attribute($this->env, $this->source, $context, "languages", array()));
         foreach ($context['_seq'] as $context["_key"] => $context["language"]) {
-            // line 138
+            // line 134
             echo "                                    <option value=\"";
             echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["language"], "LanguageCode", array()), "html", null, true);
             echo "\">";
@@ -256,8 +252,50 @@ class __TwigTemplate_104cff0095c3c3c7aa26fe9c91876368807224faa66bb852f5d645ca1aa
         $_parent = $context['_parent'];
         unset($context['_seq'], $context['_iterated'], $context['_key'], $context['language'], $context['_parent'], $context['loop']);
         $context = array_intersect_key($context, $_parent) + $_parent;
+        // line 136
+        echo "                            </select>
+                            <br>
+                            <select name=\"languages[2]\" style=\"width: 13em\">
+                                <option disabled selected value>Choose 2nd language </option>
+                                ";
         // line 140
-        echo "                            </datalist>
+        $context['_parent'] = $context;
+        $context['_seq'] = twig_ensure_traversable(twig_get_attribute($this->env, $this->source, $context, "languages", array()));
+        foreach ($context['_seq'] as $context["_key"] => $context["language"]) {
+            // line 141
+            echo "                                    <option value=\"";
+            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["language"], "LanguageCode", array()), "html", null, true);
+            echo "\">";
+            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["language"], "Language", array()), "html", null, true);
+            echo "</option>
+                                ";
+        }
+        $_parent = $context['_parent'];
+        unset($context['_seq'], $context['_iterated'], $context['_key'], $context['language'], $context['_parent'], $context['loop']);
+        $context = array_intersect_key($context, $_parent) + $_parent;
+        // line 143
+        echo "                            </select>
+                            <br>
+                            <select name=\"languages[3]\" style=\"width: 13em\">
+                                <option disabled selected value>Choose 3rd language </option>
+                                ";
+        // line 147
+        $context['_parent'] = $context;
+        $context['_seq'] = twig_ensure_traversable(twig_get_attribute($this->env, $this->source, $context, "languages", array()));
+        foreach ($context['_seq'] as $context["_key"] => $context["language"]) {
+            // line 148
+            echo "                                    <option value=\"";
+            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["language"], "LanguageCode", array()), "html", null, true);
+            echo "\">";
+            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["language"], "Language", array()), "html", null, true);
+            echo "</option>
+                                ";
+        }
+        $_parent = $context['_parent'];
+        unset($context['_seq'], $context['_iterated'], $context['_key'], $context['language'], $context['_parent'], $context['loop']);
+        $context = array_intersect_key($context, $_parent) + $_parent;
+        // line 150
+        echo "                            </select>
                         </div>
                     </div>
 
@@ -271,11 +309,11 @@ class __TwigTemplate_104cff0095c3c3c7aa26fe9c91876368807224faa66bb852f5d645ca1aa
                         <select name=\"caree_stage\" id=\"careerstage\" required>
                             <option disabled selected value> Choose </option>
                             ";
-        // line 153
+        // line 163
         $context['_parent'] = $context;
         $context['_seq'] = twig_ensure_traversable(twig_get_attribute($this->env, $this->source, $context, "career_stages", array()));
         foreach ($context['_seq'] as $context["_key"] => $context["career_stages"]) {
-            // line 154
+            // line 164
             echo "                                <option value=\"";
             echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["career_stages"], "Id", array()), "html", null, true);
             echo "\">";
@@ -286,23 +324,23 @@ class __TwigTemplate_104cff0095c3c3c7aa26fe9c91876368807224faa66bb852f5d645ca1aa
         $_parent = $context['_parent'];
         unset($context['_seq'], $context['_iterated'], $context['_key'], $context['career_stages'], $context['_parent'], $context['loop']);
         $context = array_intersect_key($context, $_parent) + $_parent;
-        // line 156
+        // line 166
         echo "                        </select>
                     </div>
 
                     <div class=\"pure-control-group\">
                         <label for=\"affiliation\">Affiliations</label>
                         <div class=\"pure-u\">
-                            <input name=\"affiliation[primary][name]\" id=\"affiliation\" type=\"text\" placeholder=\"primary affiliation\">
+                            <input name=\"affiliation[primary][name]\" id=\"affiliation\" type=\"text\" placeholder=\"primary affiliation\" required>
                             <br>
-                            <select name=\"affiliation[primary][country]\" id=\"primaryaffiliationcountry\">
+                            <select name=\"affiliation[primary][country]\" id=\"primaryaffiliationcountry\" required>
                                 <option disabled selected value> Choose </option>
                                 ";
-        // line 166
+        // line 176
         $context['_parent'] = $context;
         $context['_seq'] = twig_ensure_traversable(twig_get_attribute($this->env, $this->source, $context, "countries", array()));
         foreach ($context['_seq'] as $context["_key"] => $context["country"]) {
-            // line 167
+            // line 177
             echo "                                    <option value=\"";
             echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["country"], "CountryCode", array()), "html", null, true);
             echo "\">";
@@ -313,7 +351,7 @@ class __TwigTemplate_104cff0095c3c3c7aa26fe9c91876368807224faa66bb852f5d645ca1aa
         $_parent = $context['_parent'];
         unset($context['_seq'], $context['_iterated'], $context['_key'], $context['country'], $context['_parent'], $context['loop']);
         $context = array_intersect_key($context, $_parent) + $_parent;
-        // line 169
+        // line 179
         echo "                            </select>
                             <br>
                             <input name=\"affiliation[primary][city]\" id=\"primaryaffiliationcity\" type=\"text\" placeholder=\"City of primary affiliation\">
@@ -520,7 +558,7 @@ class __TwigTemplate_104cff0095c3c3c7aa26fe9c91876368807224faa66bb852f5d645ca1aa
                     \$.ajax({
                         type: 'POST',
                         url: \"";
-        // line 374
+        // line 384
         echo twig_escape_filter($this->env, $this->extensions['Slim\Views\TwigExtension']->pathFor("expert_check_email"), "html", null, true);
         echo "\",
                         data: 'email=' + encodeURIComponent(email),
@@ -663,7 +701,7 @@ class __TwigTemplate_104cff0095c3c3c7aa26fe9c91876368807224faa66bb852f5d645ca1aa
 
     public function getDebugInfo()
     {
-        return array (  524 => 374,  317 => 169,  306 => 167,  302 => 166,  290 => 156,  279 => 154,  275 => 153,  260 => 140,  249 => 138,  245 => 137,  218 => 112,  204 => 109,  200 => 108,  188 => 98,  174 => 95,  170 => 94,  158 => 84,  144 => 81,  140 => 80,  132 => 74,  118 => 71,  114 => 70,  102 => 60,  89 => 57,  86 => 56,  82 => 55,  56 => 32,  23 => 1,);
+        return array (  562 => 384,  355 => 179,  344 => 177,  340 => 176,  328 => 166,  317 => 164,  313 => 163,  298 => 150,  287 => 148,  283 => 147,  277 => 143,  266 => 141,  262 => 140,  256 => 136,  245 => 134,  241 => 133,  218 => 112,  204 => 109,  200 => 108,  188 => 98,  174 => 95,  170 => 94,  158 => 84,  144 => 81,  140 => 80,  132 => 74,  118 => 71,  114 => 70,  102 => 60,  89 => 57,  86 => 56,  82 => 55,  56 => 32,  23 => 1,);
     }
 
     public function getSourceContext()

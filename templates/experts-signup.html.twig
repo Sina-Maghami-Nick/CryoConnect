@@ -128,16 +128,26 @@
                     <div class="pure-control-group">
                         <label for="languages">Languages in which you are capable of answering scientific questions *</label>
                         <div class="pure-u" id="languages">
-                            <input name="languages[1]"  type="text" placeholder="language 1" list="languagessuggestions" required>
-                            <br>
-                            <input name="languages[2]" type="text" placeholder="language 2" list="languagessuggestions">
-                            <br>
-                            <input name="languages[3]" type="text" placeholder="language 3" list="languagessuggestions">
-                            <datalist id="languagessuggestions">
+                            <select name="languages[1]" style="width: 13em" required>
+                                <option disabled selected value>Choose 1st language </option>
                                 {% for language in _context.languages %}
                                     <option value="{{language.LanguageCode}}">{{language.Language}}</option>
                                 {% endfor %}
-                            </datalist>
+                            </select>
+                            <br>
+                            <select name="languages[2]" style="width: 13em">
+                                <option disabled selected value>Choose 2nd language </option>
+                                {% for language in _context.languages %}
+                                    <option value="{{language.LanguageCode}}">{{language.Language}}</option>
+                                {% endfor %}
+                            </select>
+                            <br>
+                            <select name="languages[3]" style="width: 13em">
+                                <option disabled selected value>Choose 3rd language </option>
+                                {% for language in _context.languages %}
+                                    <option value="{{language.LanguageCode}}">{{language.Language}}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                     </div>
 
