@@ -101,7 +101,7 @@ class __TwigTemplate_104cff0095c3c3c7aa26fe9c91876368807224faa66bb852f5d645ca1aa
         // line 60
         echo "                            <div id='otherdata' class=\"cryosphere_what\">
                             </div>
-                            <input id=\"newdata\" type=\"text\" placeholder=\"other\">
+                            <input id=\"newdata\" type=\"text\" class=\"cryosphere_what\" placeholder=\"other\" required>
                             <button type=\"button\" id=\"adddata\" class=\"pure-button success-button\" data-type=\"cryosphere_what\">Add</button>
                         </div>
                     </div>
@@ -157,7 +157,7 @@ class __TwigTemplate_104cff0095c3c3c7aa26fe9c91876368807224faa66bb852f5d645ca1aa
         // line 84
         echo "                            <div id='otherdata' class=\"cryosphere_what_specefic\">
                             </div>
-                            <input id=\"newdata\" type=\"text\" placeholder=\"other\">
+                            <input id=\"newdata\" type=\"text\" class=\"cryosphere_what_specefic\" placeholder=\"other\" required>
                             <button type=\"button\" id=\"adddata1\" class=\"pure-button success-button\" data-type=\"cryosphere_what_specefic\">Add</button>
                         </div>
                     </div>
@@ -187,7 +187,7 @@ class __TwigTemplate_104cff0095c3c3c7aa26fe9c91876368807224faa66bb852f5d645ca1aa
         // line 98
         echo "                            <div id='otherdata' class=\"cryosphere_method\">
                             </div>
-                            <input id=\"newdata\" type=\"text\" placeholder=\"other\">
+                            <input id=\"newdata\" type=\"text\" class=\"cryosphere_method\" placeholder=\"other\" required>
                             <button type=\"button\" id=\"adddata2\" class=\"pure-button success-button\" data-type=\"cryosphere_method\">Add</button>
                         </div>
                     </div>
@@ -217,7 +217,7 @@ class __TwigTemplate_104cff0095c3c3c7aa26fe9c91876368807224faa66bb852f5d645ca1aa
         // line 112
         echo "                            <div id='otherdata' class=\"cryosphere_when\">
                             </div>
-                            <input id=\"newdata\" type=\"text\" placeholder=\"other\">
+                            <input id=\"newdata\" type=\"text\" placeholder=\"other\" class=\"cryosphere_when\" required>
                             <button type=\"button\" id=\"adddata3\" class=\"pure-button success-button\" data-type=\"cryosphere_when\">Add</button>
                         </div>
                     </div>

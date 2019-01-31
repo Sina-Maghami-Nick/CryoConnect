@@ -46,6 +46,18 @@
                 </tr>
 
 
+                <tr>
+                    <th scope="row">Languages</th>
+                    <td colspan="10">
+                        <ul class="list-group list-group-flush">
+                            {% for expert_language in _context.expert_languages %}
+                                <li class="list-group-item">{{expert_language.Language}}
+                                {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+
+
 
                 <tr>
                     <th scope="row">Expert Caree Stage</th>
@@ -241,9 +253,9 @@
 
             </div>
         {% endif %}
-        {# <script>
+        <script>
              console.log({{ _context | json_encode | raw }});
-         </script>#}
+        </script>
 
 
         <div class="modal fade" id="expertapprovemodal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -468,281 +480,281 @@
 
 
         <script>
-            $(document).ready(function () {
-                //triggered when modal is about to be shown
-                $('#approvalmodal').on('show.bs.modal', function (e) {
+             $(document).ready(function () {
+                 //triggered when modal is about to be shown
+                 $('#approvalmodal').on('show.bs.modal', function (e) {
 
-                    //get data-id attribute of the clicked element
-                    var dataType = $(e.relatedTarget).data('type');
-                    var dataId = $(e.relatedTarget).data('id');
-                    var dataValue = $(e.relatedTarget).data('value');
-                    var postUrl = $(e.relatedTarget).data('posturl');
+                     //get data-id attribute of the clicked element
+                     var dataType = $(e.relatedTarget).data('type');
+                     var dataId = $(e.relatedTarget).data('id');
+                     var dataValue = $(e.relatedTarget).data('value');
+                     var postUrl = $(e.relatedTarget).data('posturl');
 
-                    //populate the textbox
-                    $(e.currentTarget).find('input[name="dataid"]').val(dataId);
-                    $(e.currentTarget).find('input[name="datatype"]').val(dataType);
-                    $(e.currentTarget).find('input[name="datavalue"]').val(dataValue);
-                    $(e.currentTarget).find('button[id="dataapprove"]').data('dataid', dataId);
-                    $(e.currentTarget).find('button[id="dataapprove"]').data('datatype', dataType);
-                    $(e.currentTarget).find('button[id="dataapprove"]').data('datavalue', dataValue);
-                    $(e.currentTarget).find('button[id="dataapprove"]').data('posturl', postUrl);
-                });
+                     //populate the textbox
+                     $(e.currentTarget).find('input[name="dataid"]').val(dataId);
+                     $(e.currentTarget).find('input[name="datatype"]').val(dataType);
+                     $(e.currentTarget).find('input[name="datavalue"]').val(dataValue);
+                     $(e.currentTarget).find('button[id="dataapprove"]').data('dataid', dataId);
+                     $(e.currentTarget).find('button[id="dataapprove"]').data('datatype', dataType);
+                     $(e.currentTarget).find('button[id="dataapprove"]').data('datavalue', dataValue);
+                     $(e.currentTarget).find('button[id="dataapprove"]').data('posturl', postUrl);
+                 });
 
-                $('#editmodal').on('show.bs.modal', function (e) {
+                 $('#editmodal').on('show.bs.modal', function (e) {
 
-                    //get data-id attribute of the clicked element
-                    var dataId = $(e.relatedTarget).data('id');
-                    var dataType = $(e.relatedTarget).data('type');
-                    var dataValue = $(e.relatedTarget).data('value');
-                    var existingDataList = $(e.relatedTarget).data('existing');
-                    var exisingDataFieldName = $(e.relatedTarget).data('esitingdatafield');
-                    var postUrl = $(e.relatedTarget).data('posturl');
+                     //get data-id attribute of the clicked element
+                     var dataId = $(e.relatedTarget).data('id');
+                     var dataType = $(e.relatedTarget).data('type');
+                     var dataValue = $(e.relatedTarget).data('value');
+                     var existingDataList = $(e.relatedTarget).data('existing');
+                     var exisingDataFieldName = $(e.relatedTarget).data('esitingdatafield');
+                     var postUrl = $(e.relatedTarget).data('posturl');
 
-                    //populate the textbox
-                    $(e.currentTarget).find('input[name="dataid"]').val(dataId);
-                    $(e.currentTarget).find('input[name="datatype"]').val(dataType);
-                    $(e.currentTarget).find('input[name="datavalue"]').val(dataValue);
+                     //populate the textbox
+                     $(e.currentTarget).find('input[name="dataid"]').val(dataId);
+                     $(e.currentTarget).find('input[name="datatype"]').val(dataType);
+                     $(e.currentTarget).find('input[name="datavalue"]').val(dataValue);
 
-                    $(e.currentTarget).find('button[id="dataedit"]').data('dataid', dataId);
-                    $(e.currentTarget).find('button[id="dataedit"]').data('posturl', postUrl);
-                    $(e.currentTarget).find('button[id="dataedit"]').data('datavalue', dataValue);
+                     $(e.currentTarget).find('button[id="dataedit"]').data('dataid', dataId);
+                     $(e.currentTarget).find('button[id="dataedit"]').data('posturl', postUrl);
+                     $(e.currentTarget).find('button[id="dataedit"]').data('datavalue', dataValue);
 
-                    //populating the dropdown
-                    $(e.currentTarget).find('#selectexistingdata').empty();
-                    $(e.currentTarget).find('#selectexistingdata').append($('<option disabled selected value>').text("Choose"));
+                     //populating the dropdown
+                     $(e.currentTarget).find('#selectexistingdata').empty();
+                     $(e.currentTarget).find('#selectexistingdata').append($('<option disabled selected value>').text("Choose"));
 
-                    $.each(existingDataList, function (i, obj) {
-                        $(e.currentTarget).find('#selectexistingdata').append($('<option>').text(obj[exisingDataFieldName]).attr('value', obj.Id));
-                    });
-                });
+                     $.each(existingDataList, function (i, obj) {
+                         $(e.currentTarget).find('#selectexistingdata').append($('<option>').text(obj[exisingDataFieldName]).attr('value', obj.Id));
+                     });
+                 });
 
-                $('#deletemodal').on('show.bs.modal', function (e) {
+                 $('#deletemodal').on('show.bs.modal', function (e) {
 
-                    //get data-id attribute of the clicked element
-                    var dataType = $(e.relatedTarget).data('type');
-                    var dataId = $(e.relatedTarget).data('id');
-                    var dataValue = $(e.relatedTarget).data('value');
-                    var postUrl = $(e.relatedTarget).data('posturl');
+                     //get data-id attribute of the clicked element
+                     var dataType = $(e.relatedTarget).data('type');
+                     var dataId = $(e.relatedTarget).data('id');
+                     var dataValue = $(e.relatedTarget).data('value');
+                     var postUrl = $(e.relatedTarget).data('posturl');
 
-                    //populate the textbox
-                    $(e.currentTarget).find('input[name="dataid"]').val(dataId);
-                    $(e.currentTarget).find('input[name="datatype"]').val(dataType);
-                    $(e.currentTarget).find('input[name="datavalue"]').val(dataValue);
+                     //populate the textbox
+                     $(e.currentTarget).find('input[name="dataid"]').val(dataId);
+                     $(e.currentTarget).find('input[name="datatype"]').val(dataType);
+                     $(e.currentTarget).find('input[name="datavalue"]').val(dataValue);
 
-                    $(e.currentTarget).find('button[id="datadelete"]').data('dataid', dataId);
-                    $(e.currentTarget).find('button[id="datadelete"]').data('posturl', postUrl);
-                    $(e.currentTarget).find('button[id="datadelete"]').data('datavalue', dataValue);
+                     $(e.currentTarget).find('button[id="datadelete"]').data('dataid', dataId);
+                     $(e.currentTarget).find('button[id="datadelete"]').data('posturl', postUrl);
+                     $(e.currentTarget).find('button[id="datadelete"]').data('datavalue', dataValue);
 
-                });
+                 });
 
-                $("#expertapprove").click(function () {
+                 $("#expertapprove").click(function () {
 
-                    var expertId = "{{_context.expert.Id}}";
-                    var token = getUrlParameter('t');
+                     var expertId = "{{_context.expert.Id}}";
+                     var token = getUrlParameter('t');
 
-                    if ($('#expertnotapprovable').length) {
-                        alert('Please handle the items which are not approved first!');
-                        return false;
-                    }
+                     if ($('#expertnotapprovable').length) {
+                         alert('Please handle the items which are not approved first!');
+                         return false;
+                     }
 
-                    var postUrl = $(this).data('posturl');
+                     var postUrl = $(this).data('posturl');
 
-                    if (
-                            String(token).trim() == '' ||
-                            String(expertId).trim() == '') {
-                        alert('Something went wrong! No data has been saved. Please contact the IT Support!');
-                        return false;
-                    } else {
-                        $.ajax({
-                            type: 'PUT',
-                            headers: {
-                                'Token-Authorization-X': `Bearer ${token}`,
-                            },
-                            url: postUrl,
-                            data: 'id=' + expertId,
-                            beforeSend: function () {
-                                $('.submitBtn').attr("disabled", "disabled");
-                                $('.modal-body').css('opacity', '.5');
-                            }
-                        })
-                                .done(function (data) {
-                                    location.reload();
-                                })
-                                .fail(function (errMsg) {
-                                    alert('Some problem occurred, please try again and make sure your enteries are correct. If problem consists please contact the IT support!');
-                                    $('.submitBtn').removeAttr("disabled");
-                                    $('.modal-body').css('opacity', '');
-                                });
-                    }
-                });
+                     if (
+                             String(token).trim() == '' ||
+                             String(expertId).trim() == '') {
+                         alert('Something went wrong! No data has been saved. Please contact the IT Support!');
+                         return false;
+                     } else {
+                         $.ajax({
+                             type: 'PUT',
+                             headers: {
+                                 'Token-Authorization-X': `Bearer ${token}`,
+                             },
+                             url: postUrl,
+                             data: 'id=' + expertId,
+                             beforeSend: function () {
+                                 $('.submitBtn').attr("disabled", "disabled");
+                                 $('.modal-body').css('opacity', '.5');
+                             }
+                         })
+                                 .done(function (data) {
+                                     location.reload();
+                                 })
+                                 .fail(function (errMsg) {
+                                     alert('Some problem occurred, please try again and make sure your enteries are correct. If problem consists please contact the IT support!');
+                                     $('.submitBtn').removeAttr("disabled");
+                                     $('.modal-body').css('opacity', '');
+                                 });
+                     }
+                 });
 
 
-                $("#expertreject").click(function () {
+                 $("#expertreject").click(function () {
 
-                    var expertId = "{{_context.expert.Id}}";
-                    var token = getUrlParameter('t');
+                     var expertId = "{{_context.expert.Id}}";
+                     var token = getUrlParameter('t');
 
-                    var explanation = $(this).parent().parent().find('#rejectexplanation').val();
+                     var explanation = $(this).parent().parent().find('#rejectexplanation').val();
 
-                    var postUrl = $(this).data('posturl');
+                     var postUrl = $(this).data('posturl');
 
-                    if (
-                            String(token).trim() == '' ||
-                            String(expertId).trim() == '')
-                    {
-                        alert('Something went wrong! No data has been saved. Please contact the IT Support!');
-                        return false;
-                    } else {
-                        $.ajax({
-                            type: 'DELETE',
-                            headers: {
-                                'Token-Authorization-X': `Bearer ${token}`,
-                            },
-                            url: postUrl,
-                            data: 'id=' + expertId + '&explanation=' + encodeURIComponent(explanation),
-                            beforeSend: function () {
-                                $('.submitBtn').attr("disabled", "disabled");
-                                $('.modal-body').css('opacity', '.5');
-                            }
-                        })
-                                .done(function (data) {
-                                    window.location.href = "/";
-                                })
-                                .fail(function (errMsg) {
-                                    alert('Some problem occurred, please try again and make sure your enteries are correct. If problem consists please contact the IT support!');
-                                    $('.submitBtn').removeAttr("disabled");
-                                    $('.modal-body').css('opacity', '');
-                                });
-                    }
-                });
+                     if (
+                             String(token).trim() == '' ||
+                             String(expertId).trim() == '')
+                     {
+                         alert('Something went wrong! No data has been saved. Please contact the IT Support!');
+                         return false;
+                     } else {
+                         $.ajax({
+                             type: 'DELETE',
+                             headers: {
+                                 'Token-Authorization-X': `Bearer ${token}`,
+                             },
+                             url: postUrl,
+                             data: 'id=' + expertId + '&explanation=' + encodeURIComponent(explanation),
+                             beforeSend: function () {
+                                 $('.submitBtn').attr("disabled", "disabled");
+                                 $('.modal-body').css('opacity', '.5');
+                             }
+                         })
+                                 .done(function (data) {
+                                     window.location.href = "/";
+                                 })
+                                 .fail(function (errMsg) {
+                                     alert('Some problem occurred, please try again and make sure your enteries are correct. If problem consists please contact the IT support!');
+                                     $('.submitBtn').removeAttr("disabled");
+                                     $('.modal-body').css('opacity', '');
+                                 });
+                     }
+                 });
 
-                $("#dataapprove").click(function () {
-                    var expertId = "{{_context.expert.Id}}";
-                    var token = getUrlParameter('t');
-                    var dataId = $(this).data('dataid');
-                    var dataValue = $(this).data('datavalue');
-                    var postUrl = $(this).data('posturl');
-                    if (dataValue.trim() == '' || String(dataId).trim() == '' || String(expertId).trim() == '') {
-                        alert('Something went wrong! No data has been saved. Please contact the IT Support!');
-                        return false;
-                    } else {
-                        $.ajax({
-                            type: 'POST',
-                            headers: {
-                                'Token-Authorization-X': `Bearer ${token}`,
-                            },
-                            url: postUrl,
-                            data: 'id=' + expertId + '&dataId=' + dataId + '&dataValue=' + encodeURIComponent(dataValue),
-                            beforeSend: function () {
-                                $('.submitBtn').attr("disabled", "disabled");
-                                $('.modal-body').css('opacity', '.5');
-                            }
-                        })
-                                .done(function (data) {
-                                    location.reload();
-                                })
-                                .fail(function (errMsg) {
-                                    alert('Some problem occurred, please try again and make sure your enteries are correct. If problem consists please contact the IT support!');
-                                    $('.submitBtn').removeAttr("disabled");
-                                    $('.modal-body').css('opacity', '');
-                                });
-                    }
-                });
+                 $("#dataapprove").click(function () {
+                     var expertId = "{{_context.expert.Id}}";
+                     var token = getUrlParameter('t');
+                     var dataId = $(this).data('dataid');
+                     var dataValue = $(this).data('datavalue');
+                     var postUrl = $(this).data('posturl');
+                     if (dataValue.trim() == '' || String(dataId).trim() == '' || String(expertId).trim() == '') {
+                         alert('Something went wrong! No data has been saved. Please contact the IT Support!');
+                         return false;
+                     } else {
+                         $.ajax({
+                             type: 'POST',
+                             headers: {
+                                 'Token-Authorization-X': `Bearer ${token}`,
+                             },
+                             url: postUrl,
+                             data: 'id=' + expertId + '&dataId=' + dataId + '&dataValue=' + encodeURIComponent(dataValue),
+                             beforeSend: function () {
+                                 $('.submitBtn').attr("disabled", "disabled");
+                                 $('.modal-body').css('opacity', '.5');
+                             }
+                         })
+                                 .done(function (data) {
+                                     location.reload();
+                                 })
+                                 .fail(function (errMsg) {
+                                     alert('Some problem occurred, please try again and make sure your enteries are correct. If problem consists please contact the IT support!');
+                                     $('.submitBtn').removeAttr("disabled");
+                                     $('.modal-body').css('opacity', '');
+                                 });
+                     }
+                 });
 
-                $("#dataedit").click(function () {
-                    var expertId = "{{_context.expert.Id}}";
-                    var token = getUrlParameter('t');
-                    var dataId = $(this).data('dataid');
-                    var dataValue = $(this).data('datavalue');
-                    var newDataId = "";
-                    var newDataValue = "";
-                    if ($(this).parent().parent().find('#editdataexistingcheck').is(':checked')) {
-                        var newDataId = $(this).parent().parent().find('#selectexistingdata').find(":selected").val();
-                    } else {
-                        var newDataValue = $(this).parent().parent().find('#expertNewDataValue').val();
-                    }
-                    var postUrl = $(this).data('posturl');
-                    if (
-                            (dataValue.trim() == '' && !$.isNumeric(newDataId)) ||
-                            String(dataId).trim() == '' ||
-                            String(expertId).trim() == '') {
-                        alert('Something went wrong! No data has been saved. Please contact the IT Support!');
-                        return false;
-                    } else {
-                        $.ajax({
-                            type: 'PUT',
-                            headers: {
-                                'Token-Authorization-X': `Bearer ${token}`,
-                            },
-                            url: postUrl,
-                            data: 'id=' + expertId + '&dataId=' + dataId + '&newDataValue=' + encodeURIComponent(newDataValue) + '&existingdataid=' + newDataId + '&dataValue=' + encodeURIComponent(dataValue),
-                            beforeSend: function () {
-                                $('.submitBtn').attr("disabled", "disabled");
-                                $('.modal-body').css('opacity', '.5');
-                            }
-                        })
-                                .done(function (data) {
-                                    location.reload();
-                                })
-                                .fail(function (errMsg) {
-                                    alert('Some problem occurred, please try again and make sure your enteries are correct. If problem consists please contact the IT support!');
-                                    $('.submitBtn').removeAttr("disabled");
-                                    $('.modal-body').css('opacity', '');
-                                });
-                    }
-                });
+                 $("#dataedit").click(function () {
+                     var expertId = "{{_context.expert.Id}}";
+                     var token = getUrlParameter('t');
+                     var dataId = $(this).data('dataid');
+                     var dataValue = $(this).data('datavalue');
+                     var newDataId = "";
+                     var newDataValue = "";
+                     if ($(this).parent().parent().find('#editdataexistingcheck').is(':checked')) {
+                         var newDataId = $(this).parent().parent().find('#selectexistingdata').find(":selected").val();
+                     } else {
+                         var newDataValue = $(this).parent().parent().find('#expertNewDataValue').val();
+                     }
+                     var postUrl = $(this).data('posturl');
+                     if (
+                             (dataValue.trim() == '' && !$.isNumeric(newDataId)) ||
+                             String(dataId).trim() == '' ||
+                             String(expertId).trim() == '') {
+                         alert('Something went wrong! No data has been saved. Please contact the IT Support!');
+                         return false;
+                     } else {
+                         $.ajax({
+                             type: 'PUT',
+                             headers: {
+                                 'Token-Authorization-X': `Bearer ${token}`,
+                             },
+                             url: postUrl,
+                             data: 'id=' + expertId + '&dataId=' + dataId + '&newDataValue=' + encodeURIComponent(newDataValue) + '&existingdataid=' + newDataId + '&dataValue=' + encodeURIComponent(dataValue),
+                             beforeSend: function () {
+                                 $('.submitBtn').attr("disabled", "disabled");
+                                 $('.modal-body').css('opacity', '.5');
+                             }
+                         })
+                                 .done(function (data) {
+                                     location.reload();
+                                 })
+                                 .fail(function (errMsg) {
+                                     alert('Some problem occurred, please try again and make sure your enteries are correct. If problem consists please contact the IT support!');
+                                     $('.submitBtn').removeAttr("disabled");
+                                     $('.modal-body').css('opacity', '');
+                                 });
+                     }
+                 });
 
-                $("#datadelete").click(function () {
+                 $("#datadelete").click(function () {
 
-                    var expertId = "{{_context.expert.Id}}";
-                    var token = getUrlParameter('t');
-                    var dataId = $(this).data('dataid');
-                    var postUrl = $(this).data('posturl');
-                    var dataValue = $(this).data('datavalue');
-                    if (String(dataId).trim() == '' || String(expertId).trim() == '') {
-                        alert('Something went wrong! No data has been saved. Please contact the IT Support!');
-                        return false;
-                    } else {
-                        $.ajax({
-                            type: 'DELETE',
-                            headers: {
-                                'Token-Authorization-X': `Bearer ${token}`,
-                            },
-                            url: postUrl,
-                            data: 'id=' + expertId + '&dataId=' + dataId + '&dataValue=' + encodeURIComponent(dataValue),
-                            beforeSend: function () {
-                                $('.submitBtn').attr("disabled", "disabled");
-                                $('.modal-body').css('opacity', '.5');
-                            }
-                        })
-                                .done(function (data) {
+                     var expertId = "{{_context.expert.Id}}";
+                     var token = getUrlParameter('t');
+                     var dataId = $(this).data('dataid');
+                     var postUrl = $(this).data('posturl');
+                     var dataValue = $(this).data('datavalue');
+                     if (String(dataId).trim() == '' || String(expertId).trim() == '') {
+                         alert('Something went wrong! No data has been saved. Please contact the IT Support!');
+                         return false;
+                     } else {
+                         $.ajax({
+                             type: 'DELETE',
+                             headers: {
+                                 'Token-Authorization-X': `Bearer ${token}`,
+                             },
+                             url: postUrl,
+                             data: 'id=' + expertId + '&dataId=' + dataId + '&dataValue=' + encodeURIComponent(dataValue),
+                             beforeSend: function () {
+                                 $('.submitBtn').attr("disabled", "disabled");
+                                 $('.modal-body').css('opacity', '.5');
+                             }
+                         })
+                                 .done(function (data) {
 
-                                    location.reload();
-                                })
-                                .fail(function (errMsg) {
-                                    alert('Some problem occurred, please try again and make sure your enteries are correct. If problem consists please contact the IT support!');
-                                    $('.submitBtn').removeAttr("disabled");
-                                    $('.modal-body').css('opacity', '');
-                                });
-                    }
-                });
+                                     location.reload();
+                                 })
+                                 .fail(function (errMsg) {
+                                     alert('Some problem occurred, please try again and make sure your enteries are correct. If problem consists please contact the IT support!');
+                                     $('.submitBtn').removeAttr("disabled");
+                                     $('.modal-body').css('opacity', '');
+                                 });
+                     }
+                 });
 
-                var getUrlParameter = function getUrlParameter(sParam) {
-                    var sPageURL = window.location.search.substring(1),
-                            sURLVariables = sPageURL.split('&'),
-                            sParameterName,
-                            i;
+                 var getUrlParameter = function getUrlParameter(sParam) {
+                     var sPageURL = window.location.search.substring(1),
+                             sURLVariables = sPageURL.split('&'),
+                             sParameterName,
+                             i;
 
-                    for (i = 0; i < sURLVariables.length; i++) {
-                        sParameterName = sURLVariables[i].split('=');
+                     for (i = 0; i < sURLVariables.length; i++) {
+                         sParameterName = sURLVariables[i].split('=');
 
-                        if (sParameterName[0] === sParam) {
-                            return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
-                        }
-                    }
-                };
+                         if (sParameterName[0] === sParam) {
+                             return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+                         }
+                     }
+                 };
 
-            });
+             });
         </script>
 
 
