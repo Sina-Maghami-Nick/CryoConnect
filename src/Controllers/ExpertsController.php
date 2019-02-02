@@ -27,6 +27,7 @@ use CryoConnectDB\ExpertPrimaryAffiliation;
 use CryoConnectDB\ExpertSecondaryAffiliation;
 use CryoConnectDB\ContactTypesQuery;
 use CryoConnectDB\ExpertContact;
+use CryoConnectDB\Languages;
 
 class ExpertsController extends Controller {
 
@@ -42,8 +43,8 @@ class ExpertsController extends Controller {
         $cryosphereWhen = CryosphereWhenQuery::create()->findByApproved(True);
         $cryosphereMethods = CryosphereMethodsQuery::create()->findByApproved(True);
         $careerStages = CareerStageQuery::create()->find();
-        $countries = CountriesQuery::create()->find();
-        $languages = LanguagesQuery::create()->find();
+        $countries = CountriesQuery::create()->orderByCountryName()->find();
+        $languages = LanguagesQuery::create()->orderByLanguage()->find();
 
         return $this->view->render(
                         $response, 'experts-signup.html.twig', [
@@ -69,19 +70,14 @@ class ExpertsController extends Controller {
         $emailAddress = trim(strtolower(filter_var($data['email'], FILTER_SANITIZE_EMAIL)));
         $firstName = filter_var($data['first_name'], FILTER_SANITIZE_STRING);
         $lastName = trim(filter_var($data['last_name'], FILTER_SANITIZE_STRING));
+        $gender = filter_var($data['gender'], FILTER_SANITIZE_STRING);
         $birthYear = filter_var($data['birth_year'], FILTER_SANITIZE_NUMBER_INT);
         $cryosphereExistingWhat = filter_var_array($data['cryosphere_what'], FILTER_SANITIZE_NUMBER_INT);
-        $cryosphereNewWhat = filter_var_array($data['cryosphere_what_other'], FILTER_SANITIZE_STRING);
         $cryosphereExistingWhere = filter_var_array($data['cryosphere_where'], FILTER_SANITIZE_NUMBER_INT);
         $cryosphereExistingWhatSpecefic = filter_var_array($data['cryosphere_what_specefic'], FILTER_SANITIZE_NUMBER_INT);
-        $cryosphereNewWhatSpecefic = filter_var_array($data['cryosphere_what_specefic_other'], FILTER_SANITIZE_STRING);
         $cryosphereExistingMethods = filter_var_array($data['cryosphere_method'], FILTER_SANITIZE_NUMBER_INT);
-        $cryosphereNewMethods = filter_var_array($data['cryosphere_method_other'], FILTER_SANITIZE_STRING);
         $cryosphereExistingWhen = filter_var_array($data['cryosphere_when'], FILTER_SANITIZE_NUMBER_INT);
-        $cryosphereNewWhen = filter_var_array($data['cryosphere_when_other'], FILTER_SANITIZE_STRING);
-        $fieldWorkLocation = filter_var($data['fieldwork']['location'], FILTER_SANITIZE_STRING);
-        $fieldWorkDate = filter_var($data['fieldwork']['date'], FILTER_SANITIZE_STRING);
-        $languages = filter_var_array($data['languages'], FILTER_SANITIZE_STRING);
+        $languageCodes = filter_var_array($data['languages'], FILTER_SANITIZE_STRING);
         $careerStage = filter_var($data['caree_stage'], FILTER_SANITIZE_NUMBER_INT);
         $primaryAffiliationName = filter_var($data['affiliation']['primary']['name'], FILTER_SANITIZE_STRING);
         $primaryAffiliationCountryCode = filter_var($data['affiliation']['primary']['country'], FILTER_SANITIZE_STRING);
@@ -97,32 +93,26 @@ class ExpertsController extends Controller {
                 empty($firstName) ||
                 empty($lastName) ||
                 empty($emailAddress) ||
+                empty($gender) ||
                 empty($birthYear) ||
                 empty($primaryAffiliationName) ||
                 empty($primaryAffiliationCountryCode) ||
                 empty(CountriesQuery::create()->findByCountryCode($primaryAffiliationCountryCode)) ||
                 empty($cryosphereExistingWhere) ||
-                empty($languages) ||
+                empty($languageCodes) ||
                 empty($careerStage) ||
                 empty(CareerStageQuery::create()->findOneById($careerStage)) ||
-                (
-                empty($cryosphereExistingWhat) && empty($cryosphereNewWhat)
-                ) ||
-                (
-                empty($cryosphereExistingWhen) && empty($cryosphereNewWhen)
-                ) ||
-                (
-                empty($cryosphereExistingWhatSpecefic) && empty($cryosphereNewWhatSpecefic)
-                ) ||
-                (
-                empty($cryosphereExistingMethods) && empty($cryosphereNewMethods)
-                )
+                empty($cryosphereExistingWhat) ||
+                empty($cryosphereExistingWhen) ||
+                empty($cryosphereExistingWhatSpecefic) ||
+                empty($cryosphereExistingMethods) ||
+                ExpertsQuery::create()->findOneByEmail($emailAddress)
         ) {
             $this->container->get('logger')
                     ->addError('Empty or wronge fileds for expert info recieved within the following request: ' . json_encode($data));
             $technicalAdminEmail = $this->container->get('settings')['contacts']['technical_admin'];
             $response->getBody()->write("Something went wrong! Please contact us at: " . $technicalAdminEmail);
-            
+
             return $response->withStatus(400);
         }
 
@@ -133,17 +123,19 @@ class ExpertsController extends Controller {
         $expert->setEmail($emailAddress);
         $expert->setBirthYear($birthYear);
         $expert->setCountryCode($primaryAffiliationCountryCode);
+        $expert->setGender($gender);
+        $expert->setApproved(false);
 
 
-        $expert = $this->setExpertWhat($expert, $cryosphereExistingWhat, $cryosphereNewWhat);
-        $expert = $this->setExpertWhatSpecefic($expert, $cryosphereExistingWhatSpecefic, $cryosphereNewWhatSpecefic);
-        $expert = $this->setExpertWhen($expert, $cryosphereExistingWhen, $cryosphereNewWhen);
-        $expert = $this->setExpertMethods($expert, $cryosphereExistingMethods, $cryosphereNewMethods);
+        $expert = $this->setExpertWhat($expert, $cryosphereExistingWhat);
+        $expert = $this->setExpertWhatSpecefic($expert, $cryosphereExistingWhatSpecefic);
+        $expert = $this->setExpertWhen($expert, $cryosphereExistingWhen);
+        $expert = $this->setExpertMethods($expert, $cryosphereExistingMethods);
         $expert = $this->setExpertWhere($expert, $cryosphereExistingWhere);
         $expert = $this->setExpertCareerStage($expert, $careerStage);
-        $expert = $this->setExpertFieldWork($expert, $fieldWorkLocation, $fieldWorkDate);
         $expert = $this->setExpertAffiliations($expert, $primaryAffiliationName, $primaryAffiliationCountryCode, $primaryAffiliationCity, $secondryAffiliations);
         $expert = $this->setExpertContact($expert, $phoneNumber, $website, $linkedIn, $googleScholar);
+        $expet = $this->setExpertLanguages($expert, $languageCodes);
 
         $expert->save();
 
@@ -158,7 +150,7 @@ class ExpertsController extends Controller {
                     'expert' => $expert->toArray(),
                     'token' => md5($expert->getEmail() . $expert->getBirthYear()),
                         ]
-                ), 'text/html'
+                )->getBody(), 'text/html'
         );
 
         $this->mailer->send($approvalMsg);
@@ -206,7 +198,7 @@ class ExpertsController extends Controller {
             $technicalAdminEmail = $this->container->get('settings')['contacts']['technical_admin'];
             $response->getBody()->write("Something went wrong! Please contact the technical admin at: " . $technicalAdminEmail);
             $response->withStatus(400);
-            
+
             return $response;
         }
 
@@ -216,16 +208,12 @@ class ExpertsController extends Controller {
                         $response, 'expert-approval.html.twig', [
                     'expert' => $expert->toArray(),
                     'expert_what' => $expert->getExpertCryosphereWhatsJoinCryosphereWhat()->toArray(),
-                    'all_cryosphere_what' => CryosphereWhatQuery::create()->filterByApproved(true)->find()->toArray(),
                     'expert_what_specefic' => $expert->getExpertCryosphereWhatSpeceficsJoinCryosphereWhatSpecefic()->toArray(),
-                    'all_cryosphere_what_specefic' => CryosphereWhatSpeceficQuery::create()->filterByApproved(true)->find()->toArray(),
                     'expert_when' => $expert->getExpertCryosphereWhensJoinCryosphereWhen()->toArray(),
-                    'all_cryosphere_when' => CryosphereWhenQuery::create()->filterByApproved(true)->find()->toArray(),
                     'expert_methods' => $expert->getExpertCryosphereMethodssJoinCryosphereMethods()->toArray(),
-                    'all_cryosphere_methods' => CryosphereMethodsQuery::create()->filterByApproved(true)->find()->toArray(),
                     'expert_where' => $expert->getExpertCryosphereWheresJoinCryosphereWhere()->toArray(),
                     'expert_career_stages' => $expert->getExpertCareerStagesJoinCareerStage()->toArray(),
-                    'expert_field_work' => $expert->getExpertFieldWorks()->toArray(),
+                    'expert_languages' => $expert->getLanguagess()->toArray(),
                     'expert_primary_affiliation' => $expert->getExpertPrimaryAffiliation()->toArray(),
                     'expert_secondary_affiliation' => $expert->getExpertSecondaryAffiliations()->toArray(),
                     'expert_contacts' => $expert->getExpertContactsJoinContactTypes()->toArray(),
@@ -254,8 +242,8 @@ class ExpertsController extends Controller {
                     ->addError('Empty or wronge expert id recieved for expert approval: ' . json_encode($data));
             $technicalAdminEmail = $this->container->get('settings')['contacts']['technical_admin'];
             $response->getBody()->write("Something went wrong! Please contact us at: " . $technicalAdminEmail);
-            
-            
+
+
             return $response->withStatus(400);
         }
 
@@ -271,7 +259,7 @@ class ExpertsController extends Controller {
                 $this->view->render(new \Slim\Http\Response(), 'emails/experts-welcome-email.html.twig', [
                     'expert_name' => $expert->getFirstName() . " " . $expert->getLastName(),
                         ]
-                ), 'text/html'
+                )->getBody(), 'text/html'
         );
 
         $this->mailer->send($emailMsg);
@@ -300,20 +288,16 @@ class ExpertsController extends Controller {
                     ->addError('Empty or wronge expert id recieved for expert approval: ' . json_encode($data));
             $technicalAdminEmail = $this->container->get('settings')['contacts']['technical_admin'];
             $response->getBody()->write("Something went wrong! Please contact us at: " . $technicalAdminEmail);
-            
+
             return $response->withStatus(400);
         }
 
 
         $this->container->get('logger')
                 ->addInfo('A expert is being deleted. ExpertEmail: ' . $expert->getEmail() . ' With explanation: ' . $explanation);
-        
-        CryosphereMethodsQuery::create()->filterByExperts($expert)->findByApproved(false)->delete();
-        CryosphereWhenQuery::create()->filterByExperts($expert)->findByApproved(false)->delete();
-        CryosphereWhatQuery::create()->filterByExperts($expert)->findByApproved(false)->delete();
-        CryosphereWhatSpeceficQuery::create()->filterByExperts($expert)->findByApproved(false)->delete();
+
         $expert->delete();
-        
+
         $emailMsg = (new \Swift_Message('Sorry Cryoconnect could not approve your request'))
                 ->setFrom([$this->container->get('settings')['mailer']['username'] => 'No-reply'])
                 ->setTo($expert->getEmail())
@@ -322,7 +306,7 @@ class ExpertsController extends Controller {
                     'expert_name' => $expert->getFirstName() . " " . $expert->getLastName(),
                     'explanation' => $explanation
                         ]
-                ), 'text/html'
+                )->getBody(), 'text/html'
         );
 
         $this->mailer->send($emailMsg);
@@ -334,26 +318,14 @@ class ExpertsController extends Controller {
      * 
      * @param Experts $expert
      * @param array $cryosphereExistingWhat
-     * @param array $cryosphereNewWhat
      * @return Experts
      */
-    private function setExpertWhat(Experts $expert, $cryosphereExistingWhat, $cryosphereNewWhat) {
+    private function setExpertWhat(Experts $expert, $cryosphereExistingWhat) {
         //Adding experts Crysphere whats
         if (!empty($cryosphereExistingWhat)) {
             foreach ($cryosphereExistingWhat as $cryosphereWhatID) {
                 $expertCryosphereWhat = new ExpertCryosphereWhat();
                 $expertCryosphereWhat->setCryosphereWhatId($cryosphereWhatID);
-                $expert->addExpertCryosphereWhat($expertCryosphereWhat);
-            }
-        }
-
-        //Adding new expert whats fed into the expert
-        if (!empty($cryosphereNewWhat)) {
-            foreach ($cryosphereNewWhat as $cryosphereWhatName) {
-                $cryosphereWhat = new CryosphereWhat();
-                $cryosphereWhat->setCryosphereWhatName($cryosphereWhatName);
-                $expertCryosphereWhat = new ExpertCryosphereWhat();
-                $expertCryosphereWhat->setCryosphereWhat($cryosphereWhat);
                 $expert->addExpertCryosphereWhat($expertCryosphereWhat);
             }
         }
@@ -365,26 +337,14 @@ class ExpertsController extends Controller {
      * 
      * @param Experts $expert
      * @param array $cryosphereExistingWhatSpecefic
-     * @param array $cryosphereNewWhatSpecefic
      * @return Experts
      */
-    private function setExpertWhatSpecefic(Experts $expert, $cryosphereExistingWhatSpecefic, $cryosphereNewWhatSpecefic) {
+    private function setExpertWhatSpecefic(Experts $expert, $cryosphereExistingWhatSpecefic) {
         //Adding experts Crysphere what specefics
         if (!empty($cryosphereExistingWhatSpecefic)) {
             foreach ($cryosphereExistingWhatSpecefic as $cryosphereWhatSpeceficID) {
                 $expertCryosphereWhatSpecefic = new ExpertCryosphereWhatSpecefic();
                 $expertCryosphereWhatSpecefic->setCryosphereWhatSpeceficId($cryosphereWhatSpeceficID);
-                $expert->addExpertCryosphereWhatSpecefic($expertCryosphereWhatSpecefic);
-            }
-        }
-
-        //Adding new expert what specefics fed into the expert
-        if (!empty($cryosphereNewWhatSpecefic)) {
-            foreach ($cryosphereNewWhatSpecefic as $cryosphereWhatSpeceficName) {
-                $cryosphereWhatSpecefic = new CryosphereWhatSpecefic();
-                $cryosphereWhatSpecefic->setCryosphereWhatSpeceficName($cryosphereWhatSpeceficName);
-                $expertCryosphereWhatSpecefic = new ExpertCryosphereWhatSpecefic();
-                $expertCryosphereWhatSpecefic->setCryosphereWhatSpecefic($cryosphereWhatSpecefic);
                 $expert->addExpertCryosphereWhatSpecefic($expertCryosphereWhatSpecefic);
             }
         }
@@ -396,26 +356,14 @@ class ExpertsController extends Controller {
      * 
      * @param Experts $expert
      * @param array $cryosphereExistingWhen
-     * @param array $cryosphereNewWhen
      * @return Experts
      */
-    private function setExpertWhen(Experts $expert, $cryosphereExistingWhen, $cryosphereNewWhen) {
+    private function setExpertWhen(Experts $expert, $cryosphereExistingWhen) {
         //Adding experts Crysphere whens
         if (!empty($cryosphereExistingWhen)) {
             foreach ($cryosphereExistingWhen as $cryosphereWhenID) {
                 $expertCryosphereWhen = new ExpertCryosphereWhen();
                 $expertCryosphereWhen->setCryosphereWhenId($cryosphereWhenID);
-                $expert->addExpertCryosphereWhen($expertCryosphereWhen);
-            }
-        }
-
-        //Adding new expert whens fed into the expert
-        if (!empty($cryosphereNewWhen)) {
-            foreach ($cryosphereNewWhen as $cryosphereWhenName) {
-                $cryosphereWhen = new CryosphereWhen();
-                $cryosphereWhen->setCryosphereWhenName($cryosphereWhenName);
-                $expertCryosphereWhen = new ExpertCryosphereWhen();
-                $expertCryosphereWhen->setCryosphereWhen($cryosphereWhen);
                 $expert->addExpertCryosphereWhen($expertCryosphereWhen);
             }
         }
@@ -427,26 +375,14 @@ class ExpertsController extends Controller {
      * 
      * @param Experts $expert
      * @param array $cryosphereExistingMethods
-     * @param array $cryosphereNewMethods
      * @return Experts
      */
-    private function setExpertMethods(Experts $expert, $cryosphereExistingMethods, $cryosphereNewMethods) {
+    private function setExpertMethods(Experts $expert, $cryosphereExistingMethods) {
         //Adding experts Crysphere methods
         if (!empty($cryosphereExistingMethods)) {
             foreach ($cryosphereExistingMethods as $cryosphereMethodsID) {
                 $expertCryosphereMethods = new ExpertCryosphereMethods();
                 $expertCryosphereMethods->setMethodId($cryosphereMethodsID);
-                $expert->addExpertCryosphereMethods($expertCryosphereMethods);
-            }
-        }
-
-        //Adding new expert methods fed into the expert
-        if (!empty($cryosphereNewMethods)) {
-            foreach ($cryosphereNewMethods as $cryosphereMethodsName) {
-                $cryosphereMethods = new CryosphereMethods();
-                $cryosphereMethods->setCryosphereMethodsName($cryosphereMethodsName);
-                $expertCryosphereMethods = new ExpertCryosphereMethods();
-                $expertCryosphereMethods->setCryosphereMethods($cryosphereMethods);
                 $expert->addExpertCryosphereMethods($expertCryosphereMethods);
             }
         }
@@ -495,23 +431,23 @@ class ExpertsController extends Controller {
      * @param string $fieldWorkDate
      * @return Experts
      */
-    private function setExpertFieldWork(Experts $expert, string $fieldWorkLocation, string $fieldWorkDate) {
-        //Adding experts Crysphere wheres
-        $expertFieldWork = new ExpertFieldWork();
-
-        if (!empty($fieldWorkLocation)) {
-            $expertFieldWork->setFieldWorkWhere($fieldWorkLocation);
-        }
-
-        if (($timestamp = strtotime($fieldWorkDate)) !== false) {
-            $expertFieldWork->setFieldWorkYear(date("Y", $timestamp));
-            $expertFieldWork->setFieldWorkMonth(date("m", $timestamp));
-        }
-
-        $expert->addExpertFieldWork($expertFieldWork);
-
-        return $expert;
-    }
+//    private function setExpertFieldWork(Experts $expert, string $fieldWorkLocation, string $fieldWorkDate) {
+//        //Adding experts Crysphere wheres
+//        $expertFieldWork = new ExpertFieldWork();
+//
+//        if (!empty($fieldWorkLocation)) {
+//            $expertFieldWork->setFieldWorkWhere($fieldWorkLocation);
+//        }
+//
+//        if (($timestamp = strtotime($fieldWorkDate)) !== false) {
+//            $expertFieldWork->setFieldWorkYear(date("Y", $timestamp));
+//            $expertFieldWork->setFieldWorkMonth(date("m", $timestamp));
+//        }
+//
+//        $expert->addExpertFieldWork($expertFieldWork);
+//
+//        return $expert;
+//    }
 
     /**
      * 
@@ -539,6 +475,23 @@ class ExpertsController extends Controller {
         }
 
         $expert->setExpertPrimaryAffiliation($expertPrimaryAffiliation);
+
+        return $expert;
+    }
+
+    /**
+     * 
+     * @param Experts $expert
+     * @param array $languageCodes
+     * @return Experts
+     */
+    private function setExpertLanguages(Experts $expert, $languageCodes) {
+        //Adding new expert methods fed into the expert
+
+        foreach ($languageCodes as $languageCode) {
+            $language = LanguagesQuery::create()->findOneByLanguageCode($languageCode);
+            $expert->addLanguages($language);
+        }
 
         return $expert;
     }

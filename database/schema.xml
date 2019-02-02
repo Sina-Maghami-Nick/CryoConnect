@@ -163,6 +163,7 @@
         <column name="id" phpName="Id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
         <column name="first_name" phpName="FirstName" type="LONGVARCHAR" required="true"/>
         <column name="last_name" phpName="LastName" type="LONGVARCHAR" required="true"/>
+        <column name="gender" phpName="Gender" type="VARCHAR" size="1" required="true"/>
         <column name="email" phpName="Email" type="LONGVARCHAR" required="true"/>
         <column name="birth_year" phpName="BirthYear" type="INTEGER" size="4" required="true"/>
         <column name="country_code" phpName="CountryCode" type="VARCHAR" size="2" required="true"/>

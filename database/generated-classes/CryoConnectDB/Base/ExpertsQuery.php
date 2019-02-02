@@ -23,6 +23,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildExpertsQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildExpertsQuery orderByFirstName($order = Criteria::ASC) Order by the first_name column
  * @method     ChildExpertsQuery orderByLastName($order = Criteria::ASC) Order by the last_name column
+ * @method     ChildExpertsQuery orderByGender($order = Criteria::ASC) Order by the gender column
  * @method     ChildExpertsQuery orderByEmail($order = Criteria::ASC) Order by the email column
  * @method     ChildExpertsQuery orderByBirthYear($order = Criteria::ASC) Order by the birth_year column
  * @method     ChildExpertsQuery orderByCountryCode($order = Criteria::ASC) Order by the country_code column
@@ -32,6 +33,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildExpertsQuery groupById() Group by the id column
  * @method     ChildExpertsQuery groupByFirstName() Group by the first_name column
  * @method     ChildExpertsQuery groupByLastName() Group by the last_name column
+ * @method     ChildExpertsQuery groupByGender() Group by the gender column
  * @method     ChildExpertsQuery groupByEmail() Group by the email column
  * @method     ChildExpertsQuery groupByBirthYear() Group by the birth_year column
  * @method     ChildExpertsQuery groupByCountryCode() Group by the country_code column
@@ -174,6 +176,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildExperts findOneById(int $id) Return the first ChildExperts filtered by the id column
  * @method     ChildExperts findOneByFirstName(string $first_name) Return the first ChildExperts filtered by the first_name column
  * @method     ChildExperts findOneByLastName(string $last_name) Return the first ChildExperts filtered by the last_name column
+ * @method     ChildExperts findOneByGender(string $gender) Return the first ChildExperts filtered by the gender column
  * @method     ChildExperts findOneByEmail(string $email) Return the first ChildExperts filtered by the email column
  * @method     ChildExperts findOneByBirthYear(int $birth_year) Return the first ChildExperts filtered by the birth_year column
  * @method     ChildExperts findOneByCountryCode(string $country_code) Return the first ChildExperts filtered by the country_code column
@@ -186,6 +189,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildExperts requireOneById(int $id) Return the first ChildExperts filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildExperts requireOneByFirstName(string $first_name) Return the first ChildExperts filtered by the first_name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildExperts requireOneByLastName(string $last_name) Return the first ChildExperts filtered by the last_name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildExperts requireOneByGender(string $gender) Return the first ChildExperts filtered by the gender column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildExperts requireOneByEmail(string $email) Return the first ChildExperts filtered by the email column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildExperts requireOneByBirthYear(int $birth_year) Return the first ChildExperts filtered by the birth_year column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildExperts requireOneByCountryCode(string $country_code) Return the first ChildExperts filtered by the country_code column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -196,6 +200,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildExperts[]|ObjectCollection findById(int $id) Return ChildExperts objects filtered by the id column
  * @method     ChildExperts[]|ObjectCollection findByFirstName(string $first_name) Return ChildExperts objects filtered by the first_name column
  * @method     ChildExperts[]|ObjectCollection findByLastName(string $last_name) Return ChildExperts objects filtered by the last_name column
+ * @method     ChildExperts[]|ObjectCollection findByGender(string $gender) Return ChildExperts objects filtered by the gender column
  * @method     ChildExperts[]|ObjectCollection findByEmail(string $email) Return ChildExperts objects filtered by the email column
  * @method     ChildExperts[]|ObjectCollection findByBirthYear(int $birth_year) Return ChildExperts objects filtered by the birth_year column
  * @method     ChildExperts[]|ObjectCollection findByCountryCode(string $country_code) Return ChildExperts objects filtered by the country_code column
@@ -299,7 +304,7 @@ abstract class ExpertsQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, first_name, last_name, email, birth_year, country_code, approved, created_at FROM experts WHERE id = :p0';
+        $sql = 'SELECT id, first_name, last_name, gender, email, birth_year, country_code, approved, created_at FROM experts WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -478,6 +483,31 @@ abstract class ExpertsQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(ExpertsTableMap::COL_LAST_NAME, $lastName, $comparison);
+    }
+
+    /**
+     * Filter the query on the gender column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByGender('fooValue');   // WHERE gender = 'fooValue'
+     * $query->filterByGender('%fooValue%', Criteria::LIKE); // WHERE gender LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $gender The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildExpertsQuery The current query, for fluid interface
+     */
+    public function filterByGender($gender = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($gender)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(ExpertsTableMap::COL_GENDER, $gender, $comparison);
     }
 
     /**

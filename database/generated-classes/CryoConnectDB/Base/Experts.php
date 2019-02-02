@@ -135,6 +135,13 @@ abstract class Experts implements ActiveRecordInterface
     protected $last_name;
 
     /**
+     * The value for the gender field.
+     *
+     * @var        string
+     */
+    protected $gender;
+
+    /**
      * The value for the email field.
      *
      * @var        string
@@ -706,6 +713,16 @@ abstract class Experts implements ActiveRecordInterface
     }
 
     /**
+     * Get the [gender] column value.
+     *
+     * @return string
+     */
+    public function getGender()
+    {
+        return $this->gender;
+    }
+
+    /**
      * Get the [email] column value.
      *
      * @return string
@@ -834,6 +851,26 @@ abstract class Experts implements ActiveRecordInterface
 
         return $this;
     } // setLastName()
+
+    /**
+     * Set the value of [gender] column.
+     *
+     * @param string $v new value
+     * @return $this|\CryoConnectDB\Experts The current object (for fluent API support)
+     */
+    public function setGender($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->gender !== $v) {
+            $this->gender = $v;
+            $this->modifiedColumns[ExpertsTableMap::COL_GENDER] = true;
+        }
+
+        return $this;
+    } // setGender()
 
     /**
      * Set the value of [email] column.
@@ -996,19 +1033,22 @@ abstract class Experts implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ExpertsTableMap::translateFieldName('LastName', TableMap::TYPE_PHPNAME, $indexType)];
             $this->last_name = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ExpertsTableMap::translateFieldName('Email', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ExpertsTableMap::translateFieldName('Gender', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->gender = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ExpertsTableMap::translateFieldName('Email', TableMap::TYPE_PHPNAME, $indexType)];
             $this->email = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ExpertsTableMap::translateFieldName('BirthYear', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ExpertsTableMap::translateFieldName('BirthYear', TableMap::TYPE_PHPNAME, $indexType)];
             $this->birth_year = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ExpertsTableMap::translateFieldName('CountryCode', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : ExpertsTableMap::translateFieldName('CountryCode', TableMap::TYPE_PHPNAME, $indexType)];
             $this->country_code = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : ExpertsTableMap::translateFieldName('Approved', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : ExpertsTableMap::translateFieldName('Approved', TableMap::TYPE_PHPNAME, $indexType)];
             $this->approved = (null !== $col) ? (boolean) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : ExpertsTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : ExpertsTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
@@ -1021,7 +1061,7 @@ abstract class Experts implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 8; // 8 = ExpertsTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 9; // 9 = ExpertsTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\CryoConnectDB\\Experts'), 0, $e);
@@ -1685,6 +1725,9 @@ abstract class Experts implements ActiveRecordInterface
         if ($this->isColumnModified(ExpertsTableMap::COL_LAST_NAME)) {
             $modifiedColumns[':p' . $index++]  = 'last_name';
         }
+        if ($this->isColumnModified(ExpertsTableMap::COL_GENDER)) {
+            $modifiedColumns[':p' . $index++]  = 'gender';
+        }
         if ($this->isColumnModified(ExpertsTableMap::COL_EMAIL)) {
             $modifiedColumns[':p' . $index++]  = 'email';
         }
@@ -1719,6 +1762,9 @@ abstract class Experts implements ActiveRecordInterface
                         break;
                     case 'last_name':
                         $stmt->bindValue($identifier, $this->last_name, PDO::PARAM_STR);
+                        break;
+                    case 'gender':
+                        $stmt->bindValue($identifier, $this->gender, PDO::PARAM_STR);
                         break;
                     case 'email':
                         $stmt->bindValue($identifier, $this->email, PDO::PARAM_STR);
@@ -1807,18 +1853,21 @@ abstract class Experts implements ActiveRecordInterface
                 return $this->getLastName();
                 break;
             case 3:
-                return $this->getEmail();
+                return $this->getGender();
                 break;
             case 4:
-                return $this->getBirthYear();
+                return $this->getEmail();
                 break;
             case 5:
-                return $this->getCountryCode();
+                return $this->getBirthYear();
                 break;
             case 6:
-                return $this->getApproved();
+                return $this->getCountryCode();
                 break;
             case 7:
+                return $this->getApproved();
+                break;
+            case 8:
                 return $this->getCreatedAt();
                 break;
             default:
@@ -1854,14 +1903,15 @@ abstract class Experts implements ActiveRecordInterface
             $keys[0] => $this->getId(),
             $keys[1] => $this->getFirstName(),
             $keys[2] => $this->getLastName(),
-            $keys[3] => $this->getEmail(),
-            $keys[4] => $this->getBirthYear(),
-            $keys[5] => $this->getCountryCode(),
-            $keys[6] => $this->getApproved(),
-            $keys[7] => $this->getCreatedAt(),
+            $keys[3] => $this->getGender(),
+            $keys[4] => $this->getEmail(),
+            $keys[5] => $this->getBirthYear(),
+            $keys[6] => $this->getCountryCode(),
+            $keys[7] => $this->getApproved(),
+            $keys[8] => $this->getCreatedAt(),
         );
-        if ($result[$keys[7]] instanceof \DateTimeInterface) {
-            $result[$keys[7]] = $result[$keys[7]]->format('c');
+        if ($result[$keys[8]] instanceof \DateTimeInterface) {
+            $result[$keys[8]] = $result[$keys[8]]->format('c');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -2094,18 +2144,21 @@ abstract class Experts implements ActiveRecordInterface
                 $this->setLastName($value);
                 break;
             case 3:
-                $this->setEmail($value);
+                $this->setGender($value);
                 break;
             case 4:
-                $this->setBirthYear($value);
+                $this->setEmail($value);
                 break;
             case 5:
-                $this->setCountryCode($value);
+                $this->setBirthYear($value);
                 break;
             case 6:
-                $this->setApproved($value);
+                $this->setCountryCode($value);
                 break;
             case 7:
+                $this->setApproved($value);
+                break;
+            case 8:
                 $this->setCreatedAt($value);
                 break;
         } // switch()
@@ -2144,19 +2197,22 @@ abstract class Experts implements ActiveRecordInterface
             $this->setLastName($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setEmail($arr[$keys[3]]);
+            $this->setGender($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setBirthYear($arr[$keys[4]]);
+            $this->setEmail($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
-            $this->setCountryCode($arr[$keys[5]]);
+            $this->setBirthYear($arr[$keys[5]]);
         }
         if (array_key_exists($keys[6], $arr)) {
-            $this->setApproved($arr[$keys[6]]);
+            $this->setCountryCode($arr[$keys[6]]);
         }
         if (array_key_exists($keys[7], $arr)) {
-            $this->setCreatedAt($arr[$keys[7]]);
+            $this->setApproved($arr[$keys[7]]);
+        }
+        if (array_key_exists($keys[8], $arr)) {
+            $this->setCreatedAt($arr[$keys[8]]);
         }
     }
 
@@ -2207,6 +2263,9 @@ abstract class Experts implements ActiveRecordInterface
         }
         if ($this->isColumnModified(ExpertsTableMap::COL_LAST_NAME)) {
             $criteria->add(ExpertsTableMap::COL_LAST_NAME, $this->last_name);
+        }
+        if ($this->isColumnModified(ExpertsTableMap::COL_GENDER)) {
+            $criteria->add(ExpertsTableMap::COL_GENDER, $this->gender);
         }
         if ($this->isColumnModified(ExpertsTableMap::COL_EMAIL)) {
             $criteria->add(ExpertsTableMap::COL_EMAIL, $this->email);
@@ -2311,6 +2370,7 @@ abstract class Experts implements ActiveRecordInterface
     {
         $copyObj->setFirstName($this->getFirstName());
         $copyObj->setLastName($this->getLastName());
+        $copyObj->setGender($this->getGender());
         $copyObj->setEmail($this->getEmail());
         $copyObj->setBirthYear($this->getBirthYear());
         $copyObj->setCountryCode($this->getCountryCode());
@@ -6991,6 +7051,7 @@ abstract class Experts implements ActiveRecordInterface
         $this->id = null;
         $this->first_name = null;
         $this->last_name = null;
+        $this->gender = null;
         $this->email = null;
         $this->birth_year = null;
         $this->country_code = null;

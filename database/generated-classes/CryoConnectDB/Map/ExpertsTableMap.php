@@ -59,7 +59,7 @@ class ExpertsTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 8;
+    const NUM_COLUMNS = 9;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class ExpertsTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 8;
+    const NUM_HYDRATE_COLUMNS = 9;
 
     /**
      * the column name for the id field
@@ -85,6 +85,11 @@ class ExpertsTableMap extends TableMap
      * the column name for the last_name field
      */
     const COL_LAST_NAME = 'experts.last_name';
+
+    /**
+     * the column name for the gender field
+     */
+    const COL_GENDER = 'experts.gender';
 
     /**
      * the column name for the email field
@@ -123,11 +128,11 @@ class ExpertsTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'FirstName', 'LastName', 'Email', 'BirthYear', 'CountryCode', 'Approved', 'CreatedAt', ),
-        self::TYPE_CAMELNAME     => array('id', 'firstName', 'lastName', 'email', 'birthYear', 'countryCode', 'approved', 'createdAt', ),
-        self::TYPE_COLNAME       => array(ExpertsTableMap::COL_ID, ExpertsTableMap::COL_FIRST_NAME, ExpertsTableMap::COL_LAST_NAME, ExpertsTableMap::COL_EMAIL, ExpertsTableMap::COL_BIRTH_YEAR, ExpertsTableMap::COL_COUNTRY_CODE, ExpertsTableMap::COL_APPROVED, ExpertsTableMap::COL_CREATED_AT, ),
-        self::TYPE_FIELDNAME     => array('id', 'first_name', 'last_name', 'email', 'birth_year', 'country_code', 'approved', 'created_at', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
+        self::TYPE_PHPNAME       => array('Id', 'FirstName', 'LastName', 'Gender', 'Email', 'BirthYear', 'CountryCode', 'Approved', 'CreatedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'firstName', 'lastName', 'gender', 'email', 'birthYear', 'countryCode', 'approved', 'createdAt', ),
+        self::TYPE_COLNAME       => array(ExpertsTableMap::COL_ID, ExpertsTableMap::COL_FIRST_NAME, ExpertsTableMap::COL_LAST_NAME, ExpertsTableMap::COL_GENDER, ExpertsTableMap::COL_EMAIL, ExpertsTableMap::COL_BIRTH_YEAR, ExpertsTableMap::COL_COUNTRY_CODE, ExpertsTableMap::COL_APPROVED, ExpertsTableMap::COL_CREATED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'first_name', 'last_name', 'gender', 'email', 'birth_year', 'country_code', 'approved', 'created_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, )
     );
 
     /**
@@ -137,11 +142,11 @@ class ExpertsTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'FirstName' => 1, 'LastName' => 2, 'Email' => 3, 'BirthYear' => 4, 'CountryCode' => 5, 'Approved' => 6, 'CreatedAt' => 7, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'firstName' => 1, 'lastName' => 2, 'email' => 3, 'birthYear' => 4, 'countryCode' => 5, 'approved' => 6, 'createdAt' => 7, ),
-        self::TYPE_COLNAME       => array(ExpertsTableMap::COL_ID => 0, ExpertsTableMap::COL_FIRST_NAME => 1, ExpertsTableMap::COL_LAST_NAME => 2, ExpertsTableMap::COL_EMAIL => 3, ExpertsTableMap::COL_BIRTH_YEAR => 4, ExpertsTableMap::COL_COUNTRY_CODE => 5, ExpertsTableMap::COL_APPROVED => 6, ExpertsTableMap::COL_CREATED_AT => 7, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'first_name' => 1, 'last_name' => 2, 'email' => 3, 'birth_year' => 4, 'country_code' => 5, 'approved' => 6, 'created_at' => 7, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'FirstName' => 1, 'LastName' => 2, 'Gender' => 3, 'Email' => 4, 'BirthYear' => 5, 'CountryCode' => 6, 'Approved' => 7, 'CreatedAt' => 8, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'firstName' => 1, 'lastName' => 2, 'gender' => 3, 'email' => 4, 'birthYear' => 5, 'countryCode' => 6, 'approved' => 7, 'createdAt' => 8, ),
+        self::TYPE_COLNAME       => array(ExpertsTableMap::COL_ID => 0, ExpertsTableMap::COL_FIRST_NAME => 1, ExpertsTableMap::COL_LAST_NAME => 2, ExpertsTableMap::COL_GENDER => 3, ExpertsTableMap::COL_EMAIL => 4, ExpertsTableMap::COL_BIRTH_YEAR => 5, ExpertsTableMap::COL_COUNTRY_CODE => 6, ExpertsTableMap::COL_APPROVED => 7, ExpertsTableMap::COL_CREATED_AT => 8, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'first_name' => 1, 'last_name' => 2, 'gender' => 3, 'email' => 4, 'birth_year' => 5, 'country_code' => 6, 'approved' => 7, 'created_at' => 8, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, )
     );
 
     /**
@@ -164,6 +169,7 @@ class ExpertsTableMap extends TableMap
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, 10, null);
         $this->addColumn('first_name', 'FirstName', 'LONGVARCHAR', true, null, null);
         $this->addColumn('last_name', 'LastName', 'LONGVARCHAR', true, null, null);
+        $this->addColumn('gender', 'Gender', 'VARCHAR', true, 1, null);
         $this->addColumn('email', 'Email', 'LONGVARCHAR', true, null, null);
         $this->addColumn('birth_year', 'BirthYear', 'INTEGER', true, 4, null);
         $this->addForeignKey('country_code', 'CountryCode', 'VARCHAR', 'countries', 'country_code', true, 2, null);
@@ -433,6 +439,7 @@ class ExpertsTableMap extends TableMap
             $criteria->addSelectColumn(ExpertsTableMap::COL_ID);
             $criteria->addSelectColumn(ExpertsTableMap::COL_FIRST_NAME);
             $criteria->addSelectColumn(ExpertsTableMap::COL_LAST_NAME);
+            $criteria->addSelectColumn(ExpertsTableMap::COL_GENDER);
             $criteria->addSelectColumn(ExpertsTableMap::COL_EMAIL);
             $criteria->addSelectColumn(ExpertsTableMap::COL_BIRTH_YEAR);
             $criteria->addSelectColumn(ExpertsTableMap::COL_COUNTRY_CODE);
@@ -442,6 +449,7 @@ class ExpertsTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.first_name');
             $criteria->addSelectColumn($alias . '.last_name');
+            $criteria->addSelectColumn($alias . '.gender');
             $criteria->addSelectColumn($alias . '.email');
             $criteria->addSelectColumn($alias . '.birth_year');
             $criteria->addSelectColumn($alias . '.country_code');

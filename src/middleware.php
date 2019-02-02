@@ -26,9 +26,3 @@ $app->add(new TokenAuthentication([
     'parameter' => 't',
     'header' => 'Token-Authorization-X'
 ]));
-
-$app->add(new TokenAuthentication([
-    'path' => '/api/',
-    'authenticator' => $authenticator,
-    'header' => 'Token-Authorization-X'
-]));

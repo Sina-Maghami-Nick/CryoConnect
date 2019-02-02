@@ -370,6 +370,7 @@ CREATE TABLE `experts`
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `first_name` TEXT NOT NULL,
     `last_name` TEXT NOT NULL,
+    `gender` VARCHAR(1) NOT NULL,
     `email` TEXT NOT NULL,
     `birth_year` INTEGER(4) NOT NULL,
     `country_code` VARCHAR(2) NOT NULL,

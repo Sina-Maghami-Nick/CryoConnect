@@ -2,38 +2,21 @@
 <html>
     <head>
         <title>Experts Sign-up</title>
-        <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/grids-responsive-min.css">
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-
-
-        <style>
-            .pure-form-aligned .pure-control-group label {
-                text-align: right;
-                display: inline-block;
-                vertical-align: middle;
-                width: 20em;
-                margin: 0 1em 0 0;
-            }
-
-            .success-button {
-                background: rgb(28, 184, 65);
-                color: white;
-                border-radius: 0px;
-            }
-
-
-
-        </style>
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     </head>
+
     <body>
-        <div id="formpage" style="text-align:centre">
-            <form class="pure-form pure-form-aligned" id="expertform" action={{path_for('expert_signup')}} method="post">
-                <fieldset>
-                    <div class="pure-control-group">
+        
+            <form id="expertform" action={{path_for('expert_signup')}} method="post">
+                
+                    <div class="form-group">
                         <label for="cryosphere_what">Which parts of the cryosphere are you comfortable answering questions about?* </label>
-                        <div class="pure-u" id="cryosphere_what">
+                        <div id="cryosphere_what">
                             {% for cryosphere_what in _context.cryosphere_what %}
 
                                 <input name="cryosphere_what[{{cryosphere_what.CryosphereWhatName}}]" class="cryosphere_what" type="checkbox" value="{{cryosphere_what.Id}}" required>{{cryosphere_what.CryosphereWhatName}}</input>
@@ -42,9 +25,9 @@
                         </div>
                     </div>
 
-                    <div class="pure-control-group">
-                        <label for="cryosphere_where">In which general region(s) have you studied the cryosphere?<font color="red">*</font></label>
-                        <div class="pure-u" id="cryosphere_where">
+                    <div class="form-group">
+                        <label for="cryosphere_where">In which general region(s) have you studied the cryosphere?*</label>
+                        <div id="cryosphere_where">
                             {% for cryosphere_where in _context.cryosphere_where %}
                                 <input name="cryosphere_where[{{cryosphere_what.CryosphereWhereName}}]" type="checkbox" class="cryosphere_where" value="{{cryosphere_where.Id}}" required>{{cryosphere_where.CryosphereWhereName}}</input>
                                 <br>
@@ -52,9 +35,9 @@
                         </div>
                     </div>
 
-                    <div class="pure-control-group">
-                        <label for="cryosphere_what_specefic">Which processes & subdisciplines are you comfortable answering questions about?<font color="red">*</font></label>
-                        <div class="pure-u" id="cryosphere_what_specefic">
+                    <div class="form-group">
+                        <label for="cryosphere_what_specefic">Which processes & subdisciplines are you comfortable answering questions about?*</label>
+                        <div id="cryosphere_what_specefic">
                             {% for cryosphere_what_specefic in _context.cryosphere_what_specefic %}
                                 <input name="cryosphere_what_specefic[{{cryosphere_what_specefic.CryosphereWhatSpeceficName}}]" class="cryosphere_what_specefic" type="checkbox" value="{{cryosphere_what_specefic.Id}}" required>{{cryosphere_what_specefic.CryosphereWhatSpeceficName}}</input>
                                 <br>
@@ -62,9 +45,9 @@
                         </div>
                     </div>
 
-                    <div class="pure-control-group">
+                    <div class="form-group">
                         <label for="cryosphere_method">Which methods are you comfortable answering questions about?</label>
-                        <div class="pure-u" id="cryosphere_method">
+                        <div id="cryosphere_method">
                             {% for cryosphere_method in _context.cryosphere_methods %}
                                 <input name="cryosphere_method[{{cryosphere_method.CryosphereMethodsName}}]" type="checkbox" class="cryosphere_method" value="{{cryosphere_method.Id}}" required>{{cryosphere_method.CryosphereMethodsName}}</input>
                                 <br>
@@ -72,9 +55,9 @@
                         </div>
                     </div>
 
-                    <div class="pure-control-group">
-                        <label for="cryosphere_when">Which time periods are you comfortable answering questions about?<font color="red">*</font></label>
-                        <div class="pure-u" id="cryosphere_when">
+                    <div class="form-group">
+                        <label for="cryosphere_when">Which time periods are you comfortable answering questions about?*</label>
+                        <div id="cryosphere_when">
                             {% for cryosphere_when in _context.cryosphere_when %}
                                 <input name="cryosphere_when[{{cryosphere_when.CryosphereWhatName}}]" type="checkbox" class="cryosphere_when" value="{{cryosphere_when.Id}}" required>{{cryosphere_when.CryosphereWhenName}}</input>
                                 <br>
@@ -82,9 +65,9 @@
                         </div>
                     </div>
 
-                    <div class="pure-control-group">
-                        <label for="languages">Languages in which you are capable of answering scientific questions<font color="red">*</font></label>
-                        <div class="pure-u" id="languages">
+                    <div class="form-group">
+                        <label for="languages">Languages in which you are capable of answering scientific questions*</label>
+                        <div id="languages">
                             <select name="languages[1]" style="width: 13em" required>
                                 <option disabled selected value>Choose 1st language </option>
                                 {% for language in _context.languages %}
@@ -108,13 +91,13 @@
                         </div>
                     </div>
 
-                    <div class="pure-control-group">
-                        <label for="birtyear">When is your birth year?<font color="red">*</font></label>
+                    <div class="form-group">
+                        <label for="birtyear">When is your birth year?*</label>
                         <input name="birth_year" id="birtyear" type="number" placeholder="birt year" required>
                     </div>
 
-                    <div class="pure-control-group">
-                        <label for="careerstage">Career stage<font color="red">*</font></label>
+                    <div class="form-group">
+                        <label for="careerstage">Career stage*</label>
                         <select name="caree_stage" id="careerstage" required>
                             <option disabled selected value> Choose </option>
                             {% for career_stages in _context.career_stages %}
@@ -123,10 +106,10 @@
                         </select>
                     </div>
 
-                    <div class="pure-control-group">
-                        <label for="affiliation">Affiliations (name<font color="red">*</font>, country<font color="red">*</font>, city, secondry affliations) </label>
-                        <div class="pure-u">
-                            <input name="affiliation[primary][name]" id="affiliation" type="text" placeholder="name of primary affiliation" required>
+                    <div class="form-group">
+                        <label for="affiliation">Affiliations (name*, country*, city, secondry affliations) </label>
+                        <div>
+                            <input name="affiliation[primary][name]" id="affiliation" type="text" placeholder="primary affiliation" required>
                             <br>
                             <select name="affiliation[primary][country]" id="primaryaffiliationcountry" required>
                                 <option disabled selected value> Choose </option>
@@ -135,49 +118,49 @@
                                 {% endfor %}
                             </select>
                             <br>
-                            <input name="affiliation[primary][city]" id="primaryaffiliationcity" type="text" placeholder="city of primary affiliation">
+                            <input name="affiliation[primary][city]" id="primaryaffiliationcity" type="text" placeholder="City of primary affiliation">
                             <br>
                             <input name="affiliation[secondry][name]" id="secondryaffiliations" type="text" placeholder="other affiliation (seperated by comma)">
                         </div>
                     </div>
 
-                    <div class="pure-control-group">
-                        <label for="phonenumber">Phone number (incl. country code)<font color="red">*</font></label>
+                    <div class="form-group">
+                        <label for="phonenumber">Phone number (incl. country code)*</label>
                         <input name="phone_number" id="phonenumber" type="tel" placeholder="number with country code">
                     </div>
 
-                    <div class="pure-control-group">
+                    <div class="form-group">
                         <label for="personalwebsite">Personal Website</label>
                         <input name="personal_website" id="personalwebsite" type="url" placeholder="website">
                     </div>
 
-                    <div class="pure-control-group">
+                    <div class="form-group">
                         <label for="personallinkedin">Linkedin</label>
                         <input name="personal_linkedin" id="personallinkedin" type="url" placeholder="linkedin">
                     </div>
 
-                    <div class="pure-control-group">
+                    <div class="form-group">
                         <label for="personalgooglescholar">Google Scholar profile</label>
                         <input name="personal_google_scholar" id="personalgooglescholar" type="url" placeholder="google scholar">
                     </div>
 
-                    <div class="pure-control-group">
+                    <div class="form-group">
                         <label for="email">Email Address</label>
                         <input name="email" id="email" type="email" placeholder="Email Address" required>
                     </div>
 
-                    <div class="pure-control-group">
-                        <label for="firstName">First Name<font color="red">*</font></label>
+                    <div class="form-group">
+                        <label for="firstName">First Name*</label>
                         <input name="first_name" id="firstName" type="text" placeholder="First Name" required>
                     </div>
 
-                    <div class="pure-control-group">
-                        <label for="lastName">Last Name<font color="red">*</font></label>
+                    <div class="form-group">
+                        <label for="lastName">Last Name*</label>
                         <input name="last_name" id="lastName" type="text" placeholder="Last Name" required>
                     </div>
 
-                    <div class="pure-control-group">
-                        <label for="gender">Gender<font color="red">*</font></label>
+                    <div class="form-group">
+                        <label for="gender">Gender*</label>
                         <select name="gender" style="width: 13em" required>
                             <option disabled selected value>Choose</option>
                             <option value="F">female</option>
@@ -186,178 +169,25 @@
                         </select>
                     </div>
 
-                    <div class="pure-controls">
-                        <label for="cb" class="pure-checkbox">
+                    <div class="form-group">
+                        <label for="cb" class="checkbox">
                             <input id="cb" type="checkbox" required> I agree to the terms and conditions
                         </label>
 
                         <button type="submit" id="submitBtn" class="pure-button pure-button-primary">Sign up</button>
                     </div>
-                    <span class="pure-form-message-inline"><font color="red">*</font>required fields</span>
-                </fieldset>
+                    <span class="pure-form-message-inline">*required fields</span>
+               
             </form>
-        </div>
+        
 
 
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.0/js/modal.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.7/js/bootstrap-dialog.js"></script> 
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.7/css/bootstrap-dialog.css"> 
-        <style>
-            .modal-open {
-                overflow: hidden;
-            }
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 
-            body.modal-open,
-            .modal-open .navbar-fixed-top,
-            .modal-open .navbar-fixed-bottom {
-                margin-right: 15px;
-            }
-
-            .modal {
-                position: fixed;
-                top: 0;
-                right: 0;
-                bottom: 0;
-                left: 0;
-                z-index: 1040;
-                display: none;
-                overflow: auto;
-                overflow-y: scroll;
-            }
-
-            .modal.fade .modal-dialog {
-                -webkit-transform: translate(0, -25%);
-                -ms-transform: translate(0, -25%);
-                transform: translate(0, -25%);
-                -webkit-transition: -webkit-transform 0.3s ease-out;
-                -moz-transition: -moz-transform 0.3s ease-out;
-                -o-transition: -o-transform 0.3s ease-out;
-                transition: transform 0.3s ease-out;
-            }
-
-            .modal.in .modal-dialog {
-                -webkit-transform: translate(0, 0);
-                -ms-transform: translate(0, 0);
-                transform: translate(0, 0);
-            }
-
-            .modal-dialog {
-                z-index: 1050;
-                width: auto;
-                padding: 10px;
-                margin-right: auto;
-                margin-left: auto;
-            }
-
-            .modal-content {
-                position: relative;
-                background-color: #ffffff;
-                border: 1px solid #999999;
-                border: 1px solid rgba(0, 0, 0, 0.2);
-                border-radius: 6px;
-                outline: none;
-                -webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
-                box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
-                background-clip: padding-box;
-            }
-
-            .modal-backdrop {
-                position: fixed;
-                top: 0;
-                right: 0;
-                bottom: 0;
-                left: 0;
-                z-index: 1030;
-                background-color: #000000;
-            }
-
-            .modal-backdrop.fade {
-                opacity: 0;
-                filter: alpha(opacity=0);
-            }
-
-            .modal-backdrop.in {
-                opacity: 0.5;
-                filter: alpha(opacity=50);
-            }
-
-            .modal-header {
-                min-height: 16.428571429px;
-                padding: 15px;
-                border-bottom: 1px solid #e5e5e5;
-            }
-
-            .modal-header .close {
-                margin-top: -2px;
-            }
-
-            .modal-title {
-                margin: 0;
-                line-height: 1.428571429;
-            }
-
-            .modal-body {
-                position: relative;
-                padding: 20px;
-            }
-
-            .modal-footer {
-                padding: 19px 20px 20px;
-                margin-top: 15px;
-                text-align: right;
-                border-top: 1px solid #e5e5e5;
-            }
-
-            .modal-footer:before,
-            .modal-footer:after {
-                display: table;
-                content: " ";
-            }
-
-            .modal-footer:after {
-                clear: both;
-            }
-
-            .modal-footer:before,
-            .modal-footer:after {
-                display: table;
-                content: " ";
-            }
-
-            .modal-footer:after {
-                clear: both;
-            }
-
-            .modal-footer .btn + .btn {
-                margin-bottom: 0;
-                margin-left: 5px;
-            }
-
-            .modal-footer .btn-group .btn + .btn {
-                margin-left: -1px;
-            }
-
-            .modal-footer .btn-block + .btn-block {
-                margin-left: 0;
-            }
-
-            @media screen and (min-width: 768px) {
-                .modal-dialog {
-                    right: auto;
-                    left: 50%;
-                    width: 600px;
-                    padding-top: 30px;
-                    padding-bottom: 30px;
-                }
-                .modal-content {
-                    -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-                    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-                }
-            }
-
-
-        </style>
         <script>
             $(document).ready(function () {
                 $('#email').change(function () {

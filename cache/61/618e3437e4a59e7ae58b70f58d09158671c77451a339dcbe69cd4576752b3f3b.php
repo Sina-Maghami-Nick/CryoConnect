@@ -57,35 +57,17 @@ class __TwigTemplate_104cff0095c3c3c7aa26fe9c91876368807224faa66bb852f5d645ca1aa
         echo " method=\"post\">
                 <fieldset>
                     <div class=\"pure-control-group\">
-                        <label for=\"email\">Email Address</label>
-                        <input name=\"email\" id=\"email\" type=\"email\" placeholder=\"Email Address\" required>
-                        <span class=\"pure-form-message-inline\">This is a required field.</span>
-                    </div>
-
-                    <div class=\"pure-control-group\">
-                        <label for=\"firstName\">First Name</label>
-                        <input name=\"first_name\" id=\"firstName\" type=\"text\" placeholder=\"First Name\" required>
-                        <span class=\"pure-form-message-inline\">This is a required field.</span>
-                    </div>
-
-                    <div class=\"pure-control-group\">
-                        <label for=\"lastName\">Last Name</label>
-                        <input name=\"last_name\" id=\"lastName\" type=\"text\" placeholder=\"Last Name\" required>
-                        <span class=\"pure-form-message-inline\">This is a required field.</span>
-                    </div>
-
-                    <div class=\"pure-control-group\">
-                        <label for=\"cryosphere_what\">Which parts of the cryosphere are you comfortable answering questions about? </label>
+                        <label for=\"cryosphere_what\">Which parts of the cryosphere are you comfortable answering questions about?* </label>
                         <div class=\"pure-u\" id=\"cryosphere_what\">
                             ";
-        // line 55
+        // line 37
         $context['_parent'] = $context;
         $context['_seq'] = twig_ensure_traversable(twig_get_attribute($this->env, $this->source, $context, "cryosphere_what", array()));
         foreach ($context['_seq'] as $context["_key"] => $context["cryosphere_what"]) {
-            // line 56
+            // line 38
             echo "
                                 <input name=\"cryosphere_what[";
-            // line 57
+            // line 39
             echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["cryosphere_what"], "CryosphereWhatName", array()), "html", null, true);
             echo "]\" class=\"cryosphere_what\" type=\"checkbox\" value=\"";
             echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["cryosphere_what"], "Id", array()), "html", null, true);
@@ -98,23 +80,19 @@ class __TwigTemplate_104cff0095c3c3c7aa26fe9c91876368807224faa66bb852f5d645ca1aa
         $_parent = $context['_parent'];
         unset($context['_seq'], $context['_iterated'], $context['_key'], $context['cryosphere_what'], $context['_parent'], $context['loop']);
         $context = array_intersect_key($context, $_parent) + $_parent;
-        // line 60
-        echo "                            <div id='otherdata' class=\"cryosphere_what\">
-                            </div>
-                            <input id=\"newdata\" type=\"text\" class=\"cryosphere_what\" placeholder=\"other\" required>
-                            <button type=\"button\" id=\"adddata\" class=\"pure-button success-button\" data-type=\"cryosphere_what\">Add</button>
-                        </div>
+        // line 42
+        echo "                        </div>
                     </div>
 
                     <div class=\"pure-control-group\">
-                        <label for=\"cryosphere_where\">In which general region(s) have you studied the cryosphere?</label>
+                        <label for=\"cryosphere_where\">In which general region(s) have you studied the cryosphere?<font color=\"red\">*</font></label>
                         <div class=\"pure-u\" id=\"cryosphere_where\">
                             ";
-        // line 70
+        // line 48
         $context['_parent'] = $context;
         $context['_seq'] = twig_ensure_traversable(twig_get_attribute($this->env, $this->source, $context, "cryosphere_where", array()));
         foreach ($context['_seq'] as $context["_key"] => $context["cryosphere_where"]) {
-            // line 71
+            // line 49
             echo "                                <input name=\"cryosphere_where[";
             echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, ($context["cryosphere_what"] ?? null), "CryosphereWhereName", array()), "html", null, true);
             echo "]\" type=\"checkbox\" class=\"cryosphere_where\" value=\"";
@@ -128,19 +106,19 @@ class __TwigTemplate_104cff0095c3c3c7aa26fe9c91876368807224faa66bb852f5d645ca1aa
         $_parent = $context['_parent'];
         unset($context['_seq'], $context['_iterated'], $context['_key'], $context['cryosphere_where'], $context['_parent'], $context['loop']);
         $context = array_intersect_key($context, $_parent) + $_parent;
-        // line 74
+        // line 52
         echo "                        </div>
                     </div>
 
                     <div class=\"pure-control-group\">
-                        <label for=\"cryosphere_what_specefic\">Which processes & subdisciplines are you comfortable answering questions about?</label>
+                        <label for=\"cryosphere_what_specefic\">Which processes & subdisciplines are you comfortable answering questions about?<font color=\"red\">*</font></label>
                         <div class=\"pure-u\" id=\"cryosphere_what_specefic\">
                             ";
-        // line 80
+        // line 58
         $context['_parent'] = $context;
         $context['_seq'] = twig_ensure_traversable(twig_get_attribute($this->env, $this->source, $context, "cryosphere_what_specefic", array()));
         foreach ($context['_seq'] as $context["_key"] => $context["cryosphere_what_specefic"]) {
-            // line 81
+            // line 59
             echo "                                <input name=\"cryosphere_what_specefic[";
             echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["cryosphere_what_specefic"], "CryosphereWhatSpeceficName", array()), "html", null, true);
             echo "]\" class=\"cryosphere_what_specefic\" type=\"checkbox\" value=\"";
@@ -154,23 +132,19 @@ class __TwigTemplate_104cff0095c3c3c7aa26fe9c91876368807224faa66bb852f5d645ca1aa
         $_parent = $context['_parent'];
         unset($context['_seq'], $context['_iterated'], $context['_key'], $context['cryosphere_what_specefic'], $context['_parent'], $context['loop']);
         $context = array_intersect_key($context, $_parent) + $_parent;
-        // line 84
-        echo "                            <div id='otherdata' class=\"cryosphere_what_specefic\">
-                            </div>
-                            <input id=\"newdata\" type=\"text\" class=\"cryosphere_what_specefic\" placeholder=\"other\" required>
-                            <button type=\"button\" id=\"adddata1\" class=\"pure-button success-button\" data-type=\"cryosphere_what_specefic\">Add</button>
-                        </div>
+        // line 62
+        echo "                        </div>
                     </div>
 
                     <div class=\"pure-control-group\">
-                        <label for=\"cryosphere_method\">Which methods are you comfortable answering questions about? </label>
+                        <label for=\"cryosphere_method\">Which methods are you comfortable answering questions about?</label>
                         <div class=\"pure-u\" id=\"cryosphere_method\">
                             ";
-        // line 94
+        // line 68
         $context['_parent'] = $context;
         $context['_seq'] = twig_ensure_traversable(twig_get_attribute($this->env, $this->source, $context, "cryosphere_methods", array()));
         foreach ($context['_seq'] as $context["_key"] => $context["cryosphere_method"]) {
-            // line 95
+            // line 69
             echo "                                <input name=\"cryosphere_method[";
             echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["cryosphere_method"], "CryosphereMethodsName", array()), "html", null, true);
             echo "]\" type=\"checkbox\" class=\"cryosphere_method\" value=\"";
@@ -184,23 +158,19 @@ class __TwigTemplate_104cff0095c3c3c7aa26fe9c91876368807224faa66bb852f5d645ca1aa
         $_parent = $context['_parent'];
         unset($context['_seq'], $context['_iterated'], $context['_key'], $context['cryosphere_method'], $context['_parent'], $context['loop']);
         $context = array_intersect_key($context, $_parent) + $_parent;
-        // line 98
-        echo "                            <div id='otherdata' class=\"cryosphere_method\">
-                            </div>
-                            <input id=\"newdata\" type=\"text\" class=\"cryosphere_method\" placeholder=\"other\" required>
-                            <button type=\"button\" id=\"adddata2\" class=\"pure-button success-button\" data-type=\"cryosphere_method\">Add</button>
-                        </div>
+        // line 72
+        echo "                        </div>
                     </div>
 
                     <div class=\"pure-control-group\">
-                        <label for=\"cryosphere_when\">Which time periods are you comfortable answering questions about?</label>
+                        <label for=\"cryosphere_when\">Which time periods are you comfortable answering questions about?<font color=\"red\">*</font></label>
                         <div class=\"pure-u\" id=\"cryosphere_when\">
                             ";
-        // line 108
+        // line 78
         $context['_parent'] = $context;
         $context['_seq'] = twig_ensure_traversable(twig_get_attribute($this->env, $this->source, $context, "cryosphere_when", array()));
         foreach ($context['_seq'] as $context["_key"] => $context["cryosphere_when"]) {
-            // line 109
+            // line 79
             echo "                                <input name=\"cryosphere_when[";
             echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["cryosphere_when"], "CryosphereWhatName", array()), "html", null, true);
             echo "]\" type=\"checkbox\" class=\"cryosphere_when\" value=\"";
@@ -214,34 +184,21 @@ class __TwigTemplate_104cff0095c3c3c7aa26fe9c91876368807224faa66bb852f5d645ca1aa
         $_parent = $context['_parent'];
         unset($context['_seq'], $context['_iterated'], $context['_key'], $context['cryosphere_when'], $context['_parent'], $context['loop']);
         $context = array_intersect_key($context, $_parent) + $_parent;
-        // line 112
-        echo "                            <div id='otherdata' class=\"cryosphere_when\">
-                            </div>
-                            <input id=\"newdata\" type=\"text\" placeholder=\"other\" class=\"cryosphere_when\" required>
-                            <button type=\"button\" id=\"adddata3\" class=\"pure-button success-button\" data-type=\"cryosphere_when\">Add</button>
-                        </div>
+        // line 82
+        echo "                        </div>
                     </div>
 
                     <div class=\"pure-control-group\">
-                        <label for=\"fieldwork\">If your research involves fieldwork, roughly where and when will this take place?</label>
-                        <div class=\"pure-u\" id=\"fieldwork\">
-                            <input name=\"fieldwork[location]\" type=\"text\" placeholder=\"where ?\">
-                            <br>
-                            <input name=\"fieldwork[date]\" type=\"date\" placeholder=\"When ?\">
-                        </div>
-                    </div>
-
-                    <div class=\"pure-control-group\">
-                        <label for=\"languages\">Languages in which you are capable of answering scientific questions *</label>
+                        <label for=\"languages\">Languages in which you are capable of answering scientific questions<font color=\"red\">*</font></label>
                         <div class=\"pure-u\" id=\"languages\">
                             <select name=\"languages[1]\" style=\"width: 13em\" required>
                                 <option disabled selected value>Choose 1st language </option>
                                 ";
-        // line 133
+        // line 90
         $context['_parent'] = $context;
         $context['_seq'] = twig_ensure_traversable(twig_get_attribute($this->env, $this->source, $context, "languages", array()));
         foreach ($context['_seq'] as $context["_key"] => $context["language"]) {
-            // line 134
+            // line 91
             echo "                                    <option value=\"";
             echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["language"], "LanguageCode", array()), "html", null, true);
             echo "\">";
@@ -252,17 +209,17 @@ class __TwigTemplate_104cff0095c3c3c7aa26fe9c91876368807224faa66bb852f5d645ca1aa
         $_parent = $context['_parent'];
         unset($context['_seq'], $context['_iterated'], $context['_key'], $context['language'], $context['_parent'], $context['loop']);
         $context = array_intersect_key($context, $_parent) + $_parent;
-        // line 136
+        // line 93
         echo "                            </select>
                             <br>
                             <select name=\"languages[2]\" style=\"width: 13em\">
                                 <option disabled selected value>Choose 2nd language </option>
                                 ";
-        // line 140
+        // line 97
         $context['_parent'] = $context;
         $context['_seq'] = twig_ensure_traversable(twig_get_attribute($this->env, $this->source, $context, "languages", array()));
         foreach ($context['_seq'] as $context["_key"] => $context["language"]) {
-            // line 141
+            // line 98
             echo "                                    <option value=\"";
             echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["language"], "LanguageCode", array()), "html", null, true);
             echo "\">";
@@ -273,17 +230,17 @@ class __TwigTemplate_104cff0095c3c3c7aa26fe9c91876368807224faa66bb852f5d645ca1aa
         $_parent = $context['_parent'];
         unset($context['_seq'], $context['_iterated'], $context['_key'], $context['language'], $context['_parent'], $context['loop']);
         $context = array_intersect_key($context, $_parent) + $_parent;
-        // line 143
+        // line 100
         echo "                            </select>
                             <br>
                             <select name=\"languages[3]\" style=\"width: 13em\">
                                 <option disabled selected value>Choose 3rd language </option>
                                 ";
-        // line 147
+        // line 104
         $context['_parent'] = $context;
         $context['_seq'] = twig_ensure_traversable(twig_get_attribute($this->env, $this->source, $context, "languages", array()));
         foreach ($context['_seq'] as $context["_key"] => $context["language"]) {
-            // line 148
+            // line 105
             echo "                                    <option value=\"";
             echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["language"], "LanguageCode", array()), "html", null, true);
             echo "\">";
@@ -294,26 +251,26 @@ class __TwigTemplate_104cff0095c3c3c7aa26fe9c91876368807224faa66bb852f5d645ca1aa
         $_parent = $context['_parent'];
         unset($context['_seq'], $context['_iterated'], $context['_key'], $context['language'], $context['_parent'], $context['loop']);
         $context = array_intersect_key($context, $_parent) + $_parent;
-        // line 150
+        // line 107
         echo "                            </select>
                         </div>
                     </div>
 
                     <div class=\"pure-control-group\">
-                        <label for=\"birtyear\">When is your birth-year</label>
-                        <input name=\"birth_year\" id=\"birtyear\" type=\"number\" placeholder=\"birtyear\" required>
+                        <label for=\"birtyear\">When is your birth year?<font color=\"red\">*</font></label>
+                        <input name=\"birth_year\" id=\"birtyear\" type=\"number\" placeholder=\"birt year\" required>
                     </div>
 
                     <div class=\"pure-control-group\">
-                        <label for=\"careerstage\">Career stage</label>
+                        <label for=\"careerstage\">Career stage<font color=\"red\">*</font></label>
                         <select name=\"caree_stage\" id=\"careerstage\" required>
                             <option disabled selected value> Choose </option>
                             ";
-        // line 163
+        // line 120
         $context['_parent'] = $context;
         $context['_seq'] = twig_ensure_traversable(twig_get_attribute($this->env, $this->source, $context, "career_stages", array()));
         foreach ($context['_seq'] as $context["_key"] => $context["career_stages"]) {
-            // line 164
+            // line 121
             echo "                                <option value=\"";
             echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["career_stages"], "Id", array()), "html", null, true);
             echo "\">";
@@ -324,23 +281,23 @@ class __TwigTemplate_104cff0095c3c3c7aa26fe9c91876368807224faa66bb852f5d645ca1aa
         $_parent = $context['_parent'];
         unset($context['_seq'], $context['_iterated'], $context['_key'], $context['career_stages'], $context['_parent'], $context['loop']);
         $context = array_intersect_key($context, $_parent) + $_parent;
-        // line 166
+        // line 123
         echo "                        </select>
                     </div>
 
                     <div class=\"pure-control-group\">
-                        <label for=\"affiliation\">Affiliations</label>
+                        <label for=\"affiliation\">Affiliations (name<font color=\"red\">*</font>, country<font color=\"red\">*</font>, city, secondry affliations) </label>
                         <div class=\"pure-u\">
-                            <input name=\"affiliation[primary][name]\" id=\"affiliation\" type=\"text\" placeholder=\"primary affiliation\" required>
+                            <input name=\"affiliation[primary][name]\" id=\"affiliation\" type=\"text\" placeholder=\"name of primary affiliation\" required>
                             <br>
                             <select name=\"affiliation[primary][country]\" id=\"primaryaffiliationcountry\" required>
                                 <option disabled selected value> Choose </option>
                                 ";
-        // line 176
+        // line 133
         $context['_parent'] = $context;
         $context['_seq'] = twig_ensure_traversable(twig_get_attribute($this->env, $this->source, $context, "countries", array()));
         foreach ($context['_seq'] as $context["_key"] => $context["country"]) {
-            // line 177
+            // line 134
             echo "                                    <option value=\"";
             echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["country"], "CountryCode", array()), "html", null, true);
             echo "\">";
@@ -351,17 +308,17 @@ class __TwigTemplate_104cff0095c3c3c7aa26fe9c91876368807224faa66bb852f5d645ca1aa
         $_parent = $context['_parent'];
         unset($context['_seq'], $context['_iterated'], $context['_key'], $context['country'], $context['_parent'], $context['loop']);
         $context = array_intersect_key($context, $_parent) + $_parent;
-        // line 179
+        // line 136
         echo "                            </select>
                             <br>
-                            <input name=\"affiliation[primary][city]\" id=\"primaryaffiliationcity\" type=\"text\" placeholder=\"City of primary affiliation\">
+                            <input name=\"affiliation[primary][city]\" id=\"primaryaffiliationcity\" type=\"text\" placeholder=\"city of primary affiliation\">
                             <br>
                             <input name=\"affiliation[secondry][name]\" id=\"secondryaffiliations\" type=\"text\" placeholder=\"other affiliation (seperated by comma)\">
                         </div>
                     </div>
 
                     <div class=\"pure-control-group\">
-                        <label for=\"phonenumber\">Phone number (incl. country code)</label>
+                        <label for=\"phonenumber\">Phone number (incl. country code)<font color=\"red\">*</font></label>
                         <input name=\"phone_number\" id=\"phonenumber\" type=\"tel\" placeholder=\"number with country code\">
                     </div>
 
@@ -380,13 +337,39 @@ class __TwigTemplate_104cff0095c3c3c7aa26fe9c91876368807224faa66bb852f5d645ca1aa
                         <input name=\"personal_google_scholar\" id=\"personalgooglescholar\" type=\"url\" placeholder=\"google scholar\">
                     </div>
 
+                    <div class=\"pure-control-group\">
+                        <label for=\"email\">Email Address</label>
+                        <input name=\"email\" id=\"email\" type=\"email\" placeholder=\"Email Address\" required>
+                    </div>
+
+                    <div class=\"pure-control-group\">
+                        <label for=\"firstName\">First Name<font color=\"red\">*</font></label>
+                        <input name=\"first_name\" id=\"firstName\" type=\"text\" placeholder=\"First Name\" required>
+                    </div>
+
+                    <div class=\"pure-control-group\">
+                        <label for=\"lastName\">Last Name<font color=\"red\">*</font></label>
+                        <input name=\"last_name\" id=\"lastName\" type=\"text\" placeholder=\"Last Name\" required>
+                    </div>
+
+                    <div class=\"pure-control-group\">
+                        <label for=\"gender\">Gender<font color=\"red\">*</font></label>
+                        <select name=\"gender\" style=\"width: 13em\" required>
+                            <option disabled selected value>Choose</option>
+                            <option value=\"F\">female</option>
+                            <option value=\"M\">male</option>
+                            <option value=\"O\">other</option>
+                        </select>
+                    </div>
+
                     <div class=\"pure-controls\">
                         <label for=\"cb\" class=\"pure-checkbox\">
                             <input id=\"cb\" type=\"checkbox\" required> I agree to the terms and conditions
                         </label>
 
-                        <button type=\"submit\" id=\"submitBtn\" class=\"pure-button pure-button-primary\">Submit</button>
+                        <button type=\"submit\" id=\"submitBtn\" class=\"pure-button pure-button-primary\">Sign up</button>
                     </div>
+                    <span class=\"pure-form-message-inline\"><font color=\"red\">*</font>required fields</span>
                 </fieldset>
             </form>
         </div>
@@ -548,8 +531,8 @@ class __TwigTemplate_104cff0095c3c3c7aa26fe9c91876368807224faa66bb852f5d645ca1aa
                     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
                 }
             }
-            
-            
+
+
         </style>
         <script>
             \$(document).ready(function () {
@@ -558,7 +541,7 @@ class __TwigTemplate_104cff0095c3c3c7aa26fe9c91876368807224faa66bb852f5d645ca1aa
                     \$.ajax({
                         type: 'POST',
                         url: \"";
-        // line 384
+        // line 367
         echo twig_escape_filter($this->env, $this->extensions['Slim\Views\TwigExtension']->pathFor("expert_check_email"), "html", null, true);
         echo "\",
                         data: 'email=' + encodeURIComponent(email),
@@ -598,7 +581,7 @@ class __TwigTemplate_104cff0095c3c3c7aa26fe9c91876368807224faa66bb852f5d645ca1aa
                                     },
                                     onshow: function (dialog) {
 
-                                    
+
 
                                     },
                                     onshown: function (dialog)
@@ -662,22 +645,7 @@ class __TwigTemplate_104cff0095c3c3c7aa26fe9c91876368807224faa66bb852f5d645ca1aa
                 });
 
 
-                \$(\"#adddata,#adddata1,#adddata2,#adddata3\").click(function () {
 
-                    var dataValue = \$(this).parent().find('#newdata').val();
-                    var dataType = \$(this).data('type');
-
-                    if (String(dataValue).trim() == '' || String(dataType).trim() == '') {
-                        return false;
-                    } else {
-
-
-                        \$(this).parent().parent().find('#otherdata').append(\$('<input class=\"' + dataType + '\" value=\"' + dataValue + '\" type=\"checkbox\" required>').attr('name', dataType + '_other[' + dataValue + ']').prop('checked', true));
-                        \$(this).parent().parent().find('#otherdata').append(dataValue + '<br>');
-                        \$(this).parent().find('#newdata').val('');
-                        \$(document).find('.' + dataType).prop('required', false);
-                    }
-                });
             });
 
 
@@ -701,7 +669,7 @@ class __TwigTemplate_104cff0095c3c3c7aa26fe9c91876368807224faa66bb852f5d645ca1aa
 
     public function getDebugInfo()
     {
-        return array (  562 => 384,  355 => 179,  344 => 177,  340 => 176,  328 => 166,  317 => 164,  313 => 163,  298 => 150,  287 => 148,  283 => 147,  277 => 143,  266 => 141,  262 => 140,  256 => 136,  245 => 134,  241 => 133,  218 => 112,  204 => 109,  200 => 108,  188 => 98,  174 => 95,  170 => 94,  158 => 84,  144 => 81,  140 => 80,  132 => 74,  118 => 71,  114 => 70,  102 => 60,  89 => 57,  86 => 56,  82 => 55,  56 => 32,  23 => 1,);
+        return array (  545 => 367,  312 => 136,  301 => 134,  297 => 133,  285 => 123,  274 => 121,  270 => 120,  255 => 107,  244 => 105,  240 => 104,  234 => 100,  223 => 98,  219 => 97,  213 => 93,  202 => 91,  198 => 90,  188 => 82,  174 => 79,  170 => 78,  162 => 72,  148 => 69,  144 => 68,  136 => 62,  122 => 59,  118 => 58,  110 => 52,  96 => 49,  92 => 48,  84 => 42,  71 => 39,  68 => 38,  64 => 37,  56 => 32,  23 => 1,);
     }
 
     public function getSourceContext()
