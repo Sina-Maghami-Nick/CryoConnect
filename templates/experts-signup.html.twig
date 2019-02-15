@@ -10,7 +10,7 @@
 
         <style>
             .pure-form-aligned .pure-control-group label {
-                text-align: right;
+                text-align: left;
                 display: inline-block;
                 vertical-align: middle;
                 width: 20em;
@@ -20,23 +20,124 @@
             .success-button {
                 background: rgb(28, 184, 65);
                 color: white;
-                border-radius: 0px;
+                border-radius: 5px;
+                margin-top: 2px;
             }
 
-
-
+            hr.hrform {
+                border-top: 3px double #8c8b8b;
+                width: 700px;
+            }
         </style>
     </head>
     <body>
         <div id="formpage" style="text-align:centre">
             <form class="pure-form pure-form-aligned" id="expertform" action={{path_for('expert_signup')}} method="post">
                 <fieldset>
+
                     <div class="pure-control-group">
-                        <label for="cryosphere_what">Which parts of the cryosphere are you comfortable answering questions about?* </label>
+                        <label for="firstName">First name<font color="red">*</font></label>
+                        <input name="first_name" id="firstName" type="text" placeholder="First name" required>
+                    </div>
+
+                    <div class="pure-control-group">
+                        <label for="lastName">Last name<font color="red">*</font></label>
+                        <input name="last_name" id="lastName" type="text" placeholder="Last name" required>
+                    </div>
+
+                    <div class="pure-control-group">
+                        <label for="affiliation">Affiliations (name<font color="red">*</font>, country<font color="red">*</font>, city, secondary affliations) </label>
+                        <div class="pure-u">
+                            <input name="affiliation[primary][name]" id="affiliation" type="text" placeholder="name of primary affiliation" required>
+                            <br>
+                            <select name="affiliation[primary][country]" id="primaryaffiliationcountry" required>
+                                <option disabled selected value> choose </option>
+                                {% for country in _context.countries %}
+                                    <option value="{{country.CountryCode}}">{{country.CountryName}}</option>
+                                {% endfor %}
+                            </select>
+                            <br>
+                            <input name="affiliation[primary][city]" id="primaryaffiliationcity" type="text" placeholder="city of primary affiliation">
+                            <br>
+                            <input name="affiliation[secondary][0]" class="secondaryaffiliations" type="text" placeholder="other affiliation">
+                            <br>
+                            <button type="button" id="addaffiliation" class="pure-button success-button">add affiliation</button>
+                        </div>
+                    </div>
+
+
+                    <div class="pure-control-group">
+                        <label for="careerstage">Career stage<font color="red">*</font></label>
+                        <select name="caree_stage" id="careerstage" required>
+                            <option disabled selected value> choose </option>
+                            {% for career_stages in _context.career_stages %}
+                                <option value="{{career_stages.Id}}">{{career_stages.CareerStageName}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="pure-control-group">
+                        <label for="birtyear">When is your birth year?<font color="red">*</font></label>
+                        <input name="birth_year" id="birtyear" type="number" placeholder="birt year" required>
+                    </div>
+
+                    <div class="pure-control-group">
+                        <label for="gender">Gender<font color="red">*</font></label>
+                        <select name="gender" style="width: 13em" required>
+                            <option disabled selected value>choose</option>
+                            <option value="F">female</option>
+                            <option value="M">male</option>
+                            <option value="O">other</option>
+                        </select>
+                    </div>
+
+                    <div class="pure-control-group">
+                        <label for="languages">Languages in which you are capable of answering scientific questions<font color="red">*</font></label>
+                        <div class="pure-u" id="languages">
+                            <select name="languages[0]" style="width: 13em" required>
+                                <option disabled selected value>choose</option>
+                                {% for language in _context.languages %}
+                                    <option value="{{language.LanguageCode}}">{{language.Language}}</option>
+                                {% endfor %}
+                            </select>
+                            <br>
+                            <button type="button" id="addlanguage" class="pure-button success-button">add language </button>
+                        </div>
+                    </div>  
+
+                    <div class="pure-control-group">
+                        <label for="phonenumber">Phone number (incl. country code)<font color="red">*</font></label>
+                        <input name="phone_number" id="phonenumber" type="tel" placeholder="number with country code">
+                    </div>
+
+                    <div class="pure-control-group">
+                        <label for="personalwebsite">Personal website</label>
+                        <input name="personal_website" id="personalwebsite" type="url" placeholder="website">
+                    </div>
+
+                    <div class="pure-control-group">
+                        <label for="personallinkedin">LinkedIn</label>
+                        <input name="personal_linkedin" id="personallinkedin" type="url" placeholder="linkedIn">
+                    </div>
+
+                    <div class="pure-control-group">
+                        <label for="personalgooglescholar">Google Scholar profile</label>
+                        <input name="personal_google_scholar" id="personalgooglescholar" type="url" placeholder="google scholar">
+                    </div>
+
+                    <div class="pure-control-group">
+                        <label for="email">Email address<font color="red">*</font></label>
+                        <input name="email" id="email" type="email" placeholder="Email address" required>
+                    </div>
+
+                    <hr class="hrform">
+
+                    <div class="pure-control-group">
+                        <label for="cryosphere_what">Which parts of the cryosphere are you comfortable answering questions about?<font color="red">*</font> </label>
                         <div class="pure-u" id="cryosphere_what">
                             {% for cryosphere_what in _context.cryosphere_what %}
 
-                                <input name="cryosphere_what[{{cryosphere_what.CryosphereWhatName}}]" class="cryosphere_what" type="checkbox" value="{{cryosphere_what.Id}}" required>{{cryosphere_what.CryosphereWhatName}}</input>
+                                <input name="cryosphere_what[{{cryosphere_what.CryosphereWhatName}}]" class="cryosphere_what" type="checkbox" value="{{cryosphere_what.Id}}" required > {{cryosphere_what.CryosphereWhatName}}</input>
                                 <br>
                             {% endfor %}
                         </div>
@@ -46,7 +147,7 @@
                         <label for="cryosphere_where">In which general region(s) have you studied the cryosphere?<font color="red">*</font></label>
                         <div class="pure-u" id="cryosphere_where">
                             {% for cryosphere_where in _context.cryosphere_where %}
-                                <input name="cryosphere_where[{{cryosphere_what.CryosphereWhereName}}]" type="checkbox" class="cryosphere_where" value="{{cryosphere_where.Id}}" required>{{cryosphere_where.CryosphereWhereName}}</input>
+                                <input name="cryosphere_where[{{cryosphere_what.CryosphereWhereName}}]" type="checkbox" class="cryosphere_where" value="{{cryosphere_where.Id}}" required >{{cryosphere_where.CryosphereWhereName}}</input>
                                 <br>
                             {% endfor %}
                         </div>
@@ -56,17 +157,17 @@
                         <label for="cryosphere_what_specefic">Which processes & subdisciplines are you comfortable answering questions about?<font color="red">*</font></label>
                         <div class="pure-u" id="cryosphere_what_specefic">
                             {% for cryosphere_what_specefic in _context.cryosphere_what_specefic %}
-                                <input name="cryosphere_what_specefic[{{cryosphere_what_specefic.CryosphereWhatSpeceficName}}]" class="cryosphere_what_specefic" type="checkbox" value="{{cryosphere_what_specefic.Id}}" required>{{cryosphere_what_specefic.CryosphereWhatSpeceficName}}</input>
+                                <input name="cryosphere_what_specefic[{{cryosphere_what_specefic.CryosphereWhatSpeceficName}}]" class="cryosphere_what_specefic" type="checkbox" value="{{cryosphere_what_specefic.Id}}" required >{{cryosphere_what_specefic.CryosphereWhatSpeceficName}}</input>
                                 <br>
                             {% endfor %}
                         </div>
                     </div>
 
                     <div class="pure-control-group">
-                        <label for="cryosphere_method">Which methods are you comfortable answering questions about?</label>
+                        <label for="cryosphere_method">Which methods are you comfortable answering questions about?<font color="red">*</font></label>
                         <div class="pure-u" id="cryosphere_method">
                             {% for cryosphere_method in _context.cryosphere_methods %}
-                                <input name="cryosphere_method[{{cryosphere_method.CryosphereMethodsName}}]" type="checkbox" class="cryosphere_method" value="{{cryosphere_method.Id}}" required>{{cryosphere_method.CryosphereMethodsName}}</input>
+                                <input name="cryosphere_method[{{cryosphere_method.CryosphereMethodsName}}]" type="checkbox" class="cryosphere_method" value="{{cryosphere_method.Id}}" required >{{cryosphere_method.CryosphereMethodsName}}</input>
                                 <br>
                             {% endfor %}
                         </div>
@@ -76,119 +177,17 @@
                         <label for="cryosphere_when">Which time periods are you comfortable answering questions about?<font color="red">*</font></label>
                         <div class="pure-u" id="cryosphere_when">
                             {% for cryosphere_when in _context.cryosphere_when %}
-                                <input name="cryosphere_when[{{cryosphere_when.CryosphereWhatName}}]" type="checkbox" class="cryosphere_when" value="{{cryosphere_when.Id}}" required>{{cryosphere_when.CryosphereWhenName}}</input>
+                                <input name="cryosphere_when[{{cryosphere_when.CryosphereWhatName}}]" type="checkbox" class="cryosphere_when" value="{{cryosphere_when.Id}}" required >{{cryosphere_when.CryosphereWhenName}}</input>
                                 <br>
                             {% endfor %}
                         </div>
                     </div>
 
-                    <div class="pure-control-group">
-                        <label for="languages">Languages in which you are capable of answering scientific questions<font color="red">*</font></label>
-                        <div class="pure-u" id="languages">
-                            <select name="languages[1]" style="width: 13em" required>
-                                <option disabled selected value>Choose 1st language </option>
-                                {% for language in _context.languages %}
-                                    <option value="{{language.LanguageCode}}">{{language.Language}}</option>
-                                {% endfor %}
-                            </select>
-                            <br>
-                            <select name="languages[2]" style="width: 13em">
-                                <option disabled selected value>Choose 2nd language </option>
-                                {% for language in _context.languages %}
-                                    <option value="{{language.LanguageCode}}">{{language.Language}}</option>
-                                {% endfor %}
-                            </select>
-                            <br>
-                            <select name="languages[3]" style="width: 13em">
-                                <option disabled selected value>Choose 3rd language </option>
-                                {% for language in _context.languages %}
-                                    <option value="{{language.LanguageCode}}">{{language.Language}}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
 
-                    <div class="pure-control-group">
-                        <label for="birtyear">When is your birth year?<font color="red">*</font></label>
-                        <input name="birth_year" id="birtyear" type="number" placeholder="birt year" required>
-                    </div>
-
-                    <div class="pure-control-group">
-                        <label for="careerstage">Career stage<font color="red">*</font></label>
-                        <select name="caree_stage" id="careerstage" required>
-                            <option disabled selected value> Choose </option>
-                            {% for career_stages in _context.career_stages %}
-                                <option value="{{career_stages.Id}}">{{career_stages.CareerStageName}}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <div class="pure-control-group">
-                        <label for="affiliation">Affiliations (name<font color="red">*</font>, country<font color="red">*</font>, city, secondry affliations) </label>
-                        <div class="pure-u">
-                            <input name="affiliation[primary][name]" id="affiliation" type="text" placeholder="name of primary affiliation" required>
-                            <br>
-                            <select name="affiliation[primary][country]" id="primaryaffiliationcountry" required>
-                                <option disabled selected value> Choose </option>
-                                {% for country in _context.countries %}
-                                    <option value="{{country.CountryCode}}">{{country.CountryName}}</option>
-                                {% endfor %}
-                            </select>
-                            <br>
-                            <input name="affiliation[primary][city]" id="primaryaffiliationcity" type="text" placeholder="city of primary affiliation">
-                            <br>
-                            <input name="affiliation[secondry][name]" id="secondryaffiliations" type="text" placeholder="other affiliation (seperated by comma)">
-                        </div>
-                    </div>
-
-                    <div class="pure-control-group">
-                        <label for="phonenumber">Phone number (incl. country code)<font color="red">*</font></label>
-                        <input name="phone_number" id="phonenumber" type="tel" placeholder="number with country code">
-                    </div>
-
-                    <div class="pure-control-group">
-                        <label for="personalwebsite">Personal Website</label>
-                        <input name="personal_website" id="personalwebsite" type="url" placeholder="website">
-                    </div>
-
-                    <div class="pure-control-group">
-                        <label for="personallinkedin">Linkedin</label>
-                        <input name="personal_linkedin" id="personallinkedin" type="url" placeholder="linkedin">
-                    </div>
-
-                    <div class="pure-control-group">
-                        <label for="personalgooglescholar">Google Scholar profile</label>
-                        <input name="personal_google_scholar" id="personalgooglescholar" type="url" placeholder="google scholar">
-                    </div>
-
-                    <div class="pure-control-group">
-                        <label for="email">Email Address</label>
-                        <input name="email" id="email" type="email" placeholder="Email Address" required>
-                    </div>
-
-                    <div class="pure-control-group">
-                        <label for="firstName">First Name<font color="red">*</font></label>
-                        <input name="first_name" id="firstName" type="text" placeholder="First Name" required>
-                    </div>
-
-                    <div class="pure-control-group">
-                        <label for="lastName">Last Name<font color="red">*</font></label>
-                        <input name="last_name" id="lastName" type="text" placeholder="Last Name" required>
-                    </div>
-
-                    <div class="pure-control-group">
-                        <label for="gender">Gender<font color="red">*</font></label>
-                        <select name="gender" style="width: 13em" required>
-                            <option disabled selected value>Choose</option>
-                            <option value="F">female</option>
-                            <option value="M">male</option>
-                            <option value="O">other</option>
-                        </select>
-                    </div>
 
                     <div class="pure-controls">
-                        <label for="cb" class="pure-checkbox">
-                            <input id="cb" type="checkbox" required> I agree to the terms and conditions
+                        <label for="termcondition" class="pure-checkbox">
+                            <input id="termcondition" type="checkbox" required> I agree to the terms and conditions
                         </label>
 
                         <button type="submit" id="submitBtn" class="pure-button pure-button-primary">Sign up</button>
@@ -200,185 +199,74 @@
 
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.0/js/modal.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.7/js/bootstrap-dialog.js"></script> 
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.7/css/bootstrap-dialog.css"> 
-        <style>
-            .modal-open {
-                overflow: hidden;
-            }
 
-            body.modal-open,
-            .modal-open .navbar-fixed-top,
-            .modal-open .navbar-fixed-bottom {
-                margin-right: 15px;
-            }
-
-            .modal {
-                position: fixed;
-                top: 0;
-                right: 0;
-                bottom: 0;
-                left: 0;
-                z-index: 1040;
-                display: none;
-                overflow: auto;
-                overflow-y: scroll;
-            }
-
-            .modal.fade .modal-dialog {
-                -webkit-transform: translate(0, -25%);
-                -ms-transform: translate(0, -25%);
-                transform: translate(0, -25%);
-                -webkit-transition: -webkit-transform 0.3s ease-out;
-                -moz-transition: -moz-transform 0.3s ease-out;
-                -o-transition: -o-transform 0.3s ease-out;
-                transition: transform 0.3s ease-out;
-            }
-
-            .modal.in .modal-dialog {
-                -webkit-transform: translate(0, 0);
-                -ms-transform: translate(0, 0);
-                transform: translate(0, 0);
-            }
-
-            .modal-dialog {
-                z-index: 1050;
-                width: auto;
-                padding: 10px;
-                margin-right: auto;
-                margin-left: auto;
-            }
-
-            .modal-content {
-                position: relative;
-                background-color: #ffffff;
-                border: 1px solid #999999;
-                border: 1px solid rgba(0, 0, 0, 0.2);
-                border-radius: 6px;
-                outline: none;
-                -webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
-                box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
-                background-clip: padding-box;
-            }
-
-            .modal-backdrop {
-                position: fixed;
-                top: 0;
-                right: 0;
-                bottom: 0;
-                left: 0;
-                z-index: 1030;
-                background-color: #000000;
-            }
-
-            .modal-backdrop.fade {
-                opacity: 0;
-                filter: alpha(opacity=0);
-            }
-
-            .modal-backdrop.in {
-                opacity: 0.5;
-                filter: alpha(opacity=50);
-            }
-
-            .modal-header {
-                min-height: 16.428571429px;
-                padding: 15px;
-                border-bottom: 1px solid #e5e5e5;
-            }
-
-            .modal-header .close {
-                margin-top: -2px;
-            }
-
-            .modal-title {
-                margin: 0;
-                line-height: 1.428571429;
-            }
-
-            .modal-body {
-                position: relative;
-                padding: 20px;
-            }
-
-            .modal-footer {
-                padding: 19px 20px 20px;
-                margin-top: 15px;
-                text-align: right;
-                border-top: 1px solid #e5e5e5;
-            }
-
-            .modal-footer:before,
-            .modal-footer:after {
-                display: table;
-                content: " ";
-            }
-
-            .modal-footer:after {
-                clear: both;
-            }
-
-            .modal-footer:before,
-            .modal-footer:after {
-                display: table;
-                content: " ";
-            }
-
-            .modal-footer:after {
-                clear: both;
-            }
-
-            .modal-footer .btn + .btn {
-                margin-bottom: 0;
-                margin-left: 5px;
-            }
-
-            .modal-footer .btn-group .btn + .btn {
-                margin-left: -1px;
-            }
-
-            .modal-footer .btn-block + .btn-block {
-                margin-left: 0;
-            }
-
-            @media screen and (min-width: 768px) {
-                .modal-dialog {
-                    right: auto;
-                    left: 50%;
-                    width: 600px;
-                    padding-top: 30px;
-                    padding-bottom: 30px;
-                }
-                .modal-content {
-                    -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-                    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-                }
-            }
-
-
-        </style>
         <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                var elements = $("input:checkbox");
+                for (var i = 0; i < elements.length; i++) {
+                    if (elements[i].id != "termcondition") {
+                        elements[i].oninvalid = function (e) {
+                            e.target.setCustomValidity("");
+                            if (!e.target.validity.valid) {
+                                e.target.setCustomValidity("Please select one or more options.");
+                            }
+                        };
+                        elements[i].oninput = function (e) {
+                            e.target.setCustomValidity("");
+                        };
+                    }
+                }
+            });
+
+            document.getElementById("email").addEventListener("focusout", function () {
+                var email = $(this).val();
+                $.ajax({
+                    type: 'POST',
+                    url: "{{path_for('expert_check_email')}}",
+                    data: 'email=' + encodeURIComponent(email),
+                    beforeSend: function () {
+                    }
+                })
+                        .done(function (data) {
+                            $('#email')[0].setCustomValidity("This email address is already registered!");
+                            $('#submitBtn').focus()
+                        })
+                        .fail(function (errMsg) {
+                            $('#email')[0].setCustomValidity("");
+                        });
+            });
+
+            $('#email').on('click', function () {
+                this.setCustomValidity("");
+            });
+
+
             $(document).ready(function () {
-                $('#email').change(function () {
-                    var email = $(this).val();
-                    $.ajax({
-                        type: 'POST',
-                        url: "{{path_for('expert_check_email')}}",
-                        data: 'email=' + encodeURIComponent(email),
-                        beforeSend: function () {
-                            $('#submitBtn').attr("disabled", "disabled");
-                        }
-                    })
-                            .done(function (data) {
-                                $('#submitBtn').attr("disabled", "disabled");
-                                alert("This email address is already registered!");
-                                $('#submitBtn').focus()
-                            })
-                            .fail(function (errMsg) {
-                                $('#submitBtn').removeAttr("disabled");
-                            });
+
+                parent._alert = new parent.Function("alert(arguments[0]);");
+
+                $("#addlanguage").click(function () {
+
+                    var selectCount = $(this).parent().find("select").length;
+                    var selectObj = $(this).parent().find("select").first().clone();
+                    selectObj.attr('name', 'languages[' + selectCount + ']');
+                    selectObj.selectedIndex = 0;
+                    selectObj.prop('required', false);
+                    selectObj.insertBefore($(this));
+                    $('<br />').insertBefore($(this));
                 });
+
+                $("#addaffiliation").click(function () {
+
+                    var selectCount = $(this).parent().find(".secondaryaffiliations").length;
+                    var selectObj = $(this).parent().find(".secondaryaffiliations").first().clone();
+                    selectObj.attr('name', 'affiliation[secondary][' + selectCount + ']');
+                    selectObj.val(null);
+                    selectObj.insertBefore($(this));
+                    $('<br />').insertBefore($(this));
+                });
+
+
 
                 $("#expertform").submit(function (event) {
 
@@ -394,31 +282,11 @@
                         }
                     })
                             .done(function (data) {
-                                BootstrapDialog.show({
-                                    title: "You have been registered!",
-                                    message: function (dialogRef) {
-                                        $mydata = $($.parseHTML(data));
-                                        return $mydata;
-                                    },
-                                    onshow: function (dialog) {
-
-
-
-                                    },
-                                    onshown: function (dialog)
-                                    {
-                                        // event after shown
-
-                                    },
-                                    onhide: function (dailog)
-                                    {
-                                        window.location.href = "/";
-                                    }
-                                });
+                                document.body.innerHTML = data;
                             })
                             .fail(function (errMsg) {
                                 $('#submitBtn').removeAttr("disabled");
-                                alert("Something has gone wrong! Please check your enteries and try again. If error presists, please contact us. Thank you");
+                                parent._alert("Something has gone wrong! Please check your enteries and try again. If error persists, please contact us. Thank you");
                             });
 
                 });

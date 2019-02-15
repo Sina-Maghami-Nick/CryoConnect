@@ -82,7 +82,7 @@ class ExpertsController extends Controller {
         $primaryAffiliationName = filter_var($data['affiliation']['primary']['name'], FILTER_SANITIZE_STRING);
         $primaryAffiliationCountryCode = filter_var($data['affiliation']['primary']['country'], FILTER_SANITIZE_STRING);
         $primaryAffiliationCity = filter_var($data['affiliation']['primary']['city'], FILTER_SANITIZE_STRING);
-        $secondryAffiliations = explode(',', filter_var($data['affiliation']['secondry']['name'], FILTER_SANITIZE_STRING));
+        $secondryAffiliations = filter_var_array($data['affiliation']['secondary'], FILTER_SANITIZE_STRING);
         $phoneNumber = filter_var($data['phone_number'], FILTER_SANITIZE_STRING);
         $website = filter_var($data['personal_website'], FILTER_SANITIZE_URL);
         $linkedIn = filter_var($data['personal_linkedin'], FILTER_SANITIZE_URL);
@@ -252,7 +252,7 @@ class ExpertsController extends Controller {
         $this->container->get('logger')
                 ->addInfo('A new expert has been approved. ExpertId =' . $expert->getId());
 
-        $emailMsg = (new \Swift_Message('Welcome to Cryoconnect experts family'))
+        $emailMsg = (new \Swift_Message('You are now signed up as an expert at Cryo Connect'))
                 ->setFrom([$this->container->get('settings')['mailer']['username'] => 'No-reply'])
                 ->setTo($expert->getEmail())
                 ->setBody(
