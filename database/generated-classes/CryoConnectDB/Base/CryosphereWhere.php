@@ -11,12 +11,15 @@ use CryoConnectDB\ExpertCryosphereWhere as ChildExpertCryosphereWhere;
 use CryoConnectDB\ExpertCryosphereWhereQuery as ChildExpertCryosphereWhereQuery;
 use CryoConnectDB\Experts as ChildExperts;
 use CryoConnectDB\ExpertsQuery as ChildExpertsQuery;
+use CryoConnectDB\Fieldwork as ChildFieldwork;
+use CryoConnectDB\FieldworkQuery as ChildFieldworkQuery;
 use CryoConnectDB\InformationSeekerConnectRequest as ChildInformationSeekerConnectRequest;
 use CryoConnectDB\InformationSeekerConnectRequestCryosphereWhere as ChildInformationSeekerConnectRequestCryosphereWhere;
 use CryoConnectDB\InformationSeekerConnectRequestCryosphereWhereQuery as ChildInformationSeekerConnectRequestCryosphereWhereQuery;
 use CryoConnectDB\InformationSeekerConnectRequestQuery as ChildInformationSeekerConnectRequestQuery;
 use CryoConnectDB\Map\CryosphereWhereTableMap;
 use CryoConnectDB\Map\ExpertCryosphereWhereTableMap;
+use CryoConnectDB\Map\FieldworkTableMap;
 use CryoConnectDB\Map\InformationSeekerConnectRequestCryosphereWhereTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
@@ -102,6 +105,12 @@ abstract class CryosphereWhere implements ActiveRecordInterface
     protected $collExpertCryosphereWheresPartial;
 
     /**
+     * @var        ObjectCollection|ChildFieldwork[] Collection to store aggregation of ChildFieldwork objects.
+     */
+    protected $collFieldworks;
+    protected $collFieldworksPartial;
+
+    /**
      * @var        ObjectCollection|ChildInformationSeekerConnectRequestCryosphereWhere[] Collection to store aggregation of ChildInformationSeekerConnectRequestCryosphereWhere objects.
      */
     protected $collInformationSeekerConnectRequestCryosphereWheres;
@@ -152,6 +161,12 @@ abstract class CryosphereWhere implements ActiveRecordInterface
      * @var ObjectCollection|ChildExpertCryosphereWhere[]
      */
     protected $expertCryosphereWheresScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildFieldwork[]
+     */
+    protected $fieldworksScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -614,6 +629,8 @@ abstract class CryosphereWhere implements ActiveRecordInterface
 
             $this->collExpertCryosphereWheres = null;
 
+            $this->collFieldworks = null;
+
             $this->collInformationSeekerConnectRequestCryosphereWheres = null;
 
             $this->collExpertss = null;
@@ -801,6 +818,23 @@ abstract class CryosphereWhere implements ActiveRecordInterface
 
             if ($this->collExpertCryosphereWheres !== null) {
                 foreach ($this->collExpertCryosphereWheres as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->fieldworksScheduledForDeletion !== null) {
+                if (!$this->fieldworksScheduledForDeletion->isEmpty()) {
+                    \CryoConnectDB\FieldworkQuery::create()
+                        ->filterByPrimaryKeys($this->fieldworksScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->fieldworksScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collFieldworks !== null) {
+                foreach ($this->collFieldworks as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1008,6 +1042,21 @@ abstract class CryosphereWhere implements ActiveRecordInterface
                 }
 
                 $result[$key] = $this->collExpertCryosphereWheres->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collFieldworks) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'fieldworks';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'fieldworks';
+                        break;
+                    default:
+                        $key = 'Fieldworks';
+                }
+
+                $result[$key] = $this->collFieldworks->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
             if (null !== $this->collInformationSeekerConnectRequestCryosphereWheres) {
 
@@ -1252,6 +1301,12 @@ abstract class CryosphereWhere implements ActiveRecordInterface
                 }
             }
 
+            foreach ($this->getFieldworks() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addFieldwork($relObj->copy($deepCopy));
+                }
+            }
+
             foreach ($this->getInformationSeekerConnectRequestCryosphereWheres() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addInformationSeekerConnectRequestCryosphereWhere($relObj->copy($deepCopy));
@@ -1301,6 +1356,10 @@ abstract class CryosphereWhere implements ActiveRecordInterface
     {
         if ('ExpertCryosphereWhere' == $relationName) {
             $this->initExpertCryosphereWheres();
+            return;
+        }
+        if ('Fieldwork' == $relationName) {
+            $this->initFieldworks();
             return;
         }
         if ('InformationSeekerConnectRequestCryosphereWhere' == $relationName) {
@@ -1560,6 +1619,234 @@ abstract class CryosphereWhere implements ActiveRecordInterface
         $query->joinWith('Experts', $joinBehavior);
 
         return $this->getExpertCryosphereWheres($query, $con);
+    }
+
+    /**
+     * Clears out the collFieldworks collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addFieldworks()
+     */
+    public function clearFieldworks()
+    {
+        $this->collFieldworks = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collFieldworks collection loaded partially.
+     */
+    public function resetPartialFieldworks($v = true)
+    {
+        $this->collFieldworksPartial = $v;
+    }
+
+    /**
+     * Initializes the collFieldworks collection.
+     *
+     * By default this just sets the collFieldworks collection to an empty array (like clearcollFieldworks());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initFieldworks($overrideExisting = true)
+    {
+        if (null !== $this->collFieldworks && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = FieldworkTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collFieldworks = new $collectionClassName;
+        $this->collFieldworks->setModel('\CryoConnectDB\Fieldwork');
+    }
+
+    /**
+     * Gets an array of ChildFieldwork objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildCryosphereWhere is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildFieldwork[] List of ChildFieldwork objects
+     * @throws PropelException
+     */
+    public function getFieldworks(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collFieldworksPartial && !$this->isNew();
+        if (null === $this->collFieldworks || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collFieldworks) {
+                // return empty collection
+                $this->initFieldworks();
+            } else {
+                $collFieldworks = ChildFieldworkQuery::create(null, $criteria)
+                    ->filterByCryosphereWhere($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collFieldworksPartial && count($collFieldworks)) {
+                        $this->initFieldworks(false);
+
+                        foreach ($collFieldworks as $obj) {
+                            if (false == $this->collFieldworks->contains($obj)) {
+                                $this->collFieldworks->append($obj);
+                            }
+                        }
+
+                        $this->collFieldworksPartial = true;
+                    }
+
+                    return $collFieldworks;
+                }
+
+                if ($partial && $this->collFieldworks) {
+                    foreach ($this->collFieldworks as $obj) {
+                        if ($obj->isNew()) {
+                            $collFieldworks[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collFieldworks = $collFieldworks;
+                $this->collFieldworksPartial = false;
+            }
+        }
+
+        return $this->collFieldworks;
+    }
+
+    /**
+     * Sets a collection of ChildFieldwork objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $fieldworks A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildCryosphereWhere The current object (for fluent API support)
+     */
+    public function setFieldworks(Collection $fieldworks, ConnectionInterface $con = null)
+    {
+        /** @var ChildFieldwork[] $fieldworksToDelete */
+        $fieldworksToDelete = $this->getFieldworks(new Criteria(), $con)->diff($fieldworks);
+
+
+        //since at least one column in the foreign key is at the same time a PK
+        //we can not just set a PK to NULL in the lines below. We have to store
+        //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
+        $this->fieldworksScheduledForDeletion = clone $fieldworksToDelete;
+
+        foreach ($fieldworksToDelete as $fieldworkRemoved) {
+            $fieldworkRemoved->setCryosphereWhere(null);
+        }
+
+        $this->collFieldworks = null;
+        foreach ($fieldworks as $fieldwork) {
+            $this->addFieldwork($fieldwork);
+        }
+
+        $this->collFieldworks = $fieldworks;
+        $this->collFieldworksPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Fieldwork objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related Fieldwork objects.
+     * @throws PropelException
+     */
+    public function countFieldworks(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collFieldworksPartial && !$this->isNew();
+        if (null === $this->collFieldworks || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collFieldworks) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getFieldworks());
+            }
+
+            $query = ChildFieldworkQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByCryosphereWhere($this)
+                ->count($con);
+        }
+
+        return count($this->collFieldworks);
+    }
+
+    /**
+     * Method called to associate a ChildFieldwork object to this object
+     * through the ChildFieldwork foreign key attribute.
+     *
+     * @param  ChildFieldwork $l ChildFieldwork
+     * @return $this|\CryoConnectDB\CryosphereWhere The current object (for fluent API support)
+     */
+    public function addFieldwork(ChildFieldwork $l)
+    {
+        if ($this->collFieldworks === null) {
+            $this->initFieldworks();
+            $this->collFieldworksPartial = true;
+        }
+
+        if (!$this->collFieldworks->contains($l)) {
+            $this->doAddFieldwork($l);
+
+            if ($this->fieldworksScheduledForDeletion and $this->fieldworksScheduledForDeletion->contains($l)) {
+                $this->fieldworksScheduledForDeletion->remove($this->fieldworksScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildFieldwork $fieldwork The ChildFieldwork object to add.
+     */
+    protected function doAddFieldwork(ChildFieldwork $fieldwork)
+    {
+        $this->collFieldworks[]= $fieldwork;
+        $fieldwork->setCryosphereWhere($this);
+    }
+
+    /**
+     * @param  ChildFieldwork $fieldwork The ChildFieldwork object to remove.
+     * @return $this|ChildCryosphereWhere The current object (for fluent API support)
+     */
+    public function removeFieldwork(ChildFieldwork $fieldwork)
+    {
+        if ($this->getFieldworks()->contains($fieldwork)) {
+            $pos = $this->collFieldworks->search($fieldwork);
+            $this->collFieldworks->remove($pos);
+            if (null === $this->fieldworksScheduledForDeletion) {
+                $this->fieldworksScheduledForDeletion = clone $this->collFieldworks;
+                $this->fieldworksScheduledForDeletion->clear();
+            }
+            $this->fieldworksScheduledForDeletion[]= clone $fieldwork;
+            $fieldwork->setCryosphereWhere(null);
+        }
+
+        return $this;
     }
 
     /**
@@ -2335,6 +2622,11 @@ abstract class CryosphereWhere implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collFieldworks) {
+                foreach ($this->collFieldworks as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->collInformationSeekerConnectRequestCryosphereWheres) {
                 foreach ($this->collInformationSeekerConnectRequestCryosphereWheres as $o) {
                     $o->clearAllReferences($deep);
@@ -2353,6 +2645,7 @@ abstract class CryosphereWhere implements ActiveRecordInterface
         } // if ($deep)
 
         $this->collExpertCryosphereWheres = null;
+        $this->collFieldworks = null;
         $this->collInformationSeekerConnectRequestCryosphereWheres = null;
         $this->collExpertss = null;
         $this->collInformationSeekerConnectRequests = null;

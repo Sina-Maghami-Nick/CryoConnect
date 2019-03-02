@@ -280,22 +280,41 @@ CREATE TABLE `expert_cryosphere_where`
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
--- expert_field_work
+-- fieldwork
 -- ---------------------------------------------------------------------
 
-DROP TABLE IF EXISTS `expert_field_work`;
+DROP TABLE IF EXISTS `fieldwork`;
 
-CREATE TABLE `expert_field_work`
+CREATE TABLE `fieldwork`
 (
-    `expert_id` int(10) unsigned NOT NULL,
-    `field_work_where` TEXT,
-    `field_work_year` INTEGER(4),
-    `field_work_month` TINYINT(2),
+    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `fieldwork_project_name` TEXT NOT NULL,
+    `fieldwork_leader_name` TEXT NOT NULL,
+    `fieldwork_leader_affiliation` TEXT,
+    `fieldwork_leader_website` TEXT,
+    `fieldwork_leader_email` TEXT NOT NULL,
+    `fieldwork_project_website` TEXT,
+    `cryosphere_where_id` int(10) unsigned NOT NULL,
+    `fieldwork_locations` TEXT,
+    `fieldwork_duration` int(2) unsigned,
+    `fieldwork_start_date` DATE,
+    `fieldwork_goal` TEXT,
+    `fieldwork_information_seeker_limit` int(5) unsigned,
+    `fieldwork_information_seeker_cost` int(10) unsigned,
+    `fieldwork_biding_allowed` TINYINT(1) DEFAULT 0 NOT NULL,
+    `fieldwork_information_seeker_package_included` TEXT,
+    `fieldwork_information_seeker_package_excluded` TEXT,
+    `fieldwork_is_certain` TINYINT(1) NOT NULL,
+    `fieldwork_when_certain` DATE,
+    `field_information_seeker_announcement_date` DATE,
+    `field_information_seeker_deadline` DATE NOT NULL,
+    `approved` TINYINT(1) DEFAULT 0 NOT NULL,
     `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    INDEX `expert_field_work_fi_023b7c` (`expert_id`),
-    CONSTRAINT `expert_field_work_fk_023b7c`
-        FOREIGN KEY (`expert_id`)
-        REFERENCES `experts` (`id`)
+    PRIMARY KEY (`id`,`cryosphere_where_id`),
+    INDEX `fieldwork_fi_7f381c` (`cryosphere_where_id`),
+    CONSTRAINT `fieldwork_fk_7f381c`
+        FOREIGN KEY (`cryosphere_where_id`)
+        REFERENCES `cryosphere_where` (`id`)
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
 

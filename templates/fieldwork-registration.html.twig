@@ -1,0 +1,274 @@
+{# empty Twig template #}
+<html>
+    <head>
+        <title>Fieldwork registration</title>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </head>
+
+    <body>
+        <div class="row">
+            <form class="col s12" id="fieldwork_form">
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="leader_name" name="leader_name" type="text" class="validate" required>
+                        <label for="leader_name">Expedition leader's full name<font color="red">*</font></label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="leader_email" name="leader_email" type="email" class="validate" required>
+                        <label for="leader_email">Expedition leader's email<font color="red">*</font></label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="leader_affiliation" name="leader_affiliation" type="text" class="validate" required>
+                        <label for="leader_affiliation">Expedition leader's primary affiliation<font color="red">*</font></label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="leader_website" name="leader_website" type="url" class="validate">
+                        <label for="leader_website">Webpage with information about the expedition leader<font color="red">*</font></label>
+                        <span class="helper-text">e.g. linkedIn page - please enter the whole url including http://</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="project_name" name="project_name" type="text" class="validate" required>
+                        <label for="project_name">Project or expedition name<font color="red">*</font></label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="project_website" name="project_website" type="url" class="validate">
+                        <label for="project_website">Webpage with information about the project or expedition</label>
+                        <span class="helper-text">please enter the whole url including http://</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="input-field col s12">
+                        <select id="cryosphere_where" name="cryosphere_where" required>
+                            <option value="" disabled selected>choose</option>
+                            {% for cryosphere_where in _context.cryosphere_where %}
+                                <option value="{{cryosphere_where.Id}}">{{cryosphere_where.CryosphereWhereName}}</option>
+                            {% endfor %}
+                        </select>
+                        <label for="cryosphere_where">Region of expedition<font color="red">*</font></label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="locations" name="locations" type="text" class="validate" required>
+                        <label for="locations">More precise location</label>
+                        <span class="helper-text">please separate each location with comma</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="start_date" name="start_date" type="text" class="datepicker" required>
+                        <label for="start_date">Approximate expedition start date<font color="red">*</font></label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="input-field col s12">
+                        <label>Approximate expedition duration in days<font color="red">*</font></label>
+                        <input type="number" class="validate" id="duration" name="duration" min="1" required />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="input-field col s12">
+                        <textarea id="science_goals" name="science_goals" class="materialize-textarea"></textarea>
+                        <label for="science_goals">Scientific goal(s) of expedition</label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="infomation_seeker_limit" name="infomation_seeker_limit" type="number" min="1" class="validate" required>
+                        <label for="infomation_seeker_limit">Maximum number of spots available for information seekers<font color="red">*</font></label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="infomation_seeker_cost" name="infomation_seeker_cost" type="number" min="1" class="validate" required>
+                        <label for="infomation_seeker_cost">Cost per information seekers in Euros<font color="red">*</font></label>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="input-field col s12">
+                        <span class="helper-text">Bidding over cost price allowed?<font color="red">*</font><br><br></span>
+                        <div class="switch">
+                            <label>
+                                No
+                                <input name="biding_allowed" type="checkbox">
+                                <span class="lever"></span>
+                                Yes
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="input-field col s12">
+                        <textarea id="package_included" name="package_included" class="materialize-textarea" required></textarea>
+                        <label for="package_included">What would be covered by this cost?<font color="red">*</font></label>
+                        <span class="helper-text">For instance travel, accommodation, food, insurance.</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="input-field col s12">
+                        <textarea id="package_excluded" name="package_excluded" class="materialize-textarea"></textarea>
+                        <label for="package_excluded">What would <u>not</u> be covered by this cost?</label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="infomation_seeker_deadline" name="infomation_seeker_deadline" type="text" class="datepicker" required>
+                        <label for="infomation_seeker_deadline">Deadline for information seekers to apply<font color="red">*</font></label>       
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="input-field col s12">
+                        <span class="helper-text">Is the fieldwork certain?<font color="red">*</font><br><br></span>
+                        <div class="switch">
+                            <label>
+                                No
+                                <input id="project_certain" name="project_certain" type="checkbox">
+                                <span class="lever"></span>
+                                Yes
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="project_certain_date" name="project_certain_date" type="text" class="datepicker" required>
+                        <label for="project_certain_date">If not, when will it be certain?</label>       
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="infomation_seeker_announcment_date" name="infomation_seeker_announcment_date" type="text" class="datepicker" required>
+                        <label for="infomation_seeker_announcment_date">When would information seeker applicants be informed of your decision?</label>       
+                    </div>
+                </div>        
+                <div class="row">
+                    <div class="input-field col s12">
+                        <label>
+                            <input type="checkbox" required/>
+                            <span>I agree to the terms and conditions<font color="red">*</font></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="input-field col s12">
+                        <p class="center-align">
+                            <button id="submitBtn" class="btn waves-effect waves-light" type="submit" name="action">Submit
+                                <i class="material-icons right">send</i>
+                            </button>
+                        </p>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+
+
+
+
+    </body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+
+        //enables date picker for uncertain dates
+        $(function () {
+            $('#project_certain').click(function () {
+                if ($(this).is(':checked')) {
+                    $('#project_certain_date').attr('disabled', 'disabled');
+                } else {
+                    $('#project_certain_date').removeAttr('disabled');
+                    $('#project_certain_date').prop('required', false);
+                }
+            });
+        });
+
+        //check if leader's email exists and change the validation msg accordingly
+        document.getElementById("leader_email").addEventListener("focusout", function () {
+            var email = $(this).val();
+            $.ajax({
+                type: 'POST',
+                url: "{{path_for('leader_check_email')}}",
+                data: 'email=' + encodeURIComponent(email),
+                beforeSend: function () {
+                }
+            })
+                    .done(function (data) {
+                        $('#leader_email')[0].setCustomValidity("This email address is already registered!");
+                        $('#leader_name').focus()
+                    })
+                    .fail(function (errMsg) {
+                        $('#leader_email')[0].setCustomValidity("");
+                    });
+        });
+
+        $('#leader_email').on('click', function () {
+            this.setCustomValidity("");
+        });
+
+        $(document).ready(function () {
+
+            //form subbmition
+            $("#fieldwork_form").submit(function (event) {
+
+                /* stop form from submitting normally */
+                event.preventDefault();
+
+                $.ajax({
+                    type: 'POST',
+                    url: "{{path_for('fieldwork-registration')}}",
+                    data: $(this).serialize(),
+                    beforeSend: function () {
+                        $('#submitBtn').attr("disabled", "disabled");
+                    }
+                })
+                        .done(function (data) {
+                            document.body.innerHTML = data;
+                            parent.scrollTo(0,400);
+                        })
+                        .fail(function (errMsg) {
+                            $('#submitBtn').removeAttr("disabled");
+                            alert("Something has gone wrong! Please check your enteries and try again. If error persists, please contact us. Thank you");
+                        });
+
+            });
+
+            //to initialize materelize forms
+            $('select').formSelect();
+
+            var todayDate = new Date();
+            $(".datepicker").flatpickr({
+                minDate: todayDate,
+                dateFormat: 'd M Y'
+            });
+        });
+    </script>
+</html>

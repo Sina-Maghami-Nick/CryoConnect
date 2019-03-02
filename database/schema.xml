@@ -120,14 +120,32 @@
             <reference local="cryosphere_where_id" foreign="id"/>
         </foreign-key>
     </table>
-    <table name="expert_field_work" idMethod="native" phpName="ExpertFieldWork">
-        <column name="expert_id" phpName="ExpertId" type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
-        <column name="field_work_where" phpName="FieldWorkWhere" type="LONGVARCHAR"/>
-        <column name="field_work_year" phpName="FieldWorkYear" type="INTEGER" size="4"/>
-        <column name="field_work_month" phpName="FieldWorkMonth" type="TINYINT" size="2"/>
+    <table name="fieldwork" idMethod="native" phpName="Fieldwork">
+        <column name="id" phpName="Id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
+        <column name="fieldwork_project_name" phpName="FieldworkName" type="LONGVARCHAR" required="true"/>
+        <column name="fieldwork_leader_name" phpName="FieldworkLeaderName" type="LONGVARCHAR" required="true"/>
+        <column name="fieldwork_leader_affiliation" phpName="FieldworkLeaderAffiliation" type="LONGVARCHAR"/>
+        <column name="fieldwork_leader_website" phpName="FieldworkLeaderWebsite" type="LONGVARCHAR"/>
+        <column name="fieldwork_leader_email" phpName="FieldworkLeaderEmail" type="LONGVARCHAR" required="true"/>
+        <column name="fieldwork_project_website" phpName="FieldworkProjectWebsite" type="LONGVARCHAR"/>
+        <column name="cryosphere_where_id" phpName="CryosphereWhereId" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" required="true"/>
+        <column name="fieldwork_locations" phpName="FieldworkLocations" type="LONGVARCHAR"/>
+        <column name="fieldwork_duration" phpName="FieldworkDuration" type="INTEGER" sqlType="int(2) unsigned"/>
+        <column name="fieldwork_start_date" phpName="FieldworkStartDate" type="DATE"/>
+        <column name="fieldwork_goal" phpName="FieldworkGoal" type="LONGVARCHAR"/>
+        <column name="fieldwork_information_seeker_limit" phpName="FieldworkInformationSeekerLimit" type="INTEGER" sqlType="int(5) unsigned"/>
+        <column name="fieldwork_information_seeker_cost" phpName="FieldworkInformationSeekerCost" type="INTEGER" sqlType="int(10) unsigned"/>
+        <column name="fieldwork_biding_allowed" phpName="FieldworkBidingAllowed" type="BOOLEAN" size="1" required="true" defaultValue="false"/>
+        <column name="fieldwork_information_seeker_package_included" phpName="FieldworkInformationSeekerPackageIncluded" type="LONGVARCHAR"/>
+        <column name="fieldwork_information_seeker_package_excluded" phpName="FieldworkInformationSeekerPackageExcluded" type="LONGVARCHAR"/>
+        <column name="fieldwork_is_certain" phpName="FieldworkIsCertain" type="BOOLEAN" size="1" required="true"/>
+        <column name="fieldwork_when_certain" phpName="FieldworkWhenCertain" type="DATE"/>
+        <column name="field_information_seeker_announcement_date" phpName="FieldworkInformationSeekerAnnouncementDate" type="DATE"/>
+        <column name="field_information_seeker_deadline" phpName="FieldworkInformationSeekerDeadline" required="true" type="DATE" />
+        <column name="approved" phpName="Approved" type="BOOLEAN" size="1" required="true" defaultValue="false"/>
         <column name="timestamp" phpName="Timestamp" type="TIMESTAMP" required="true" defaultExpr="CURRENT_TIMESTAMP"/>
-        <foreign-key foreignTable="experts" onDelete="CASCADE">
-            <reference local="expert_id" foreign="id"/>
+        <foreign-key foreignTable="cryosphere_where" onDelete="CASCADE">
+            <reference local="cryosphere_where_id" foreign="id"/>
         </foreign-key>
     </table>
     <table name="expert_languages" idMethod="native" phpName="ExpertLanguages" isCrossRef="true">

@@ -238,13 +238,6 @@ class ExpertsTableMap extends TableMap
     1 => ':id',
   ),
 ), 'CASCADE', null, 'ExpertCryosphereWheres', false);
-        $this->addRelation('ExpertFieldWork', '\\CryoConnectDB\\ExpertFieldWork', RelationMap::ONE_TO_MANY, array (
-  0 =>
-  array (
-    0 => ':expert_id',
-    1 => ':id',
-  ),
-), 'CASCADE', null, 'ExpertFieldWorks', false);
         $this->addRelation('ExpertLanguages', '\\CryoConnectDB\\ExpertLanguages', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
@@ -289,7 +282,6 @@ class ExpertsTableMap extends TableMap
         ExpertCryosphereWhatSpeceficTableMap::clearInstancePool();
         ExpertCryosphereWhenTableMap::clearInstancePool();
         ExpertCryosphereWhereTableMap::clearInstancePool();
-        ExpertFieldWorkTableMap::clearInstancePool();
         ExpertLanguagesTableMap::clearInstancePool();
         ExpertPrimaryAffiliationTableMap::clearInstancePool();
         ExpertSecondaryAffiliationTableMap::clearInstancePool();

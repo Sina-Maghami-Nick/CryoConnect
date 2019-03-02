@@ -9,6 +9,10 @@
 
 
         <style>
+            
+            .pure-form select {
+                width: 215px;
+            }
             .pure-form-aligned .pure-control-group label {
                 text-align: left;
                 display: inline-block;
@@ -26,9 +30,11 @@
 
             hr.hrform {
                 border-top: 3px double #8c8b8b;
-                width: 700px;
+                width: 555px;
+                margin-left: 0;
             }
         </style>
+        
     </head>
     <body>
         <div id="formpage" style="text-align:centre">
@@ -83,7 +89,7 @@
 
                     <div class="pure-control-group">
                         <label for="gender">Gender<font color="red">*</font></label>
-                        <select name="gender" style="width: 13em" required>
+                        <select name="gender" required>
                             <option disabled selected value>choose</option>
                             <option value="F">female</option>
                             <option value="M">male</option>
@@ -94,7 +100,7 @@
                     <div class="pure-control-group">
                         <label for="languages">Languages in which you are capable of answering scientific questions<font color="red">*</font></label>
                         <div class="pure-u" id="languages">
-                            <select name="languages[0]" style="width: 13em" required>
+                            <select name="languages[0]" required>
                                 <option disabled selected value>choose</option>
                                 {% for language in _context.languages %}
                                     <option value="{{language.LanguageCode}}">{{language.Language}}</option>
@@ -243,8 +249,6 @@
 
             $(document).ready(function () {
 
-                parent._alert = new parent.Function("alert(arguments[0]);");
-
                 $("#addlanguage").click(function () {
 
                     var selectCount = $(this).parent().find("select").length;
@@ -286,7 +290,7 @@
                             })
                             .fail(function (errMsg) {
                                 $('#submitBtn').removeAttr("disabled");
-                                parent._alert("Something has gone wrong! Please check your enteries and try again. If error persists, please contact us. Thank you");
+                                alert("Something has gone wrong! Please check your enteries and try again. If error persists, please contact us. Thank you");
                             });
 
                 });

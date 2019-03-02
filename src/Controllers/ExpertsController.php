@@ -143,7 +143,7 @@ class ExpertsController extends Controller {
                 ->addInfo('A new unvalidated expert is added to the databse: ' . json_encode($expert->toArray()));
 
         $approvalMsg = (new \Swift_Message('Approval of new cryoconnect expert: ' . $firstName . ' ' . $lastName))
-                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'No-reply'])
+                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryoconnect'])
                 ->setTo($this->container->get('settings')['contacts']['approval_admin'])
                 ->setBody(
                 $this->view->render(new \Slim\Http\Response(), 'emails/experts-approval-email.html.twig', [
@@ -253,7 +253,7 @@ class ExpertsController extends Controller {
                 ->addInfo('A new expert has been approved. ExpertId =' . $expert->getId());
 
         $emailMsg = (new \Swift_Message('You are now signed up as an expert at Cryo Connect'))
-                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'No-reply'])
+                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryoconnect'])
                 ->setTo($expert->getEmail())
                 ->setBody(
                 $this->view->render(new \Slim\Http\Response(), 'emails/experts-welcome-email.html.twig', [
@@ -299,7 +299,7 @@ class ExpertsController extends Controller {
         $expert->delete();
 
         $emailMsg = (new \Swift_Message('Sorry Cryoconnect could not approve your request'))
-                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'No-reply'])
+                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryoconnect'])
                 ->setTo($expert->getEmail())
                 ->setBody(
                 $this->view->render(new \Slim\Http\Response(), 'emails/experts-rejection-email.html.twig', [
@@ -424,30 +424,6 @@ class ExpertsController extends Controller {
         return $expert;
     }
 
-    /**
-     * 
-     * @param Experts $expert
-     * @param string $fieldWorkLocation
-     * @param string $fieldWorkDate
-     * @return Experts
-     */
-//    private function setExpertFieldWork(Experts $expert, string $fieldWorkLocation, string $fieldWorkDate) {
-//        //Adding experts Crysphere wheres
-//        $expertFieldWork = new ExpertFieldWork();
-//
-//        if (!empty($fieldWorkLocation)) {
-//            $expertFieldWork->setFieldWorkWhere($fieldWorkLocation);
-//        }
-//
-//        if (($timestamp = strtotime($fieldWorkDate)) !== false) {
-//            $expertFieldWork->setFieldWorkYear(date("Y", $timestamp));
-//            $expertFieldWork->setFieldWorkMonth(date("m", $timestamp));
-//        }
-//
-//        $expert->addExpertFieldWork($expertFieldWork);
-//
-//        return $expert;
-//    }
 
     /**
      * 

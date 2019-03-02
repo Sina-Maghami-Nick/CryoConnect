@@ -2,10 +2,10 @@
 
 namespace CryoConnectDB;
 
-use CryoConnectDB\Base\ExpertFieldWorkQuery as BaseExpertFieldWorkQuery;
+use CryoConnectDB\Base\Fieldwork as BaseFieldwork;
 
 /**
- * Skeleton subclass for performing query and update operations on the 'expert_field_work' table.
+ * Skeleton subclass for representing a row from the 'fieldwork' table.
  *
  *
  *
@@ -14,7 +14,7 @@ use CryoConnectDB\Base\ExpertFieldWorkQuery as BaseExpertFieldWorkQuery;
  * long as it does not already exist in the output directory.
  *
  */
-class ExpertFieldWorkQuery extends BaseExpertFieldWorkQuery
+class Fieldwork extends BaseFieldwork
 {
 
 }

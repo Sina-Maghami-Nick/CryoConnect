@@ -46,6 +46,16 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildCryosphereWhereQuery rightJoinWithExpertCryosphereWhere() Adds a RIGHT JOIN clause and with to the query using the ExpertCryosphereWhere relation
  * @method     ChildCryosphereWhereQuery innerJoinWithExpertCryosphereWhere() Adds a INNER JOIN clause and with to the query using the ExpertCryosphereWhere relation
  *
+ * @method     ChildCryosphereWhereQuery leftJoinFieldwork($relationAlias = null) Adds a LEFT JOIN clause to the query using the Fieldwork relation
+ * @method     ChildCryosphereWhereQuery rightJoinFieldwork($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Fieldwork relation
+ * @method     ChildCryosphereWhereQuery innerJoinFieldwork($relationAlias = null) Adds a INNER JOIN clause to the query using the Fieldwork relation
+ *
+ * @method     ChildCryosphereWhereQuery joinWithFieldwork($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Fieldwork relation
+ *
+ * @method     ChildCryosphereWhereQuery leftJoinWithFieldwork() Adds a LEFT JOIN clause and with to the query using the Fieldwork relation
+ * @method     ChildCryosphereWhereQuery rightJoinWithFieldwork() Adds a RIGHT JOIN clause and with to the query using the Fieldwork relation
+ * @method     ChildCryosphereWhereQuery innerJoinWithFieldwork() Adds a INNER JOIN clause and with to the query using the Fieldwork relation
+ *
  * @method     ChildCryosphereWhereQuery leftJoinInformationSeekerConnectRequestCryosphereWhere($relationAlias = null) Adds a LEFT JOIN clause to the query using the InformationSeekerConnectRequestCryosphereWhere relation
  * @method     ChildCryosphereWhereQuery rightJoinInformationSeekerConnectRequestCryosphereWhere($relationAlias = null) Adds a RIGHT JOIN clause to the query using the InformationSeekerConnectRequestCryosphereWhere relation
  * @method     ChildCryosphereWhereQuery innerJoinInformationSeekerConnectRequestCryosphereWhere($relationAlias = null) Adds a INNER JOIN clause to the query using the InformationSeekerConnectRequestCryosphereWhere relation
@@ -56,7 +66,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildCryosphereWhereQuery rightJoinWithInformationSeekerConnectRequestCryosphereWhere() Adds a RIGHT JOIN clause and with to the query using the InformationSeekerConnectRequestCryosphereWhere relation
  * @method     ChildCryosphereWhereQuery innerJoinWithInformationSeekerConnectRequestCryosphereWhere() Adds a INNER JOIN clause and with to the query using the InformationSeekerConnectRequestCryosphereWhere relation
  *
- * @method     \CryoConnectDB\ExpertCryosphereWhereQuery|\CryoConnectDB\InformationSeekerConnectRequestCryosphereWhereQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \CryoConnectDB\ExpertCryosphereWhereQuery|\CryoConnectDB\FieldworkQuery|\CryoConnectDB\InformationSeekerConnectRequestCryosphereWhereQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildCryosphereWhere findOne(ConnectionInterface $con = null) Return the first ChildCryosphereWhere matching the query
  * @method     ChildCryosphereWhere findOneOrCreate(ConnectionInterface $con = null) Return the first ChildCryosphereWhere matching the query, or a new ChildCryosphereWhere object populated from the query conditions when no match is found
@@ -444,6 +454,79 @@ abstract class CryosphereWhereQuery extends ModelCriteria
         return $this
             ->joinExpertCryosphereWhere($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'ExpertCryosphereWhere', '\CryoConnectDB\ExpertCryosphereWhereQuery');
+    }
+
+    /**
+     * Filter the query by a related \CryoConnectDB\Fieldwork object
+     *
+     * @param \CryoConnectDB\Fieldwork|ObjectCollection $fieldwork the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildCryosphereWhereQuery The current query, for fluid interface
+     */
+    public function filterByFieldwork($fieldwork, $comparison = null)
+    {
+        if ($fieldwork instanceof \CryoConnectDB\Fieldwork) {
+            return $this
+                ->addUsingAlias(CryosphereWhereTableMap::COL_ID, $fieldwork->getCryosphereWhereId(), $comparison);
+        } elseif ($fieldwork instanceof ObjectCollection) {
+            return $this
+                ->useFieldworkQuery()
+                ->filterByPrimaryKeys($fieldwork->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByFieldwork() only accepts arguments of type \CryoConnectDB\Fieldwork or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Fieldwork relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildCryosphereWhereQuery The current query, for fluid interface
+     */
+    public function joinFieldwork($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Fieldwork');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Fieldwork');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Fieldwork relation Fieldwork object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \CryoConnectDB\FieldworkQuery A secondary query class using the current class as primary query
+     */
+    public function useFieldworkQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinFieldwork($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Fieldwork', '\CryoConnectDB\FieldworkQuery');
     }
 
     /**

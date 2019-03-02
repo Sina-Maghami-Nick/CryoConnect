@@ -35,8 +35,6 @@ use CryoConnectDB\ExpertCryosphereWhen as ChildExpertCryosphereWhen;
 use CryoConnectDB\ExpertCryosphereWhenQuery as ChildExpertCryosphereWhenQuery;
 use CryoConnectDB\ExpertCryosphereWhere as ChildExpertCryosphereWhere;
 use CryoConnectDB\ExpertCryosphereWhereQuery as ChildExpertCryosphereWhereQuery;
-use CryoConnectDB\ExpertFieldWork as ChildExpertFieldWork;
-use CryoConnectDB\ExpertFieldWorkQuery as ChildExpertFieldWorkQuery;
 use CryoConnectDB\ExpertLanguages as ChildExpertLanguages;
 use CryoConnectDB\ExpertLanguagesQuery as ChildExpertLanguagesQuery;
 use CryoConnectDB\ExpertPrimaryAffiliation as ChildExpertPrimaryAffiliation;
@@ -54,7 +52,6 @@ use CryoConnectDB\Map\ExpertCryosphereWhatSpeceficTableMap;
 use CryoConnectDB\Map\ExpertCryosphereWhatTableMap;
 use CryoConnectDB\Map\ExpertCryosphereWhenTableMap;
 use CryoConnectDB\Map\ExpertCryosphereWhereTableMap;
-use CryoConnectDB\Map\ExpertFieldWorkTableMap;
 use CryoConnectDB\Map\ExpertLanguagesTableMap;
 use CryoConnectDB\Map\ExpertSecondaryAffiliationTableMap;
 use CryoConnectDB\Map\ExpertsTableMap;
@@ -224,12 +221,6 @@ abstract class Experts implements ActiveRecordInterface
      */
     protected $collExpertCryosphereWheres;
     protected $collExpertCryosphereWheresPartial;
-
-    /**
-     * @var        ObjectCollection|ChildExpertFieldWork[] Collection to store aggregation of ChildExpertFieldWork objects.
-     */
-    protected $collExpertFieldWorks;
-    protected $collExpertFieldWorksPartial;
 
     /**
      * @var        ObjectCollection|ChildExpertLanguages[] Collection to store aggregation of ChildExpertLanguages objects.
@@ -425,12 +416,6 @@ abstract class Experts implements ActiveRecordInterface
      * @var ObjectCollection|ChildExpertCryosphereWhere[]
      */
     protected $expertCryosphereWheresScheduledForDeletion = null;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var ObjectCollection|ChildExpertFieldWork[]
-     */
-    protected $expertFieldWorksScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -1140,8 +1125,6 @@ abstract class Experts implements ActiveRecordInterface
 
             $this->collExpertCryosphereWheres = null;
 
-            $this->collExpertFieldWorks = null;
-
             $this->collExpertLanguagess = null;
 
             $this->singleExpertPrimaryAffiliation = null;
@@ -1633,23 +1616,6 @@ abstract class Experts implements ActiveRecordInterface
                 }
             }
 
-            if ($this->expertFieldWorksScheduledForDeletion !== null) {
-                if (!$this->expertFieldWorksScheduledForDeletion->isEmpty()) {
-                    \CryoConnectDB\ExpertFieldWorkQuery::create()
-                        ->filterByPrimaryKeys($this->expertFieldWorksScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->expertFieldWorksScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collExpertFieldWorks !== null) {
-                foreach ($this->collExpertFieldWorks as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
-            }
-
             if ($this->expertLanguagessScheduledForDeletion !== null) {
                 if (!$this->expertLanguagessScheduledForDeletion->isEmpty()) {
                     \CryoConnectDB\ExpertLanguagesQuery::create()
@@ -2040,21 +2006,6 @@ abstract class Experts implements ActiveRecordInterface
 
                 $result[$key] = $this->collExpertCryosphereWheres->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
-            if (null !== $this->collExpertFieldWorks) {
-
-                switch ($keyType) {
-                    case TableMap::TYPE_CAMELNAME:
-                        $key = 'expertFieldWorks';
-                        break;
-                    case TableMap::TYPE_FIELDNAME:
-                        $key = 'expert_field_works';
-                        break;
-                    default:
-                        $key = 'ExpertFieldWorks';
-                }
-
-                $result[$key] = $this->collExpertFieldWorks->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-            }
             if (null !== $this->collExpertLanguagess) {
 
                 switch ($keyType) {
@@ -2424,12 +2375,6 @@ abstract class Experts implements ActiveRecordInterface
                 }
             }
 
-            foreach ($this->getExpertFieldWorks() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addExpertFieldWork($relObj->copy($deepCopy));
-                }
-            }
-
             foreach ($this->getExpertLanguagess() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addExpertLanguages($relObj->copy($deepCopy));
@@ -2565,10 +2510,6 @@ abstract class Experts implements ActiveRecordInterface
         }
         if ('ExpertCryosphereWhere' == $relationName) {
             $this->initExpertCryosphereWheres();
-            return;
-        }
-        if ('ExpertFieldWork' == $relationName) {
-            $this->initExpertFieldWorks();
             return;
         }
         if ('ExpertLanguages' == $relationName) {
@@ -4350,231 +4291,6 @@ abstract class Experts implements ActiveRecordInterface
         $query->joinWith('CryosphereWhere', $joinBehavior);
 
         return $this->getExpertCryosphereWheres($query, $con);
-    }
-
-    /**
-     * Clears out the collExpertFieldWorks collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return void
-     * @see        addExpertFieldWorks()
-     */
-    public function clearExpertFieldWorks()
-    {
-        $this->collExpertFieldWorks = null; // important to set this to NULL since that means it is uninitialized
-    }
-
-    /**
-     * Reset is the collExpertFieldWorks collection loaded partially.
-     */
-    public function resetPartialExpertFieldWorks($v = true)
-    {
-        $this->collExpertFieldWorksPartial = $v;
-    }
-
-    /**
-     * Initializes the collExpertFieldWorks collection.
-     *
-     * By default this just sets the collExpertFieldWorks collection to an empty array (like clearcollExpertFieldWorks());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param      boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initExpertFieldWorks($overrideExisting = true)
-    {
-        if (null !== $this->collExpertFieldWorks && !$overrideExisting) {
-            return;
-        }
-
-        $collectionClassName = ExpertFieldWorkTableMap::getTableMap()->getCollectionClassName();
-
-        $this->collExpertFieldWorks = new $collectionClassName;
-        $this->collExpertFieldWorks->setModel('\CryoConnectDB\ExpertFieldWork');
-    }
-
-    /**
-     * Gets an array of ChildExpertFieldWork objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this ChildExperts is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param      Criteria $criteria optional Criteria object to narrow the query
-     * @param      ConnectionInterface $con optional connection object
-     * @return ObjectCollection|ChildExpertFieldWork[] List of ChildExpertFieldWork objects
-     * @throws PropelException
-     */
-    public function getExpertFieldWorks(Criteria $criteria = null, ConnectionInterface $con = null)
-    {
-        $partial = $this->collExpertFieldWorksPartial && !$this->isNew();
-        if (null === $this->collExpertFieldWorks || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collExpertFieldWorks) {
-                // return empty collection
-                $this->initExpertFieldWorks();
-            } else {
-                $collExpertFieldWorks = ChildExpertFieldWorkQuery::create(null, $criteria)
-                    ->filterByExperts($this)
-                    ->find($con);
-
-                if (null !== $criteria) {
-                    if (false !== $this->collExpertFieldWorksPartial && count($collExpertFieldWorks)) {
-                        $this->initExpertFieldWorks(false);
-
-                        foreach ($collExpertFieldWorks as $obj) {
-                            if (false == $this->collExpertFieldWorks->contains($obj)) {
-                                $this->collExpertFieldWorks->append($obj);
-                            }
-                        }
-
-                        $this->collExpertFieldWorksPartial = true;
-                    }
-
-                    return $collExpertFieldWorks;
-                }
-
-                if ($partial && $this->collExpertFieldWorks) {
-                    foreach ($this->collExpertFieldWorks as $obj) {
-                        if ($obj->isNew()) {
-                            $collExpertFieldWorks[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collExpertFieldWorks = $collExpertFieldWorks;
-                $this->collExpertFieldWorksPartial = false;
-            }
-        }
-
-        return $this->collExpertFieldWorks;
-    }
-
-    /**
-     * Sets a collection of ChildExpertFieldWork objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param      Collection $expertFieldWorks A Propel collection.
-     * @param      ConnectionInterface $con Optional connection object
-     * @return $this|ChildExperts The current object (for fluent API support)
-     */
-    public function setExpertFieldWorks(Collection $expertFieldWorks, ConnectionInterface $con = null)
-    {
-        /** @var ChildExpertFieldWork[] $expertFieldWorksToDelete */
-        $expertFieldWorksToDelete = $this->getExpertFieldWorks(new Criteria(), $con)->diff($expertFieldWorks);
-
-
-        $this->expertFieldWorksScheduledForDeletion = $expertFieldWorksToDelete;
-
-        foreach ($expertFieldWorksToDelete as $expertFieldWorkRemoved) {
-            $expertFieldWorkRemoved->setExperts(null);
-        }
-
-        $this->collExpertFieldWorks = null;
-        foreach ($expertFieldWorks as $expertFieldWork) {
-            $this->addExpertFieldWork($expertFieldWork);
-        }
-
-        $this->collExpertFieldWorks = $expertFieldWorks;
-        $this->collExpertFieldWorksPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related ExpertFieldWork objects.
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct
-     * @param      ConnectionInterface $con
-     * @return int             Count of related ExpertFieldWork objects.
-     * @throws PropelException
-     */
-    public function countExpertFieldWorks(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
-    {
-        $partial = $this->collExpertFieldWorksPartial && !$this->isNew();
-        if (null === $this->collExpertFieldWorks || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collExpertFieldWorks) {
-                return 0;
-            }
-
-            if ($partial && !$criteria) {
-                return count($this->getExpertFieldWorks());
-            }
-
-            $query = ChildExpertFieldWorkQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByExperts($this)
-                ->count($con);
-        }
-
-        return count($this->collExpertFieldWorks);
-    }
-
-    /**
-     * Method called to associate a ChildExpertFieldWork object to this object
-     * through the ChildExpertFieldWork foreign key attribute.
-     *
-     * @param  ChildExpertFieldWork $l ChildExpertFieldWork
-     * @return $this|\CryoConnectDB\Experts The current object (for fluent API support)
-     */
-    public function addExpertFieldWork(ChildExpertFieldWork $l)
-    {
-        if ($this->collExpertFieldWorks === null) {
-            $this->initExpertFieldWorks();
-            $this->collExpertFieldWorksPartial = true;
-        }
-
-        if (!$this->collExpertFieldWorks->contains($l)) {
-            $this->doAddExpertFieldWork($l);
-
-            if ($this->expertFieldWorksScheduledForDeletion and $this->expertFieldWorksScheduledForDeletion->contains($l)) {
-                $this->expertFieldWorksScheduledForDeletion->remove($this->expertFieldWorksScheduledForDeletion->search($l));
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param ChildExpertFieldWork $expertFieldWork The ChildExpertFieldWork object to add.
-     */
-    protected function doAddExpertFieldWork(ChildExpertFieldWork $expertFieldWork)
-    {
-        $this->collExpertFieldWorks[]= $expertFieldWork;
-        $expertFieldWork->setExperts($this);
-    }
-
-    /**
-     * @param  ChildExpertFieldWork $expertFieldWork The ChildExpertFieldWork object to remove.
-     * @return $this|ChildExperts The current object (for fluent API support)
-     */
-    public function removeExpertFieldWork(ChildExpertFieldWork $expertFieldWork)
-    {
-        if ($this->getExpertFieldWorks()->contains($expertFieldWork)) {
-            $pos = $this->collExpertFieldWorks->search($expertFieldWork);
-            $this->collExpertFieldWorks->remove($pos);
-            if (null === $this->expertFieldWorksScheduledForDeletion) {
-                $this->expertFieldWorksScheduledForDeletion = clone $this->collExpertFieldWorks;
-                $this->expertFieldWorksScheduledForDeletion->clear();
-            }
-            $this->expertFieldWorksScheduledForDeletion[]= clone $expertFieldWork;
-            $expertFieldWork->setExperts(null);
-        }
-
-        return $this;
     }
 
     /**
@@ -7111,11 +6827,6 @@ abstract class Experts implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
-            if ($this->collExpertFieldWorks) {
-                foreach ($this->collExpertFieldWorks as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
             if ($this->collExpertLanguagess) {
                 foreach ($this->collExpertLanguagess as $o) {
                     $o->clearAllReferences($deep);
@@ -7178,7 +6889,6 @@ abstract class Experts implements ActiveRecordInterface
         $this->collExpertCryosphereWhatSpecefics = null;
         $this->collExpertCryosphereWhens = null;
         $this->collExpertCryosphereWheres = null;
-        $this->collExpertFieldWorks = null;
         $this->collExpertLanguagess = null;
         $this->singleExpertPrimaryAffiliation = null;
         $this->collExpertSecondaryAffiliations = null;

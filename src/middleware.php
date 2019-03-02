@@ -3,10 +3,11 @@
 // Application middleware
 // e.g: $app->add(new \Slim\Csrf\Guard);
 use Slim\Middleware\TokenAuthentication;
+use CryoConnectDB\FieldworkQuery;
 use CryoConnectDB\ExpertsQuery;
 
-//token authentication
-$authenticator = function(Slim\Http\Request $request, TokenAuthentication $tokenAuth) {
+//expert token authentication
+$expertAuthenticator = function(Slim\Http\Request $request, TokenAuthentication $tokenAuth) {
 
     # Search for token on header, parameter, cookie or attribute
     $token = $tokenAuth->findToken($request);
@@ -22,7 +23,29 @@ $authenticator = function(Slim\Http\Request $request, TokenAuthentication $token
 
 $app->add(new TokenAuthentication([
     'path' => '/experts/approval/',
-    'authenticator' => $authenticator,
+    'authenticator' => $expertAuthenticator,
+    'parameter' => 't',
+    'header' => 'Token-Authorization-X'
+]));
+
+//fieldwork token authentication
+$fieldworkAuthenticator = function(Slim\Http\Request $request, TokenAuthentication $tokenAuth) {
+
+    # Search for token on header, parameter, cookie or attribute
+    $token = $tokenAuth->findToken($request);
+    $fieldworkId = $request->getParam('id');
+    $fieldwork = FieldworkQuery::create()->findOneById($fieldworkId);
+    $fieldworkToken = md5($fieldwork->getFieldworkLeaderEmail() . $fieldwork->getId());
+
+    if ($fieldworkToken != $token) {
+        throw new Exception("not authorized");
+    }
+};
+
+
+$app->add(new TokenAuthentication([
+    'path' => '/fieldwork/approval/',
+    'authenticator' => $fieldworkAuthenticator,
     'parameter' => 't',
     'header' => 'Token-Authorization-X'
 ]));

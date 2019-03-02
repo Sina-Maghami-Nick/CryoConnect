@@ -153,6 +153,13 @@ class CryosphereWhereTableMap extends TableMap
     1 => ':id',
   ),
 ), 'CASCADE', null, 'ExpertCryosphereWheres', false);
+        $this->addRelation('Fieldwork', '\\CryoConnectDB\\Fieldwork', RelationMap::ONE_TO_MANY, array (
+  0 =>
+  array (
+    0 => ':cryosphere_where_id',
+    1 => ':id',
+  ),
+), 'CASCADE', null, 'Fieldworks', false);
         $this->addRelation('InformationSeekerConnectRequestCryosphereWhere', '\\CryoConnectDB\\InformationSeekerConnectRequestCryosphereWhere', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
@@ -171,6 +178,7 @@ class CryosphereWhereTableMap extends TableMap
         // Invalidate objects in related instance pools,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         ExpertCryosphereWhereTableMap::clearInstancePool();
+        FieldworkTableMap::clearInstancePool();
     }
 
     /**
