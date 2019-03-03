@@ -310,11 +310,54 @@ CREATE TABLE `fieldwork`
     `field_information_seeker_deadline` DATE NOT NULL,
     `approved` TINYINT(1) DEFAULT 0 NOT NULL,
     `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`,`cryosphere_where_id`),
+    PRIMARY KEY (`id`),
     INDEX `fieldwork_fi_7f381c` (`cryosphere_where_id`),
     CONSTRAINT `fieldwork_fk_7f381c`
         FOREIGN KEY (`cryosphere_where_id`)
         REFERENCES `cryosphere_where` (`id`)
+        ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- fieldwork_information_seeker
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `fieldwork_information_seeker`;
+
+CREATE TABLE `fieldwork_information_seeker`
+(
+    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `information_seeker_name` TEXT NOT NULL,
+    `information_seeker_affiliation` TEXT NOT NULL,
+    `information_seeker_website` TEXT NOT NULL,
+    `information_seeker_email` TEXT NOT NULL,
+    `information_seeker_affiliation_website` TEXT NOT NULL,
+    `information_seeker_reasons` TEXT,
+    `approved` TINYINT(1) DEFAULT 0 NOT NULL,
+    `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- fieldwork_information_seeker_request
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `fieldwork_information_seeker_request`;
+
+CREATE TABLE `fieldwork_information_seeker_request`
+(
+    `fieldwork_information_seeker_id` int(10) unsigned NOT NULL,
+    `fieldwork_id` int(10) unsigned NOT NULL,
+    `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`fieldwork_information_seeker_id`,`fieldwork_id`),
+    INDEX `fieldwork_information_seeker_request_fi_e02375` (`fieldwork_id`),
+    CONSTRAINT `fieldwork_information_seeker_request_fk_7bc517`
+        FOREIGN KEY (`fieldwork_information_seeker_id`)
+        REFERENCES `fieldwork_information_seeker` (`id`)
+        ON DELETE CASCADE,
+    CONSTRAINT `fieldwork_information_seeker_request_fk_e02375`
+        FOREIGN KEY (`fieldwork_id`)
+        REFERENCES `fieldwork` (`id`)
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
 

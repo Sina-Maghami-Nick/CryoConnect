@@ -86,7 +86,17 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildFieldworkQuery rightJoinWithCryosphereWhere() Adds a RIGHT JOIN clause and with to the query using the CryosphereWhere relation
  * @method     ChildFieldworkQuery innerJoinWithCryosphereWhere() Adds a INNER JOIN clause and with to the query using the CryosphereWhere relation
  *
- * @method     \CryoConnectDB\CryosphereWhereQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     ChildFieldworkQuery leftJoinFieldworkInformationSeekerRequest($relationAlias = null) Adds a LEFT JOIN clause to the query using the FieldworkInformationSeekerRequest relation
+ * @method     ChildFieldworkQuery rightJoinFieldworkInformationSeekerRequest($relationAlias = null) Adds a RIGHT JOIN clause to the query using the FieldworkInformationSeekerRequest relation
+ * @method     ChildFieldworkQuery innerJoinFieldworkInformationSeekerRequest($relationAlias = null) Adds a INNER JOIN clause to the query using the FieldworkInformationSeekerRequest relation
+ *
+ * @method     ChildFieldworkQuery joinWithFieldworkInformationSeekerRequest($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the FieldworkInformationSeekerRequest relation
+ *
+ * @method     ChildFieldworkQuery leftJoinWithFieldworkInformationSeekerRequest() Adds a LEFT JOIN clause and with to the query using the FieldworkInformationSeekerRequest relation
+ * @method     ChildFieldworkQuery rightJoinWithFieldworkInformationSeekerRequest() Adds a RIGHT JOIN clause and with to the query using the FieldworkInformationSeekerRequest relation
+ * @method     ChildFieldworkQuery innerJoinWithFieldworkInformationSeekerRequest() Adds a INNER JOIN clause and with to the query using the FieldworkInformationSeekerRequest relation
+ *
+ * @method     \CryoConnectDB\CryosphereWhereQuery|\CryoConnectDB\FieldworkInformationSeekerRequestQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildFieldwork findOne(ConnectionInterface $con = null) Return the first ChildFieldwork matching the query
  * @method     ChildFieldwork findOneOrCreate(ConnectionInterface $con = null) Return the first ChildFieldwork matching the query, or a new ChildFieldwork object populated from the query conditions when no match is found
@@ -215,10 +225,10 @@ abstract class FieldworkQuery extends ModelCriteria
      * Go fast if the query is untouched.
      *
      * <code>
-     * $obj = $c->findPk(array(12, 34), $con);
+     * $obj  = $c->findPk(12, $con);
      * </code>
      *
-     * @param array[$id, $cryosphere_where_id] $key Primary key to use for the query
+     * @param mixed $key Primary key to use for the query
      * @param ConnectionInterface $con an optional connection object
      *
      * @return ChildFieldwork|array|mixed the result, formatted by the current formatter
@@ -243,7 +253,7 @@ abstract class FieldworkQuery extends ModelCriteria
             return $this->findPkComplex($key, $con);
         }
 
-        if ((null !== ($obj = FieldworkTableMap::getInstanceFromPool(serialize([(null === $key[0] || is_scalar($key[0]) || is_callable([$key[0], '__toString']) ? (string) $key[0] : $key[0]), (null === $key[1] || is_scalar($key[1]) || is_callable([$key[1], '__toString']) ? (string) $key[1] : $key[1])]))))) {
+        if ((null !== ($obj = FieldworkTableMap::getInstanceFromPool(null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key)))) {
             // the object is already in the instance pool
             return $obj;
         }
@@ -264,11 +274,10 @@ abstract class FieldworkQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, fieldwork_project_name, fieldwork_leader_name, fieldwork_leader_affiliation, fieldwork_leader_website, fieldwork_leader_email, fieldwork_project_website, cryosphere_where_id, fieldwork_locations, fieldwork_duration, fieldwork_start_date, fieldwork_goal, fieldwork_information_seeker_limit, fieldwork_information_seeker_cost, fieldwork_biding_allowed, fieldwork_information_seeker_package_included, fieldwork_information_seeker_package_excluded, fieldwork_is_certain, fieldwork_when_certain, field_information_seeker_announcement_date, field_information_seeker_deadline, approved, timestamp FROM fieldwork WHERE id = :p0 AND cryosphere_where_id = :p1';
+        $sql = 'SELECT id, fieldwork_project_name, fieldwork_leader_name, fieldwork_leader_affiliation, fieldwork_leader_website, fieldwork_leader_email, fieldwork_project_website, cryosphere_where_id, fieldwork_locations, fieldwork_duration, fieldwork_start_date, fieldwork_goal, fieldwork_information_seeker_limit, fieldwork_information_seeker_cost, fieldwork_biding_allowed, fieldwork_information_seeker_package_included, fieldwork_information_seeker_package_excluded, fieldwork_is_certain, fieldwork_when_certain, field_information_seeker_announcement_date, field_information_seeker_deadline, approved, timestamp FROM fieldwork WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
-            $stmt->bindValue(':p0', $key[0], PDO::PARAM_INT);
-            $stmt->bindValue(':p1', $key[1], PDO::PARAM_INT);
+            $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
             $stmt->execute();
         } catch (Exception $e) {
             Propel::log($e->getMessage(), Propel::LOG_ERR);
@@ -279,7 +288,7 @@ abstract class FieldworkQuery extends ModelCriteria
             /** @var ChildFieldwork $obj */
             $obj = new ChildFieldwork();
             $obj->hydrate($row);
-            FieldworkTableMap::addInstanceToPool($obj, serialize([(null === $key[0] || is_scalar($key[0]) || is_callable([$key[0], '__toString']) ? (string) $key[0] : $key[0]), (null === $key[1] || is_scalar($key[1]) || is_callable([$key[1], '__toString']) ? (string) $key[1] : $key[1])]));
+            FieldworkTableMap::addInstanceToPool($obj, null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key);
         }
         $stmt->closeCursor();
 
@@ -308,7 +317,7 @@ abstract class FieldworkQuery extends ModelCriteria
     /**
      * Find objects by primary key
      * <code>
-     * $objs = $c->findPks(array(array(12, 56), array(832, 123), array(123, 456)), $con);
+     * $objs = $c->findPks(array(12, 56, 832), $con);
      * </code>
      * @param     array $keys Primary keys to use for the query
      * @param     ConnectionInterface $con an optional connection object
@@ -338,10 +347,8 @@ abstract class FieldworkQuery extends ModelCriteria
      */
     public function filterByPrimaryKey($key)
     {
-        $this->addUsingAlias(FieldworkTableMap::COL_ID, $key[0], Criteria::EQUAL);
-        $this->addUsingAlias(FieldworkTableMap::COL_CRYOSPHERE_WHERE_ID, $key[1], Criteria::EQUAL);
 
-        return $this;
+        return $this->addUsingAlias(FieldworkTableMap::COL_ID, $key, Criteria::EQUAL);
     }
 
     /**
@@ -353,17 +360,8 @@ abstract class FieldworkQuery extends ModelCriteria
      */
     public function filterByPrimaryKeys($keys)
     {
-        if (empty($keys)) {
-            return $this->add(null, '1<>1', Criteria::CUSTOM);
-        }
-        foreach ($keys as $key) {
-            $cton0 = $this->getNewCriterion(FieldworkTableMap::COL_ID, $key[0], Criteria::EQUAL);
-            $cton1 = $this->getNewCriterion(FieldworkTableMap::COL_CRYOSPHERE_WHERE_ID, $key[1], Criteria::EQUAL);
-            $cton0->addAnd($cton1);
-            $this->addOr($cton0);
-        }
 
-        return $this;
+        return $this->addUsingAlias(FieldworkTableMap::COL_ID, $keys, Criteria::IN);
     }
 
     /**
@@ -1197,6 +1195,96 @@ abstract class FieldworkQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query by a related \CryoConnectDB\FieldworkInformationSeekerRequest object
+     *
+     * @param \CryoConnectDB\FieldworkInformationSeekerRequest|ObjectCollection $fieldworkInformationSeekerRequest the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildFieldworkQuery The current query, for fluid interface
+     */
+    public function filterByFieldworkInformationSeekerRequest($fieldworkInformationSeekerRequest, $comparison = null)
+    {
+        if ($fieldworkInformationSeekerRequest instanceof \CryoConnectDB\FieldworkInformationSeekerRequest) {
+            return $this
+                ->addUsingAlias(FieldworkTableMap::COL_ID, $fieldworkInformationSeekerRequest->getFieldworkId(), $comparison);
+        } elseif ($fieldworkInformationSeekerRequest instanceof ObjectCollection) {
+            return $this
+                ->useFieldworkInformationSeekerRequestQuery()
+                ->filterByPrimaryKeys($fieldworkInformationSeekerRequest->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByFieldworkInformationSeekerRequest() only accepts arguments of type \CryoConnectDB\FieldworkInformationSeekerRequest or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the FieldworkInformationSeekerRequest relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildFieldworkQuery The current query, for fluid interface
+     */
+    public function joinFieldworkInformationSeekerRequest($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('FieldworkInformationSeekerRequest');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'FieldworkInformationSeekerRequest');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the FieldworkInformationSeekerRequest relation FieldworkInformationSeekerRequest object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \CryoConnectDB\FieldworkInformationSeekerRequestQuery A secondary query class using the current class as primary query
+     */
+    public function useFieldworkInformationSeekerRequestQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinFieldworkInformationSeekerRequest($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'FieldworkInformationSeekerRequest', '\CryoConnectDB\FieldworkInformationSeekerRequestQuery');
+    }
+
+    /**
+     * Filter the query by a related FieldworkInformationSeeker object
+     * using the fieldwork_information_seeker_request table as cross reference
+     *
+     * @param FieldworkInformationSeeker $fieldworkInformationSeeker the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildFieldworkQuery The current query, for fluid interface
+     */
+    public function filterByFieldworkInformationSeeker($fieldworkInformationSeeker, $comparison = Criteria::EQUAL)
+    {
+        return $this
+            ->useFieldworkInformationSeekerRequestQuery()
+            ->filterByFieldworkInformationSeeker($fieldworkInformationSeeker, $comparison)
+            ->endUse();
+    }
+
+    /**
      * Exclude object from result
      *
      * @param   ChildFieldwork $fieldwork Object to remove from the list of results
@@ -1206,9 +1294,7 @@ abstract class FieldworkQuery extends ModelCriteria
     public function prune($fieldwork = null)
     {
         if ($fieldwork) {
-            $this->addCond('pruneCond0', $this->getAliasedColName(FieldworkTableMap::COL_ID), $fieldwork->getId(), Criteria::NOT_EQUAL);
-            $this->addCond('pruneCond1', $this->getAliasedColName(FieldworkTableMap::COL_CRYOSPHERE_WHERE_ID), $fieldwork->getCryosphereWhereId(), Criteria::NOT_EQUAL);
-            $this->combine(array('pruneCond0', 'pruneCond1'), Criteria::LOGICAL_OR);
+            $this->addUsingAlias(FieldworkTableMap::COL_ID, $fieldwork->getId(), Criteria::NOT_EQUAL);
         }
 
         return $this;

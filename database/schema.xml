@@ -128,7 +128,7 @@
         <column name="fieldwork_leader_website" phpName="FieldworkLeaderWebsite" type="LONGVARCHAR"/>
         <column name="fieldwork_leader_email" phpName="FieldworkLeaderEmail" type="LONGVARCHAR" required="true"/>
         <column name="fieldwork_project_website" phpName="FieldworkProjectWebsite" type="LONGVARCHAR"/>
-        <column name="cryosphere_where_id" phpName="CryosphereWhereId" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" required="true"/>
+        <column name="cryosphere_where_id" phpName="CryosphereWhereId" type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
         <column name="fieldwork_locations" phpName="FieldworkLocations" type="LONGVARCHAR"/>
         <column name="fieldwork_duration" phpName="FieldworkDuration" type="INTEGER" sqlType="int(2) unsigned"/>
         <column name="fieldwork_start_date" phpName="FieldworkStartDate" type="DATE"/>
@@ -148,6 +148,31 @@
             <reference local="cryosphere_where_id" foreign="id"/>
         </foreign-key>
     </table>
+    
+    <table name="fieldwork_information_seeker" idMethod="native" phpName="FieldworkInformationSeeker">
+        <column name="id" phpName="Id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
+        <column name="information_seeker_name" phpName="InformationSeekerName" type="LONGVARCHAR" required="true"/>
+        <column name="information_seeker_affiliation" phpName="InformationSeekerAffiliation" type="LONGVARCHAR" required="true"/>
+        <column name="information_seeker_website" phpName="InformationSeekerWebsite" type="LONGVARCHAR" required="true"/>
+        <column name="information_seeker_email" phpName="InformationSeekerEmail" type="LONGVARCHAR" required="true"/>
+        <column name="information_seeker_affiliation_website" phpName="InformationSeekerAffiliationWebsite" type="LONGVARCHAR" required="true"/>
+        <column name="information_seeker_reasons" phpName="InformationSeekerReasons" type="LONGVARCHAR"/>
+        <column name="approved" phpName="Approved" type="BOOLEAN" size="1" required="true" defaultValue="false"/>
+        <column name="timestamp" phpName="Timestamp" type="TIMESTAMP" required="true" defaultExpr="CURRENT_TIMESTAMP"/>
+    </table>
+    
+    <table name="fieldwork_information_seeker_request" idMethod="native" phpName="FieldworkInformationSeekerRequest" isCrossRef="true">
+        <column name="fieldwork_information_seeker_id" phpName="FieldworkInformationSeekerId" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" required="true"/>
+        <column name="fieldwork_id" phpName="FieldworkId" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" required="true"/>
+        <column name="timestamp" phpName="Timestamp" type="TIMESTAMP" required="true" defaultExpr="CURRENT_TIMESTAMP"/>
+        <foreign-key foreignTable="fieldwork_information_seeker" onDelete="CASCADE">
+            <reference local="fieldwork_information_seeker_id" foreign="id"/>
+        </foreign-key>
+        <foreign-key foreignTable="fieldwork" onDelete="CASCADE">
+            <reference local="fieldwork_id" foreign="id"/>
+        </foreign-key>
+    </table>
+    
     <table name="expert_languages" idMethod="native" phpName="ExpertLanguages" isCrossRef="true">
         <column name="expert_id" phpName="ExpertId" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" required="true"/>
         <column name="language_code" phpName="LanguageCode" type="VARCHAR" size="2" primaryKey="true" required="true"/>

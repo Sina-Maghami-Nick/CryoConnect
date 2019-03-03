@@ -11,6 +11,7 @@ namespace App\Controllers;
 use CryoConnectDB\CryosphereWhereQuery;
 use CryoConnectDB\FieldworkQuery;
 use CryoConnectDB\Fieldwork;
+use CryoConnectDB\FieldworkInformationSeeker;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -36,6 +37,166 @@ class FieldworkController extends Controller {
                     'cryosphere_where' => $cryosphereWhere->toArray(),
                         ]
         );
+    }
+
+    /**
+     * 
+     * @param Request $request
+     * @param Response $response
+     * @param type $args
+     */
+    public function connectFormAction(Request $request, Response $response, $args) {
+
+        $cryosphereWhere = CryosphereWhereQuery::create()->find();
+
+        return $this->view->render(
+                        $response, 'fieldwork-connect.html.twig', [
+                    'cryosphere_where' => $cryosphereWhere->toArray(),
+                        ]
+        );
+    }
+
+    /**
+     * 
+     * @param Request $request
+     * @param Response $response
+     * @param type $args
+     */
+    public function connectSearchAction(Request $request, Response $response, $args) {
+
+        $data = $request->getQueryParams();
+
+        $cryosphereWhereId = filter_var($data['cryosphere_where'], FILTER_SANITIZE_NUMBER_INT);
+        $dateRange = filter_var_array(explode(' to ', $data['range_date']), FILTER_SANITIZE_STRING);
+        $fromDate = strtotime($dateRange[0]);
+        $toDate = strtotime($dateRange[1]);
+
+        if (
+                empty($cryosphereWhereId) ||
+                empty($dateRange) ||
+                empty($fromDate) ||
+                empty($toDate)
+        ) {
+            $this->container->get('logger')
+                    ->addError('Empty or wronge fileds for fieldtrip connect search info recieved within the following request: ' . json_encode($data));
+            $technicalAdminEmail = $this->container->get('settings')['contacts']['technical_admin'];
+            $response->getBody()->write("Something went wrong! Please contact us at: " . $technicalAdminEmail);
+
+            return $response->withStatus(400);
+        }
+
+        $fieldworks = FieldworkQuery::create()->filterByCryosphereWhereId($cryosphereWhereId)
+                ->filterByFieldworkInformationSeekerDeadline(array('min' => date()))
+                ->filterByFieldworkStartDate(array('min' => $fromDate, 'max' => $toDate))
+                ->find();
+
+        $minFieldworkInfo = array();
+        foreach ($fieldworks->toArray() as $key => $fieldwork) {
+            $minFieldworkInfo[$key]['Id'] = $fieldwork['Id'];
+            $minFieldworkInfo[$key]['FieldworkName'] = $fieldwork['FieldworkName'];
+            $minFieldworkInfo[$key]['FieldworkLocations'] = $fieldwork['FieldworkLocations'];
+            $minFieldworkInfo[$key]['FieldworkStartDate'] = $fieldwork['FieldworkStartDate'];
+            $minFieldworkInfo[$key]['FieldworkDuration'] = $fieldwork['FieldworkDuration'];
+            $minFieldworkInfo[$key]['FieldworkInformationSeekerDeadline'] = $fieldwork['FieldworkInformationSeekerDeadline'];
+        }
+
+        return $this->view->render(
+                        $response, 'fieldwork-connect-search.html.twig', [
+                    'fieldworks' => $minFieldworkInfo,
+                    'cryosphere_where' => CryosphereWhereQuery::create()->find()->toArray()
+                        ]
+        );
+    }
+
+    /**
+     * 
+     * @param type $request
+     * @param type $response
+     * @param type $args
+     */
+    public function connectRequestAction(Request $request, Response $response, $args) {
+
+        $data = $request->getParsedBody();
+
+        $this->container->get('logger')
+                ->addInfo('A new fieldwork connect request recieved with data: ' . json_encode($data));
+
+        $informationSeekerEmailAddress = trim(strtolower(filter_var($data['information_seeker_email'], FILTER_SANITIZE_EMAIL)));
+        $informationSeekerName = filter_var($data['information_seeker_name'], FILTER_SANITIZE_STRING);
+        $requestedFieldworkIds = filter_var_array($data['fieldwork_ids'], FILTER_SANITIZE_STRING);
+        $informationSeekerAffiliationName = filter_var($data['information_seeker_affiliation'], FILTER_SANITIZE_STRING);
+        $informationSeekerWebsite = filter_var($data['information_seeker_website'], FILTER_SANITIZE_URL);
+        $informationSeekerAffiliationWebsite = filter_var($data['information_seeker_affiliation_website'], FILTER_SANITIZE_URL);
+        $informationSeekerReasons = filter_var($data['information_seeker_reasons'], FILTER_SANITIZE_STRING);
+
+        //rest of validations
+        if (
+                empty($informationSeekerEmailAddress) ||
+                empty($informationSeekerName) ||
+                empty($requestedFieldworkIds) ||
+                empty($informationSeekerAffiliationName) ||
+                empty($informationSeekerWebsite) ||
+                empty($informationSeekerAffiliationWebsite) ||
+                empty($informationSeekerReasons)
+        ) {
+            $this->container->get('logger')
+                    ->addError('Empty or wronge fileds for fieldwork connect request recieved with the following request: ' . json_encode($data));
+            $technicalAdminEmail = $this->container->get('settings')['contacts']['technical_admin'];
+            $response->getBody()->write("Something went wrong! Please contact us at: " . $technicalAdminEmail);
+
+            return $response->withStatus(400);
+        }
+
+        $fieldworkInformationSeeker = new FieldworkInformationSeeker;
+
+        $fieldworkInformationSeeker
+                ->setInformationSeekerName($informationSeekerName)
+                ->setInformationSeekerEmail($informationSeekerEmailAddress)
+                ->setInformationSeekerWebsite($informationSeekerWebsite)
+                ->setInformationSeekerAffiliation($informationSeekerAffiliationName)
+                ->setInformationSeekerAffiliationWebsite($informationSeekerAffiliationWebsite)
+                ->setInformationSeekerReasons($informationSeekerReasons);
+
+        foreach ($requestedFieldworkIds as $requestedFieldworkId) {
+            $fieldwork = FieldworkQuery::create()->findOneById($requestedFieldworkId);
+
+            if (empty($fieldwork)) {
+                $this->container->get('logger')
+                        ->addError('Wrong fieldwork Id passed from frontend: ' . json_encode($data));
+                $technicalAdminEmail = $this->container->get('settings')['contacts']['technical_admin'];
+                $response->getBody()->write("Something went wrong! Please contact us at: " . $technicalAdminEmail);
+
+                return $response->withStatus(400);
+            }
+            
+            $fieldworkInformationSeeker->addFieldwork($fieldwork);
+        }
+        
+        $fieldworkInformationSeeker->save();
+        
+        $this->container->get('logger')
+                ->addInfo('A new unvalidated fieldwork information seeker request is added to the databse: ' . json_encode($fieldwork->toArray()));
+        
+        $approvalMsg = (new \Swift_Message('Approval of new fieldwork connect request: ' . $leaderName))
+                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryoconnect'])
+                ->setTo($this->container->get('settings')['contacts']['approval_admin'])
+                ->setBody(
+                $this->view->render(new \Slim\Http\Response(), 'emails/fieldwork-connect-approval-email.html.twig', [
+                    'fieldwork_information_seeker' => $fieldworkInformationSeeker->toArray(),
+                    'fieldworks' => $fieldworkInformationSeeker->getFieldworkInformationSeekerRequestsJoinFieldwork()->toArray(),
+                    'token' => md5($fieldworkInformationSeeker->getInformationSeekerEmail() . $fieldworkInformationSeeker->getId()),
+                        ]
+                )->getBody(), 'text/html'
+        );
+
+        $this->mailer->send($approvalMsg);
+
+        return $this->view->render(
+                        $response, 'fieldwork-connect-thank-you-page.html.twig', [
+                    
+                        ]
+        );
+        
     }
 
     /**

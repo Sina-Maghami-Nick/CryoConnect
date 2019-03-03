@@ -29,15 +29,24 @@ $app->group('/experts', function () {
 });
 
 
-//Experts Routes
+//Fieldworks Routes
 $app->group('/fieldwork', function () {
-    //route to the expert sign-up form
+    //route to the fieldwork sign-up form
     $this->get('/register', FieldworkController::class . ':registrationFormAction');
 
-    //route to the expert save data
+    //route to the fieldwork sign-up form
+    $this->get('/connect', FieldworkController::class . ':connectFormAction');
+    
+    //route to the fieldwork sign-up form
+    $this->get('/connect/search', FieldworkController::class . ':connectSearchAction')->setName('fieldwork-connect-search');
+    
+    //route to the fieldwork sign-up form
+    $this->post('/connect/request', FieldworkController::class . ':connectRequestAction')->setName('fieldwork-connect-request');
+    
+    //route to the fieldwork save data
     $this->post('/new-request', FieldworkController::class . ':registrationAction')->setName('fieldwork-registration');
 
-    //route to the expert approval page
+    //route to the fieldwork approval page
     $this->get('/approval', FieldworkController::class . ':approvalAction')->setName('fieldwork_approval');
 
     //route to approve fieldwork

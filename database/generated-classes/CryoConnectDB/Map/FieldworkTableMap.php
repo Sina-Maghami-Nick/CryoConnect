@@ -243,7 +243,7 @@ class FieldworkTableMap extends TableMap
         $this->addColumn('fieldwork_leader_website', 'FieldworkLeaderWebsite', 'LONGVARCHAR', false, null, null);
         $this->addColumn('fieldwork_leader_email', 'FieldworkLeaderEmail', 'LONGVARCHAR', true, null, null);
         $this->addColumn('fieldwork_project_website', 'FieldworkProjectWebsite', 'LONGVARCHAR', false, null, null);
-        $this->addForeignPrimaryKey('cryosphere_where_id', 'CryosphereWhereId', 'INTEGER' , 'cryosphere_where', 'id', true, 10, null);
+        $this->addForeignKey('cryosphere_where_id', 'CryosphereWhereId', 'INTEGER', 'cryosphere_where', 'id', true, 10, null);
         $this->addColumn('fieldwork_locations', 'FieldworkLocations', 'LONGVARCHAR', false, null, null);
         $this->addColumn('fieldwork_duration', 'FieldworkDuration', 'INTEGER', false, null, null);
         $this->addColumn('fieldwork_start_date', 'FieldworkStartDate', 'DATE', false, null, null);
@@ -273,59 +273,23 @@ class FieldworkTableMap extends TableMap
     1 => ':id',
   ),
 ), 'CASCADE', null, null, false);
+        $this->addRelation('FieldworkInformationSeekerRequest', '\\CryoConnectDB\\FieldworkInformationSeekerRequest', RelationMap::ONE_TO_MANY, array (
+  0 =>
+  array (
+    0 => ':fieldwork_id',
+    1 => ':id',
+  ),
+), 'CASCADE', null, 'FieldworkInformationSeekerRequests', false);
+        $this->addRelation('FieldworkInformationSeeker', '\\CryoConnectDB\\FieldworkInformationSeeker', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'FieldworkInformationSeekers');
     } // buildRelations()
-
     /**
-     * Adds an object to the instance pool.
-     *
-     * Propel keeps cached copies of objects in an instance pool when they are retrieved
-     * from the database. In some cases you may need to explicitly add objects
-     * to the cache in order to ensure that the same objects are always returned by find*()
-     * and findPk*() calls.
-     *
-     * @param \CryoConnectDB\Fieldwork $obj A \CryoConnectDB\Fieldwork object.
-     * @param string $key             (optional) key to use for instance map (for performance boost if key was already calculated externally).
+     * Method to invalidate the instance pool of all tables related to fieldwork     * by a foreign key with ON DELETE CASCADE
      */
-    public static function addInstanceToPool($obj, $key = null)
+    public static function clearRelatedInstancePool()
     {
-        if (Propel::isInstancePoolingEnabled()) {
-            if (null === $key) {
-                $key = serialize([(null === $obj->getId() || is_scalar($obj->getId()) || is_callable([$obj->getId(), '__toString']) ? (string) $obj->getId() : $obj->getId()), (null === $obj->getCryosphereWhereId() || is_scalar($obj->getCryosphereWhereId()) || is_callable([$obj->getCryosphereWhereId(), '__toString']) ? (string) $obj->getCryosphereWhereId() : $obj->getCryosphereWhereId())]);
-            } // if key === null
-            self::$instances[$key] = $obj;
-        }
-    }
-
-    /**
-     * Removes an object from the instance pool.
-     *
-     * Propel keeps cached copies of objects in an instance pool when they are retrieved
-     * from the database.  In some cases -- especially when you override doDelete
-     * methods in your stub classes -- you may need to explicitly remove objects
-     * from the cache in order to prevent returning objects that no longer exist.
-     *
-     * @param mixed $value A \CryoConnectDB\Fieldwork object or a primary key value.
-     */
-    public static function removeInstanceFromPool($value)
-    {
-        if (Propel::isInstancePoolingEnabled() && null !== $value) {
-            if (is_object($value) && $value instanceof \CryoConnectDB\Fieldwork) {
-                $key = serialize([(null === $value->getId() || is_scalar($value->getId()) || is_callable([$value->getId(), '__toString']) ? (string) $value->getId() : $value->getId()), (null === $value->getCryosphereWhereId() || is_scalar($value->getCryosphereWhereId()) || is_callable([$value->getCryosphereWhereId(), '__toString']) ? (string) $value->getCryosphereWhereId() : $value->getCryosphereWhereId())]);
-
-            } elseif (is_array($value) && count($value) === 2) {
-                // assume we've been passed a primary key";
-                $key = serialize([(null === $value[0] || is_scalar($value[0]) || is_callable([$value[0], '__toString']) ? (string) $value[0] : $value[0]), (null === $value[1] || is_scalar($value[1]) || is_callable([$value[1], '__toString']) ? (string) $value[1] : $value[1])]);
-            } elseif ($value instanceof Criteria) {
-                self::$instances = [];
-
-                return;
-            } else {
-                $e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or \CryoConnectDB\Fieldwork object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value, true)));
-                throw $e;
-            }
-
-            unset(self::$instances[$key]);
-        }
+        // Invalidate objects in related instance pools,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        FieldworkInformationSeekerRequestTableMap::clearInstancePool();
     }
 
     /**
@@ -344,11 +308,11 @@ class FieldworkTableMap extends TableMap
     public static function getPrimaryKeyHashFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
         // If the PK cannot be derived from the row, return NULL.
-        if ($row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)] === null && $row[TableMap::TYPE_NUM == $indexType ? 7 + $offset : static::translateFieldName('CryosphereWhereId', TableMap::TYPE_PHPNAME, $indexType)] === null) {
+        if ($row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)] === null) {
             return null;
         }
 
-        return serialize([(null === $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)] || is_scalar($row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)]) || is_callable([$row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)], '__toString']) ? (string) $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)] : $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)]), (null === $row[TableMap::TYPE_NUM == $indexType ? 7 + $offset : static::translateFieldName('CryosphereWhereId', TableMap::TYPE_PHPNAME, $indexType)] || is_scalar($row[TableMap::TYPE_NUM == $indexType ? 7 + $offset : static::translateFieldName('CryosphereWhereId', TableMap::TYPE_PHPNAME, $indexType)]) || is_callable([$row[TableMap::TYPE_NUM == $indexType ? 7 + $offset : static::translateFieldName('CryosphereWhereId', TableMap::TYPE_PHPNAME, $indexType)], '__toString']) ? (string) $row[TableMap::TYPE_NUM == $indexType ? 7 + $offset : static::translateFieldName('CryosphereWhereId', TableMap::TYPE_PHPNAME, $indexType)] : $row[TableMap::TYPE_NUM == $indexType ? 7 + $offset : static::translateFieldName('CryosphereWhereId', TableMap::TYPE_PHPNAME, $indexType)])]);
+        return null === $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)] || is_scalar($row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)]) || is_callable([$row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)], '__toString']) ? (string) $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)] : $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
     }
 
     /**
@@ -365,20 +329,11 @@ class FieldworkTableMap extends TableMap
      */
     public static function getPrimaryKeyFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-            $pks = [];
-
-        $pks[] = (int) $row[
+        return (int) $row[
             $indexType == TableMap::TYPE_NUM
                 ? 0 + $offset
                 : self::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)
         ];
-        $pks[] = (int) $row[
-            $indexType == TableMap::TYPE_NUM
-                ? 7 + $offset
-                : self::translateFieldName('CryosphereWhereId', TableMap::TYPE_PHPNAME, $indexType)
-        ];
-
-        return $pks;
     }
 
     /**
@@ -576,17 +531,7 @@ class FieldworkTableMap extends TableMap
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
             $criteria = new Criteria(FieldworkTableMap::DATABASE_NAME);
-            // primary key is composite; we therefore, expect
-            // the primary key passed to be an array of pkey values
-            if (count($values) == count($values, COUNT_RECURSIVE)) {
-                // array is not multi-dimensional
-                $values = array($values);
-            }
-            foreach ($values as $value) {
-                $criterion = $criteria->getNewCriterion(FieldworkTableMap::COL_ID, $value[0]);
-                $criterion->addAnd($criteria->getNewCriterion(FieldworkTableMap::COL_CRYOSPHERE_WHERE_ID, $value[1]));
-                $criteria->addOr($criterion);
-            }
+            $criteria->add(FieldworkTableMap::COL_ID, (array) $values, Criteria::IN);
         }
 
         $query = FieldworkQuery::create()->mergeWith($criteria);

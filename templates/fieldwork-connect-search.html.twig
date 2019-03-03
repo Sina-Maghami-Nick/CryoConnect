@@ -1,0 +1,83 @@
+{#{{ _context | json_encode | raw }}#}
+{% if _context.fieldworks is not empty %}
+    <div class="row">
+        {% for fieldwork in _context.fieldworks %}
+            <div class="card blue lighten-3">
+                <div class="card-content black-text">
+                    <span class="card-title">Expedition name: {{fieldwork.FieldworkName | raw}}</span>
+                    <p>Location(s): {{fieldwork.FieldworkLocations | raw}}</p>
+                    <p>Start date: {{fieldwork.FieldworkStartDate|slice(0, 10)}}</p>
+                    <p>Duration: {{fieldwork.FieldworkDuration}} days</p>
+                    <p>Deadline: {{fieldwork.FieldworkInformationSeekerDeadline|slice(0, 10)}}</p>
+                </div>
+                <div class="card-action">
+                    <label>
+                        <input name="fieldwork_ids[{{fieldwork.FieldworkName}}]" type="checkbox" class="filled-in" value="{{fieldwork.Id}}" required />
+                        <span><font color="black">Select to get more info</font></span>
+                    </label> 
+                </div>
+            </div>
+
+        {% endfor %}
+    </div>
+
+    <div class="row">
+        <div class="input-field col s12">
+            <input id="information_seeker_name" name="information_seeker_name" type="text" class="validate" required>
+            <label for="information_seeker_name">Your full name<font color="red">*</font></label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s12">
+            <input id="information_seeker_email" name="information_seeker_email" type="email" class="validate" required>
+            <label for="information_seeker_email">Your email<font color="red">*</font></label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s12">
+            <input id="information_seeker_affiliation" name="information_seeker_affiliation" type="text" class="validate" required>
+            <label for="information_seeker_affiliation">Primary affiliation<font color="red">*</font></label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s12">
+            <input id="information_seeker_website" name="information_seeker_website" type="url" class="validate">
+            <label for="information_seeker_website">Webpage with your background<font color="red">*</font></label>
+            <span class="helper-text">e.g. linkedIn page - please enter the whole url including http://</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s12">
+            <input id="information_seeker_affiliation_website" name="information_seeker_affiliation_website" type="url" class="validate" required>
+            <label for="information_seeker_affiliation_website">Webpage with information about your affiliation<font color="red">*</font></label>
+            <span class="helper-text">please enter the whole url including http://</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s12">
+            <textarea id="information_seeker_reasons" name="information_seeker_reasons" class="materialize-textarea" required></textarea>
+            <label for="information_seeker_reasons">Reason for requesting expedition participation<font color="red">*</font></label>
+            <span class="helper-text">i.e. which type of media, which topic</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s12">
+            <label>
+                <input id="termcondition" type="checkbox" required/>
+                <span>I agree to the terms and conditions<font color="red">*</font></span>
+            </label>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="input-field col s12">
+            <p class="center-align">
+                <button id="submitBtnTwo" class="btn waves-effect waves-light" type="submit" name="action">Request more info on selected
+                    <i class="material-icons right">send</i>
+                </button>
+            </p>
+        </div>
+    </div>
+{% else %}
+    <h4 align="center">No results found!</h4>
+{% endif %}

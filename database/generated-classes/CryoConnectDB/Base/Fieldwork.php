@@ -7,13 +7,20 @@ use \Exception;
 use \PDO;
 use CryoConnectDB\CryosphereWhere as ChildCryosphereWhere;
 use CryoConnectDB\CryosphereWhereQuery as ChildCryosphereWhereQuery;
+use CryoConnectDB\Fieldwork as ChildFieldwork;
+use CryoConnectDB\FieldworkInformationSeeker as ChildFieldworkInformationSeeker;
+use CryoConnectDB\FieldworkInformationSeekerQuery as ChildFieldworkInformationSeekerQuery;
+use CryoConnectDB\FieldworkInformationSeekerRequest as ChildFieldworkInformationSeekerRequest;
+use CryoConnectDB\FieldworkInformationSeekerRequestQuery as ChildFieldworkInformationSeekerRequestQuery;
 use CryoConnectDB\FieldworkQuery as ChildFieldworkQuery;
+use CryoConnectDB\Map\FieldworkInformationSeekerRequestTableMap;
 use CryoConnectDB\Map\FieldworkTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
+use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\LogicException;
@@ -233,12 +240,40 @@ abstract class Fieldwork implements ActiveRecordInterface
     protected $aCryosphereWhere;
 
     /**
+     * @var        ObjectCollection|ChildFieldworkInformationSeekerRequest[] Collection to store aggregation of ChildFieldworkInformationSeekerRequest objects.
+     */
+    protected $collFieldworkInformationSeekerRequests;
+    protected $collFieldworkInformationSeekerRequestsPartial;
+
+    /**
+     * @var        ObjectCollection|ChildFieldworkInformationSeeker[] Cross Collection to store aggregation of ChildFieldworkInformationSeeker objects.
+     */
+    protected $collFieldworkInformationSeekers;
+
+    /**
+     * @var bool
+     */
+    protected $collFieldworkInformationSeekersPartial;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      *
      * @var boolean
      */
     protected $alreadyInSave = false;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildFieldworkInformationSeeker[]
+     */
+    protected $fieldworkInformationSeekersScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildFieldworkInformationSeekerRequest[]
+     */
+    protected $fieldworkInformationSeekerRequestsScheduledForDeletion = null;
 
     /**
      * Applies default values to this object.
@@ -1477,6 +1512,9 @@ abstract class Fieldwork implements ActiveRecordInterface
         if ($deep) {  // also de-associate any related objects?
 
             $this->aCryosphereWhere = null;
+            $this->collFieldworkInformationSeekerRequests = null;
+
+            $this->collFieldworkInformationSeekers = null;
         } // if (deep)
     }
 
@@ -1601,6 +1639,52 @@ abstract class Fieldwork implements ActiveRecordInterface
                     $affectedRows += $this->doUpdate($con);
                 }
                 $this->resetModified();
+            }
+
+            if ($this->fieldworkInformationSeekersScheduledForDeletion !== null) {
+                if (!$this->fieldworkInformationSeekersScheduledForDeletion->isEmpty()) {
+                    $pks = array();
+                    foreach ($this->fieldworkInformationSeekersScheduledForDeletion as $entry) {
+                        $entryPk = [];
+
+                        $entryPk[1] = $this->getId();
+                        $entryPk[0] = $entry->getId();
+                        $pks[] = $entryPk;
+                    }
+
+                    \CryoConnectDB\FieldworkInformationSeekerRequestQuery::create()
+                        ->filterByPrimaryKeys($pks)
+                        ->delete($con);
+
+                    $this->fieldworkInformationSeekersScheduledForDeletion = null;
+                }
+
+            }
+
+            if ($this->collFieldworkInformationSeekers) {
+                foreach ($this->collFieldworkInformationSeekers as $fieldworkInformationSeeker) {
+                    if (!$fieldworkInformationSeeker->isDeleted() && ($fieldworkInformationSeeker->isNew() || $fieldworkInformationSeeker->isModified())) {
+                        $fieldworkInformationSeeker->save($con);
+                    }
+                }
+            }
+
+
+            if ($this->fieldworkInformationSeekerRequestsScheduledForDeletion !== null) {
+                if (!$this->fieldworkInformationSeekerRequestsScheduledForDeletion->isEmpty()) {
+                    \CryoConnectDB\FieldworkInformationSeekerRequestQuery::create()
+                        ->filterByPrimaryKeys($this->fieldworkInformationSeekerRequestsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->fieldworkInformationSeekerRequestsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collFieldworkInformationSeekerRequests !== null) {
+                foreach ($this->collFieldworkInformationSeekerRequests as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
             }
 
             $this->alreadyInSave = false;
@@ -2004,6 +2088,21 @@ abstract class Fieldwork implements ActiveRecordInterface
 
                 $result[$key] = $this->aCryosphereWhere->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
+            if (null !== $this->collFieldworkInformationSeekerRequests) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'fieldworkInformationSeekerRequests';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'fieldwork_information_seeker_requests';
+                        break;
+                    default:
+                        $key = 'FieldworkInformationSeekerRequests';
+                }
+
+                $result[$key] = $this->collFieldworkInformationSeekerRequests->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
         }
 
         return $result;
@@ -2330,7 +2429,6 @@ abstract class Fieldwork implements ActiveRecordInterface
     {
         $criteria = ChildFieldworkQuery::create();
         $criteria->add(FieldworkTableMap::COL_ID, $this->id);
-        $criteria->add(FieldworkTableMap::COL_CRYOSPHERE_WHERE_ID, $this->cryosphere_where_id);
 
         return $criteria;
     }
@@ -2343,18 +2441,10 @@ abstract class Fieldwork implements ActiveRecordInterface
      */
     public function hashCode()
     {
-        $validPk = null !== $this->getId() &&
-            null !== $this->getCryosphereWhereId();
+        $validPk = null !== $this->getId();
 
-        $validPrimaryKeyFKs = 1;
+        $validPrimaryKeyFKs = 0;
         $primaryKeyFKs = [];
-
-        //relation fieldwork_fk_7f381c to table cryosphere_where
-        if ($this->aCryosphereWhere && $hash = spl_object_hash($this->aCryosphereWhere)) {
-            $primaryKeyFKs[] = $hash;
-        } else {
-            $validPrimaryKeyFKs = false;
-        }
 
         if ($validPk) {
             return crc32(json_encode($this->getPrimaryKey(), JSON_UNESCAPED_UNICODE));
@@ -2366,29 +2456,23 @@ abstract class Fieldwork implements ActiveRecordInterface
     }
 
     /**
-     * Returns the composite primary key for this object.
-     * The array elements will be in same order as specified in XML.
-     * @return array
+     * Returns the primary key for this object (row).
+     * @return int
      */
     public function getPrimaryKey()
     {
-        $pks = array();
-        $pks[0] = $this->getId();
-        $pks[1] = $this->getCryosphereWhereId();
-
-        return $pks;
+        return $this->getId();
     }
 
     /**
-     * Set the [composite] primary key.
+     * Generic method to set the primary key (id column).
      *
-     * @param      array $keys The elements of the composite key (order must match the order in XML file).
+     * @param       int $key Primary key.
      * @return void
      */
-    public function setPrimaryKey($keys)
+    public function setPrimaryKey($key)
     {
-        $this->setId($keys[0]);
-        $this->setCryosphereWhereId($keys[1]);
+        $this->setId($key);
     }
 
     /**
@@ -2397,7 +2481,7 @@ abstract class Fieldwork implements ActiveRecordInterface
      */
     public function isPrimaryKeyNull()
     {
-        return (null === $this->getId()) && (null === $this->getCryosphereWhereId());
+        return null === $this->getId();
     }
 
     /**
@@ -2435,6 +2519,20 @@ abstract class Fieldwork implements ActiveRecordInterface
         $copyObj->setFieldworkInformationSeekerDeadline($this->getFieldworkInformationSeekerDeadline());
         $copyObj->setApproved($this->getApproved());
         $copyObj->setTimestamp($this->getTimestamp());
+
+        if ($deepCopy) {
+            // important: temporarily setNew(false) because this affects the behavior of
+            // the getter/setter methods for fkey referrer objects.
+            $copyObj->setNew(false);
+
+            foreach ($this->getFieldworkInformationSeekerRequests() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addFieldworkInformationSeekerRequest($relObj->copy($deepCopy));
+                }
+            }
+
+        } // if ($deepCopy)
+
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
@@ -2514,6 +2612,519 @@ abstract class Fieldwork implements ActiveRecordInterface
         return $this->aCryosphereWhere;
     }
 
+
+    /**
+     * Initializes a collection based on the name of a relation.
+     * Avoids crafting an 'init[$relationName]s' method name
+     * that wouldn't work when StandardEnglishPluralizer is used.
+     *
+     * @param      string $relationName The name of the relation to initialize
+     * @return void
+     */
+    public function initRelation($relationName)
+    {
+        if ('FieldworkInformationSeekerRequest' == $relationName) {
+            $this->initFieldworkInformationSeekerRequests();
+            return;
+        }
+    }
+
+    /**
+     * Clears out the collFieldworkInformationSeekerRequests collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addFieldworkInformationSeekerRequests()
+     */
+    public function clearFieldworkInformationSeekerRequests()
+    {
+        $this->collFieldworkInformationSeekerRequests = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collFieldworkInformationSeekerRequests collection loaded partially.
+     */
+    public function resetPartialFieldworkInformationSeekerRequests($v = true)
+    {
+        $this->collFieldworkInformationSeekerRequestsPartial = $v;
+    }
+
+    /**
+     * Initializes the collFieldworkInformationSeekerRequests collection.
+     *
+     * By default this just sets the collFieldworkInformationSeekerRequests collection to an empty array (like clearcollFieldworkInformationSeekerRequests());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initFieldworkInformationSeekerRequests($overrideExisting = true)
+    {
+        if (null !== $this->collFieldworkInformationSeekerRequests && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = FieldworkInformationSeekerRequestTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collFieldworkInformationSeekerRequests = new $collectionClassName;
+        $this->collFieldworkInformationSeekerRequests->setModel('\CryoConnectDB\FieldworkInformationSeekerRequest');
+    }
+
+    /**
+     * Gets an array of ChildFieldworkInformationSeekerRequest objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildFieldwork is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildFieldworkInformationSeekerRequest[] List of ChildFieldworkInformationSeekerRequest objects
+     * @throws PropelException
+     */
+    public function getFieldworkInformationSeekerRequests(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collFieldworkInformationSeekerRequestsPartial && !$this->isNew();
+        if (null === $this->collFieldworkInformationSeekerRequests || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collFieldworkInformationSeekerRequests) {
+                // return empty collection
+                $this->initFieldworkInformationSeekerRequests();
+            } else {
+                $collFieldworkInformationSeekerRequests = ChildFieldworkInformationSeekerRequestQuery::create(null, $criteria)
+                    ->filterByFieldwork($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collFieldworkInformationSeekerRequestsPartial && count($collFieldworkInformationSeekerRequests)) {
+                        $this->initFieldworkInformationSeekerRequests(false);
+
+                        foreach ($collFieldworkInformationSeekerRequests as $obj) {
+                            if (false == $this->collFieldworkInformationSeekerRequests->contains($obj)) {
+                                $this->collFieldworkInformationSeekerRequests->append($obj);
+                            }
+                        }
+
+                        $this->collFieldworkInformationSeekerRequestsPartial = true;
+                    }
+
+                    return $collFieldworkInformationSeekerRequests;
+                }
+
+                if ($partial && $this->collFieldworkInformationSeekerRequests) {
+                    foreach ($this->collFieldworkInformationSeekerRequests as $obj) {
+                        if ($obj->isNew()) {
+                            $collFieldworkInformationSeekerRequests[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collFieldworkInformationSeekerRequests = $collFieldworkInformationSeekerRequests;
+                $this->collFieldworkInformationSeekerRequestsPartial = false;
+            }
+        }
+
+        return $this->collFieldworkInformationSeekerRequests;
+    }
+
+    /**
+     * Sets a collection of ChildFieldworkInformationSeekerRequest objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $fieldworkInformationSeekerRequests A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildFieldwork The current object (for fluent API support)
+     */
+    public function setFieldworkInformationSeekerRequests(Collection $fieldworkInformationSeekerRequests, ConnectionInterface $con = null)
+    {
+        /** @var ChildFieldworkInformationSeekerRequest[] $fieldworkInformationSeekerRequestsToDelete */
+        $fieldworkInformationSeekerRequestsToDelete = $this->getFieldworkInformationSeekerRequests(new Criteria(), $con)->diff($fieldworkInformationSeekerRequests);
+
+
+        //since at least one column in the foreign key is at the same time a PK
+        //we can not just set a PK to NULL in the lines below. We have to store
+        //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
+        $this->fieldworkInformationSeekerRequestsScheduledForDeletion = clone $fieldworkInformationSeekerRequestsToDelete;
+
+        foreach ($fieldworkInformationSeekerRequestsToDelete as $fieldworkInformationSeekerRequestRemoved) {
+            $fieldworkInformationSeekerRequestRemoved->setFieldwork(null);
+        }
+
+        $this->collFieldworkInformationSeekerRequests = null;
+        foreach ($fieldworkInformationSeekerRequests as $fieldworkInformationSeekerRequest) {
+            $this->addFieldworkInformationSeekerRequest($fieldworkInformationSeekerRequest);
+        }
+
+        $this->collFieldworkInformationSeekerRequests = $fieldworkInformationSeekerRequests;
+        $this->collFieldworkInformationSeekerRequestsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related FieldworkInformationSeekerRequest objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related FieldworkInformationSeekerRequest objects.
+     * @throws PropelException
+     */
+    public function countFieldworkInformationSeekerRequests(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collFieldworkInformationSeekerRequestsPartial && !$this->isNew();
+        if (null === $this->collFieldworkInformationSeekerRequests || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collFieldworkInformationSeekerRequests) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getFieldworkInformationSeekerRequests());
+            }
+
+            $query = ChildFieldworkInformationSeekerRequestQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByFieldwork($this)
+                ->count($con);
+        }
+
+        return count($this->collFieldworkInformationSeekerRequests);
+    }
+
+    /**
+     * Method called to associate a ChildFieldworkInformationSeekerRequest object to this object
+     * through the ChildFieldworkInformationSeekerRequest foreign key attribute.
+     *
+     * @param  ChildFieldworkInformationSeekerRequest $l ChildFieldworkInformationSeekerRequest
+     * @return $this|\CryoConnectDB\Fieldwork The current object (for fluent API support)
+     */
+    public function addFieldworkInformationSeekerRequest(ChildFieldworkInformationSeekerRequest $l)
+    {
+        if ($this->collFieldworkInformationSeekerRequests === null) {
+            $this->initFieldworkInformationSeekerRequests();
+            $this->collFieldworkInformationSeekerRequestsPartial = true;
+        }
+
+        if (!$this->collFieldworkInformationSeekerRequests->contains($l)) {
+            $this->doAddFieldworkInformationSeekerRequest($l);
+
+            if ($this->fieldworkInformationSeekerRequestsScheduledForDeletion and $this->fieldworkInformationSeekerRequestsScheduledForDeletion->contains($l)) {
+                $this->fieldworkInformationSeekerRequestsScheduledForDeletion->remove($this->fieldworkInformationSeekerRequestsScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildFieldworkInformationSeekerRequest $fieldworkInformationSeekerRequest The ChildFieldworkInformationSeekerRequest object to add.
+     */
+    protected function doAddFieldworkInformationSeekerRequest(ChildFieldworkInformationSeekerRequest $fieldworkInformationSeekerRequest)
+    {
+        $this->collFieldworkInformationSeekerRequests[]= $fieldworkInformationSeekerRequest;
+        $fieldworkInformationSeekerRequest->setFieldwork($this);
+    }
+
+    /**
+     * @param  ChildFieldworkInformationSeekerRequest $fieldworkInformationSeekerRequest The ChildFieldworkInformationSeekerRequest object to remove.
+     * @return $this|ChildFieldwork The current object (for fluent API support)
+     */
+    public function removeFieldworkInformationSeekerRequest(ChildFieldworkInformationSeekerRequest $fieldworkInformationSeekerRequest)
+    {
+        if ($this->getFieldworkInformationSeekerRequests()->contains($fieldworkInformationSeekerRequest)) {
+            $pos = $this->collFieldworkInformationSeekerRequests->search($fieldworkInformationSeekerRequest);
+            $this->collFieldworkInformationSeekerRequests->remove($pos);
+            if (null === $this->fieldworkInformationSeekerRequestsScheduledForDeletion) {
+                $this->fieldworkInformationSeekerRequestsScheduledForDeletion = clone $this->collFieldworkInformationSeekerRequests;
+                $this->fieldworkInformationSeekerRequestsScheduledForDeletion->clear();
+            }
+            $this->fieldworkInformationSeekerRequestsScheduledForDeletion[]= clone $fieldworkInformationSeekerRequest;
+            $fieldworkInformationSeekerRequest->setFieldwork(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Fieldwork is new, it will return
+     * an empty collection; or if this Fieldwork has previously
+     * been saved, it will retrieve related FieldworkInformationSeekerRequests from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Fieldwork.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ChildFieldworkInformationSeekerRequest[] List of ChildFieldworkInformationSeekerRequest objects
+     */
+    public function getFieldworkInformationSeekerRequestsJoinFieldworkInformationSeeker(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ChildFieldworkInformationSeekerRequestQuery::create(null, $criteria);
+        $query->joinWith('FieldworkInformationSeeker', $joinBehavior);
+
+        return $this->getFieldworkInformationSeekerRequests($query, $con);
+    }
+
+    /**
+     * Clears out the collFieldworkInformationSeekers collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addFieldworkInformationSeekers()
+     */
+    public function clearFieldworkInformationSeekers()
+    {
+        $this->collFieldworkInformationSeekers = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Initializes the collFieldworkInformationSeekers crossRef collection.
+     *
+     * By default this just sets the collFieldworkInformationSeekers collection to an empty collection (like clearFieldworkInformationSeekers());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @return void
+     */
+    public function initFieldworkInformationSeekers()
+    {
+        $collectionClassName = FieldworkInformationSeekerRequestTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collFieldworkInformationSeekers = new $collectionClassName;
+        $this->collFieldworkInformationSeekersPartial = true;
+        $this->collFieldworkInformationSeekers->setModel('\CryoConnectDB\FieldworkInformationSeeker');
+    }
+
+    /**
+     * Checks if the collFieldworkInformationSeekers collection is loaded.
+     *
+     * @return bool
+     */
+    public function isFieldworkInformationSeekersLoaded()
+    {
+        return null !== $this->collFieldworkInformationSeekers;
+    }
+
+    /**
+     * Gets a collection of ChildFieldworkInformationSeeker objects related by a many-to-many relationship
+     * to the current object by way of the fieldwork_information_seeker_request cross-reference table.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildFieldwork is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return ObjectCollection|ChildFieldworkInformationSeeker[] List of ChildFieldworkInformationSeeker objects
+     */
+    public function getFieldworkInformationSeekers(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collFieldworkInformationSeekersPartial && !$this->isNew();
+        if (null === $this->collFieldworkInformationSeekers || null !== $criteria || $partial) {
+            if ($this->isNew()) {
+                // return empty collection
+                if (null === $this->collFieldworkInformationSeekers) {
+                    $this->initFieldworkInformationSeekers();
+                }
+            } else {
+
+                $query = ChildFieldworkInformationSeekerQuery::create(null, $criteria)
+                    ->filterByFieldwork($this);
+                $collFieldworkInformationSeekers = $query->find($con);
+                if (null !== $criteria) {
+                    return $collFieldworkInformationSeekers;
+                }
+
+                if ($partial && $this->collFieldworkInformationSeekers) {
+                    //make sure that already added objects gets added to the list of the database.
+                    foreach ($this->collFieldworkInformationSeekers as $obj) {
+                        if (!$collFieldworkInformationSeekers->contains($obj)) {
+                            $collFieldworkInformationSeekers[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collFieldworkInformationSeekers = $collFieldworkInformationSeekers;
+                $this->collFieldworkInformationSeekersPartial = false;
+            }
+        }
+
+        return $this->collFieldworkInformationSeekers;
+    }
+
+    /**
+     * Sets a collection of FieldworkInformationSeeker objects related by a many-to-many relationship
+     * to the current object by way of the fieldwork_information_seeker_request cross-reference table.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param  Collection $fieldworkInformationSeekers A Propel collection.
+     * @param  ConnectionInterface $con Optional connection object
+     * @return $this|ChildFieldwork The current object (for fluent API support)
+     */
+    public function setFieldworkInformationSeekers(Collection $fieldworkInformationSeekers, ConnectionInterface $con = null)
+    {
+        $this->clearFieldworkInformationSeekers();
+        $currentFieldworkInformationSeekers = $this->getFieldworkInformationSeekers();
+
+        $fieldworkInformationSeekersScheduledForDeletion = $currentFieldworkInformationSeekers->diff($fieldworkInformationSeekers);
+
+        foreach ($fieldworkInformationSeekersScheduledForDeletion as $toDelete) {
+            $this->removeFieldworkInformationSeeker($toDelete);
+        }
+
+        foreach ($fieldworkInformationSeekers as $fieldworkInformationSeeker) {
+            if (!$currentFieldworkInformationSeekers->contains($fieldworkInformationSeeker)) {
+                $this->doAddFieldworkInformationSeeker($fieldworkInformationSeeker);
+            }
+        }
+
+        $this->collFieldworkInformationSeekersPartial = false;
+        $this->collFieldworkInformationSeekers = $fieldworkInformationSeekers;
+
+        return $this;
+    }
+
+    /**
+     * Gets the number of FieldworkInformationSeeker objects related by a many-to-many relationship
+     * to the current object by way of the fieldwork_information_seeker_request cross-reference table.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      boolean $distinct Set to true to force count distinct
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return int the number of related FieldworkInformationSeeker objects
+     */
+    public function countFieldworkInformationSeekers(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collFieldworkInformationSeekersPartial && !$this->isNew();
+        if (null === $this->collFieldworkInformationSeekers || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collFieldworkInformationSeekers) {
+                return 0;
+            } else {
+
+                if ($partial && !$criteria) {
+                    return count($this->getFieldworkInformationSeekers());
+                }
+
+                $query = ChildFieldworkInformationSeekerQuery::create(null, $criteria);
+                if ($distinct) {
+                    $query->distinct();
+                }
+
+                return $query
+                    ->filterByFieldwork($this)
+                    ->count($con);
+            }
+        } else {
+            return count($this->collFieldworkInformationSeekers);
+        }
+    }
+
+    /**
+     * Associate a ChildFieldworkInformationSeeker to this object
+     * through the fieldwork_information_seeker_request cross reference table.
+     *
+     * @param ChildFieldworkInformationSeeker $fieldworkInformationSeeker
+     * @return ChildFieldwork The current object (for fluent API support)
+     */
+    public function addFieldworkInformationSeeker(ChildFieldworkInformationSeeker $fieldworkInformationSeeker)
+    {
+        if ($this->collFieldworkInformationSeekers === null) {
+            $this->initFieldworkInformationSeekers();
+        }
+
+        if (!$this->getFieldworkInformationSeekers()->contains($fieldworkInformationSeeker)) {
+            // only add it if the **same** object is not already associated
+            $this->collFieldworkInformationSeekers->push($fieldworkInformationSeeker);
+            $this->doAddFieldworkInformationSeeker($fieldworkInformationSeeker);
+        }
+
+        return $this;
+    }
+
+    /**
+     *
+     * @param ChildFieldworkInformationSeeker $fieldworkInformationSeeker
+     */
+    protected function doAddFieldworkInformationSeeker(ChildFieldworkInformationSeeker $fieldworkInformationSeeker)
+    {
+        $fieldworkInformationSeekerRequest = new ChildFieldworkInformationSeekerRequest();
+
+        $fieldworkInformationSeekerRequest->setFieldworkInformationSeeker($fieldworkInformationSeeker);
+
+        $fieldworkInformationSeekerRequest->setFieldwork($this);
+
+        $this->addFieldworkInformationSeekerRequest($fieldworkInformationSeekerRequest);
+
+        // set the back reference to this object directly as using provided method either results
+        // in endless loop or in multiple relations
+        if (!$fieldworkInformationSeeker->isFieldworksLoaded()) {
+            $fieldworkInformationSeeker->initFieldworks();
+            $fieldworkInformationSeeker->getFieldworks()->push($this);
+        } elseif (!$fieldworkInformationSeeker->getFieldworks()->contains($this)) {
+            $fieldworkInformationSeeker->getFieldworks()->push($this);
+        }
+
+    }
+
+    /**
+     * Remove fieldworkInformationSeeker of this object
+     * through the fieldwork_information_seeker_request cross reference table.
+     *
+     * @param ChildFieldworkInformationSeeker $fieldworkInformationSeeker
+     * @return ChildFieldwork The current object (for fluent API support)
+     */
+    public function removeFieldworkInformationSeeker(ChildFieldworkInformationSeeker $fieldworkInformationSeeker)
+    {
+        if ($this->getFieldworkInformationSeekers()->contains($fieldworkInformationSeeker)) {
+            $fieldworkInformationSeekerRequest = new ChildFieldworkInformationSeekerRequest();
+            $fieldworkInformationSeekerRequest->setFieldworkInformationSeeker($fieldworkInformationSeeker);
+            if ($fieldworkInformationSeeker->isFieldworksLoaded()) {
+                //remove the back reference if available
+                $fieldworkInformationSeeker->getFieldworks()->removeObject($this);
+            }
+
+            $fieldworkInformationSeekerRequest->setFieldwork($this);
+            $this->removeFieldworkInformationSeekerRequest(clone $fieldworkInformationSeekerRequest);
+            $fieldworkInformationSeekerRequest->clear();
+
+            $this->collFieldworkInformationSeekers->remove($this->collFieldworkInformationSeekers->search($fieldworkInformationSeeker));
+
+            if (null === $this->fieldworkInformationSeekersScheduledForDeletion) {
+                $this->fieldworkInformationSeekersScheduledForDeletion = clone $this->collFieldworkInformationSeekers;
+                $this->fieldworkInformationSeekersScheduledForDeletion->clear();
+            }
+
+            $this->fieldworkInformationSeekersScheduledForDeletion->push($fieldworkInformationSeeker);
+        }
+
+
+        return $this;
+    }
+
     /**
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
@@ -2566,8 +3177,20 @@ abstract class Fieldwork implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
+            if ($this->collFieldworkInformationSeekerRequests) {
+                foreach ($this->collFieldworkInformationSeekerRequests as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
+            if ($this->collFieldworkInformationSeekers) {
+                foreach ($this->collFieldworkInformationSeekers as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
         } // if ($deep)
 
+        $this->collFieldworkInformationSeekerRequests = null;
+        $this->collFieldworkInformationSeekers = null;
         $this->aCryosphereWhere = null;
     }
 
