@@ -40,8 +40,6 @@ class FieldworkController extends Controller {
         );
     }
 
-    
-    
     /**
      * 
      * @param type $request
@@ -187,9 +185,7 @@ class FieldworkController extends Controller {
                         ]
         );
     }
-    
-    
-    
+
     /**
      * Approving fieldwork
      * @param type $request
@@ -284,7 +280,7 @@ class FieldworkController extends Controller {
         return $response->withStatus(200);
     }
 
-     /**
+    /**
      * Rendering a form for information seekers to search for 
      * 
      * @param Request $request
@@ -330,7 +326,7 @@ class FieldworkController extends Controller {
 
             return $response->withStatus(400);
         }
-            
+
         $fieldworks = FieldworkQuery::create()->filterByCryosphereWhereId($cryosphereWhereId)
                 ->filterByFieldworkInformationSeekerDeadline(array('min' => date()))
                 ->filterByFieldworkStartDate(array('min' => $fromDate, 'max' => $toDate))
@@ -344,6 +340,9 @@ class FieldworkController extends Controller {
             $minFieldworkInfo[$key]['FieldworkStartDate'] = $fieldwork['FieldworkStartDate'];
             $minFieldworkInfo[$key]['FieldworkDuration'] = $fieldwork['FieldworkDuration'];
             $minFieldworkInfo[$key]['FieldworkInformationSeekerDeadline'] = $fieldwork['FieldworkInformationSeekerDeadline'];
+            $minFieldworkInfo[$key]['FieldworkRegion'] = CryosphereWhereQuery::create()
+                    ->findOneById($fieldwork['CryosphereWhereId'])
+                    ->getCryosphereWhereName();
         }
 
         return $this->view->render(
@@ -353,7 +352,7 @@ class FieldworkController extends Controller {
                         ]
         );
     }
-    
+
     /**
      * Checking if leader email exists
      */
