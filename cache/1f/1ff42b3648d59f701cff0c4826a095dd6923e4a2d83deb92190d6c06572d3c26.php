@@ -34,14 +34,13 @@ class __TwigTemplate_3061aad815295c89f702c2a99e2831a9407ad1ce619458c62764063c757
             <form class=\"col s12\" id=\"search_form\">
                 <div class=\"row\">
                     <div class=\"input-field col s12\">
-                        <select id=\"cryosphere_where\" name=\"cryosphere_where\" required>
-                            <option value=\"\" disabled selected>choose</option>
+                        <select id=\"cryosphere_where\" name=\"cryosphere_where[]\" required multiple>
                             ";
-        // line 18
+        // line 17
         $context['_parent'] = $context;
         $context['_seq'] = twig_ensure_traversable(twig_get_attribute($this->env, $this->source, $context, "cryosphere_where", array()));
         foreach ($context['_seq'] as $context["_key"] => $context["cryosphere_where"]) {
-            // line 19
+            // line 18
             echo "                                <option value=\"";
             echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["cryosphere_where"], "Id", array()), "html", null, true);
             echo "\">";
@@ -52,7 +51,7 @@ class __TwigTemplate_3061aad815295c89f702c2a99e2831a9407ad1ce619458c62764063c757
         $_parent = $context['_parent'];
         unset($context['_seq'], $context['_iterated'], $context['_key'], $context['cryosphere_where'], $context['_parent'], $context['loop']);
         $context = array_intersect_key($context, $_parent) + $_parent;
-        // line 21
+        // line 20
         echo "                        </select>
                         <label for=\"cryosphere_where\">Region of expedition<font color=\"red\">*</font></label>
                     </div>
@@ -101,7 +100,7 @@ class __TwigTemplate_3061aad815295c89f702c2a99e2831a9407ad1ce619458c62764063c757
     <script src=\"https://cdn.jsdelivr.net/npm/flatpickr\"></script>
     <script>
 
-
+        
 
 
         //fix required checkbox
@@ -132,8 +131,9 @@ class __TwigTemplate_3061aad815295c89f702c2a99e2831a9407ad1ce619458c62764063c757
         });
 
         \$(document).ready(function () {
-
-
+            
+            //fixe iframe focusing out of drop box
+            \$(window).on('blur',function() { document.getElementById('search_form').click()} );
 
             //search subbmition
             \$(\"#search_form\").submit(function (event) {
@@ -148,7 +148,7 @@ class __TwigTemplate_3061aad815295c89f702c2a99e2831a9407ad1ce619458c62764063c757
                     type: 'GET',
                     url: \"";
         // line 114
-        echo twig_escape_filter($this->env, $this->extensions['Slim\Views\TwigExtension']->pathFor("fieldwork-connect-search"), "html", null, true);
+        echo twig_escape_filter($this->env, $this->extensions['Slim\Views\TwigExtension']->pathFor("fieldwork_connect_search"), "html", null, true);
         echo "\",
                     data: \$(this).serialize(),
                     beforeSend: function () {
@@ -183,14 +183,11 @@ class __TwigTemplate_3061aad815295c89f702c2a99e2831a9407ad1ce619458c62764063c757
                 /* stop form from submitting normally */
                 event.preventDefault();
 
-
-
-
                 \$.ajax({
                     type: 'POST',
                     url: \"";
-        // line 153
-        echo twig_escape_filter($this->env, $this->extensions['Slim\Views\TwigExtension']->pathFor("fieldwork-connect-request"), "html", null, true);
+        // line 150
+        echo twig_escape_filter($this->env, $this->extensions['Slim\Views\TwigExtension']->pathFor("fieldwork_connect_request"), "html", null, true);
         echo "\",
                     data: \$(this).serialize(),
                     beforeSend: function () {
@@ -200,6 +197,7 @@ class __TwigTemplate_3061aad815295c89f702c2a99e2831a9407ad1ce619458c62764063c757
                         .done(function (data) {
                             \$('#submitBtnTwo').removeAttr('disabled');
                             document.getElementById('fieldwork_inquiry_form').innerHTML = data;
+                            parent.scrollTo(0,500);
                         })
                         .fail(function (errMsg) {
                             \$('#submitBtn').show();
@@ -254,7 +252,7 @@ class __TwigTemplate_3061aad815295c89f702c2a99e2831a9407ad1ce619458c62764063c757
 
     public function getDebugInfo()
     {
-        return array (  193 => 153,  151 => 114,  56 => 21,  45 => 19,  41 => 18,  23 => 2,);
+        return array (  190 => 150,  151 => 114,  55 => 20,  44 => 18,  40 => 17,  23 => 2,);
     }
 
     public function getSourceContext()

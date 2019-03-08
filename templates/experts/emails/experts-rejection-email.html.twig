@@ -2,7 +2,7 @@
 <p>We are sorry to inform you that we could not approve the data you entered as a Cryosphere expert.&nbsp;</p>
 {% if _context.explanation != '' %}
 <p>We have gone through your info and rejected your request due to this explanation:&nbsp;</p>
-<p>{{_context.explanation}}</p>
+<p>{{_context.explanation | raw}}</p>
 {% endif %}
 <p>&nbsp;</p>
 <p>Thank you,</p>

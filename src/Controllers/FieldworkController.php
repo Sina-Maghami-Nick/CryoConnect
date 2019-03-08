@@ -12,6 +12,7 @@ use CryoConnectDB\CryosphereWhereQuery;
 use CryoConnectDB\FieldworkQuery;
 use CryoConnectDB\Fieldwork;
 use CryoConnectDB\FieldworkInformationSeeker;
+use CryoConnectDB\FieldworkInformationSeekerQuery;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -33,172 +34,14 @@ class FieldworkController extends Controller {
         $cryosphereWhere = CryosphereWhereQuery::create()->find();
 
         return $this->view->render(
-                        $response, 'fieldwork-registration.html.twig', [
+                        $response, 'fieldworks/fieldwork-registration.html.twig', [
                     'cryosphere_where' => $cryosphereWhere->toArray(),
                         ]
         );
     }
 
-    /**
-     * 
-     * @param Request $request
-     * @param Response $response
-     * @param type $args
-     */
-    public function connectFormAction(Request $request, Response $response, $args) {
-
-        $cryosphereWhere = CryosphereWhereQuery::create()->find();
-
-        return $this->view->render(
-                        $response, 'fieldwork-connect.html.twig', [
-                    'cryosphere_where' => $cryosphereWhere->toArray(),
-                        ]
-        );
-    }
-
-    /**
-     * 
-     * @param Request $request
-     * @param Response $response
-     * @param type $args
-     */
-    public function connectSearchAction(Request $request, Response $response, $args) {
-
-        $data = $request->getQueryParams();
-
-        $cryosphereWhereId = filter_var($data['cryosphere_where'], FILTER_SANITIZE_NUMBER_INT);
-        $dateRange = filter_var_array(explode(' to ', $data['range_date']), FILTER_SANITIZE_STRING);
-        $fromDate = strtotime($dateRange[0]);
-        $toDate = strtotime($dateRange[1]);
-
-        if (
-                empty($cryosphereWhereId) ||
-                empty($dateRange) ||
-                empty($fromDate) ||
-                empty($toDate)
-        ) {
-            $this->container->get('logger')
-                    ->addError('Empty or wronge fileds for fieldtrip connect search info recieved within the following request: ' . json_encode($data));
-            $technicalAdminEmail = $this->container->get('settings')['contacts']['technical_admin'];
-            $response->getBody()->write("Something went wrong! Please contact us at: " . $technicalAdminEmail);
-
-            return $response->withStatus(400);
-        }
-
-        $fieldworks = FieldworkQuery::create()->filterByCryosphereWhereId($cryosphereWhereId)
-                ->filterByFieldworkInformationSeekerDeadline(array('min' => date()))
-                ->filterByFieldworkStartDate(array('min' => $fromDate, 'max' => $toDate))
-                ->find();
-
-        $minFieldworkInfo = array();
-        foreach ($fieldworks->toArray() as $key => $fieldwork) {
-            $minFieldworkInfo[$key]['Id'] = $fieldwork['Id'];
-            $minFieldworkInfo[$key]['FieldworkName'] = $fieldwork['FieldworkName'];
-            $minFieldworkInfo[$key]['FieldworkLocations'] = $fieldwork['FieldworkLocations'];
-            $minFieldworkInfo[$key]['FieldworkStartDate'] = $fieldwork['FieldworkStartDate'];
-            $minFieldworkInfo[$key]['FieldworkDuration'] = $fieldwork['FieldworkDuration'];
-            $minFieldworkInfo[$key]['FieldworkInformationSeekerDeadline'] = $fieldwork['FieldworkInformationSeekerDeadline'];
-        }
-
-        return $this->view->render(
-                        $response, 'fieldwork-connect-search.html.twig', [
-                    'fieldworks' => $minFieldworkInfo,
-                    'cryosphere_where' => CryosphereWhereQuery::create()->find()->toArray()
-                        ]
-        );
-    }
-
-    /**
-     * 
-     * @param type $request
-     * @param type $response
-     * @param type $args
-     */
-    public function connectRequestAction(Request $request, Response $response, $args) {
-
-        $data = $request->getParsedBody();
-
-        $this->container->get('logger')
-                ->addInfo('A new fieldwork connect request recieved with data: ' . json_encode($data));
-
-        $informationSeekerEmailAddress = trim(strtolower(filter_var($data['information_seeker_email'], FILTER_SANITIZE_EMAIL)));
-        $informationSeekerName = filter_var($data['information_seeker_name'], FILTER_SANITIZE_STRING);
-        $requestedFieldworkIds = filter_var_array($data['fieldwork_ids'], FILTER_SANITIZE_STRING);
-        $informationSeekerAffiliationName = filter_var($data['information_seeker_affiliation'], FILTER_SANITIZE_STRING);
-        $informationSeekerWebsite = filter_var($data['information_seeker_website'], FILTER_SANITIZE_URL);
-        $informationSeekerAffiliationWebsite = filter_var($data['information_seeker_affiliation_website'], FILTER_SANITIZE_URL);
-        $informationSeekerReasons = filter_var($data['information_seeker_reasons'], FILTER_SANITIZE_STRING);
-
-        //rest of validations
-        if (
-                empty($informationSeekerEmailAddress) ||
-                empty($informationSeekerName) ||
-                empty($requestedFieldworkIds) ||
-                empty($informationSeekerAffiliationName) ||
-                empty($informationSeekerWebsite) ||
-                empty($informationSeekerAffiliationWebsite) ||
-                empty($informationSeekerReasons)
-        ) {
-            $this->container->get('logger')
-                    ->addError('Empty or wronge fileds for fieldwork connect request recieved with the following request: ' . json_encode($data));
-            $technicalAdminEmail = $this->container->get('settings')['contacts']['technical_admin'];
-            $response->getBody()->write("Something went wrong! Please contact us at: " . $technicalAdminEmail);
-
-            return $response->withStatus(400);
-        }
-
-        $fieldworkInformationSeeker = new FieldworkInformationSeeker;
-
-        $fieldworkInformationSeeker
-                ->setInformationSeekerName($informationSeekerName)
-                ->setInformationSeekerEmail($informationSeekerEmailAddress)
-                ->setInformationSeekerWebsite($informationSeekerWebsite)
-                ->setInformationSeekerAffiliation($informationSeekerAffiliationName)
-                ->setInformationSeekerAffiliationWebsite($informationSeekerAffiliationWebsite)
-                ->setInformationSeekerReasons($informationSeekerReasons);
-
-        foreach ($requestedFieldworkIds as $requestedFieldworkId) {
-            $fieldwork = FieldworkQuery::create()->findOneById($requestedFieldworkId);
-
-            if (empty($fieldwork)) {
-                $this->container->get('logger')
-                        ->addError('Wrong fieldwork Id passed from frontend: ' . json_encode($data));
-                $technicalAdminEmail = $this->container->get('settings')['contacts']['technical_admin'];
-                $response->getBody()->write("Something went wrong! Please contact us at: " . $technicalAdminEmail);
-
-                return $response->withStatus(400);
-            }
-            
-            $fieldworkInformationSeeker->addFieldwork($fieldwork);
-        }
-        
-        $fieldworkInformationSeeker->save();
-        
-        $this->container->get('logger')
-                ->addInfo('A new unvalidated fieldwork information seeker request is added to the databse: ' . json_encode($fieldwork->toArray()));
-        
-        $approvalMsg = (new \Swift_Message('Approval of new fieldwork connect request: ' . $leaderName))
-                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryoconnect'])
-                ->setTo($this->container->get('settings')['contacts']['approval_admin'])
-                ->setBody(
-                $this->view->render(new \Slim\Http\Response(), 'emails/fieldwork-connect-approval-email.html.twig', [
-                    'fieldwork_information_seeker' => $fieldworkInformationSeeker->toArray(),
-                    'fieldworks' => $fieldworkInformationSeeker->getFieldworkInformationSeekerRequestsJoinFieldwork()->toArray(),
-                    'token' => md5($fieldworkInformationSeeker->getInformationSeekerEmail() . $fieldworkInformationSeeker->getId()),
-                        ]
-                )->getBody(), 'text/html'
-        );
-
-        $this->mailer->send($approvalMsg);
-
-        return $this->view->render(
-                        $response, 'fieldwork-connect-thank-you-page.html.twig', [
-                    
-                        ]
-        );
-        
-    }
-
+    
+    
     /**
      * 
      * @param type $request
@@ -297,7 +140,7 @@ class FieldworkController extends Controller {
                 ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryoconnect'])
                 ->setTo($this->container->get('settings')['contacts']['approval_admin'])
                 ->setBody(
-                $this->view->render(new \Slim\Http\Response(), 'emails/fieldwork-approval-email.html.twig', [
+                $this->view->render(new \Slim\Http\Response(), 'fieldworks/emails/fieldwork-approval-email.html.twig', [
                     'fieldwork' => $fieldwork->toArray(),
                     'token' => md5($fieldwork->getFieldworkLeaderEmail() . $fieldwork->getId()),
                         ]
@@ -307,7 +150,7 @@ class FieldworkController extends Controller {
         $this->mailer->send($approvalMsg);
 
         return $this->view->render(
-                        $response, 'fieldwork-thank-you-page.html.twig', [
+                        $response, 'fieldworks/fieldwork-thank-you-page.html.twig', [
                     'leader_name' => $fieldwork->getFieldworkLeaderName(),
                         ]
         );
@@ -338,15 +181,17 @@ class FieldworkController extends Controller {
         $this->container->get('logger')
                 ->addInfo('Fieldwork Validation page was accessed by a user for expert:' . json_encode($fieldwork->toArray()));
         return $this->view->render(
-                        $response, 'fieldwork-approval.html.twig', [
+                        $response, 'fieldworks/fieldwork-approval.html.twig', [
                     'fieldwork' => $fieldwork->toArray(),
                     'fieldwork_cryosphere_where' => $fieldwork->getCryosphereWhere()->getCryosphereWhereName(),
                         ]
         );
     }
-
+    
+    
+    
     /**
-     * Approving expert
+     * Approving fieldwork
      * @param type $request
      * @param type $response
      * @param type $args
@@ -377,9 +222,9 @@ class FieldworkController extends Controller {
 
         $emailMsg = (new \Swift_Message('Your fieldwork is registered at Cryo Connect now'))
                 ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryoconnect'])
-                ->setTo($fieldwork->getFieldworkLeaderEmail())
+                ->setTo($fieldworkInformationSeeker->getInformationSeekerEmail())
                 ->setBody(
-                $this->view->render(new \Slim\Http\Response(), 'emails/fieldwork-welcome-email.html.twig', [
+                $this->view->render(new \Slim\Http\Response(), 'fieldworks/emails/fieldwork-welcome-email.html.twig', [
                     'fieldwork_leader_name' => $fieldwork->getFieldworkLeaderName(),
                         ]
                 )->getBody(), 'text/html'
@@ -391,6 +236,7 @@ class FieldworkController extends Controller {
     }
 
     /**
+     * Rejecting a fieldwork
      * 
      * @param Request $request
      * @param Response $response
@@ -426,7 +272,7 @@ class FieldworkController extends Controller {
                 ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryoconnect'])
                 ->setTo($fieldwork->getFieldworkLeaderEmail())
                 ->setBody(
-                $this->view->render(new \Slim\Http\Response(), 'emails/fieldwork-rejection-email.html.twig', [
+                $this->view->render(new \Slim\Http\Response(), 'fieldworks/emails/fieldwork-rejection-email.html.twig', [
                     'fieldwork_leader_name' => $fieldwork->getFieldworkLeaderName(),
                     'explanation' => $explanation
                         ]
@@ -438,6 +284,76 @@ class FieldworkController extends Controller {
         return $response->withStatus(200);
     }
 
+     /**
+     * Rendering a form for information seekers to search for 
+     * 
+     * @param Request $request
+     * @param Response $response
+     * @param type $args
+     */
+    public function searchFormAction(Request $request, Response $response, $args) {
+
+        $cryosphereWhere = CryosphereWhereQuery::create()->find();
+
+        return $this->view->render(
+                        $response, 'fieldworks/fieldwork-connect.html.twig', [
+                    'cryosphere_where' => $cryosphereWhere->toArray(),
+                        ]
+        );
+    }
+
+    /**
+     * 
+     * @param Request $request
+     * @param Response $response
+     * @param type $args
+     */
+    public function searchAction(Request $request, Response $response, $args) {
+
+        $data = $request->getQueryParams();
+
+        $cryosphereWhereId = filter_var_array($data['cryosphere_where'], FILTER_SANITIZE_NUMBER_INT);
+        $dateRange = filter_var_array(explode(' to ', $data['range_date']), FILTER_SANITIZE_STRING);
+        $fromDate = strtotime($dateRange[0]);
+        $toDate = strtotime($dateRange[1]);
+
+        if (
+                empty($cryosphereWhereId) ||
+                empty($dateRange) ||
+                empty($fromDate) ||
+                empty($toDate)
+        ) {
+            $this->container->get('logger')
+                    ->addError('Empty or wronge fileds for fieldtrip connect search info recieved within the following request: ' . json_encode($data));
+            $technicalAdminEmail = $this->container->get('settings')['contacts']['technical_admin'];
+            $response->getBody()->write("Something went wrong! Please contact us at: " . $technicalAdminEmail);
+
+            return $response->withStatus(400);
+        }
+            
+        $fieldworks = FieldworkQuery::create()->filterByCryosphereWhereId($cryosphereWhereId)
+                ->filterByFieldworkInformationSeekerDeadline(array('min' => date()))
+                ->filterByFieldworkStartDate(array('min' => $fromDate, 'max' => $toDate))
+                ->find();
+
+        $minFieldworkInfo = array();
+        foreach ($fieldworks->toArray() as $key => $fieldwork) {
+            $minFieldworkInfo[$key]['Id'] = $fieldwork['Id'];
+            $minFieldworkInfo[$key]['FieldworkName'] = $fieldwork['FieldworkName'];
+            $minFieldworkInfo[$key]['FieldworkLocations'] = $fieldwork['FieldworkLocations'];
+            $minFieldworkInfo[$key]['FieldworkStartDate'] = $fieldwork['FieldworkStartDate'];
+            $minFieldworkInfo[$key]['FieldworkDuration'] = $fieldwork['FieldworkDuration'];
+            $minFieldworkInfo[$key]['FieldworkInformationSeekerDeadline'] = $fieldwork['FieldworkInformationSeekerDeadline'];
+        }
+
+        return $this->view->render(
+                        $response, 'fieldworks/fieldwork-connect-search.html.twig', [
+                    'fieldworks' => $minFieldworkInfo,
+                    'cryosphere_where' => CryosphereWhereQuery::create()->find()->toArray()
+                        ]
+        );
+    }
+    
     /**
      * Checking if leader email exists
      */

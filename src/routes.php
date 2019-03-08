@@ -35,13 +35,22 @@ $app->group('/fieldwork', function () {
     $this->get('/register', FieldworkController::class . ':registrationFormAction');
 
     //route to the fieldwork sign-up form
-    $this->get('/connect', FieldworkController::class . ':connectFormAction');
+    $this->get('/connect', FieldworkController::class . ':searchFormAction');
     
     //route to the fieldwork sign-up form
-    $this->get('/connect/search', FieldworkController::class . ':connectSearchAction')->setName('fieldwork-connect-search');
+    $this->get('/connect/search', FieldworkController::class . ':searchAction')->setName('fieldwork_connect_search');
     
     //route to the fieldwork sign-up form
-    $this->post('/connect/request', FieldworkController::class . ':connectRequestAction')->setName('fieldwork-connect-request');
+    $this->post('/connect/request', InformationSeekersController::class . ':fieldworkRequestAction')->setName('fieldwork_connect_request');
+    
+    //route to the fieldwork approval page
+    $this->get('/connect/approval', InformationSeekersController::class . ':fieldworkRequestApprovalPageAction')->setName('fieldwork_connect_approval');
+    
+    //route to approve fieldwork information seeker
+    $this->put('/connect/approval/approve-fieldwork-information-seeker', InformationSeekersController::class . ':approveFieldworkRequestAction')->setName('fieldwork_information_seeker_approve');
+
+    //route to reject fieldwork information seeker
+    $this->delete('/connect/approval/reject-fieldwork-information-seeker', InformationSeekersController::class . ':rejectFieldworkRequestAction')->setName('fieldwork_information_seeker_reject');
     
     //route to the fieldwork save data
     $this->post('/new-request', FieldworkController::class . ':registrationAction')->setName('fieldwork-registration');

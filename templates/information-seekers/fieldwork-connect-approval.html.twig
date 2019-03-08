@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <title>Expedition Approval Page</title>
+    </head>
+    <body>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">New Expedition Information Seeker Request</th>
+                        {% if _context.fieldwork_information_seeker.Approved == false %}
+
+                        <td>Not approved yet!</td>
+
+                    {% else %}
+                        <td>Already approved!</td>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">Information seeker name</th>
+                    <td>{{_context.fieldwork_information_seeker.InformationSeekerName}}</td>
+                </tr>
+
+                <tr>
+                    <th scope="row">Information seeker email</th>
+                    <td colspan="2">{{_context.fieldwork_information_seeker.InformationSeekerEmail}}</td>
+                </tr>
+
+                <tr>
+                    <th scope="row">Information seeker website</th>
+                    <td colspan="2">{{_context.fieldwork_information_seeker.InformationSeekerWebsite}}</td>
+                </tr>
+
+                <tr>
+                    <th scope="row">Information seeker affiliation</th>
+                    <td colspan="2">{{_context.fieldwork_information_seeker.InformationSeekerAffiliation}}</td>
+                </tr>
+
+
+                <tr>
+                    <th scope="row">Information seeker affiliation website</th>
+                    <td colspan="2">{{_context.fieldwork_information_seeker.InformationSeekerAffiliationWebsite}}</td>
+                </tr>
+
+                <tr>
+                    <th scope="row">Request reason(s)</th>
+                    <td colspan="2">{{_context.fieldwork_information_seeker.InformationSeekerReasons}}</td>
+                </tr>
+
+                <tr>
+                    <th scope="row">Requested expedition(s)</th>
+                    <td colspan="10">
+                        <ul class="list-group list-group-flush">
+                            {% for fieldwork in _context.fieldworks %}
+                                <li class="list-group-item">{{fieldwork.Fieldwork.Id }} - {{fieldwork.Fieldwork.FieldworkName | raw}} - leader : {{fieldwork.Fieldwork.FieldworkLeaderName | raw}} - start date : {{fieldwork.Fieldwork.FieldworkStartDate|slice(0, 10)}}</li>
+                                {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        {% if _context.fieldwork_information_seeker.Approved == false %}
+            <div class="col-md text-center"> 
+
+                <button type="button" class="fieldwork_information_seeker-approve btn btn-success btn-lg" data-toggle="modal" data-target="#fieldwork_information_seeker_approve_modal">Approve Request</button>
+
+                <button type="button" class="fieldwork_information_seeker-reject btn btn-danger btn-lg" data-toggle="modal" data-target="#fieldwork_information_seeker_reject_modal">Reject Request</button>
+
+            </div>
+        {% endif %}
+        <script>
+            console.log({{ _context | json_encode | raw }});
+        </script>
+
+
+        <div class="modal fade" id="fieldwork_information_seeker_approve_modal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header text-center">
+                        <h4 class="modal-title w-100 font-weight-bold">Are you sure to approve this request ?</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group row">
+                                <label for="fieldwork_information_seeker_name" class="col-sm-2 col-form-label">Name:</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control-plaintext" name="fieldwork_information_seeker_name" id="fieldwork_information_seeker_name" value="{{_context.fieldwork_information_seeker.InformationSeekerName}}" readonly>
+                                </div>
+                            </div>
+
+                            <input type="hidden" id="fieldwork_information_seeker_id" name="custId" value={{_context.fieldwork_information_seeker.Id}}>
+                            <div class="modal-footer ">
+                                <button type="button" id="fieldwork_information_seeker_approve" data-posturl="{{path_for('fieldwork_information_seeker_approve')}}" class="btn btn-success btn-lg" style="width: 100%;"></span>Approve Request</button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+                <!-- /.modal-content --> 
+            </div>
+            <!-- /.modal-dialog --> 
+        </div>
+
+        <div class="modal fade" id="fieldwork_information_seeker_reject_modal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header text-center">
+                        <h4 class="modal-title w-100 font-weight-bold">Are you sure to reject the request ?</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group row">
+                                <label for="fieldwork_information_seeker_name" class="col-sm-4 col-form-label">Name:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control-plaintext" name="fieldwork_information_seeker_name" id="fieldwork_information_seeker_name" value="{{_context.fieldwork_information_seeker.InformationSeekerName}}" readonly>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+
+                                <label for="rejectexplanation" class="col-sm-10 col-form-label">Explanation for rejection:</label>
+
+                                <div class="col-lg-12">
+                                    <textarea class="form-control rounded-0" type="text" name="rejectexplanation" id="rejectexplanation" value=""></textarea>
+                                </div>
+                            </div>
+
+                            <input type="hidden" id="fieldwork_information_seeker_id" name="custId" value={{_context.fieldwork_information_seeker.Id}}>
+                            <div class="modal-footer ">
+                                <button type="button" id="fieldwork_information_seeker_reject" class="btn btn-danger btn-lg" data-posturl="{{path_for('fieldwork_information_seeker_reject')}}" style="width: 100%;"></span>Reject Expedition</button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+                <!-- /.modal-content --> 
+            </div>
+            <!-- /.modal-dialog --> 
+        </div>
+
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+        <script>
+            $(document).ready(function () {
+
+
+                $("#fieldwork_information_seeker_approve").click(function () {
+
+                    var fieldworkInformationSeekerId = "{{_context.fieldwork_information_seeker.Id}}";
+                    var token = getUrlParameter('t');
+
+                    var postUrl = $(this).data('posturl');
+
+                    if (
+                            String(token).trim() == '' ||
+                            String(fieldworkInformationSeekerId).trim() == '') {
+                        alert('Something went wrong! No data has been saved. Please contact the IT Support!');
+                        return false;
+                    } else {
+                        $.ajax({
+                            type: 'PUT',
+                            headers: {
+                                'Token-Authorization-X': `Bearer ${token}`,
+                            },
+                            url: postUrl,
+                            data: 'id=' + fieldworkInformationSeekerId,
+                            beforeSend: function () {
+                                $('.submitBtn').attr("disabled", "disabled");
+                                $('.modal-body').css('opacity', '.5');
+                            }
+                        })
+                                .done(function (data) {
+                                    location.reload();
+                                })
+                                .fail(function (errMsg) {
+                                    alert('Some problem occurred, please try again and make sure your entries are correct. If problem consists please contact the IT support!');
+                                    $('.submitBtn').removeAttr("disabled");
+                                    $('.modal-body').css('opacity', '');
+                                });
+                    }
+                });
+
+
+                $("#fieldwork_information_seeker_reject").click(function () {
+
+                    var fieldworkInformationSeekerId = "{{_context.fieldwork_information_seeker.Id}}";
+                    var token = getUrlParameter('t');
+
+                    var explanation = $(this).parent().parent().find('#rejectexplanation').val();
+
+                    var postUrl = $(this).data('posturl');
+
+                    if (
+                            String(token).trim() == '' ||
+                            String(fieldworkInformationSeekerId).trim() == '')
+                    {
+                        alert('Something went wrong! No data has been saved. Please contact the IT Support!');
+                        return false;
+                    } else {
+                        $.ajax({
+                            type: 'DELETE',
+                            headers: {
+                                'Token-Authorization-X': `Bearer ${token}`,
+                            },
+                            url: postUrl,
+                            data: 'id=' + fieldworkInformationSeekerId + '&explanation=' + encodeURIComponent(explanation),
+                            beforeSend: function () {
+                                $('.submitBtn').attr("disabled", "disabled");
+                                $('.modal-body').css('opacity', '.5');
+                            }
+                        })
+                                .done(function (data) {
+                                    window.location.href = "/";
+                                })
+                                .fail(function (errMsg) {
+                                    alert('Some problem occurred, please try again and make sure your enteries are correct. If problem consists please contact the IT support!');
+                                    $('.submitBtn').removeAttr("disabled");
+                                    $('.modal-body').css('opacity', '');
+                                });
+                    }
+                });
+
+                var getUrlParameter = function getUrlParameter(sParam) {
+                    var sPageURL = window.location.search.substring(1),
+                            sURLVariables = sPageURL.split('&'),
+                            sParameterName,
+                            i;
+
+                    for (i = 0; i < sURLVariables.length; i++) {
+                        sParameterName = sURLVariables[i].split('=');
+
+                        if (sParameterName[0] === sParam) {
+                            return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+                        }
+                    }
+                };
+
+            });
+        </script>
+
+
+
+
+
+
+
+    </body>
+</html>

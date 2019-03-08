@@ -13,8 +13,7 @@
             <form class="col s12" id="search_form">
                 <div class="row">
                     <div class="input-field col s12">
-                        <select id="cryosphere_where" name="cryosphere_where" required>
-                            <option value="" disabled selected>choose</option>
+                        <select id="cryosphere_where" name="cryosphere_where[]" required multiple>
                             {% for cryosphere_where in _context.cryosphere_where %}
                                 <option value="{{cryosphere_where.Id}}">{{cryosphere_where.CryosphereWhereName}}</option>
                             {% endfor %}
@@ -66,7 +65,7 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
 
-
+        
 
 
         //fix required checkbox
@@ -97,8 +96,9 @@
         });
 
         $(document).ready(function () {
-
-
+            
+            //fixe iframe focusing out of drop box
+            $(window).on('blur',function() { document.getElementById('search_form').click()} );
 
             //search subbmition
             $("#search_form").submit(function (event) {
@@ -111,7 +111,7 @@
 
                 $.ajax({
                     type: 'GET',
-                    url: "{{path_for('fieldwork-connect-search')}}",
+                    url: "{{path_for('fieldwork_connect_search')}}",
                     data: $(this).serialize(),
                     beforeSend: function () {
                         $('#submitBtn').hide();
@@ -145,12 +145,9 @@
                 /* stop form from submitting normally */
                 event.preventDefault();
 
-
-
-
                 $.ajax({
                     type: 'POST',
-                    url: "{{path_for('fieldwork-connect-request')}}",
+                    url: "{{path_for('fieldwork_connect_request')}}",
                     data: $(this).serialize(),
                     beforeSend: function () {
                         $('#submitBtnTwo').attr('disabled', 'disabled');
@@ -159,6 +156,7 @@
                         .done(function (data) {
                             $('#submitBtnTwo').removeAttr('disabled');
                             document.getElementById('fieldwork_inquiry_form').innerHTML = data;
+                            parent.scrollTo(0,500);
                         })
                         .fail(function (errMsg) {
                             $('#submitBtn').show();

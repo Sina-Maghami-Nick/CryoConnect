@@ -1,0 +1,13 @@
+<p>Dear Admin,</p>
+<p>There is a new fieldwork connect request :&nbsp;</p>
+<p>Information seeker's name : {{_context.fieldwork_information_seeker.InformationSeekerName}}</p>
+<p>Information seeker's email : {{_context.fieldwork_information_seeker.InformationSeekerEmail}}</p>
+<p>Could you please approve/disapprove the new connect request using the following link :&nbsp;</p>
+<p><a href="https://cryoconnect.net{{path_for('fieldwork_connect_approval',{},{'id': _context.fieldwork_information_seeker.Id  , 't': _context.token}) }}">https://cryoconnect.net{{ path_for('fieldwork_connect_approval',{} , {'id': _context.fieldwork_information_seeker.Id , 't': _context.token}) }}</a></p>
+
+<p>&nbsp;</p>
+<p>Thank you,</p>
+<p>Best wishes,</p>
+<p>CryoConnect App</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>

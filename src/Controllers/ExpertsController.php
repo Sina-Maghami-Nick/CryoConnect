@@ -47,7 +47,7 @@ class ExpertsController extends Controller {
         $languages = LanguagesQuery::create()->orderByLanguage()->find();
 
         return $this->view->render(
-                        $response, 'experts-signup.html.twig', [
+                        $response, 'experts/experts-signup.html.twig', [
                     'countries' => $countries->toArray(),
                     'languages' => $languages->toArray(),
                     'cryosphere_what' => $cryosphereWhat->toArray(),
@@ -146,7 +146,7 @@ class ExpertsController extends Controller {
                 ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryoconnect'])
                 ->setTo($this->container->get('settings')['contacts']['approval_admin'])
                 ->setBody(
-                $this->view->render(new \Slim\Http\Response(), 'emails/experts-approval-email.html.twig', [
+                $this->view->render(new \Slim\Http\Response(), 'experts/emails/experts-approval-email.html.twig', [
                     'expert' => $expert->toArray(),
                     'token' => md5($expert->getEmail() . $expert->getBirthYear()),
                         ]
@@ -156,7 +156,7 @@ class ExpertsController extends Controller {
         $this->mailer->send($approvalMsg);
 
         return $this->view->render(
-                        $response, 'experts-thank-you-page.html.twig', [
+                        $response, 'experts/experts-thank-you-page.html.twig', [
                     'expert_first_name' => $firstName,
                     'expert_last_name' => $lastName,
                         ]
@@ -205,7 +205,7 @@ class ExpertsController extends Controller {
         $this->container->get('logger')
                 ->addInfo('Expert Validation page was accessed by a user for expert:' . json_encode($expert->toArray()));
         return $this->view->render(
-                        $response, 'expert-approval.html.twig', [
+                        $response, 'experts/expert-approval.html.twig', [
                     'expert' => $expert->toArray(),
                     'expert_what' => $expert->getExpertCryosphereWhatsJoinCryosphereWhat()->toArray(),
                     'expert_what_specefic' => $expert->getExpertCryosphereWhatSpeceficsJoinCryosphereWhatSpecefic()->toArray(),
@@ -256,7 +256,7 @@ class ExpertsController extends Controller {
                 ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryoconnect'])
                 ->setTo($expert->getEmail())
                 ->setBody(
-                $this->view->render(new \Slim\Http\Response(), 'emails/experts-welcome-email.html.twig', [
+                $this->view->render(new \Slim\Http\Response(), 'experts/emails/experts-welcome-email.html.twig', [
                     'expert_name' => $expert->getFirstName() . " " . $expert->getLastName(),
                         ]
                 )->getBody(), 'text/html'
@@ -302,7 +302,7 @@ class ExpertsController extends Controller {
                 ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryoconnect'])
                 ->setTo($expert->getEmail())
                 ->setBody(
-                $this->view->render(new \Slim\Http\Response(), 'emails/experts-rejection-email.html.twig', [
+                $this->view->render(new \Slim\Http\Response(), 'experts/emails/experts-rejection-email.html.twig', [
                     'expert_name' => $expert->getFirstName() . " " . $expert->getLastName(),
                     'explanation' => $explanation
                         ]
