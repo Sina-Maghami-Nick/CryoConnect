@@ -102,8 +102,8 @@ class __TwigTemplate_522fe7f2590dc63041028ab778fbdf39352ca9c5cbdc56a99b5a8de671b
     <div class=\"row\">
         <div class=\"input-field col s12\">
             <input id=\"information_seeker_website\" name=\"information_seeker_website\" type=\"url\" class=\"validate\">
-            <label for=\"information_seeker_website\">Webpage with your background<font color=\"red\">*</font></label>
-            <span class=\"helper-text\">e.g. linkedIn page - please enter the whole url including http://</span>
+            <label for=\"information_seeker_website\">Webpage with some information about you<font color=\"red\">*</font></label>
+            <span class=\"helper-text\">i.e. show expedition leaders who you are - please enter the whole url including http://</span>
         </div>
     </div>
     <div class=\"row\">
