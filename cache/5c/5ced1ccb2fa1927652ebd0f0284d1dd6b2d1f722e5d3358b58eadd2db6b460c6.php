@@ -29,38 +29,42 @@ class __TwigTemplate_522fe7f2590dc63041028ab778fbdf39352ca9c5cbdc56a99b5a8de671b
             $context['_seq'] = twig_ensure_traversable(twig_get_attribute($this->env, $this->source, $context, "fieldworks", array()));
             foreach ($context['_seq'] as $context["_key"] => $context["fieldwork"]) {
                 // line 5
-                echo "            <div class=\"card blue lighten-3\">
+                echo "            <div class=\"card blue lighten-3 hoverable\">
                 <div class=\"card-content black-text\">
                     <span class=\"card-title\">Expedition name: ";
                 // line 7
                 echo twig_get_attribute($this->env, $this->source, $context["fieldwork"], "FieldworkName", array());
                 echo "</span>
-                    <p>Region: ";
+                    <p>Aim: ";
                 // line 8
+                echo twig_get_attribute($this->env, $this->source, $context["fieldwork"], "FieldworkGoal", array());
+                echo "</p>
+                    <p>Region: ";
+                // line 9
                 echo twig_get_attribute($this->env, $this->source, $context["fieldwork"], "FieldworkRegion", array());
                 echo "</p>
                     <p>Location(s): ";
-                // line 9
+                // line 10
                 echo twig_get_attribute($this->env, $this->source, $context["fieldwork"], "FieldworkLocations", array());
                 echo "</p>
                     <p>Start date: ";
-                // line 10
+                // line 11
                 echo twig_escape_filter($this->env, twig_slice($this->env, twig_get_attribute($this->env, $this->source, $context["fieldwork"], "FieldworkStartDate", array()), 0, 10), "html", null, true);
                 echo "</p>
                     <p>Duration: ";
-                // line 11
+                // line 12
                 echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["fieldwork"], "FieldworkDuration", array()), "html", null, true);
                 echo " days</p>
                     <p>Deadline: ";
-                // line 12
+                // line 13
                 echo twig_escape_filter($this->env, twig_slice($this->env, twig_get_attribute($this->env, $this->source, $context["fieldwork"], "FieldworkInformationSeekerDeadline", array()), 0, 10), "html", null, true);
                 echo "</p>
                 </div>
                 <div class=\"card-action\">
                     <label>
                         <input name=\"fieldwork_ids[";
-                // line 16
-                echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["fieldwork"], "FieldworkName", array()), "html", null, true);
+                // line 17
+                echo twig_get_attribute($this->env, $this->source, $context["fieldwork"], "FieldworkName", array());
                 echo "]\" type=\"checkbox\" class=\"filled-in\" value=\"";
                 echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["fieldwork"], "Id", array()), "html", null, true);
                 echo "\" required />
@@ -74,7 +78,7 @@ class __TwigTemplate_522fe7f2590dc63041028ab778fbdf39352ca9c5cbdc56a99b5a8de671b
             $_parent = $context['_parent'];
             unset($context['_seq'], $context['_iterated'], $context['_key'], $context['fieldwork'], $context['_parent'], $context['loop']);
             $context = array_intersect_key($context, $_parent) + $_parent;
-            // line 23
+            // line 24
             echo "    </div>
 
     <div class=\"row\">
@@ -136,7 +140,7 @@ class __TwigTemplate_522fe7f2590dc63041028ab778fbdf39352ca9c5cbdc56a99b5a8de671b
     </div>
 ";
         } else {
-            // line 83
+            // line 84
             echo "    <h4 align=\"center\">No results found!</h4>
 ";
         }
@@ -154,7 +158,7 @@ class __TwigTemplate_522fe7f2590dc63041028ab778fbdf39352ca9c5cbdc56a99b5a8de671b
 
     public function getDebugInfo()
     {
-        return array (  140 => 83,  78 => 23,  63 => 16,  56 => 12,  52 => 11,  48 => 10,  44 => 9,  40 => 8,  36 => 7,  32 => 5,  28 => 4,  25 => 3,  23 => 2,);
+        return array (  144 => 84,  82 => 24,  67 => 17,  60 => 13,  56 => 12,  52 => 11,  48 => 10,  44 => 9,  40 => 8,  36 => 7,  32 => 5,  28 => 4,  25 => 3,  23 => 2,);
     }
 
     public function getSourceContext()

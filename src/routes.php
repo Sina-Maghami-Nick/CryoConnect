@@ -36,22 +36,10 @@ $app->group('/fieldwork', function () {
 
     //route to the fieldwork sign-up form
     $this->get('/connect', FieldworkController::class . ':searchFormAction');
-    
+
     //route to the fieldwork sign-up form
     $this->get('/connect/search', FieldworkController::class . ':searchAction')->setName('fieldwork_connect_search');
-    
-    //route to the fieldwork sign-up form
-    $this->post('/connect/request', InformationSeekersController::class . ':fieldworkRequestAction')->setName('fieldwork_connect_request');
-    
-    //route to the fieldwork approval page
-    $this->get('/connect/approval', InformationSeekersController::class . ':fieldworkRequestApprovalPageAction')->setName('fieldwork_connect_approval');
-    
-    //route to approve fieldwork information seeker
-    $this->put('/connect/approval/approve-fieldwork-information-seeker', InformationSeekersController::class . ':approveFieldworkRequestAction')->setName('fieldwork_information_seeker_approve');
 
-    //route to reject fieldwork information seeker
-    $this->delete('/connect/approval/reject-fieldwork-information-seeker', InformationSeekersController::class . ':rejectFieldworkRequestAction')->setName('fieldwork_information_seeker_reject');
-    
     //route to the fieldwork save data
     $this->post('/new-request', FieldworkController::class . ':registrationAction')->setName('fieldwork-registration');
 
@@ -66,6 +54,27 @@ $app->group('/fieldwork', function () {
 
     //route to check if leader's email exists
     $this->post('/email-exist-check', FieldworkController::class . ':leaderExistCheckAction')->setName('leader_check_email');
+
+    //route to the fieldwork sign-up form
+    $this->post('/connect/new-request', InformationSeekersController::class . ':fieldworkRequestAction')->setName('fieldwork_connect_new_request');
+
+    //route to the fieldwork approval page
+    $this->get('/connect/approval', InformationSeekersController::class . ':fieldworkRequestApprovalPageAction')->setName('fieldwork_connect_approval');
+
+    //route to approve fieldwork information seeker
+    $this->put('/connect/approval/approve-fieldwork-information-seeker', InformationSeekersController::class . ':approveFieldworkRequestAction')->setName('fieldwork_information_seeker_approve');
+
+    //route to reject fieldwork information seeker
+    $this->delete('/connect/approval/reject-fieldwork-information-seeker', InformationSeekersController::class . ':rejectFieldworkRequestAction')->setName('fieldwork_information_seeker_reject');
+
+    //route to fieldwork-detail for information seeker
+    $this->get('/connect/request/exhibition-details', InformationSeekersController::class . ':fieldworkDetailPageAction')->setName('fieldwork_detail');
+    
+    //route to fieldwork-detail for information seeker
+    $this->post('/connect/request/submit', InformationSeekersController::class . ':fieldworkBidSubmissionAction')->setName('fieldwork_bid_request_submit');
+
+    //route to fieldwork-detail for information seeker
+    $this->get('/connect/applicants', InformationSeekersController::class . ':fieldworkApplicantsAction')->setName('fieldwork_applicants');
 });
 
 //Information Seeker Routes

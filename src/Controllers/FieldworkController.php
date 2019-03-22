@@ -218,7 +218,7 @@ class FieldworkController extends Controller {
 
         $emailMsg = (new \Swift_Message('Your fieldwork is registered at Cryo Connect now'))
                 ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryoconnect'])
-                ->setTo($fieldworkInformationSeeker->getInformationSeekerEmail())
+                ->setTo($fieldwork->getFieldworkLeaderEmail())
                 ->setBody(
                 $this->view->render(new \Slim\Http\Response(), 'fieldworks/emails/fieldwork-welcome-email.html.twig', [
                     'fieldwork_leader_name' => $fieldwork->getFieldworkLeaderName(),
@@ -328,6 +328,7 @@ class FieldworkController extends Controller {
         }
 
         $fieldworks = FieldworkQuery::create()->filterByCryosphereWhereId($cryosphereWhereId)
+                ->filterByApproved(true)
                 ->filterByFieldworkInformationSeekerDeadline(array('min' => date()))
                 ->filterByFieldworkStartDate(array('min' => $fromDate, 'max' => $toDate))
                 ->find();
@@ -339,6 +340,7 @@ class FieldworkController extends Controller {
             $minFieldworkInfo[$key]['FieldworkLocations'] = $fieldwork['FieldworkLocations'];
             $minFieldworkInfo[$key]['FieldworkStartDate'] = $fieldwork['FieldworkStartDate'];
             $minFieldworkInfo[$key]['FieldworkDuration'] = $fieldwork['FieldworkDuration'];
+            $minFieldworkInfo[$key]['FieldworkGoal'] = $fieldwork['FieldworkGoal'];
             $minFieldworkInfo[$key]['FieldworkInformationSeekerDeadline'] = $fieldwork['FieldworkInformationSeekerDeadline'];
             $minFieldworkInfo[$key]['FieldworkRegion'] = CryosphereWhereQuery::create()
                     ->findOneById($fieldwork['CryosphereWhereId'])

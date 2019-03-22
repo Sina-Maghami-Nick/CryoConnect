@@ -58,7 +58,7 @@ $fieldworkConnectAuthenticator = function(Slim\Http\Request $request, TokenAuthe
     $token = $tokenAuth->findToken($request);
     $fieldworkInformationSeekerId = $request->getParam('id');
     $fieldworkInformationSeeker = FieldworkInformationSeekerQuery::create()->findOneById($fieldworkInformationSeekerId);
-    $fieldworkToken = md5($fieldworkInformationSeeker->getInformationSeekerEmail() . $fieldworkInformationSeekerId );
+    $fieldworkToken = md5($fieldworkInformationSeeker->getInformationSeekerEmail() . $fieldworkInformationSeekerId);
 
     if ($fieldworkToken != $token) {
         throw new Exception("not authorized");
@@ -69,6 +69,66 @@ $fieldworkConnectAuthenticator = function(Slim\Http\Request $request, TokenAuthe
 $app->add(new TokenAuthentication([
     'path' => '/fieldwork/connect/approval/',
     'authenticator' => $fieldworkConnectAuthenticator,
+    'parameter' => 't',
+    'header' => 'Token-Authorization-X'
+]));
+
+
+
+//fieldwork connect show detail to information seeker page token authentication
+$informationSeekerFieldworkDetailsAuthenticator = function(Slim\Http\Request $request, TokenAuthentication $tokenAuth) {
+
+    # Search for token on header, parameter, cookie or attribute
+    $token = $tokenAuth->findToken($request);
+    $fieldworkInformationSeekerEmail = str_replace(' ', '+', $request->getParam('e'));
+    $fieldworkInformationSeekers = FieldworkInformationSeekerQuery::create()->filterByApproved(true)->findByInformationSeekerEmail($fieldworkInformationSeekerEmail);
+
+    $authenticated = false;
+    foreach ($fieldworkInformationSeekers as $fieldworkInformationSeeker) {
+        if (md5($fieldworkInformationSeeker->getInformationSeekerEmail() . $fieldworkInformationSeeker->hashCode()) == $token) {
+            $authenticated = true;
+            break;
+        }
+    }
+
+    if (!$authenticated) {
+        throw new Exception("not authorized" . $fieldworkInformationSeekers->toJSON());
+    }
+};
+
+
+$app->add(new TokenAuthentication([
+    'path' => '/fieldwork/connect/request',
+    'authenticator' => $informationSeekerFieldworkDetailsAuthenticator,
+    'parameter' => 't',
+    'header' => 'Token-Authorization-X'
+]));
+
+
+//fieldwork connect applicant lust page token authentication
+$fieldworkApplicantsAuthenticator = function(Slim\Http\Request $request, TokenAuthentication $tokenAuth) {
+    # Search for token on header, parameter, cookie or attribute
+    $token = $tokenAuth->findToken($request);
+    $fieldworkLeaderEmail = str_replace(' ', '+', $request->getParam('e'));
+    $fieldworks = FieldworkQuery::create()->findByFieldworkLeaderEmail($fieldworkLeaderEmail);
+    
+    $authenticated = false;
+    foreach ($fieldworks as $fieldwork) {
+        if (md5($fieldwork->getFieldworkLeaderEmail() . $fieldwork->hashCode()) == $token) {
+            $authenticated = true;
+            break;
+        }
+    }
+
+    if (!$authenticated) {
+        throw new Exception("not authorized" . $fieldworkInformationSeekers->toJSON());
+    }
+};
+
+
+$app->add(new TokenAuthentication([
+    'path' => '/fieldwork/connect/applicants',
+    'authenticator' => $fieldworkApplicantsAuthenticator,
     'parameter' => 't',
     'header' => 'Token-Authorization-X'
 ]));

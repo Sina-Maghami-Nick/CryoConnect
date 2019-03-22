@@ -80,6 +80,29 @@ abstract class FieldworkInformationSeekerRequest implements ActiveRecordInterfac
     protected $fieldwork_id;
 
     /**
+     * The value for the application_sent field.
+     *
+     * Note: this column has a database default value of: false
+     * @var        boolean
+     */
+    protected $application_sent;
+
+    /**
+     * The value for the application_accepted field.
+     *
+     * Note: this column has a database default value of: false
+     * @var        boolean
+     */
+    protected $application_accepted;
+
+    /**
+     * The value for the bid field.
+     *
+     * @var        int
+     */
+    protected $bid;
+
+    /**
      * The value for the timestamp field.
      *
      * Note: this column has a database default value of: (expression) CURRENT_TIMESTAMP
@@ -113,6 +136,8 @@ abstract class FieldworkInformationSeekerRequest implements ActiveRecordInterfac
      */
     public function applyDefaultValues()
     {
+        $this->application_sent = false;
+        $this->application_accepted = false;
     }
 
     /**
@@ -363,6 +388,56 @@ abstract class FieldworkInformationSeekerRequest implements ActiveRecordInterfac
     }
 
     /**
+     * Get the [application_sent] column value.
+     *
+     * @return boolean
+     */
+    public function getApplicationSent()
+    {
+        return $this->application_sent;
+    }
+
+    /**
+     * Get the [application_sent] column value.
+     *
+     * @return boolean
+     */
+    public function isApplicationSent()
+    {
+        return $this->getApplicationSent();
+    }
+
+    /**
+     * Get the [application_accepted] column value.
+     *
+     * @return boolean
+     */
+    public function getApplicationAccepted()
+    {
+        return $this->application_accepted;
+    }
+
+    /**
+     * Get the [application_accepted] column value.
+     *
+     * @return boolean
+     */
+    public function isApplicationAccepted()
+    {
+        return $this->getApplicationAccepted();
+    }
+
+    /**
+     * Get the [bid] column value.
+     *
+     * @return int
+     */
+    public function getBid()
+    {
+        return $this->bid;
+    }
+
+    /**
      * Get the [optionally formatted] temporal [timestamp] column value.
      *
      *
@@ -431,6 +506,82 @@ abstract class FieldworkInformationSeekerRequest implements ActiveRecordInterfac
     } // setFieldworkId()
 
     /**
+     * Sets the value of the [application_sent] column.
+     * Non-boolean arguments are converted using the following rules:
+     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     *
+     * @param  boolean|integer|string $v The new value
+     * @return $this|\CryoConnectDB\FieldworkInformationSeekerRequest The current object (for fluent API support)
+     */
+    public function setApplicationSent($v)
+    {
+        if ($v !== null) {
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
+            }
+        }
+
+        if ($this->application_sent !== $v) {
+            $this->application_sent = $v;
+            $this->modifiedColumns[FieldworkInformationSeekerRequestTableMap::COL_APPLICATION_SENT] = true;
+        }
+
+        return $this;
+    } // setApplicationSent()
+
+    /**
+     * Sets the value of the [application_accepted] column.
+     * Non-boolean arguments are converted using the following rules:
+     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     *
+     * @param  boolean|integer|string $v The new value
+     * @return $this|\CryoConnectDB\FieldworkInformationSeekerRequest The current object (for fluent API support)
+     */
+    public function setApplicationAccepted($v)
+    {
+        if ($v !== null) {
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
+            }
+        }
+
+        if ($this->application_accepted !== $v) {
+            $this->application_accepted = $v;
+            $this->modifiedColumns[FieldworkInformationSeekerRequestTableMap::COL_APPLICATION_ACCEPTED] = true;
+        }
+
+        return $this;
+    } // setApplicationAccepted()
+
+    /**
+     * Set the value of [bid] column.
+     *
+     * @param int $v new value
+     * @return $this|\CryoConnectDB\FieldworkInformationSeekerRequest The current object (for fluent API support)
+     */
+    public function setBid($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->bid !== $v) {
+            $this->bid = $v;
+            $this->modifiedColumns[FieldworkInformationSeekerRequestTableMap::COL_BID] = true;
+        }
+
+        return $this;
+    } // setBid()
+
+    /**
      * Sets the value of [timestamp] column to a normalized version of the date/time value specified.
      *
      * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
@@ -460,6 +611,14 @@ abstract class FieldworkInformationSeekerRequest implements ActiveRecordInterfac
      */
     public function hasOnlyDefaultValues()
     {
+            if ($this->application_sent !== false) {
+                return false;
+            }
+
+            if ($this->application_accepted !== false) {
+                return false;
+            }
+
         // otherwise, everything was equal, so return TRUE
         return true;
     } // hasOnlyDefaultValues()
@@ -492,7 +651,16 @@ abstract class FieldworkInformationSeekerRequest implements ActiveRecordInterfac
             $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : FieldworkInformationSeekerRequestTableMap::translateFieldName('FieldworkId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->fieldwork_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : FieldworkInformationSeekerRequestTableMap::translateFieldName('Timestamp', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : FieldworkInformationSeekerRequestTableMap::translateFieldName('ApplicationSent', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->application_sent = (null !== $col) ? (boolean) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : FieldworkInformationSeekerRequestTableMap::translateFieldName('ApplicationAccepted', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->application_accepted = (null !== $col) ? (boolean) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : FieldworkInformationSeekerRequestTableMap::translateFieldName('Bid', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->bid = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : FieldworkInformationSeekerRequestTableMap::translateFieldName('Timestamp', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
@@ -505,7 +673,7 @@ abstract class FieldworkInformationSeekerRequest implements ActiveRecordInterfac
                 $this->ensureConsistency();
             }
 
-            return $startcol + 3; // 3 = FieldworkInformationSeekerRequestTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 6; // 6 = FieldworkInformationSeekerRequestTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\CryoConnectDB\\FieldworkInformationSeekerRequest'), 0, $e);
@@ -735,6 +903,15 @@ abstract class FieldworkInformationSeekerRequest implements ActiveRecordInterfac
         if ($this->isColumnModified(FieldworkInformationSeekerRequestTableMap::COL_FIELDWORK_ID)) {
             $modifiedColumns[':p' . $index++]  = 'fieldwork_id';
         }
+        if ($this->isColumnModified(FieldworkInformationSeekerRequestTableMap::COL_APPLICATION_SENT)) {
+            $modifiedColumns[':p' . $index++]  = 'application_sent';
+        }
+        if ($this->isColumnModified(FieldworkInformationSeekerRequestTableMap::COL_APPLICATION_ACCEPTED)) {
+            $modifiedColumns[':p' . $index++]  = 'application_accepted';
+        }
+        if ($this->isColumnModified(FieldworkInformationSeekerRequestTableMap::COL_BID)) {
+            $modifiedColumns[':p' . $index++]  = 'bid';
+        }
         if ($this->isColumnModified(FieldworkInformationSeekerRequestTableMap::COL_TIMESTAMP)) {
             $modifiedColumns[':p' . $index++]  = 'timestamp';
         }
@@ -754,6 +931,15 @@ abstract class FieldworkInformationSeekerRequest implements ActiveRecordInterfac
                         break;
                     case 'fieldwork_id':
                         $stmt->bindValue($identifier, $this->fieldwork_id, PDO::PARAM_INT);
+                        break;
+                    case 'application_sent':
+                        $stmt->bindValue($identifier, (int) $this->application_sent, PDO::PARAM_INT);
+                        break;
+                    case 'application_accepted':
+                        $stmt->bindValue($identifier, (int) $this->application_accepted, PDO::PARAM_INT);
+                        break;
+                    case 'bid':
+                        $stmt->bindValue($identifier, $this->bid, PDO::PARAM_INT);
                         break;
                     case 'timestamp':
                         $stmt->bindValue($identifier, $this->timestamp ? $this->timestamp->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
@@ -820,6 +1006,15 @@ abstract class FieldworkInformationSeekerRequest implements ActiveRecordInterfac
                 return $this->getFieldworkId();
                 break;
             case 2:
+                return $this->getApplicationSent();
+                break;
+            case 3:
+                return $this->getApplicationAccepted();
+                break;
+            case 4:
+                return $this->getBid();
+                break;
+            case 5:
                 return $this->getTimestamp();
                 break;
             default:
@@ -854,10 +1049,13 @@ abstract class FieldworkInformationSeekerRequest implements ActiveRecordInterfac
         $result = array(
             $keys[0] => $this->getFieldworkInformationSeekerId(),
             $keys[1] => $this->getFieldworkId(),
-            $keys[2] => $this->getTimestamp(),
+            $keys[2] => $this->getApplicationSent(),
+            $keys[3] => $this->getApplicationAccepted(),
+            $keys[4] => $this->getBid(),
+            $keys[5] => $this->getTimestamp(),
         );
-        if ($result[$keys[2]] instanceof \DateTimeInterface) {
-            $result[$keys[2]] = $result[$keys[2]]->format('c');
+        if ($result[$keys[5]] instanceof \DateTimeInterface) {
+            $result[$keys[5]] = $result[$keys[5]]->format('c');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -937,6 +1135,15 @@ abstract class FieldworkInformationSeekerRequest implements ActiveRecordInterfac
                 $this->setFieldworkId($value);
                 break;
             case 2:
+                $this->setApplicationSent($value);
+                break;
+            case 3:
+                $this->setApplicationAccepted($value);
+                break;
+            case 4:
+                $this->setBid($value);
+                break;
+            case 5:
                 $this->setTimestamp($value);
                 break;
         } // switch()
@@ -972,7 +1179,16 @@ abstract class FieldworkInformationSeekerRequest implements ActiveRecordInterfac
             $this->setFieldworkId($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setTimestamp($arr[$keys[2]]);
+            $this->setApplicationSent($arr[$keys[2]]);
+        }
+        if (array_key_exists($keys[3], $arr)) {
+            $this->setApplicationAccepted($arr[$keys[3]]);
+        }
+        if (array_key_exists($keys[4], $arr)) {
+            $this->setBid($arr[$keys[4]]);
+        }
+        if (array_key_exists($keys[5], $arr)) {
+            $this->setTimestamp($arr[$keys[5]]);
         }
     }
 
@@ -1020,6 +1236,15 @@ abstract class FieldworkInformationSeekerRequest implements ActiveRecordInterfac
         }
         if ($this->isColumnModified(FieldworkInformationSeekerRequestTableMap::COL_FIELDWORK_ID)) {
             $criteria->add(FieldworkInformationSeekerRequestTableMap::COL_FIELDWORK_ID, $this->fieldwork_id);
+        }
+        if ($this->isColumnModified(FieldworkInformationSeekerRequestTableMap::COL_APPLICATION_SENT)) {
+            $criteria->add(FieldworkInformationSeekerRequestTableMap::COL_APPLICATION_SENT, $this->application_sent);
+        }
+        if ($this->isColumnModified(FieldworkInformationSeekerRequestTableMap::COL_APPLICATION_ACCEPTED)) {
+            $criteria->add(FieldworkInformationSeekerRequestTableMap::COL_APPLICATION_ACCEPTED, $this->application_accepted);
+        }
+        if ($this->isColumnModified(FieldworkInformationSeekerRequestTableMap::COL_BID)) {
+            $criteria->add(FieldworkInformationSeekerRequestTableMap::COL_BID, $this->bid);
         }
         if ($this->isColumnModified(FieldworkInformationSeekerRequestTableMap::COL_TIMESTAMP)) {
             $criteria->add(FieldworkInformationSeekerRequestTableMap::COL_TIMESTAMP, $this->timestamp);
@@ -1134,6 +1359,9 @@ abstract class FieldworkInformationSeekerRequest implements ActiveRecordInterfac
     {
         $copyObj->setFieldworkInformationSeekerId($this->getFieldworkInformationSeekerId());
         $copyObj->setFieldworkId($this->getFieldworkId());
+        $copyObj->setApplicationSent($this->getApplicationSent());
+        $copyObj->setApplicationAccepted($this->getApplicationAccepted());
+        $copyObj->setBid($this->getBid());
         $copyObj->setTimestamp($this->getTimestamp());
         if ($makeNew) {
             $copyObj->setNew(true);
@@ -1279,6 +1507,9 @@ abstract class FieldworkInformationSeekerRequest implements ActiveRecordInterfac
         }
         $this->fieldwork_information_seeker_id = null;
         $this->fieldwork_id = null;
+        $this->application_sent = null;
+        $this->application_accepted = null;
+        $this->bid = null;
         $this->timestamp = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();

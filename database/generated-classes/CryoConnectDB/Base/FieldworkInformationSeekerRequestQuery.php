@@ -22,10 +22,16 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildFieldworkInformationSeekerRequestQuery orderByFieldworkInformationSeekerId($order = Criteria::ASC) Order by the fieldwork_information_seeker_id column
  * @method     ChildFieldworkInformationSeekerRequestQuery orderByFieldworkId($order = Criteria::ASC) Order by the fieldwork_id column
+ * @method     ChildFieldworkInformationSeekerRequestQuery orderByApplicationSent($order = Criteria::ASC) Order by the application_sent column
+ * @method     ChildFieldworkInformationSeekerRequestQuery orderByApplicationAccepted($order = Criteria::ASC) Order by the application_accepted column
+ * @method     ChildFieldworkInformationSeekerRequestQuery orderByBid($order = Criteria::ASC) Order by the bid column
  * @method     ChildFieldworkInformationSeekerRequestQuery orderByTimestamp($order = Criteria::ASC) Order by the timestamp column
  *
  * @method     ChildFieldworkInformationSeekerRequestQuery groupByFieldworkInformationSeekerId() Group by the fieldwork_information_seeker_id column
  * @method     ChildFieldworkInformationSeekerRequestQuery groupByFieldworkId() Group by the fieldwork_id column
+ * @method     ChildFieldworkInformationSeekerRequestQuery groupByApplicationSent() Group by the application_sent column
+ * @method     ChildFieldworkInformationSeekerRequestQuery groupByApplicationAccepted() Group by the application_accepted column
+ * @method     ChildFieldworkInformationSeekerRequestQuery groupByBid() Group by the bid column
  * @method     ChildFieldworkInformationSeekerRequestQuery groupByTimestamp() Group by the timestamp column
  *
  * @method     ChildFieldworkInformationSeekerRequestQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
@@ -63,6 +69,9 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildFieldworkInformationSeekerRequest findOneByFieldworkInformationSeekerId(int $fieldwork_information_seeker_id) Return the first ChildFieldworkInformationSeekerRequest filtered by the fieldwork_information_seeker_id column
  * @method     ChildFieldworkInformationSeekerRequest findOneByFieldworkId(int $fieldwork_id) Return the first ChildFieldworkInformationSeekerRequest filtered by the fieldwork_id column
+ * @method     ChildFieldworkInformationSeekerRequest findOneByApplicationSent(boolean $application_sent) Return the first ChildFieldworkInformationSeekerRequest filtered by the application_sent column
+ * @method     ChildFieldworkInformationSeekerRequest findOneByApplicationAccepted(boolean $application_accepted) Return the first ChildFieldworkInformationSeekerRequest filtered by the application_accepted column
+ * @method     ChildFieldworkInformationSeekerRequest findOneByBid(int $bid) Return the first ChildFieldworkInformationSeekerRequest filtered by the bid column
  * @method     ChildFieldworkInformationSeekerRequest findOneByTimestamp(string $timestamp) Return the first ChildFieldworkInformationSeekerRequest filtered by the timestamp column *
 
  * @method     ChildFieldworkInformationSeekerRequest requirePk($key, ConnectionInterface $con = null) Return the ChildFieldworkInformationSeekerRequest by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -70,11 +79,17 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildFieldworkInformationSeekerRequest requireOneByFieldworkInformationSeekerId(int $fieldwork_information_seeker_id) Return the first ChildFieldworkInformationSeekerRequest filtered by the fieldwork_information_seeker_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildFieldworkInformationSeekerRequest requireOneByFieldworkId(int $fieldwork_id) Return the first ChildFieldworkInformationSeekerRequest filtered by the fieldwork_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildFieldworkInformationSeekerRequest requireOneByApplicationSent(boolean $application_sent) Return the first ChildFieldworkInformationSeekerRequest filtered by the application_sent column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildFieldworkInformationSeekerRequest requireOneByApplicationAccepted(boolean $application_accepted) Return the first ChildFieldworkInformationSeekerRequest filtered by the application_accepted column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildFieldworkInformationSeekerRequest requireOneByBid(int $bid) Return the first ChildFieldworkInformationSeekerRequest filtered by the bid column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildFieldworkInformationSeekerRequest requireOneByTimestamp(string $timestamp) Return the first ChildFieldworkInformationSeekerRequest filtered by the timestamp column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildFieldworkInformationSeekerRequest[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildFieldworkInformationSeekerRequest objects based on current ModelCriteria
  * @method     ChildFieldworkInformationSeekerRequest[]|ObjectCollection findByFieldworkInformationSeekerId(int $fieldwork_information_seeker_id) Return ChildFieldworkInformationSeekerRequest objects filtered by the fieldwork_information_seeker_id column
  * @method     ChildFieldworkInformationSeekerRequest[]|ObjectCollection findByFieldworkId(int $fieldwork_id) Return ChildFieldworkInformationSeekerRequest objects filtered by the fieldwork_id column
+ * @method     ChildFieldworkInformationSeekerRequest[]|ObjectCollection findByApplicationSent(boolean $application_sent) Return ChildFieldworkInformationSeekerRequest objects filtered by the application_sent column
+ * @method     ChildFieldworkInformationSeekerRequest[]|ObjectCollection findByApplicationAccepted(boolean $application_accepted) Return ChildFieldworkInformationSeekerRequest objects filtered by the application_accepted column
+ * @method     ChildFieldworkInformationSeekerRequest[]|ObjectCollection findByBid(int $bid) Return ChildFieldworkInformationSeekerRequest objects filtered by the bid column
  * @method     ChildFieldworkInformationSeekerRequest[]|ObjectCollection findByTimestamp(string $timestamp) Return ChildFieldworkInformationSeekerRequest objects filtered by the timestamp column
  * @method     ChildFieldworkInformationSeekerRequest[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
@@ -174,7 +189,7 @@ abstract class FieldworkInformationSeekerRequestQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT fieldwork_information_seeker_id, fieldwork_id, timestamp FROM fieldwork_information_seeker_request WHERE fieldwork_information_seeker_id = :p0 AND fieldwork_id = :p1';
+        $sql = 'SELECT fieldwork_information_seeker_id, fieldwork_id, application_sent, application_accepted, bid, timestamp FROM fieldwork_information_seeker_request WHERE fieldwork_information_seeker_id = :p0 AND fieldwork_id = :p1';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key[0], PDO::PARAM_INT);
@@ -360,6 +375,101 @@ abstract class FieldworkInformationSeekerRequestQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(FieldworkInformationSeekerRequestTableMap::COL_FIELDWORK_ID, $fieldworkId, $comparison);
+    }
+
+    /**
+     * Filter the query on the application_sent column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByApplicationSent(true); // WHERE application_sent = true
+     * $query->filterByApplicationSent('yes'); // WHERE application_sent = true
+     * </code>
+     *
+     * @param     boolean|string $applicationSent The value to use as filter.
+     *              Non-boolean arguments are converted using the following rules:
+     *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     *              Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildFieldworkInformationSeekerRequestQuery The current query, for fluid interface
+     */
+    public function filterByApplicationSent($applicationSent = null, $comparison = null)
+    {
+        if (is_string($applicationSent)) {
+            $applicationSent = in_array(strtolower($applicationSent), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+        }
+
+        return $this->addUsingAlias(FieldworkInformationSeekerRequestTableMap::COL_APPLICATION_SENT, $applicationSent, $comparison);
+    }
+
+    /**
+     * Filter the query on the application_accepted column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByApplicationAccepted(true); // WHERE application_accepted = true
+     * $query->filterByApplicationAccepted('yes'); // WHERE application_accepted = true
+     * </code>
+     *
+     * @param     boolean|string $applicationAccepted The value to use as filter.
+     *              Non-boolean arguments are converted using the following rules:
+     *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     *              Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildFieldworkInformationSeekerRequestQuery The current query, for fluid interface
+     */
+    public function filterByApplicationAccepted($applicationAccepted = null, $comparison = null)
+    {
+        if (is_string($applicationAccepted)) {
+            $applicationAccepted = in_array(strtolower($applicationAccepted), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+        }
+
+        return $this->addUsingAlias(FieldworkInformationSeekerRequestTableMap::COL_APPLICATION_ACCEPTED, $applicationAccepted, $comparison);
+    }
+
+    /**
+     * Filter the query on the bid column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByBid(1234); // WHERE bid = 1234
+     * $query->filterByBid(array(12, 34)); // WHERE bid IN (12, 34)
+     * $query->filterByBid(array('min' => 12)); // WHERE bid > 12
+     * </code>
+     *
+     * @param     mixed $bid The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildFieldworkInformationSeekerRequestQuery The current query, for fluid interface
+     */
+    public function filterByBid($bid = null, $comparison = null)
+    {
+        if (is_array($bid)) {
+            $useMinMax = false;
+            if (isset($bid['min'])) {
+                $this->addUsingAlias(FieldworkInformationSeekerRequestTableMap::COL_BID, $bid['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($bid['max'])) {
+                $this->addUsingAlias(FieldworkInformationSeekerRequestTableMap::COL_BID, $bid['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(FieldworkInformationSeekerRequestTableMap::COL_BID, $bid, $comparison);
     }
 
     /**

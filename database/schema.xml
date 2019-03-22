@@ -130,7 +130,7 @@
         <column name="fieldwork_project_website" phpName="FieldworkProjectWebsite" type="LONGVARCHAR"/>
         <column name="cryosphere_where_id" phpName="CryosphereWhereId" type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
         <column name="fieldwork_locations" phpName="FieldworkLocations" type="LONGVARCHAR"/>
-        <column name="fieldwork_duration" phpName="FieldworkDuration" type="INTEGER" sqlType="int(2) unsigned"/>
+        <column name="fieldwork_duration" phpName="FieldworkDuration" type="INTEGER" sqlType="int(4) unsigned"/>
         <column name="fieldwork_start_date" phpName="FieldworkStartDate" type="DATE"/>
         <column name="fieldwork_goal" phpName="FieldworkGoal" type="LONGVARCHAR"/>
         <column name="fieldwork_information_seeker_limit" phpName="FieldworkInformationSeekerLimit" type="INTEGER" sqlType="int(5) unsigned"/>
@@ -164,6 +164,9 @@
     <table name="fieldwork_information_seeker_request" idMethod="native" phpName="FieldworkInformationSeekerRequest" isCrossRef="true">
         <column name="fieldwork_information_seeker_id" phpName="FieldworkInformationSeekerId" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" required="true"/>
         <column name="fieldwork_id" phpName="FieldworkId" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" required="true"/>
+        <column name="application_sent" phpName="ApplicationSent" type="BOOLEAN" size="1" required="true" defaultValue="false"/>
+        <column name="application_accepted" phpName="ApplicationAccepted" type="BOOLEAN" size="1" required="true" defaultValue="false"/>
+        <column name="bid" phpName="Bid" type="INTEGER" sqlType="int(10) unsigned"/>
         <column name="timestamp" phpName="Timestamp" type="TIMESTAMP" required="true" defaultExpr="CURRENT_TIMESTAMP"/>
         <foreign-key foreignTable="fieldwork_information_seeker" onDelete="CASCADE">
             <reference local="fieldwork_information_seeker_id" foreign="id"/>

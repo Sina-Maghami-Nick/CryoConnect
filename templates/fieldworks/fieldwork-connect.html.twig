@@ -147,7 +147,7 @@
 
                 $.ajax({
                     type: 'POST',
-                    url: "{{path_for('fieldwork_connect_request')}}",
+                    url: "{{path_for('fieldwork_connect_new_request')}}",
                     data: $(this).serialize(),
                     beforeSend: function () {
                         $('#submitBtnTwo').attr('disabled', 'disabled');

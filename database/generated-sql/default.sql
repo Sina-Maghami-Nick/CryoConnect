@@ -296,7 +296,7 @@ CREATE TABLE `fieldwork`
     `fieldwork_project_website` TEXT,
     `cryosphere_where_id` int(10) unsigned NOT NULL,
     `fieldwork_locations` TEXT,
-    `fieldwork_duration` int(2) unsigned,
+    `fieldwork_duration` int(4) unsigned,
     `fieldwork_start_date` DATE,
     `fieldwork_goal` TEXT,
     `fieldwork_information_seeker_limit` int(5) unsigned,
@@ -348,6 +348,9 @@ CREATE TABLE `fieldwork_information_seeker_request`
 (
     `fieldwork_information_seeker_id` int(10) unsigned NOT NULL,
     `fieldwork_id` int(10) unsigned NOT NULL,
+    `application_sent` TINYINT(1) DEFAULT 0 NOT NULL,
+    `application_accepted` TINYINT(1) DEFAULT 0 NOT NULL,
+    `bid` int(10) unsigned,
     `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`fieldwork_information_seeker_id`,`fieldwork_id`),
     INDEX `fieldwork_information_seeker_request_fi_e02375` (`fieldwork_id`),

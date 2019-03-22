@@ -59,7 +59,7 @@ class FieldworkInformationSeekerRequestTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 3;
+    const NUM_COLUMNS = 6;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class FieldworkInformationSeekerRequestTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 3;
+    const NUM_HYDRATE_COLUMNS = 6;
 
     /**
      * the column name for the fieldwork_information_seeker_id field
@@ -80,6 +80,21 @@ class FieldworkInformationSeekerRequestTableMap extends TableMap
      * the column name for the fieldwork_id field
      */
     const COL_FIELDWORK_ID = 'fieldwork_information_seeker_request.fieldwork_id';
+
+    /**
+     * the column name for the application_sent field
+     */
+    const COL_APPLICATION_SENT = 'fieldwork_information_seeker_request.application_sent';
+
+    /**
+     * the column name for the application_accepted field
+     */
+    const COL_APPLICATION_ACCEPTED = 'fieldwork_information_seeker_request.application_accepted';
+
+    /**
+     * the column name for the bid field
+     */
+    const COL_BID = 'fieldwork_information_seeker_request.bid';
 
     /**
      * the column name for the timestamp field
@@ -98,11 +113,11 @@ class FieldworkInformationSeekerRequestTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('FieldworkInformationSeekerId', 'FieldworkId', 'Timestamp', ),
-        self::TYPE_CAMELNAME     => array('fieldworkInformationSeekerId', 'fieldworkId', 'timestamp', ),
-        self::TYPE_COLNAME       => array(FieldworkInformationSeekerRequestTableMap::COL_FIELDWORK_INFORMATION_SEEKER_ID, FieldworkInformationSeekerRequestTableMap::COL_FIELDWORK_ID, FieldworkInformationSeekerRequestTableMap::COL_TIMESTAMP, ),
-        self::TYPE_FIELDNAME     => array('fieldwork_information_seeker_id', 'fieldwork_id', 'timestamp', ),
-        self::TYPE_NUM           => array(0, 1, 2, )
+        self::TYPE_PHPNAME       => array('FieldworkInformationSeekerId', 'FieldworkId', 'ApplicationSent', 'ApplicationAccepted', 'Bid', 'Timestamp', ),
+        self::TYPE_CAMELNAME     => array('fieldworkInformationSeekerId', 'fieldworkId', 'applicationSent', 'applicationAccepted', 'bid', 'timestamp', ),
+        self::TYPE_COLNAME       => array(FieldworkInformationSeekerRequestTableMap::COL_FIELDWORK_INFORMATION_SEEKER_ID, FieldworkInformationSeekerRequestTableMap::COL_FIELDWORK_ID, FieldworkInformationSeekerRequestTableMap::COL_APPLICATION_SENT, FieldworkInformationSeekerRequestTableMap::COL_APPLICATION_ACCEPTED, FieldworkInformationSeekerRequestTableMap::COL_BID, FieldworkInformationSeekerRequestTableMap::COL_TIMESTAMP, ),
+        self::TYPE_FIELDNAME     => array('fieldwork_information_seeker_id', 'fieldwork_id', 'application_sent', 'application_accepted', 'bid', 'timestamp', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -112,11 +127,11 @@ class FieldworkInformationSeekerRequestTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('FieldworkInformationSeekerId' => 0, 'FieldworkId' => 1, 'Timestamp' => 2, ),
-        self::TYPE_CAMELNAME     => array('fieldworkInformationSeekerId' => 0, 'fieldworkId' => 1, 'timestamp' => 2, ),
-        self::TYPE_COLNAME       => array(FieldworkInformationSeekerRequestTableMap::COL_FIELDWORK_INFORMATION_SEEKER_ID => 0, FieldworkInformationSeekerRequestTableMap::COL_FIELDWORK_ID => 1, FieldworkInformationSeekerRequestTableMap::COL_TIMESTAMP => 2, ),
-        self::TYPE_FIELDNAME     => array('fieldwork_information_seeker_id' => 0, 'fieldwork_id' => 1, 'timestamp' => 2, ),
-        self::TYPE_NUM           => array(0, 1, 2, )
+        self::TYPE_PHPNAME       => array('FieldworkInformationSeekerId' => 0, 'FieldworkId' => 1, 'ApplicationSent' => 2, 'ApplicationAccepted' => 3, 'Bid' => 4, 'Timestamp' => 5, ),
+        self::TYPE_CAMELNAME     => array('fieldworkInformationSeekerId' => 0, 'fieldworkId' => 1, 'applicationSent' => 2, 'applicationAccepted' => 3, 'bid' => 4, 'timestamp' => 5, ),
+        self::TYPE_COLNAME       => array(FieldworkInformationSeekerRequestTableMap::COL_FIELDWORK_INFORMATION_SEEKER_ID => 0, FieldworkInformationSeekerRequestTableMap::COL_FIELDWORK_ID => 1, FieldworkInformationSeekerRequestTableMap::COL_APPLICATION_SENT => 2, FieldworkInformationSeekerRequestTableMap::COL_APPLICATION_ACCEPTED => 3, FieldworkInformationSeekerRequestTableMap::COL_BID => 4, FieldworkInformationSeekerRequestTableMap::COL_TIMESTAMP => 5, ),
+        self::TYPE_FIELDNAME     => array('fieldwork_information_seeker_id' => 0, 'fieldwork_id' => 1, 'application_sent' => 2, 'application_accepted' => 3, 'bid' => 4, 'timestamp' => 5, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -139,6 +154,9 @@ class FieldworkInformationSeekerRequestTableMap extends TableMap
         // columns
         $this->addForeignPrimaryKey('fieldwork_information_seeker_id', 'FieldworkInformationSeekerId', 'INTEGER' , 'fieldwork_information_seeker', 'id', true, 10, null);
         $this->addForeignPrimaryKey('fieldwork_id', 'FieldworkId', 'INTEGER' , 'fieldwork', 'id', true, 10, null);
+        $this->addColumn('application_sent', 'ApplicationSent', 'BOOLEAN', true, 1, false);
+        $this->addColumn('application_accepted', 'ApplicationAccepted', 'BOOLEAN', true, 1, false);
+        $this->addColumn('bid', 'Bid', 'INTEGER', false, null, null);
         $this->addColumn('timestamp', 'Timestamp', 'TIMESTAMP', true, null, 'CURRENT_TIMESTAMP');
     } // initialize()
 
@@ -368,10 +386,16 @@ class FieldworkInformationSeekerRequestTableMap extends TableMap
         if (null === $alias) {
             $criteria->addSelectColumn(FieldworkInformationSeekerRequestTableMap::COL_FIELDWORK_INFORMATION_SEEKER_ID);
             $criteria->addSelectColumn(FieldworkInformationSeekerRequestTableMap::COL_FIELDWORK_ID);
+            $criteria->addSelectColumn(FieldworkInformationSeekerRequestTableMap::COL_APPLICATION_SENT);
+            $criteria->addSelectColumn(FieldworkInformationSeekerRequestTableMap::COL_APPLICATION_ACCEPTED);
+            $criteria->addSelectColumn(FieldworkInformationSeekerRequestTableMap::COL_BID);
             $criteria->addSelectColumn(FieldworkInformationSeekerRequestTableMap::COL_TIMESTAMP);
         } else {
             $criteria->addSelectColumn($alias . '.fieldwork_information_seeker_id');
             $criteria->addSelectColumn($alias . '.fieldwork_id');
+            $criteria->addSelectColumn($alias . '.application_sent');
+            $criteria->addSelectColumn($alias . '.application_accepted');
+            $criteria->addSelectColumn($alias . '.bid');
             $criteria->addSelectColumn($alias . '.timestamp');
         }
     }

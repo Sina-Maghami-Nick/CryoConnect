@@ -187,7 +187,7 @@ class __TwigTemplate_d8e70e8824507d278a3b2ce7c8579836ae85b16e6c55552fd3dbdd70b19
                     type: 'POST',
                     url: \"";
         // line 150
-        echo twig_escape_filter($this->env, $this->extensions['Slim\Views\TwigExtension']->pathFor("fieldwork_connect_request"), "html", null, true);
+        echo twig_escape_filter($this->env, $this->extensions['Slim\Views\TwigExtension']->pathFor("fieldwork_connect_new_request"), "html", null, true);
         echo "\",
                     data: \$(this).serialize(),
                     beforeSend: function () {

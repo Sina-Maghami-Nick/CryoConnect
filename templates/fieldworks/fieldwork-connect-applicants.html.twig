@@ -1,0 +1,138 @@
+<html>
+    <head>
+        <title>Fieldwork applicants</title>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flipclock/0.7.8/flipclock.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </head>
+
+    <body>
+        <div class="row">
+            <div class="col s12 m12">
+                <div class="card cyan lighten-2">
+                    <span class="card-title">Exhibition: {{_context.fieldwork_name | raw}}</span>
+                    <div class="card-content">
+                        <div class="row">
+                            <div class="col s2">
+                                <strong>Time you have left to choose:</strong>
+                            </div>
+                            <div class="col s10"><p></p>
+                                <div class="announcement-day-countdown"></div>
+                            </div>
+                        </div>
+
+                        <p>Start date: {{_context.fieldwork_start_date|date}}</p>
+                        <p>Application deadline: {{_context.fieldwork_start_date|date}}</p>
+                        <p>Cost: {{_context.fieldwork_cost}} Euros</p>
+                        <p>
+                            {% if _context.fieldwork.FieldworkBidingAllowed == false %}
+                                Bidding is not allowed
+                            {% else %}
+                                Bidding is allowed
+                            {% endif %}
+                        </p>
+                        <p>Results announcement date: {{_context.fieldwork_announcement_deadline|date}}</p>
+                    </div>
+                    <div class="card-action white-text">
+                        <a href="{{_context.fieldwork_website}}">Expedition website</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s12 m12">
+            {% for applicant in _context.applicants %}
+                <form class="application-submit col s12" id="{{applicant.Id}}">
+                    <div class="row">
+                        <div class="card purple lighten-5 hoverable">
+                            <div class="card-content black-text">
+                                <span class="card-title">Applicant name: {{applicant.Name | raw}}</span>
+                                <p>Website: <a href source="{{applicant.Website}}">{{applicant.Website}}</a></p>
+                                <p>Affiliation: {{applicant.Affiliation | raw}}</p>
+                                <p>Affiliation website: <a href source="{{applicant.AffiliationWebsite}}">{{applicant.AffiliationWebsite}}</a></p>
+                                <p>Application reason: {{applicant.Reasons}}</p>
+                                <p>Email: {{applicant.Email}}</p>
+                                {% if _context.fieldwork_bidding_allowed == true %}
+                                    <p><strong>Bid: {{applicant.Bid}} Euros</strong></p>
+                                {% endif %}
+
+                            </div>
+                            <div class="card-action">
+                                {% if applicant.Accepted == false %}
+                                        <label>
+                                            <input type="checkbox" class="filled-in" required />
+                                            <span><font color="black">I agree to the terms and conditions<font color="red">*</font></font></span>
+                                        </label>
+                                    </p>
+                                    <div class="row">
+                                    <p class="center-align">
+                                        <button class="btn waves-effect waves-light green" type="submit" name="accep-applicantt">Accept applicant
+                                            <i class="material-icons right">check</i>
+                                        </button>
+                                        <button class="btn waves-effect waves-light red" type="submit" name="reject-applicantt">Reject applicant
+                                            <i class="material-icons right">close</i>
+                                        </button>
+                                    </p>
+                                    </div>
+                                {% else %}
+                                    <p><strong>You have already applied for this exhibition. You will be informed about the results over email</strong></p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            {% endfor %}
+            </div>
+        </div>
+    </body>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flipclock/0.7.8/flipclock.js"></script>
+
+    <script>
+        console.log({{ _context | json_encode | raw }});
+        $(document).ready(function () {
+
+            var date = new Date('{{_context.fieldwork_announcement_deadline | date}}'); //Month Days, Year HH:MM:SS
+            var now = new Date();
+            var diff = (date.getTime() / 1000) - (now.getTime() / 1000);
+            var clock = $('.announcement-day-countdown').FlipClock(diff, {
+                clockFace: 'DailyCounter',
+                countdown: true
+            });
+
+            //form subbmition
+            $(".application-submit").submit(function (event) {
+
+                /* stop form from submitting normally */
+                event.preventDefault();
+                var formObject = $(this);
+                $.ajax({
+                    type: 'POST',
+                    headers: {
+                        'Token-Authorization-X': `Bearer {{_context.token}}`,
+                    },
+                    url: "{{path_for('fieldwork_bid_request_submit')}}",
+                    data: formObject.serialize() + "&e={{_context.email}}&ish={{_context.fieldwork_information_seeker_hash}}&fh=" + formObject[0].id,
+                    beforeSend: function () {
+                        $('.submitBtn').attr("disabled", "disabled");
+                        $('.modal-body').css('opacity', '.5');
+                    }
+                })
+                        .done(function (data) {
+                            location.reload();
+                        })
+                        .fail(function (errMsg) {
+                            alert('Some problem occurred, please try again and make sure your entries are correct. If problem consists please contact the IT support!');
+                            $('.submitBtn').removeAttr("disabled");
+                            $('.modal-body').css('opacity', '');
+                        });
+            });
+            //to initialize materelize forms
+            $('select').formSelect();
+        });
+
+    </script>

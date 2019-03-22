@@ -1,0 +1,118 @@
+<html>
+    <head>
+        <title>Fieldwork details</title>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </head>
+
+    <body>
+        <div class="row">
+            {% for fieldwork in _context.fieldworks %}
+                <div class="col s12 m12">
+                <form class="application-submit col s12" id="{{fieldwork.Id}}">
+                    <div class="row">
+                        <div class="card green lighten-3 hoverable">
+                            <div class="card-content black-text">
+                                <span class="card-title">Expedition name: {{fieldwork.FieldworkName | raw}}</span>
+                                <p>Expedition website: <a href source="{{fieldwork.FieldworkProjectWebsite}}">{{fieldwork.FieldworkProjectWebsite}}</a></p>
+                                <p>Region: {{fieldwork.FieldworkRegion | raw}}</p>
+                                <p>Location(s): {{fieldwork.FieldworkLocations | raw}}</p>
+                                <p>Start date: {{fieldwork.FieldworkStartDate|slice(0, 10)}}</p>
+                                <p>Expedition goal(s): {{fieldwork.FieldworkGoal}}</p>
+                                <p>Duration: {{fieldwork.FieldworkDuration}} days</p>
+                                <p>Deadline: {{fieldwork.FieldworkInformationSeekerDeadline|slice(0, 10)}}</p>
+                                <p>Cost: {{fieldwork.FieldworkInformationSeekerCost}} Euros</p>
+                                <p>Included by the cost: {{fieldwork.FieldworkInformationSeekerPackageIncluded | raw}}</p>
+                                <p>Not included by the cost: {{fieldwork.FieldworkInformationSeekerPackageExcluded | raw}}</p>
+                                <p>Results announcement date: {{fieldwork.FieldworkInformationSeekerAnnouncementDate|slice(0, 10)}}</p>
+                                {% if fieldwork.FieldworkIsCertain == false %}
+                                    <p>
+                                        <strong>
+                                            NOTE: this expedition is not certain yet, it will be certain at {{fieldwork.FieldworkWhenCertain|slice(0, 10)}}
+                                        </strong>
+                                    </p>
+                                {% endif %}
+
+                            </div>
+                            <div class="card-action">
+                                {% if fieldwork.ApplicationSent == false %}
+                                    {% if fieldwork.FieldworkBidingAllowed == true %}
+                                        <p><strong>This expedition allows you to bid for the costs</strong></p>
+                                        <div class="row">
+                                            <div class="input-field col s6">
+                                                <i class="material-icons prefix">gavel</i>
+                                                <input id="icon_prefix" name="bid" type="number" value="{{fieldwork.FieldworkInformationSeekerCost}}" min="1" class="validate" required>
+                                                <label for="icon_prefix">Place your bid in Euros</label>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    <p>
+                                        <label>
+                                            <input type="checkbox" class="filled-in" required />
+                                            <span><font color="black">I agree to the terms and conditions<font color="red">*</font></font></span>
+                                        </label>
+                                    </p>
+                                    <p class="center-align">
+                                        <button class="btn waves-effect waves-light green pulse" type="submit" name="action">Apply
+                                            <i class="material-icons right">pan_tool</i>
+                                        </button>
+                                    </p>
+                                {% else %}
+                                    <p><strong>You have already applied for this exhibition. You will be informed about the results over email</strong></p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                </div>
+            {% endfor %}
+        </div>
+    </body>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <script>
+        console.log({{ _context | json_encode | raw }});
+        $(document).ready(function () {
+
+            //form subbmition
+            $(".application-submit").submit(function (event) {
+
+                /* stop form from submitting normally */
+                event.preventDefault();
+
+                var formObject = $(this);
+
+
+                $.ajax({
+                    type: 'POST',
+                    headers: {
+                        'Token-Authorization-X': `Bearer {{_context.token}}`,
+                    },
+                    url: "{{path_for('fieldwork_bid_request_submit')}}",
+                    data: formObject.serialize() + "&e={{_context.email}}&ish={{_context.fieldwork_information_seeker_hash}}&fh=" + formObject[0].id,
+                            beforeSend: function () {
+                                $('.submitBtn').attr("disabled", "disabled");
+                                $('.modal-body').css('opacity', '.5');
+                            }
+                })
+                        .done(function (data) {
+                            location.reload();
+                        })
+                        .fail(function (errMsg) {
+                            alert('Some problem occurred, please try again and make sure your entries are correct. If problem consists please contact the IT support!');
+                            $('.submitBtn').removeAttr("disabled");
+                            $('.modal-body').css('opacity', '');
+                        });
+
+            });
+
+            //to initialize materelize forms
+            $('select').formSelect();
+
+        });
+        
+    </script>

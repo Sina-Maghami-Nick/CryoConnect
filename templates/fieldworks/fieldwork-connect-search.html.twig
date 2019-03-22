@@ -2,9 +2,10 @@
 {% if _context.fieldworks is not empty %}
     <div class="row">
         {% for fieldwork in _context.fieldworks %}
-            <div class="card blue lighten-3">
+            <div class="card blue lighten-3 hoverable">
                 <div class="card-content black-text">
                     <span class="card-title">Expedition name: {{fieldwork.FieldworkName | raw}}</span>
+                    <p>Aim: {{fieldwork.FieldworkGoal | raw}}</p>
                     <p>Region: {{fieldwork.FieldworkRegion | raw}}</p>
                     <p>Location(s): {{fieldwork.FieldworkLocations | raw}}</p>
                     <p>Start date: {{fieldwork.FieldworkStartDate|slice(0, 10)}}</p>
@@ -13,7 +14,7 @@
                 </div>
                 <div class="card-action">
                     <label>
-                        <input name="fieldwork_ids[{{fieldwork.FieldworkName}}]" type="checkbox" class="filled-in" value="{{fieldwork.Id}}" required />
+                        <input name="fieldwork_ids[{{fieldwork.FieldworkName | raw}}]" type="checkbox" class="filled-in" value="{{fieldwork.Id}}" required />
                         <span><font color="black">Select to get more info</font></span>
                     </label> 
                 </div>
