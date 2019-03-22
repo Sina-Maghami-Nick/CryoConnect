@@ -264,7 +264,7 @@ class FieldworkController extends Controller {
 
         $fieldwork->delete();
 
-        $emailMsg = (new \Swift_Message('Sorry Cryoconnect could not approve your request'))
+        $emailMsg = (new \Swift_Message('Rejection of requesting expedition information'))
                 ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryoconnect'])
                 ->setTo($fieldwork->getFieldworkLeaderEmail())
                 ->setBody(
