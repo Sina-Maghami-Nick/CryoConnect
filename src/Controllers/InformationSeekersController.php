@@ -102,7 +102,7 @@ class InformationSeekersController extends Controller {
         $this->container->get('logger')
                 ->addInfo('A new unvalidated fieldwork information seeker request is added to the databse: ' . json_encode($fieldwork->toArray()));
 
-        $approvalMsg = (new \Swift_Message('Approval of new fieldwork connect request: ' . $leaderName))
+        $approvalMsg = (new \Swift_Message('Please approve expedition connect request'))
                 ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryoconnect'])
                 ->setTo($this->container->get('settings')['contacts']['approval_admin'])
                 ->setBody(
