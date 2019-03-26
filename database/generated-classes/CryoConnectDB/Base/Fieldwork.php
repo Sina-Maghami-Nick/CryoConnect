@@ -134,11 +134,11 @@ abstract class Fieldwork implements ActiveRecordInterface
     protected $fieldwork_locations;
 
     /**
-     * The value for the fieldwork_duration field.
+     * The value for the fieldwork_end_date field.
      *
-     * @var        int
+     * @var        DateTime
      */
-    protected $fieldwork_duration;
+    protected $fieldwork_end_date;
 
     /**
      * The value for the fieldwork_start_date field.
@@ -605,13 +605,23 @@ abstract class Fieldwork implements ActiveRecordInterface
     }
 
     /**
-     * Get the [fieldwork_duration] column value.
+     * Get the [optionally formatted] temporal [fieldwork_end_date] column value.
      *
-     * @return int
+     *
+     * @param      string|null $format The date/time format string (either date()-style or strftime()-style).
+     *                            If format is NULL, then the raw DateTime object will be returned.
+     *
+     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00
+     *
+     * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getFieldworkDuration()
+    public function getFieldworkEndDate($format = NULL)
     {
-        return $this->fieldwork_duration;
+        if ($format === null) {
+            return $this->fieldwork_end_date;
+        } else {
+            return $this->fieldwork_end_date instanceof \DateTimeInterface ? $this->fieldwork_end_date->format($format) : null;
+        }
     }
 
     /**
@@ -1009,24 +1019,24 @@ abstract class Fieldwork implements ActiveRecordInterface
     } // setFieldworkLocations()
 
     /**
-     * Set the value of [fieldwork_duration] column.
+     * Sets the value of [fieldwork_end_date] column to a normalized version of the date/time value specified.
      *
-     * @param int $v new value
+     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
+     *               Empty strings are treated as NULL.
      * @return $this|\CryoConnectDB\Fieldwork The current object (for fluent API support)
      */
-    public function setFieldworkDuration($v)
+    public function setFieldworkEndDate($v)
     {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->fieldwork_duration !== $v) {
-            $this->fieldwork_duration = $v;
-            $this->modifiedColumns[FieldworkTableMap::COL_FIELDWORK_DURATION] = true;
-        }
+        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+        if ($this->fieldwork_end_date !== null || $dt !== null) {
+            if ($this->fieldwork_end_date === null || $dt === null || $dt->format("Y-m-d") !== $this->fieldwork_end_date->format("Y-m-d")) {
+                $this->fieldwork_end_date = $dt === null ? null : clone $dt;
+                $this->modifiedColumns[FieldworkTableMap::COL_FIELDWORK_END_DATE] = true;
+            }
+        } // if either are not null
 
         return $this;
-    } // setFieldworkDuration()
+    } // setFieldworkEndDate()
 
     /**
      * Sets the value of [fieldwork_start_date] column to a normalized version of the date/time value specified.
@@ -1383,8 +1393,11 @@ abstract class Fieldwork implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : FieldworkTableMap::translateFieldName('FieldworkLocations', TableMap::TYPE_PHPNAME, $indexType)];
             $this->fieldwork_locations = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : FieldworkTableMap::translateFieldName('FieldworkDuration', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->fieldwork_duration = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : FieldworkTableMap::translateFieldName('FieldworkEndDate', TableMap::TYPE_PHPNAME, $indexType)];
+            if ($col === '0000-00-00') {
+                $col = null;
+            }
+            $this->fieldwork_end_date = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : FieldworkTableMap::translateFieldName('FieldworkStartDate', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00') {
@@ -1740,8 +1753,8 @@ abstract class Fieldwork implements ActiveRecordInterface
         if ($this->isColumnModified(FieldworkTableMap::COL_FIELDWORK_LOCATIONS)) {
             $modifiedColumns[':p' . $index++]  = 'fieldwork_locations';
         }
-        if ($this->isColumnModified(FieldworkTableMap::COL_FIELDWORK_DURATION)) {
-            $modifiedColumns[':p' . $index++]  = 'fieldwork_duration';
+        if ($this->isColumnModified(FieldworkTableMap::COL_FIELDWORK_END_DATE)) {
+            $modifiedColumns[':p' . $index++]  = 'fieldwork_end_date';
         }
         if ($this->isColumnModified(FieldworkTableMap::COL_FIELDWORK_START_DATE)) {
             $modifiedColumns[':p' . $index++]  = 'fieldwork_start_date';
@@ -1820,8 +1833,8 @@ abstract class Fieldwork implements ActiveRecordInterface
                     case 'fieldwork_locations':
                         $stmt->bindValue($identifier, $this->fieldwork_locations, PDO::PARAM_STR);
                         break;
-                    case 'fieldwork_duration':
-                        $stmt->bindValue($identifier, $this->fieldwork_duration, PDO::PARAM_INT);
+                    case 'fieldwork_end_date':
+                        $stmt->bindValue($identifier, $this->fieldwork_end_date ? $this->fieldwork_end_date->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
                         break;
                     case 'fieldwork_start_date':
                         $stmt->bindValue($identifier, $this->fieldwork_start_date ? $this->fieldwork_start_date->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
@@ -1952,7 +1965,7 @@ abstract class Fieldwork implements ActiveRecordInterface
                 return $this->getFieldworkLocations();
                 break;
             case 9:
-                return $this->getFieldworkDuration();
+                return $this->getFieldworkEndDate();
                 break;
             case 10:
                 return $this->getFieldworkStartDate();
@@ -2032,7 +2045,7 @@ abstract class Fieldwork implements ActiveRecordInterface
             $keys[6] => $this->getFieldworkProjectWebsite(),
             $keys[7] => $this->getCryosphereWhereId(),
             $keys[8] => $this->getFieldworkLocations(),
-            $keys[9] => $this->getFieldworkDuration(),
+            $keys[9] => $this->getFieldworkEndDate(),
             $keys[10] => $this->getFieldworkStartDate(),
             $keys[11] => $this->getFieldworkGoal(),
             $keys[12] => $this->getFieldworkInformationSeekerLimit(),
@@ -2047,6 +2060,10 @@ abstract class Fieldwork implements ActiveRecordInterface
             $keys[21] => $this->getApproved(),
             $keys[22] => $this->getTimestamp(),
         );
+        if ($result[$keys[9]] instanceof \DateTimeInterface) {
+            $result[$keys[9]] = $result[$keys[9]]->format('c');
+        }
+
         if ($result[$keys[10]] instanceof \DateTimeInterface) {
             $result[$keys[10]] = $result[$keys[10]]->format('c');
         }
@@ -2165,7 +2182,7 @@ abstract class Fieldwork implements ActiveRecordInterface
                 $this->setFieldworkLocations($value);
                 break;
             case 9:
-                $this->setFieldworkDuration($value);
+                $this->setFieldworkEndDate($value);
                 break;
             case 10:
                 $this->setFieldworkStartDate($value);
@@ -2260,7 +2277,7 @@ abstract class Fieldwork implements ActiveRecordInterface
             $this->setFieldworkLocations($arr[$keys[8]]);
         }
         if (array_key_exists($keys[9], $arr)) {
-            $this->setFieldworkDuration($arr[$keys[9]]);
+            $this->setFieldworkEndDate($arr[$keys[9]]);
         }
         if (array_key_exists($keys[10], $arr)) {
             $this->setFieldworkStartDate($arr[$keys[10]]);
@@ -2369,8 +2386,8 @@ abstract class Fieldwork implements ActiveRecordInterface
         if ($this->isColumnModified(FieldworkTableMap::COL_FIELDWORK_LOCATIONS)) {
             $criteria->add(FieldworkTableMap::COL_FIELDWORK_LOCATIONS, $this->fieldwork_locations);
         }
-        if ($this->isColumnModified(FieldworkTableMap::COL_FIELDWORK_DURATION)) {
-            $criteria->add(FieldworkTableMap::COL_FIELDWORK_DURATION, $this->fieldwork_duration);
+        if ($this->isColumnModified(FieldworkTableMap::COL_FIELDWORK_END_DATE)) {
+            $criteria->add(FieldworkTableMap::COL_FIELDWORK_END_DATE, $this->fieldwork_end_date);
         }
         if ($this->isColumnModified(FieldworkTableMap::COL_FIELDWORK_START_DATE)) {
             $criteria->add(FieldworkTableMap::COL_FIELDWORK_START_DATE, $this->fieldwork_start_date);
@@ -2505,7 +2522,7 @@ abstract class Fieldwork implements ActiveRecordInterface
         $copyObj->setFieldworkProjectWebsite($this->getFieldworkProjectWebsite());
         $copyObj->setCryosphereWhereId($this->getCryosphereWhereId());
         $copyObj->setFieldworkLocations($this->getFieldworkLocations());
-        $copyObj->setFieldworkDuration($this->getFieldworkDuration());
+        $copyObj->setFieldworkEndDate($this->getFieldworkEndDate());
         $copyObj->setFieldworkStartDate($this->getFieldworkStartDate());
         $copyObj->setFieldworkGoal($this->getFieldworkGoal());
         $copyObj->setFieldworkInformationSeekerLimit($this->getFieldworkInformationSeekerLimit());
@@ -3144,7 +3161,7 @@ abstract class Fieldwork implements ActiveRecordInterface
         $this->fieldwork_project_website = null;
         $this->cryosphere_where_id = null;
         $this->fieldwork_locations = null;
-        $this->fieldwork_duration = null;
+        $this->fieldwork_end_date = null;
         $this->fieldwork_start_date = null;
         $this->fieldwork_goal = null;
         $this->fieldwork_information_seeker_limit = null;

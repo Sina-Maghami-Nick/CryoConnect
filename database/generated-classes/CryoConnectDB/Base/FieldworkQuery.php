@@ -29,7 +29,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildFieldworkQuery orderByFieldworkProjectWebsite($order = Criteria::ASC) Order by the fieldwork_project_website column
  * @method     ChildFieldworkQuery orderByCryosphereWhereId($order = Criteria::ASC) Order by the cryosphere_where_id column
  * @method     ChildFieldworkQuery orderByFieldworkLocations($order = Criteria::ASC) Order by the fieldwork_locations column
- * @method     ChildFieldworkQuery orderByFieldworkDuration($order = Criteria::ASC) Order by the fieldwork_duration column
+ * @method     ChildFieldworkQuery orderByFieldworkEndDate($order = Criteria::ASC) Order by the fieldwork_end_date column
  * @method     ChildFieldworkQuery orderByFieldworkStartDate($order = Criteria::ASC) Order by the fieldwork_start_date column
  * @method     ChildFieldworkQuery orderByFieldworkGoal($order = Criteria::ASC) Order by the fieldwork_goal column
  * @method     ChildFieldworkQuery orderByFieldworkInformationSeekerLimit($order = Criteria::ASC) Order by the fieldwork_information_seeker_limit column
@@ -53,7 +53,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildFieldworkQuery groupByFieldworkProjectWebsite() Group by the fieldwork_project_website column
  * @method     ChildFieldworkQuery groupByCryosphereWhereId() Group by the cryosphere_where_id column
  * @method     ChildFieldworkQuery groupByFieldworkLocations() Group by the fieldwork_locations column
- * @method     ChildFieldworkQuery groupByFieldworkDuration() Group by the fieldwork_duration column
+ * @method     ChildFieldworkQuery groupByFieldworkEndDate() Group by the fieldwork_end_date column
  * @method     ChildFieldworkQuery groupByFieldworkStartDate() Group by the fieldwork_start_date column
  * @method     ChildFieldworkQuery groupByFieldworkGoal() Group by the fieldwork_goal column
  * @method     ChildFieldworkQuery groupByFieldworkInformationSeekerLimit() Group by the fieldwork_information_seeker_limit column
@@ -110,7 +110,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildFieldwork findOneByFieldworkProjectWebsite(string $fieldwork_project_website) Return the first ChildFieldwork filtered by the fieldwork_project_website column
  * @method     ChildFieldwork findOneByCryosphereWhereId(int $cryosphere_where_id) Return the first ChildFieldwork filtered by the cryosphere_where_id column
  * @method     ChildFieldwork findOneByFieldworkLocations(string $fieldwork_locations) Return the first ChildFieldwork filtered by the fieldwork_locations column
- * @method     ChildFieldwork findOneByFieldworkDuration(int $fieldwork_duration) Return the first ChildFieldwork filtered by the fieldwork_duration column
+ * @method     ChildFieldwork findOneByFieldworkEndDate(string $fieldwork_end_date) Return the first ChildFieldwork filtered by the fieldwork_end_date column
  * @method     ChildFieldwork findOneByFieldworkStartDate(string $fieldwork_start_date) Return the first ChildFieldwork filtered by the fieldwork_start_date column
  * @method     ChildFieldwork findOneByFieldworkGoal(string $fieldwork_goal) Return the first ChildFieldwork filtered by the fieldwork_goal column
  * @method     ChildFieldwork findOneByFieldworkInformationSeekerLimit(int $fieldwork_information_seeker_limit) Return the first ChildFieldwork filtered by the fieldwork_information_seeker_limit column
@@ -137,7 +137,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildFieldwork requireOneByFieldworkProjectWebsite(string $fieldwork_project_website) Return the first ChildFieldwork filtered by the fieldwork_project_website column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildFieldwork requireOneByCryosphereWhereId(int $cryosphere_where_id) Return the first ChildFieldwork filtered by the cryosphere_where_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildFieldwork requireOneByFieldworkLocations(string $fieldwork_locations) Return the first ChildFieldwork filtered by the fieldwork_locations column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildFieldwork requireOneByFieldworkDuration(int $fieldwork_duration) Return the first ChildFieldwork filtered by the fieldwork_duration column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildFieldwork requireOneByFieldworkEndDate(string $fieldwork_end_date) Return the first ChildFieldwork filtered by the fieldwork_end_date column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildFieldwork requireOneByFieldworkStartDate(string $fieldwork_start_date) Return the first ChildFieldwork filtered by the fieldwork_start_date column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildFieldwork requireOneByFieldworkGoal(string $fieldwork_goal) Return the first ChildFieldwork filtered by the fieldwork_goal column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildFieldwork requireOneByFieldworkInformationSeekerLimit(int $fieldwork_information_seeker_limit) Return the first ChildFieldwork filtered by the fieldwork_information_seeker_limit column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -162,7 +162,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildFieldwork[]|ObjectCollection findByFieldworkProjectWebsite(string $fieldwork_project_website) Return ChildFieldwork objects filtered by the fieldwork_project_website column
  * @method     ChildFieldwork[]|ObjectCollection findByCryosphereWhereId(int $cryosphere_where_id) Return ChildFieldwork objects filtered by the cryosphere_where_id column
  * @method     ChildFieldwork[]|ObjectCollection findByFieldworkLocations(string $fieldwork_locations) Return ChildFieldwork objects filtered by the fieldwork_locations column
- * @method     ChildFieldwork[]|ObjectCollection findByFieldworkDuration(int $fieldwork_duration) Return ChildFieldwork objects filtered by the fieldwork_duration column
+ * @method     ChildFieldwork[]|ObjectCollection findByFieldworkEndDate(string $fieldwork_end_date) Return ChildFieldwork objects filtered by the fieldwork_end_date column
  * @method     ChildFieldwork[]|ObjectCollection findByFieldworkStartDate(string $fieldwork_start_date) Return ChildFieldwork objects filtered by the fieldwork_start_date column
  * @method     ChildFieldwork[]|ObjectCollection findByFieldworkGoal(string $fieldwork_goal) Return ChildFieldwork objects filtered by the fieldwork_goal column
  * @method     ChildFieldwork[]|ObjectCollection findByFieldworkInformationSeekerLimit(int $fieldwork_information_seeker_limit) Return ChildFieldwork objects filtered by the fieldwork_information_seeker_limit column
@@ -274,7 +274,7 @@ abstract class FieldworkQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, fieldwork_project_name, fieldwork_leader_name, fieldwork_leader_affiliation, fieldwork_leader_website, fieldwork_leader_email, fieldwork_project_website, cryosphere_where_id, fieldwork_locations, fieldwork_duration, fieldwork_start_date, fieldwork_goal, fieldwork_information_seeker_limit, fieldwork_information_seeker_cost, fieldwork_biding_allowed, fieldwork_information_seeker_package_included, fieldwork_information_seeker_package_excluded, fieldwork_is_certain, fieldwork_when_certain, field_information_seeker_announcement_date, field_information_seeker_deadline, approved, timestamp FROM fieldwork WHERE id = :p0';
+        $sql = 'SELECT id, fieldwork_project_name, fieldwork_leader_name, fieldwork_leader_affiliation, fieldwork_leader_website, fieldwork_leader_email, fieldwork_project_website, cryosphere_where_id, fieldwork_locations, fieldwork_end_date, fieldwork_start_date, fieldwork_goal, fieldwork_information_seeker_limit, fieldwork_information_seeker_cost, fieldwork_biding_allowed, fieldwork_information_seeker_package_included, fieldwork_information_seeker_package_excluded, fieldwork_is_certain, fieldwork_when_certain, field_information_seeker_announcement_date, field_information_seeker_deadline, approved, timestamp FROM fieldwork WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -624,16 +624,18 @@ abstract class FieldworkQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the fieldwork_duration column
+     * Filter the query on the fieldwork_end_date column
      *
      * Example usage:
      * <code>
-     * $query->filterByFieldworkDuration(1234); // WHERE fieldwork_duration = 1234
-     * $query->filterByFieldworkDuration(array(12, 34)); // WHERE fieldwork_duration IN (12, 34)
-     * $query->filterByFieldworkDuration(array('min' => 12)); // WHERE fieldwork_duration > 12
+     * $query->filterByFieldworkEndDate('2011-03-14'); // WHERE fieldwork_end_date = '2011-03-14'
+     * $query->filterByFieldworkEndDate('now'); // WHERE fieldwork_end_date = '2011-03-14'
+     * $query->filterByFieldworkEndDate(array('max' => 'yesterday')); // WHERE fieldwork_end_date > '2011-03-13'
      * </code>
      *
-     * @param     mixed $fieldworkDuration The value to use as filter.
+     * @param     mixed $fieldworkEndDate The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -641,16 +643,16 @@ abstract class FieldworkQuery extends ModelCriteria
      *
      * @return $this|ChildFieldworkQuery The current query, for fluid interface
      */
-    public function filterByFieldworkDuration($fieldworkDuration = null, $comparison = null)
+    public function filterByFieldworkEndDate($fieldworkEndDate = null, $comparison = null)
     {
-        if (is_array($fieldworkDuration)) {
+        if (is_array($fieldworkEndDate)) {
             $useMinMax = false;
-            if (isset($fieldworkDuration['min'])) {
-                $this->addUsingAlias(FieldworkTableMap::COL_FIELDWORK_DURATION, $fieldworkDuration['min'], Criteria::GREATER_EQUAL);
+            if (isset($fieldworkEndDate['min'])) {
+                $this->addUsingAlias(FieldworkTableMap::COL_FIELDWORK_END_DATE, $fieldworkEndDate['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($fieldworkDuration['max'])) {
-                $this->addUsingAlias(FieldworkTableMap::COL_FIELDWORK_DURATION, $fieldworkDuration['max'], Criteria::LESS_EQUAL);
+            if (isset($fieldworkEndDate['max'])) {
+                $this->addUsingAlias(FieldworkTableMap::COL_FIELDWORK_END_DATE, $fieldworkEndDate['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -661,7 +663,7 @@ abstract class FieldworkQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(FieldworkTableMap::COL_FIELDWORK_DURATION, $fieldworkDuration, $comparison);
+        return $this->addUsingAlias(FieldworkTableMap::COL_FIELDWORK_END_DATE, $fieldworkEndDate, $comparison);
     }
 
     /**

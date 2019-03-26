@@ -196,7 +196,7 @@ class InformationSeekersController extends Controller {
             $fieldworkInfo[$key]['FieldworkName'] = $fieldworkRequest['Fieldwork']['FieldworkName'];
             $fieldworkInfo[$key]['FieldworkLocations'] = $fieldworkRequest['Fieldwork']['FieldworkLocations'];
             $fieldworkInfo[$key]['FieldworkStartDate'] = $fieldworkRequest['Fieldwork']['FieldworkStartDate'];
-            $fieldworkInfo[$key]['FieldworkDuration'] = $fieldworkRequest['Fieldwork']['FieldworkDuration'];
+            $fieldworkInfo[$key]['FieldworkEndDate'] = $fieldworkRequest['Fieldwork']['FieldworkEndDate'];
             $fieldworkInfo[$key]['FieldworkInformationSeekerDeadline'] = $fieldworkRequest['Fieldwork']['FieldworkInformationSeekerDeadline'];
             $fieldworkInfo[$key]['FieldworkRegion'] = CryosphereWhereQuery::create()
                     ->findOneById($fieldworkRequest['Fieldwork']['CryosphereWhereId'])

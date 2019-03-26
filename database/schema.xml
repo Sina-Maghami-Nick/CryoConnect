@@ -130,7 +130,7 @@
         <column name="fieldwork_project_website" phpName="FieldworkProjectWebsite" type="LONGVARCHAR"/>
         <column name="cryosphere_where_id" phpName="CryosphereWhereId" type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
         <column name="fieldwork_locations" phpName="FieldworkLocations" type="LONGVARCHAR"/>
-        <column name="fieldwork_duration" phpName="FieldworkDuration" type="INTEGER" sqlType="int(4) unsigned"/>
+        <column name="fieldwork_end_date" phpName="FieldworkEndDate" type="DATE"/>
         <column name="fieldwork_start_date" phpName="FieldworkStartDate" type="DATE"/>
         <column name="fieldwork_goal" phpName="FieldworkGoal" type="LONGVARCHAR"/>
         <column name="fieldwork_information_seeker_limit" phpName="FieldworkInformationSeekerLimit" type="INTEGER" sqlType="int(5) unsigned"/>

@@ -79,8 +79,8 @@
 
                 <div class="row">
                     <div class="input-field col s12">
-                        <label>Approximate expedition duration in days<font color="red">*</font></label>
-                        <input type="number" class="validate" id="duration" name="duration" min="1" required />
+                        <input id="end_date" name="end_date" type="text" class="datepicker" required>
+                        <label for="start_date">Approximate expedition end date<font color="red">*</font></label>
                     </div>
                 </div>
 
@@ -229,7 +229,7 @@
                 })
                         .done(function (data) {
                             document.body.innerHTML = data;
-                            parent.scrollTo(0,400);
+                            parent.scrollTo(0, 400);
                         })
                         .fail(function (errMsg) {
                             $('#submitBtn').removeAttr("disabled");

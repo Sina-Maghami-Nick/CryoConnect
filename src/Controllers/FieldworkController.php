@@ -62,7 +62,7 @@ class FieldworkController extends Controller {
         $projectWebsite = filter_var($data['project_website'], FILTER_SANITIZE_URL);
         $locations = filter_var($data['locations'], FILTER_SANITIZE_STRING);
         $startDate = strtotime($data['start_date']);
-        $duration = filter_var($data['duration'], FILTER_SANITIZE_NUMBER_INT);
+        $endDate = strtotime($data['end_date']);
         $scienteficGoals = filter_var($data['science_goals'], FILTER_SANITIZE_STRING);
         $informationSeekerLimit = filter_var($data['infomation_seeker_limit'], FILTER_SANITIZE_NUMBER_INT);
         $informationSeekerCost = filter_var($data['infomation_seeker_cost'], FILTER_SANITIZE_NUMBER_INT);
@@ -84,7 +84,7 @@ class FieldworkController extends Controller {
                 empty($projectName) ||
                 empty($locations) ||
                 empty($startDate) ||
-                empty($duration) ||
+                empty($endDate) ||
                 empty($informationSeekerLimit) ||
                 empty($informationSeekerCost) ||
                 empty($informationSeekerApplicationDeadline) ||
@@ -111,7 +111,7 @@ class FieldworkController extends Controller {
                 ->setFieldworkLeaderAffiliation($leaderAffiliationName)
                 ->setFieldworkProjectWebsite($projectWebsite)
                 ->setFieldworkLocations($locations)
-                ->setFieldworkDuration($duration)
+                ->setFieldworkEndDate($endDate)
                 ->setFieldworkStartDate($startDate)
                 ->setFieldworkGoal($scienteficGoals)
                 ->setCryosphereWhereId($cryosphereWhereId)
@@ -339,7 +339,7 @@ class FieldworkController extends Controller {
             $minFieldworkInfo[$key]['FieldworkName'] = $fieldwork['FieldworkName'];
             $minFieldworkInfo[$key]['FieldworkLocations'] = $fieldwork['FieldworkLocations'];
             $minFieldworkInfo[$key]['FieldworkStartDate'] = $fieldwork['FieldworkStartDate'];
-            $minFieldworkInfo[$key]['FieldworkDuration'] = $fieldwork['FieldworkDuration'];
+            $minFieldworkInfo[$key]['FieldworkEndDate'] = $fieldwork['FieldworkEndDate'];
             $minFieldworkInfo[$key]['FieldworkGoal'] = $fieldwork['FieldworkGoal'];
             $minFieldworkInfo[$key]['FieldworkInformationSeekerDeadline'] = $fieldwork['FieldworkInformationSeekerDeadline'];
             $minFieldworkInfo[$key]['FieldworkRegion'] = CryosphereWhereQuery::create()

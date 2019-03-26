@@ -296,7 +296,7 @@ CREATE TABLE `fieldwork`
     `fieldwork_project_website` TEXT,
     `cryosphere_where_id` int(10) unsigned NOT NULL,
     `fieldwork_locations` TEXT,
-    `fieldwork_duration` int(4) unsigned,
+    `fieldwork_end_date` DATE,
     `fieldwork_start_date` DATE,
     `fieldwork_goal` TEXT,
     `fieldwork_information_seeker_limit` int(5) unsigned,
