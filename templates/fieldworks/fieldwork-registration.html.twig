@@ -211,29 +211,6 @@
             });
         });
 
-        //check if leader's email exists and change the validation msg accordingly
-        document.getElementById("leader_email").addEventListener("focusout", function () {
-            var email = $(this).val();
-            $.ajax({
-                type: 'POST',
-                url: "{{path_for('leader_check_email')}}",
-                data: 'email=' + encodeURIComponent(email),
-                beforeSend: function () {
-                }
-            })
-                    .done(function (data) {
-                        $('#leader_email')[0].setCustomValidity("This email address is already registered!");
-                        $('#leader_name').focus()
-                    })
-                    .fail(function (errMsg) {
-                        $('#leader_email')[0].setCustomValidity("");
-                    });
-        });
-
-        $('#leader_email').on('click', function () {
-            this.setCustomValidity("");
-        });
-
         $(document).ready(function () {
 
             //form subbmition
