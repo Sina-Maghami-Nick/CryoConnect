@@ -31,7 +31,9 @@
 
                 <tr>
                     <th scope="row">Expedition leader email</th>
-                    <td colspan="2">{{_context.fieldwork.FieldworkLeaderEmail}}</td>
+                    <td colspan="2">        
+                        <a href="mailto:{{_context.fieldwork.FieldworkLeaderEmail}}" target="_top">{{_context.fieldwork.FieldworkLeaderEmail}}</a>
+                    </td>
                 </tr>
 
                 <tr>
@@ -41,12 +43,17 @@
 
                 <tr>
                     <th scope="row">Expedition leader website</th>
-                    <td colspan="2">{{_context.fieldwork.FieldworkLeaderWebsite}}</td>
+                    <td colspan="2"><a href="{{_context.fieldwork.FieldworkLeaderWebsite}}" >{{_context.fieldwork.FieldworkLeaderWebsite}}</a></td>
+                </tr>
+
+                <tr>
+                    <th scope="row">Expedition name</th>
+                    <td colspan="2">{{_context.fieldwork.FieldworkName}}</td>
                 </tr>
 
                 <tr>
                     <th scope="row">Expedition project website</th>
-                    <td colspan="2">{{_context.fieldwork.FieldworkProjectWebsite}}</td>
+                    <td colspan="2"><a href="{{_context.fieldwork.FieldworkProjectWebsite}}" >{{_context.fieldwork.FieldworkProjectWebsite}}</a></td>
                 </tr>
 
                 <tr>
@@ -107,6 +114,11 @@
                 </tr>
 
                 <tr>
+                    <th scope="row">Information seekers application deadline</th>
+                    <td colspan="2">{{_context.fieldwork.FieldworkInformationSeekerDeadline|slice(0, 10)}}</td>
+                </tr>
+
+                <tr>
                     <th scope="row">Is it certain ?</th>
                         {% if _context.fieldwork.FieldworkIsCertain == false %}
 
@@ -115,11 +127,6 @@
                     {% else %}
                         <td colspan="2">Yes</td>
                     {% endif %}
-                </tr>
-
-                <tr>
-                    <th scope="row">Information seekers application deadline</th>
-                    <td colspan="2">{{_context.fieldwork.FieldworkInformationSeekerDeadline|slice(0, 10)}}</td>
                 </tr>
 
                 <tr>
