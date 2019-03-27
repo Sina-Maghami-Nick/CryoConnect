@@ -55,7 +55,7 @@
                         <select id="cryosphere_where" name="cryosphere_where" required>
                             <option value="" disabled selected>choose</option>
                             {% for cryosphere_where in _context.cryosphere_where %}
-                                <option value="{{cryosphere_where.Id}}">{{cryosphere_where.CryosphereWhereName}}</option>
+                                <option value="{{cryosphere_where.Id}}">{{cryosphere_where.CryosphereWhereName | raw}}</option>
                             {% endfor %}
                         </select>
                         <label for="cryosphere_where">Region of expedition<font color="red">*</font></label>

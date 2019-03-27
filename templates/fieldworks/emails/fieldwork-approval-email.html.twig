@@ -1,7 +1,7 @@
 <p>Dear Admin,</p>
 <p>There is a new fieldwork request :&nbsp;</p>
-<p>Fieldwork leader Name : {{_context.fieldwork.FieldworkLeaderName}}</p>
-<p>Fieldwork leader Email : {{_context.fieldwork.FieldworkLeaderEmail}}</p>
+<p>Fieldwork leader Name : {{_context.fieldwork.FieldworkLeaderName | raw}}</p>
+<p>Fieldwork leader Email : <a href="mailto:{{_context.fieldwork.FieldworkLeaderEmail}}" target="_top">{{_context.fieldwork.FieldworkLeaderEmail}}</a></p>
 <p>Could you please approve/disapprove the new fieldwork using the following link :&nbsp;</p>
 <p><a href="https://cryoconnect.net{{path_for('fieldwork_approval',{},{'id': _context.fieldwork.Id  , 't': _context.token}) }}">https://cryoconnect.net{{ path_for('fieldwork_approval',{} , {'id': _context.fieldwork.Id , 't': _context.token}) }}</a></p>
 

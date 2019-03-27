@@ -22,8 +22,8 @@
                             </div>
                         </div>
 
-                        <p>Start date: {{_context.fieldwork_start_date|date}}</p>
-                        <p>Application deadline: {{_context.fieldwork_start_date|date}}</p>
+                        <p>Start date: {{_context.fieldwork_start_date|slice(0, 10)}}</p>
+                        <p>Application deadline: {{_context.fieldwork_start_date|slice(0, 10)}}</p>
                         <p>Cost: {{_context.fieldwork_cost}} Euros</p>
                         <p>
                             {% if _context.fieldwork.FieldworkBidingAllowed == false %}
@@ -32,7 +32,7 @@
                                 Bidding is allowed
                             {% endif %}
                         </p>
-                        <p>Results announcement date: {{_context.fieldwork_announcement_deadline|date}}</p>
+                        <p>Results announcement date: {{_context.fieldwork_announcement_deadline|slice(0, 10)}}</p>
                     </div>
                     <div class="card-action white-text">
                         <a href="{{_context.fieldwork_website}}">Expedition website</a>

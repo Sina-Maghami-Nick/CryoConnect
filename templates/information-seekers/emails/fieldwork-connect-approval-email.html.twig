@@ -1,7 +1,7 @@
 <p>Dear moderator,</p>
 <p>&nbsp;</p>
 <p>
-    A new expedition was added to the Cryo Connect database by {{_context.fieldwork_information_seeker.InformationSeekerName}} (<a href="mailto:{{_context.fieldwork_information_seeker.InformationSeekerEmail}}">{{_context.fieldwork_information_seeker.InformationSeekerEmail}}</a>)
+    A new expedition was added to the Cryo Connect database by {{_context.fieldwork_information_seeker.InformationSeekerName | raw}} (<a href="mailto:{{_context.fieldwork_information_seeker.InformationSeekerEmail}}">{{_context.fieldwork_information_seeker.InformationSeekerEmail}}</a>)
     Please approve the new listing using the following link:&nbsp;
 </p>
 <p><a href="https://cryoconnect.net{{path_for('fieldwork_connect_approval',{},{'id': _context.fieldwork_information_seeker.Id  , 't': _context.token}) }}">https://cryoconnect.net{{ path_for('fieldwork_connect_approval',{} , {'id': _context.fieldwork_information_seeker.Id , 't': _context.token}) }}</a></p>

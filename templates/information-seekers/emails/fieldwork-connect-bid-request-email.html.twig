@@ -1,4 +1,4 @@
-<p>Dear {{_context.leader_name}},</p>
+<p>Dear {{_context.leader_name | raw}},</p>
 <p>There is a new request from a information seeker: {{information_seeker_name | raw}} to join your expedition: {{fieldwork_name | raw}}.&nbsp;</p>
 <p>
     You only have {{ date( _context.announcement_day|date ).diff( date() ).format('%a') }} day(s) to the announcmenet date. Please use the link below to approve/reject the requests to your expedition:&nbsp;

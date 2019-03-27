@@ -1,4 +1,4 @@
-<p>Dear {{_context.fieldwork_information_seeker_name}},</p>
+<p>Dear {{_context.fieldwork_information_seeker_name | raw}},</p>
 <p>We have carefully studied the information you provided, but we are sorry to inform you that we can’t provide you with information on expeditions listed at Cryo Connect. 
 {% if _context.explanation != '' %}
 <p>The reason provided by our moderator team is:&nbsp;</p>

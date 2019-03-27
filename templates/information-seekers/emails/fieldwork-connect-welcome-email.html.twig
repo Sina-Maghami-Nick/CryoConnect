@@ -1,4 +1,4 @@
-<p>Dear {{_context.fieldwork_information_seeker_name}},</p>
+<p>Dear {{_context.fieldwork_information_seeker_name | raw}},</p>
 <p>Your request for information on expeditions has been approved. Click here to find this information, and to request joining an expedition:&nbsp;</p>
 <p><a href="https://cryoconnect.net{{path_for('fieldwork_detail',{},{'e': _context.email  , 't': _context.token}) }}">https://cryoconnect.net{{ path_for('fieldwork_detail',{} , {'e': _context.email , 't': _context.token}) }}</a></p>
 

@@ -26,7 +26,7 @@
             <tbody>
                 <tr>
                     <th scope="row">Expedition leader name</th>
-                    <td>{{_context.fieldwork.FieldworkLeaderName}}</td>
+                    <td>{{_context.fieldwork.FieldworkLeaderName  | raw}}</td>
                 </tr>
 
                 <tr>
@@ -38,7 +38,7 @@
 
                 <tr>
                     <th scope="row">Expedition leader affiliation</th>
-                    <td colspan="2">{{_context.fieldwork.FieldworkLeaderAffiliation}}</td>
+                    <td colspan="2">{{_context.fieldwork.FieldworkLeaderAffiliation | raw}}</td>
                 </tr>
 
                 <tr>
@@ -48,7 +48,7 @@
 
                 <tr>
                     <th scope="row">Expedition name</th>
-                    <td colspan="2">{{_context.fieldwork.FieldworkName}}</td>
+                    <td colspan="2">{{_context.fieldwork.FieldworkName | raw}}</td>
                 </tr>
 
                 <tr>
@@ -58,12 +58,12 @@
 
                 <tr>
                     <th scope="row">Expedition cryosphere where</th>
-                    <td colspan="2">{{_context.fieldwork_cryosphere_where}}</td>
+                    <td colspan="2">{{_context.fieldwork_cryosphere_where | raw}}</td>
                 </tr>
 
                 <tr>
                     <th scope="row">Expedition location(s)</th>
-                    <td colspan="2">{{_context.fieldwork.FieldworkLocations}}</td>
+                    <td colspan="2">{{_context.fieldwork.FieldworkLocations | raw}}</td>
                 </tr>
 
                 <tr>
@@ -78,7 +78,7 @@
 
                 <tr>
                     <th scope="row">Expedition science goal</th>
-                    <td colspan="2">{{_context.fieldwork.FieldworkGoal}}</td>
+                    <td colspan="2">{{_context.fieldwork.FieldworkGoal | raw}}</td>
                 </tr>
 
                 <tr>
@@ -105,12 +105,12 @@
 
                 <tr>
                     <th scope="row">Cost includes</th>
-                    <td colspan="2">{{_context.fieldwork.FieldworkInformationSeekerPackageIncluded}}</td>
+                    <td colspan="2">{{_context.fieldwork.FieldworkInformationSeekerPackageIncluded | raw}}</td>
                 </tr>
 
                 <tr>
                     <th scope="row">Cost excludes</th>
-                    <td colspan="2">{{_context.fieldwork.FieldworkInformationSeekerPackageExcluded}}</td>
+                    <td colspan="2">{{_context.fieldwork.FieldworkInformationSeekerPackageExcluded | raw}}</td>
                 </tr>
 
                 <tr>
@@ -145,9 +145,9 @@
 
             </div>
         {% endif %}
-        <script>
+     {#   <script>
             console.log({{ _context | json_encode | raw }});
-        </script>
+        </script>#}
 
 
         <div class="modal fade" id="fieldworkapprovemodal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -164,7 +164,7 @@
                             <div class="form-group row">
                                 <label for="fieldworkLeaderName" class="col-sm-2 col-form-label">Name:</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control-plaintext" name="fieldworkLeaderName" id="fieldworkLeaderName" value="{{_context.fieldwork.FieldworkLeaderName}}" readonly>
+                                    <input type="text" class="form-control-plaintext" name="fieldworkLeaderName" id="fieldworkLeaderName" value="{{_context.fieldwork.FieldworkLeaderName | raw}}" readonly>
                                 </div>
                             </div>
 
@@ -195,7 +195,7 @@
                             <div class="form-group row">
                                 <label for="fieldworkLeaderName" class="col-sm-4 col-form-label">Leader name:</label>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control-plaintext" name="fieldworkLeaderName" id="fieldworkLeaderName" value="{{_context.fieldwork.FieldworkLeaderName}}" readonly>
+                                    <input type="text" class="form-control-plaintext" name="fieldworkLeaderName" id="fieldworkLeaderName" value="{{_context.fieldwork.FieldworkLeaderName | raw}}" readonly>
                                 </div>
                             </div>
 

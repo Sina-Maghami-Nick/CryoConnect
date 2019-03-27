@@ -1,4 +1,4 @@
-<p>Dear {{_context.fieldwork_leader_name}},</p>
+<p>Dear {{_context.fieldwork_leader_name | raw}},</p>
 <p>We are sorry to inform you that we could not approve the data you entered for a Cryosphere fieldwork.&nbsp;</p>
 {% if _context.explanation != '' %}
 <p>We have gone through your info and rejected your request due to this explanation:&nbsp;</p>
