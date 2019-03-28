@@ -11,10 +11,10 @@ namespace App\Controllers;
 use CryoConnectDB\CryosphereWhereQuery;
 use CryoConnectDB\FieldworkQuery;
 use CryoConnectDB\Fieldwork;
-use CryoConnectDB\FieldworkInformationSeeker;
-use CryoConnectDB\FieldworkInformationSeekerQuery;
 use Slim\Http\Request;
 use Slim\Http\Response;
+use CryoConnectDB\FieldworkInformationSeekerQuery;
+use CryoConnectDB\FieldworkInformationSeekerRequestQuery;
 
 /**
  * Description of FieldworkController
@@ -89,8 +89,7 @@ class FieldworkController extends Controller {
                 empty($informationSeekerCost) ||
                 empty($informationSeekerApplicationDeadline) ||
                 empty($informationSeekerAnnouncmentDate) ||
-                (!$fieldworkCertain && empty($fieldworkCertainDate)) ||
-                FieldworkQuery::create()->findOneByFieldworkLeaderEmail($leaderEmailAddress)
+                (!$fieldworkCertain && empty($fieldworkCertainDate))
         ) {
             $this->container->get('logger')
                     ->addError('Empty or wronge fileds for fieldtrip info recieved within the following request: ' . json_encode($data));
@@ -134,8 +133,8 @@ class FieldworkController extends Controller {
         $this->container->get('logger')
                 ->addInfo('A new unvalidated fieldwork is added to the databse: ' . json_encode($fieldwork->toArray()));
 
-        $approvalMsg = (new \Swift_Message('Approval of new fieldwork expert: ' . $leaderName))
-                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryoconnect'])
+        $approvalMsg = (new \Swift_Message('Please approve new expedition'))
+                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryo Connect'])
                 ->setTo($this->container->get('settings')['contacts']['approval_admin'])
                 ->setBody(
                 $this->view->render(new \Slim\Http\Response(), 'fieldworks/emails/fieldwork-approval-email.html.twig', [
@@ -216,12 +215,14 @@ class FieldworkController extends Controller {
         $this->container->get('logger')
                 ->addInfo('A new fieldwork has been approved. FieldworkId =' . $fieldwork->getId());
 
-        $emailMsg = (new \Swift_Message('Your fieldwork is registered at Cryo Connect now'))
-                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryoconnect'])
+        $emailMsg = (new \Swift_Message('Confirmation of expedition registration'))
+                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryo Connect'])
                 ->setTo($fieldwork->getFieldworkLeaderEmail())
                 ->setBody(
                 $this->view->render(new \Slim\Http\Response(), 'fieldworks/emails/fieldwork-welcome-email.html.twig', [
                     'fieldwork_leader_name' => $fieldwork->getFieldworkLeaderName(),
+                    'leader_email' => $fieldwork->getFieldworkLeaderEmail(),
+                    'token' => md5($fieldwork->getFieldworkLeaderEmail() . $fieldwork->hashCode()),
                         ]
                 )->getBody(), 'text/html'
         );
@@ -264,8 +265,8 @@ class FieldworkController extends Controller {
 
         $fieldwork->delete();
 
-        $emailMsg = (new \Swift_Message('Rejection of requesting expedition information'))
-                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryoconnect'])
+        $emailMsg = (new \Swift_Message('Rejection of expedition listing'))
+                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryo Connect'])
                 ->setTo($fieldwork->getFieldworkLeaderEmail())
                 ->setBody(
                 $this->view->render(new \Slim\Http\Response(), 'fieldworks/emails/fieldwork-rejection-email.html.twig', [
@@ -276,6 +277,279 @@ class FieldworkController extends Controller {
         );
 
         $this->mailer->send($emailMsg);
+
+        return $response->withStatus(200);
+    }
+
+    /**
+     * @param type $request
+     * @param type $response
+     * @param type $args
+     */
+    public function fieldworkDashboardAction(Request $request, Response $response, $args) {
+        // your code
+        // to access items in the container... $this->container->get('');
+        $fieldworkLeaderEmail = $request->getQueryParams()['e'];
+        $token = $request->getQueryParams()['t'];
+
+        $fieldworks = FieldworkQuery::create()->findByFieldworkLeaderEmail($fieldworkLeaderEmail);
+
+        foreach ($fieldworks as $oneFieldwork) {
+            if (md5($oneFieldwork->getFieldworkLeaderEmail() . $oneFieldwork->hashCode()) == $token) {
+                $fieldwork = $oneFieldwork;
+                break;
+            }
+        }
+
+        $fieldworkInformationSeekerRequests = FieldworkInformationSeekerRequestQuery::create()
+                ->filterByFieldwork($fieldwork)
+                ->filterByApplicationSent(true)
+                ->find();
+
+        $this->container->get('logger')
+                ->addInfo('Fieldwork applicant info was accessed by a leader:' . json_encode($fieldwork->toArray()));
+
+        $applicants = array();
+
+        if (!empty($fieldworkInformationSeekerRequests)) {
+            foreach ($fieldworkInformationSeekerRequests->toArray() as $key => $fieldworkInformationSeekerRequest) {
+                $informationSeeker = FieldworkInformationSeekerQuery::create()->findOneById($fieldworkInformationSeekerRequest['FieldworkInformationSeekerId']);
+                $applicants[$key]['Id'] = $informationSeeker->hashCode();
+                $applicants[$key]['Name'] = $informationSeeker->getInformationSeekerName();
+                $applicants[$key]['Email'] = $informationSeeker->getInformationSeekerEmail();
+                $applicants[$key]['Website'] = $informationSeeker->getInformationSeekerWebsite();
+                $applicants[$key]['Reasons'] = $informationSeeker->getInformationSeekerReasons();
+                $applicants[$key]['Affiliation'] = $informationSeeker->getInformationSeekerAffiliation();
+                $applicants[$key]['AffiliationWebsite'] = $informationSeeker->getInformationSeekerAffiliationWebsite();
+                $applicants[$key]['Bid'] = $fieldworkInformationSeekerRequest['Bid'];
+                $applicants[$key]['Accepted'] = $fieldworkInformationSeekerRequest['ApplicationAccepted'];
+            }
+        }
+
+        return $this->view->render(
+                        $response, 'fieldworks/fieldwork-connect-applicants.html.twig', [
+                    'applicants' => $applicants,
+                    'fieldworkId' => $fieldwork->hashCode(),
+                    'fieldwork_leader_email' => $fieldwork->getFieldworkLeaderEmail(),
+                    'fieldwork_name' => $fieldwork->getFieldworkName(),
+                    'fieldwork_application_deadline' => $fieldwork->getFieldworkInformationSeekerDeadline(),
+                    'fieldwork_website' => $fieldwork->getFieldworkProjectWebsite(),
+                    'fieldwork_goal' => $fieldwork->getFieldworkGoal(),
+                    'fieldwork_locations' => $fieldwork->getFieldworkLocations(),
+                    'fieldwork_information_seeker_limit' => $fieldwork->getFieldworkInformationSeekerLimit(),
+                    'fieldwork_cost' => $fieldwork->getFieldworkInformationSeekerCost(),
+                    'fieldwork_cost_inc' => $fieldwork->getFieldworkInformationSeekerPackageIncluded(),
+                    'fieldwork_cost_exc' => $fieldwork->getFieldworkInformationSeekerPackageExcluded(),
+                    'fieldwork_start_date' => $fieldwork->getFieldworkStartDate(),
+                    'fieldwork_end_date' => $fieldwork->getFieldworkEndDate(),
+                    'fieldwork_application_deadline' => $fieldwork->getFieldworkInformationSeekerDeadline(),
+                    'fieldwork_announcement_deadline' => $fieldwork->getFieldworkInformationSeekerAnnouncementDate(),
+                    'fieldwork_leader_name' => $fieldwork->getFieldworkLeaderName(),
+                    'fieldwork_leader_website' => $fieldwork->getFieldworkLeaderWebsite(),
+                    'fieldwork_leader_affiliation' => $fieldwork->getFieldworkLeaderAffiliation(),
+                        ]
+        );
+    }
+
+    /**
+     * @param type $request
+     * @param type $response
+     * @param type $args
+     */
+    public function fieldworkDeleteAction(Request $request, Response $response, $args) {
+
+        $data = $request->getParsedBody();
+
+        $fieldworkHash = trim(filter_var($data['id'], FILTER_SANITIZE_STRING));
+        $fieldworkLeaderEmail = filter_var(str_replace(' ', '+', $data['e']), FILTER_SANITIZE_EMAIL);
+
+        $fieldworks = FieldworkQuery::create()->findByFieldworkLeaderEmail($fieldworkLeaderEmail);
+
+        foreach ($fieldworks as $oneFieldwork) {
+            if ($oneFieldwork->hashCode() == $fieldworkHash) {
+                $fieldwork = $oneFieldwork;
+                break;
+            }
+        }
+
+        if (
+                empty($fieldwork) ||
+                empty($fieldwork->getId())
+        ) {
+            $this->container->get('logger')
+                    ->addError('Empty or wronge fieldwork id recieved for fieldwork deletation from dashboard: ' . json_encode($data));
+            $technicalAdminEmail = $this->container->get('settings')['contacts']['technical_admin'];
+            $response->getBody()->write("Something went wrong! Please contact us at: " . $technicalAdminEmail);
+
+            return $response->withStatus(400);
+        }
+
+
+        $this->container->get('logger')
+                ->addInfo('A fieldwork is being deleted by a leader. FieldworkEmail: ' . $fieldwork->getFieldworkLeaderEmail() . ' With explanation: ' . $explanation);
+
+
+        $fieldworkInformationSeekerRequests = FieldworkInformationSeekerRequestQuery::create()
+                ->filterByFieldwork($fieldwork)
+                ->filterByApplicationSent(true)
+                ->find();
+
+        if (!empty($fieldworkInformationSeekerRequests)) {
+            foreach ($fieldworkInformationSeekerRequests->toArray() as $key => $fieldworkInformationSeekerRequest) {
+                $informationSeeker = FieldworkInformationSeekerQuery::create()->findOneById($fieldworkInformationSeekerRequest['FieldworkInformationSeekerId']);
+
+                $emailMsg = (new \Swift_Message('An expedition has been cancelled'))
+                        ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryo Connect'])
+                        ->setTo($informationSeeker->getInformationSeekerEmail())
+                        ->setBody(
+                        $this->view->render(new \Slim\Http\Response(), 'information-seekers/emails/fieldwork-deleted-email.html.twig', [
+                            'fieldwork_information_seeker_name' => $informationSeeker->getInformationSeekerName(),
+                            'fieldwork_leader_email' => $fieldwork->getFieldworkLeaderEmail(),
+                            'fieldwork_name' => $fieldwork->getFieldworkName()
+                                ]
+                        )->getBody(), 'text/html'
+                );
+
+                $this->mailer->send($emailMsg);
+            }
+        }
+
+        $fieldwork->delete();
+
+        return $response->withStatus(200);
+    }
+
+    /**
+     * @param type $request
+     * @param type $response
+     * @param type $args
+     */
+    public function fieldworkEditAction(Request $request, Response $response, $args) {
+
+        $data = $request->getParsedBody();
+
+        $fieldworkHash = trim(filter_var($data['id'], FILTER_SANITIZE_STRING));
+        $fieldworkLeaderEmail = filter_var(str_replace(' ', '+', $data['e']), FILTER_SANITIZE_EMAIL);
+
+        $fieldworks = FieldworkQuery::create()->findByFieldworkLeaderEmail($fieldworkLeaderEmail);
+
+        foreach ($fieldworks as $oneFieldwork) {
+            if ($oneFieldwork->hashCode() == $fieldworkHash) {
+                $fieldwork = $oneFieldwork;
+                break;
+            }
+        }
+
+        if (
+                empty($fieldwork) ||
+                empty($fieldwork->getId())
+        ) {
+            $this->container->get('logger')
+                    ->addError('Empty or wronge fieldwork id recieved for fieldwork editation from dashboard: ' . json_encode($data));
+            $technicalAdminEmail = $this->container->get('settings')['contacts']['technical_admin'];
+            $response->getBody()->write("Something went wrong! Please contact us at: " . $technicalAdminEmail);
+
+            return $response->withStatus(400);
+        }
+
+        $leaderName = filter_var($data['leader_name'], FILTER_SANITIZE_STRING);
+        $projectName = filter_var($data['project_name'], FILTER_SANITIZE_STRING);
+        $leaderAffiliationName = filter_var($data['leader_affiliation'], FILTER_SANITIZE_STRING);
+        $leaderWebsite = filter_var($data['leader_website'], FILTER_SANITIZE_URL);
+        $projectWebsite = filter_var($data['project_website'], FILTER_SANITIZE_URL);
+        $locations = filter_var($data['locations'], FILTER_SANITIZE_STRING);
+        $scienteficGoals = filter_var($data['science_goals'], FILTER_SANITIZE_STRING);
+        $informationSeekerLimit = filter_var($data['infomation_seeker_limit'], FILTER_SANITIZE_NUMBER_INT);
+        $informationSeekerCost = filter_var($data['infomation_seeker_cost'], FILTER_SANITIZE_NUMBER_INT);
+        $packageIncluded = filter_var($data['package_included'], FILTER_SANITIZE_STRING);
+        $packageExcluded = filter_var($data['package_excluded'], FILTER_SANITIZE_STRING);
+        $informationSeekerApplicationDeadline = strtotime($data['infomation_seeker_deadline']);
+        $informationSeekerAnnouncmentDate = strtotime($data['infomation_seeker_announcment_date']);
+
+
+        $this->container->get('logger')
+                ->addInfo('A fieldwork is being edited by a leader. FieldworkEmail: ' . $fieldwork->getFieldworkLeaderEmail() . ' With explanation: ' . $explanation);
+
+        if (!empty($leaderName)) {
+            $fieldwork->setFieldworkLeaderName($leaderName);
+        }
+
+        if (!empty($projectName)) {
+            $fieldwork->setFieldworkName($projectName);
+        }
+
+        if (!empty($leaderAffiliationName)) {
+            $fieldwork->setFieldworkLeaderAffiliation($leaderAffiliationName);
+        }
+
+        if (!empty($leaderWebsite)) {
+            $fieldwork->setFieldworkLeaderWebsite($leaderWebsite);
+        }
+
+        if (!empty($projectWebsite)) {
+            $fieldwork->setFieldworkProjectWebsite($projectWebsite);
+        }
+
+        if (!empty($locations)) {
+            $fieldwork->setFieldworkLocations($locations);
+        }
+
+        if (!empty($scienteficGoals)) {
+            $fieldwork->setFieldworkGoal($scienteficGoals);
+        }
+
+        if (!empty($informationSeekerLimit) && ($informationSeekerLimit > $fieldwork->getFieldworkInformationSeekerLimit())) {
+            $fieldwork->setFieldworkInformationSeekerLimit($informationSeekerLimit);
+        }
+
+        if (!empty($informationSeekerCost)) {
+            $fieldwork->setFieldworkInformationSeekerCost($informationSeekerCost);
+        }
+
+        if (!empty($packageIncluded)) {
+            $fieldwork->setFieldworkInformationSeekerPackageIncluded($packageIncluded);
+        }
+
+        if (!empty($packageExcluded)) {
+            $fieldwork->setFieldworkInformationSeekerPackageExcluded($packageExcluded);
+        }
+
+        if (!empty($informationSeekerApplicationDeadline)) {
+            $fieldwork->setFieldworkInformationSeekerDeadline($informationSeekerApplicationDeadline);
+        }
+
+        if (!empty($informationSeekerAnnouncmentDate)) {
+            $fieldwork->setFieldworkInformationSeekerAnnouncementDate($informationSeekerAnnouncmentDate);
+        }
+
+        $fieldworkInformationSeekerRequests = FieldworkInformationSeekerRequestQuery::create()
+                ->filterByFieldwork($fieldwork)
+                ->filterByApplicationSent(true)
+                ->find();
+
+        if (!empty($fieldworkInformationSeekerRequests)) {
+            foreach ($fieldworkInformationSeekerRequests->toArray() as $key => $fieldworkInformationSeekerRequest) {
+                $informationSeeker = FieldworkInformationSeekerQuery::create()->findOneById($fieldworkInformationSeekerRequest['FieldworkInformationSeekerId']);
+
+                $emailMsg = (new \Swift_Message('An expedition has been updated'))
+                        ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryo Connect'])
+                        ->setTo($informationSeeker->getInformationSeekerEmail())
+                        ->setBody(
+                        $this->view->render(new \Slim\Http\Response(), 'information-seekers/emails/fieldwork-updated-email.html.twig', [
+                            'fieldwork_information_seeker_name' => $informationSeeker->getInformationSeekerName(),
+                            'fieldwork_name' => $fieldwork->getFieldworkName(),
+                            'fieldwork_hash' => $fieldwork->hashCode(),
+                            'email' => $informationSeeker->getInformationSeekerEmail(),
+                            'token' => md5($informationSeeker->getInformationSeekerEmail() . $informationSeeker->hashCode())
+                                ]
+                        )->getBody(), 'text/html'
+                );
+
+                $this->mailer->send($emailMsg);
+            }
+        }
+
+        $fieldwork->save();
 
         return $response->withStatus(200);
     }
@@ -330,7 +604,8 @@ class FieldworkController extends Controller {
         $fieldworks = FieldworkQuery::create()->filterByCryosphereWhereId($cryosphereWhereId)
                 ->filterByApproved(true)
                 ->filterByFieldworkInformationSeekerDeadline(array('min' => date()))
-                ->filterByFieldworkStartDate(array('min' => $fromDate, 'max' => $toDate))
+                ->filterByFieldworkStartDate(array('max' => $toDate))
+                ->filterByFieldworkEndDate(array('min' => $fromDate))
                 ->find();
 
         $minFieldworkInfo = array();

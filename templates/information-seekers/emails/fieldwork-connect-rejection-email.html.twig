@@ -1,11 +1,10 @@
 <p>Dear {{_context.fieldwork_information_seeker_name | raw}},</p>
-<p>We have carefully studied the information you provided, but we are sorry to inform you that we can’t provide you with information on expeditions listed at Cryo Connect. 
+<p>We have carefully studied the information you provided, but we are sorry to inform you that we can’t provide you with information on expeditions listed at Cryo Connect. </p>
 {% if _context.explanation != '' %}
-<p>The reason provided by our moderator team is:&nbsp;</p>
-<p>{{_context.explanation | raw}}</p>
+    <p>
+        The reason provided by our moderator team is:&nbsp;
+        {{_context.explanation | raw}}
+    </p>
 {% endif %}
-<p>&nbsp;</p>
 <p>Best,</p>
 <p>Cryo Connect</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>

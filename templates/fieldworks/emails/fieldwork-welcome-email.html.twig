@@ -1,6 +1,7 @@
 <p>Dear {{_context.fieldwork_leader_name  | raw}},</p>
 <p>You have successfully registered your expedition at Cryo Connect. From now on you may receive requests from information seekers interested in joining your expedition.&nbsp;</p>
-<p>Click here to modify/remove your information in our database: …&nbsp;</p>
+<p>Click here to modify/remove your information in our database:<br>
+<a href="https://cryoconnect.net{{path_for('fieldwork_dashboard',{},{'e': _context.leader_email  , 't': _context.token}) }}">https://cryoconnect.net{{ path_for('fieldwork_dashboard',{} , {'e': _context.leader_email , 't': _context.token}) }}</a></p>
 
-<p>Best wishes,</p>
-<p>CryoConnect</p>
+<p>Best,<br>
+Cryo Connect</p>

@@ -21,118 +21,337 @@
                                 <div class="announcement-day-countdown"></div>
                             </div>
                         </div>
-
-                        <p>Start date: {{_context.fieldwork_start_date|slice(0, 10)}}</p>
-                        <p>Application deadline: {{_context.fieldwork_start_date|slice(0, 10)}}</p>
+                        <p>Number of approved applicants: <strong></strong></p>
+                        <p>Number of seats left: <strong></strong></p>
+                        <p>Website: <a href="{{_context.fieldwork_website}}">{{_context.fieldwork_website}}</a></p>
+                        <p>Start date: {{_context.fieldwork_start_date | date("F jS\\, Y")}}</p>
+                        <p>End date: {{_context.fieldwork_end_date | date("F jS\\, Y")}}</p>
+                        <p>Application deadline: {{_context.fieldwork_start_date | date("F jS\\, Y")}}</p>
                         <p>Cost: {{_context.fieldwork_cost}} Euros</p>
-                        <p>
-                            {% if _context.fieldwork.FieldworkBidingAllowed == false %}
-                                Bidding is not allowed
-                            {% else %}
-                                Bidding is allowed
-                            {% endif %}
-                        </p>
-                        <p>Results announcement date: {{_context.fieldwork_announcement_deadline|slice(0, 10)}}</p>
+                        <p>Results announcement date: {{_context.fieldwork_announcement_deadline | date("F jS\\, Y")}}</p>
+
                     </div>
-                    <div class="card-action white-text">
-                        <a href="{{_context.fieldwork_website}}">Expedition website</a>
+                    <div class="card-action">
+                        <div class="row">
+                            <p class="center-align">
+                                <button class="btn modal-trigger waves-effect waves-light orange" name="edit-expedition" data-target="modal-edit-expedition">Edit expedition info
+                                    <i class="material-icons right">edit</i>
+                                </button>
+                                <button class="btn modal-trigger waves-effect waves-light red" name="delete-expedition" data-target="modal-remove-expedition">Delete expedition
+                                    <i class="material-icons right">delete_forever</i>
+                                </button>
+
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col s12 m12">
-            {% for applicant in _context.applicants %}
-                <form class="application-submit col s12" id="{{applicant.Id}}">
-                    <div class="row">
-                        <div class="card purple lighten-5 hoverable">
-                            <div class="card-content black-text">
-                                <span class="card-title">Applicant name: {{applicant.Name | raw}}</span>
-                                <p>Website: <a href source="{{applicant.Website}}">{{applicant.Website}}</a></p>
-                                <p>Affiliation: {{applicant.Affiliation | raw}}</p>
-                                <p>Affiliation website: <a href source="{{applicant.AffiliationWebsite}}">{{applicant.AffiliationWebsite}}</a></p>
-                                <p>Application reason: {{applicant.Reasons}}</p>
-                                <p>Email: {{applicant.Email}}</p>
-                                {% if _context.fieldwork_bidding_allowed == true %}
-                                    <p><strong>Bid: {{applicant.Bid}} Euros</strong></p>
-                                {% endif %}
+                {% for applicant in _context.applicants %}
+                    <form class="application-submit col s12" id="{{applicant.Id}}">
+                        <div class="row">
+                            <div class="card purple lighten-5 hoverable">
+                                <div class="card-content black-text">
+                                    <span class="card-title">Applicant name: {{applicant.Name | raw}}</span>
+                                    <p>Website: <a href source="{{applicant.Website}}">{{applicant.Website}}</a></p>
+                                    <p>Affiliation: {{applicant.Affiliation | raw}}</p>
+                                    <p>Affiliation website: <a href source="{{applicant.AffiliationWebsite}}">{{applicant.AffiliationWebsite}}</a></p>
+                                    <p>Application reason: {{applicant.Reasons}}</p>
+                                    <p>Email: {{applicant.Email}}</p>
 
-                            </div>
-                            <div class="card-action">
-                                {% if applicant.Accepted == false %}
+                                </div>
+                                <div class="card-action">
+                                    {% if applicant.Accepted == false %}
                                         <label>
                                             <input type="checkbox" class="filled-in" required />
                                             <span><font color="black">I agree to the terms and conditions<font color="red">*</font></font></span>
                                         </label>
-                                    </p>
-                                    <div class="row">
-                                    <p class="center-align">
-                                        <button class="btn waves-effect waves-light green" type="submit" name="accep-applicantt">Accept applicant
-                                            <i class="material-icons right">check</i>
-                                        </button>
-                                        <button class="btn waves-effect waves-light red" type="submit" name="reject-applicantt">Reject applicant
-                                            <i class="material-icons right">close</i>
-                                        </button>
-                                    </p>
-                                    </div>
-                                {% else %}
-                                    <p><strong>You have already applied for this expedition. You will be informed about the results over email</strong></p>
-                                {% endif %}
+                                        </p>
+                                        <div class="row">
+                                            <p class="center-align">
+                                                <button class="btn waves-effect waves-light green" type="submit" name="accep-applicantt">Accept applicant
+                                                    <i class="material-icons right">check</i>
+                                                </button>
+                                                <button class="btn waves-effect waves-light red" type="submit" name="reject-applicantt">Reject applicant
+                                                    <i class="material-icons right">close</i>
+                                                </button>
+                                            </p>
+                                        </div>
+                                    {% else %}
+                                        <p><strong>This applicant is already accepted!</strong></p>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </form>
-            {% endfor %}
+                    </form>
+                {% endfor %}
             </div>
         </div>
-    </body>
+
+        <!-- Modal remove -->
+        <div id="modal-remove-expedition" class="modal">
+            <div class="modal-content">
+                <h4>Are you sure ?</h4><br>
+                <p>By clicking on delete all of the data on this expedition will be deleted.
+                    <br>
+                    Once the expedition is deleted the applicants wil be informed by email.</p>
+            </div>
+            <div class="modal-footer">
+                <button id="delete-expedition-forever" class="btn waves-effect waves-light red">Delete expedition</button>
+            </div>
+        </div>
+
+        <!-- Modal remove -->
+        <div id="modal-edit-expedition" class="modal">
+            <div class="modal-content">
+
+                <div class="row">
+                    <form class="col s12" id="fieldwork_edit_form">
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <input id="leader_name" name="leader_name" type="text" class="validate" value="{{_context.fieldwork_leader_name | raw}}" required>
+                                <label for="leader_name">Expedition leader's full name<font color="red">*</font></label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <input id="leader_affiliation" name="leader_affiliation" type="text" value="{{_context.fieldwork_leader_affiliation | raw}}" class="validate" required>
+                                <label for="leader_affiliation">Expedition leader's primary affiliation<font color="red">*</font></label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <input id="leader_website" name="leader_website" type="url" value="{{_context.fieldwork_leader_website}}" class="validate">
+                                <label for="leader_website">Webpage with information about the expedition leader<font color="red">*</font></label>
+                                <span class="helper-text">e.g. LinkedIn page - please enter the whole url including http://</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <input id="project_name" name="project_name" type="text" value="{{_context.fieldwork_name | raw}}" class="validate" required>
+                                <label for="project_name">Project or expedition name<font color="red">*</font></label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <input id="project_website" name="project_website" type="url" value="{{_context.fieldwork_website}}" class="validate">
+                                <label for="project_website">Webpage with information about the project or expedition</label>
+                                <span class="helper-text">please enter the whole url including http://</span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <input id="locations" name="locations" type="text" value="{{_context.fieldwork_locations | raw}}" class="validate" required>
+                                <label for="locations">More precise location</label>
+                                <span class="helper-text">please separate each location with comma</span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <textarea id="science_goals" name="science_goals" class="materialize-textarea">{{_context.fieldwork_goal | raw}}</textarea>
+                                <label for="science_goals">Scientific goal(s) of expedition</label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <input id="infomation_seeker_limit" name="infomation_seeker_limit" type="number" min="{{_context.fieldwork_information_seeker_limit}}" value="{{_context.fieldwork_information_seeker_limit}}" class="validate" required>
+                                <label for="infomation_seeker_limit">Maximum number of spots available for information seekers<font color="red">*</font></label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <input id="infomation_seeker_cost" name="infomation_seeker_cost" type="number" min="0" value="{{_context.fieldwork_cost}}" class="validate" required>
+                                <label for="infomation_seeker_cost">Approximate cost per information seeker in Euros<font color="red">*</font></label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <textarea id="package_included" name="package_included" class="materialize-textarea" required>{{_context.fieldwork_cost_inc | raw}}</textarea>
+                                <label for="package_included">What would be covered by this cost?<font color="red">*</font></label>
+                                <span class="helper-text">For instance travel, accommodation, food, insurance.</span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <textarea id="package_excluded" name="package_excluded" class="materialize-textarea">{{_context.fieldwork_cost_exc | raw}}</textarea>
+                                <label for="package_excluded">What would <u>not</u> be covered by this cost?</label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <label>
+                                    <input type="checkbox" required/>
+                                    <span>I agree to the terms and conditions<font color="red">*</font></span>
+                                </label>
+                            </div>
+                        </div>
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <p class="center-align">
+                    <button id="edit-expedition-btn" class="btn waves-effect waves-light" type="submit" name="action">Update expedition
+                        <i class="material-icons right">edit</i>
+                    </button>
+                </p>
+            </div>
+        </form>
+    </div>
+</body>
 
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flipclock/0.7.8/flipclock.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flipclock/0.7.8/flipclock.js"></script>
 
-    <script>
-        console.log({{ _context | json_encode | raw }});
+<script>
+    console.log({{ _context | json_encode | raw }});
+    $(document).ready(function () {
+
+        var date = new Date('{{_context.fieldwork_announcement_deadline | date}}'); //Month Days, Year HH:MM:SS
+        var now = new Date();
+        var diff = (date.getTime() / 1000) - (now.getTime() / 1000);
+        var clock = $('.announcement-day-countdown').FlipClock(diff, {
+            clockFace: 'DailyCounter',
+            countdown: true
+        });
         $(document).ready(function () {
+            $('.modal').modal();
+        });
+        //delete expedition
+        $("#delete-expedition-forever").click(function () {
 
-            var date = new Date('{{_context.fieldwork_announcement_deadline | date}}'); //Month Days, Year HH:MM:SS
-            var now = new Date();
-            var diff = (date.getTime() / 1000) - (now.getTime() / 1000);
-            var clock = $('.announcement-day-countdown').FlipClock(diff, {
-                clockFace: 'DailyCounter',
-                countdown: true
-            });
-
-            //form subbmition
-            $(".application-submit").submit(function (event) {
-
-                /* stop form from submitting normally */
-                event.preventDefault();
-                var formObject = $(this);
+            var fieldworkId = "{{_context.fieldworkId}}";
+            var fieldworkLeaderEmail = "{{_context.fieldwork_leader_email}}";
+            var token = getUrlParameter('t');
+            var postUrl = "{{path_for('fieldwork_delete')}}";
+            if (
+                    String(token).trim() == '' ||
+                    String(fieldworkId).trim() == '' ||
+                    String(fieldworkLeaderEmail).trim() == '')
+            {
+                alert('Something went wrong! Please contact Cryo Connect!');
+                return false;
+            } else {
                 $.ajax({
-                    type: 'POST',
+                    type: 'DELETE',
                     headers: {
-                        'Token-Authorization-X': `Bearer {{_context.token}}`,
+                        'Token-Authorization-X': `Bearer ${token}`,
                     },
-                    url: "{{path_for('fieldwork_bid_request_submit')}}",
-                    data: formObject.serialize() + "&e={{_context.email}}&ish={{_context.fieldwork_information_seeker_hash}}&fh=" + formObject[0].id,
+                    url: postUrl,
+                    data: 'e=' + fieldworkLeaderEmail + '&id=' + fieldworkId,
                     beforeSend: function () {
-                        $('.submitBtn').attr("disabled", "disabled");
-                        $('.modal-body').css('opacity', '.5');
+                        $('#delete-expedition-forever').attr("disabled", "disabled");
+                        $('.modal-remove-expedition').css('opacity', '.5');
+                    }
+                })
+                        .done(function (data) {
+                            alert('Your expedition has been succesfully deleted!');
+                            window.location.href = "/";
+                        })
+                        .fail(function (errMsg) {
+                            alert('Some problem occurred, please try again and make sure your enteries are correct. If problem consists please contact the IT support!');
+                            $('#delete-expedition-forever').removeAttr("disabled");
+                            $('.modal-remove-expedition').css('opacity', '');
+                        });
+            }
+        });
+        //edit fieldwork subbmit
+        $("#fieldwork_edit_form").submit(function (event) {
+
+            /* stop form from submitting normally */
+            event.preventDefault();
+
+            var fieldworkId = "{{_context.fieldworkId}}";
+            var fieldworkLeaderEmail = "{{_context.fieldwork_leader_email}}";
+            var token = getUrlParameter('t');
+            var postUrl = "{{path_for('fieldwork_edit')}}";
+            var formObject = $(this);
+
+            if (
+                    String(token).trim() == '' ||
+                    String(fieldworkId).trim() == '' ||
+                    String(fieldworkLeaderEmail).trim() == '')
+            {
+                alert('Something went wrong! Please contact Cryo Connect!');
+                return false;
+            } else {
+                $.ajax({
+                    type: 'PUT',
+                    headers: {
+                        'Token-Authorization-X': `Bearer ${token}`,
+                    },
+                    url: postUrl,
+                    data: formObject.serialize() + '&e=' + fieldworkLeaderEmail + '&id=' + fieldworkId,
+                    beforeSend: function () {
+                        $('#edit-expedition-btn').attr("disabled", "disabled");
+                        $('.modal-edit-expedition').css('opacity', '.5');
                     }
                 })
                         .done(function (data) {
                             location.reload();
                         })
                         .fail(function (errMsg) {
-                            alert('Some problem occurred, please try again and make sure your entries are correct. If problem consists please contact the IT support!');
-                            $('.submitBtn').removeAttr("disabled");
-                            $('.modal-body').css('opacity', '');
+                            alert('Some problem occurred, please try again and make sure your enteries are correct. If problem consists please contact the IT support!');
+                            $('#edit-expedition-btn').removeAttr("disabled");
+                            $('.modal-edit-expedition').css('opacity', '');
                         });
-            });
-            //to initialize materelize forms
-            $('select').formSelect();
-        });
+            }
 
-    </script>
+        });
+        //form subbmition
+        $(".application-submit").submit(function (event) {
+
+            /* stop form from submitting normally */
+            event.preventDefault();
+            var formObject = $(this);
+            $.ajax({
+                type: 'POST',
+                headers: {
+                    'Token-Authorization-X': `Bearer {{_context.token}}`,
+                },
+                url: "{{path_for('fieldwork_bid_request_submit')}}",
+                data: formObject.serialize() + "&e={{_context.email}}&ish={{_context.fieldwork_information_seeker_hash}}&fh=" + formObject[0].id,
+                beforeSend: function () {
+                    $('.submitBtn').attr("disabled", "disabled");
+                    $('.modal-body').css('opacity', '.5');
+                }
+            })
+                    .done(function (data) {
+                        location.reload();
+                    })
+                    .fail(function (errMsg) {
+                        alert('Some problem occurred, please try again and make sure your entries are correct. If problem consists please contact the IT support!');
+                        $('.submitBtn').removeAttr("disabled");
+                        $('.modal-body').css('opacity', '');
+                    });
+        });
+        //to initialize materelize forms
+        $('select').formSelect();
+
+        var getUrlParameter = function getUrlParameter(sParam) {
+            var sPageURL = window.location.search.substring(1),
+                    sURLVariables = sPageURL.split('&'),
+                    sParameterName,
+                    i;
+
+            for (i = 0; i < sURLVariables.length; i++) {
+                sParameterName = sURLVariables[i].split('=');
+
+                if (sParameterName[0] === sParam) {
+                    return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+                }
+            }
+        };
+    });
+
+</script>

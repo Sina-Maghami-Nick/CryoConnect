@@ -143,7 +143,7 @@ class ExpertsController extends Controller {
                 ->addInfo('A new unvalidated expert is added to the databse: ' . json_encode($expert->toArray()));
 
         $approvalMsg = (new \Swift_Message('Approval of new cryoconnect expert: ' . $firstName . ' ' . $lastName))
-                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryoconnect'])
+                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryo Connect'])
                 ->setTo($this->container->get('settings')['contacts']['approval_admin'])
                 ->setBody(
                 $this->view->render(new \Slim\Http\Response(), 'experts/emails/experts-approval-email.html.twig', [
@@ -253,7 +253,7 @@ class ExpertsController extends Controller {
                 ->addInfo('A new expert has been approved. ExpertId =' . $expert->getId());
 
         $emailMsg = (new \Swift_Message('You are now signed up as an expert at Cryo Connect'))
-                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryoconnect'])
+                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryo Connect'])
                 ->setTo($expert->getEmail())
                 ->setBody(
                 $this->view->render(new \Slim\Http\Response(), 'experts/emails/experts-welcome-email.html.twig', [
@@ -299,7 +299,7 @@ class ExpertsController extends Controller {
         $expert->delete();
 
         $emailMsg = (new \Swift_Message('Sorry Cryoconnect could not approve your request'))
-                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryoconnect'])
+                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryo Connect'])
                 ->setTo($expert->getEmail())
                 ->setBody(
                 $this->view->render(new \Slim\Http\Response(), 'experts/emails/experts-rejection-email.html.twig', [

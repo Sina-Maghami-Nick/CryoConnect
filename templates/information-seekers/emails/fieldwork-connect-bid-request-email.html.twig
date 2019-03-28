@@ -1,9 +1,8 @@
 <p>Dear {{_context.leader_name | raw}},</p>
-<p>There is a new request from a information seeker: {{information_seeker_name | raw}} to join your expedition: {{fieldwork_name | raw}}.&nbsp;</p>
-<p>
-    You only have {{ date( _context.announcement_day|date ).diff( date() ).format('%a') }} day(s) to the announcmenet date. Please use the link below to approve/reject the requests to your expedition:&nbsp;
-</p>
-<p><a href="https://cryoconnect.net{{path_for('fieldwork_applicants',{},{'e': _context.leader_email  , 't': _context.token}) }}">https://cryoconnect.net{{ path_for('fieldwork_applicants',{} , {'e': _context.leader_email , 't': _context.token}) }}</a></p>
+<p>We received a  request from an information seeker ({{information_seeker_name | raw}} from {{information_seeker_affliation | raw}}) to join your {{fieldwork_name | raw}} expedition.<br>
+    You have {{ date( _context.announcement_day|date ).diff( date() ).format('%a') }} X day(s) to respond to this and other requests. Please use this link to approve/reject the requests:
+    <br>
+<a href="https://cryoconnect.net{{path_for('fieldwork_dashboard',{},{'e': _context.leader_email  , 't': _context.token}) }}">https://cryoconnect.net{{ path_for('fieldwork_dashboard',{} , {'e': _context.leader_email , 't': _context.token}) }}</a></p>
 
-<p>Best wishes,</p>
-<p>CryoConnect</p>
+<p>Best wishes,<br>
+Cryo Connect</p>

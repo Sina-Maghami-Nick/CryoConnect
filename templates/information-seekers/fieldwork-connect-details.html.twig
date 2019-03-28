@@ -37,7 +37,7 @@
                             </div>
                             <div class="card-action">
                                 {% if fieldwork.ApplicationSent == false %}
-                                    {% if fieldwork.FieldworkBidingAllowed == true %}
+                                    {#{% if fieldwork.FieldworkBidingAllowed == true %}
                                         <p><strong>This expedition allows you to bid for the costs</strong></p>
                                         <div class="row">
                                             <div class="input-field col s6">
@@ -46,7 +46,7 @@
                                                 <label for="icon_prefix">Place your bid in Euros</label>
                                             </div>
                                         </div>
-                                    {% endif %}
+                                    {% endif %}#}
                                     <p>
                                         <label>
                                             <input type="checkbox" class="filled-in" required />
@@ -59,7 +59,7 @@
                                         </button>
                                     </p>
                                 {% else %}
-                                    <p><strong>You have already applied for this expedition. You will be informed about the results over email</strong></p>
+                                    <p><strong>You have applied to join this expedition. You will be informed about the expedition leader’s decision by email.</strong></p>
                                 {% endif %}
                             </div>
                         </div>

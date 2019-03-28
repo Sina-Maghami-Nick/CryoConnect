@@ -69,12 +69,18 @@ $app->group('/fieldwork', function () {
 
     //route to fieldwork-detail for information seeker
     $this->get('/connect/request/exhibition-details', InformationSeekersController::class . ':fieldworkDetailPageAction')->setName('fieldwork_detail');
-    
+
     //route to fieldwork-detail for information seeker
     $this->post('/connect/request/submit', InformationSeekersController::class . ':fieldworkBidSubmissionAction')->setName('fieldwork_bid_request_submit');
 
-    //route to fieldwork-detail for information seeker
-    $this->get('/connect/applicants', InformationSeekersController::class . ':fieldworkApplicantsAction')->setName('fieldwork_applicants');
+    //route to fieldwork dashboard
+    $this->get('/connect/dashboard', FieldworkController::class . ':fieldworkDashboardAction')->setName('fieldwork_dashboard');
+    
+    //route to fieldwork removeforever
+    $this->delete('/connect/dashboard/delete', FieldworkController::class . ':fieldworkDeleteAction')->setName('fieldwork_delete');
+    
+    //route to fieldwork edit
+    $this->put('/connect/dashboard/edit', FieldworkController::class . ':fieldworkEditAction')->setName('fieldwork_edit');
 });
 
 //Information Seeker Routes

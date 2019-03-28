@@ -104,21 +104,6 @@
                     </div>
                 </div>
 
-
-                <div class="row">
-                    <div class="input-field col s12">
-                        <span class="helper-text">Bidding over cost price allowed?<font color="red">*</font><br><br></span>
-                        <div class="switch">
-                            <label>
-                                No
-                                <input name="biding_allowed" type="checkbox">
-                                <span class="lever"></span>
-                                Yes
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="row">
                     <div class="input-field col s12">
                         <textarea id="package_included" name="package_included" class="materialize-textarea" required></textarea>
@@ -165,7 +150,7 @@
                 <div class="row">
                     <div class="input-field col s12">
                         <input id="infomation_seeker_announcment_date" name="infomation_seeker_announcment_date" type="text" class="datepicker" required>
-                        <label for="infomation_seeker_announcment_date">When would information seeker applicants be informed of your decision?</label>       
+                        <label for="infomation_seeker_announcment_date">When would information seeker applicants be informed of your decision?<font color="red">*</font></label>       
                     </div>
                 </div>        
                 <div class="row">
@@ -246,6 +231,10 @@
                 minDate: todayDate,
                 dateFormat: 'd M Y'
             });
+
+            $('.datepicker').on('focus', ({ currentTarget }) => $(currentTarget).blur())
+            $(".datepicker").prop('readonly', false)
+
         });
     </script>
 </html>

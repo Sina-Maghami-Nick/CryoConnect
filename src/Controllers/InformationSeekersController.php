@@ -103,7 +103,7 @@ class InformationSeekersController extends Controller {
                 ->addInfo('A new unvalidated fieldwork information seeker request is added to the databse: ' . json_encode($fieldwork->toArray()));
 
         $approvalMsg = (new \Swift_Message('Please approve expedition connect request'))
-                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryoconnect'])
+                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryo Connect'])
                 ->setTo($this->container->get('settings')['contacts']['approval_admin'])
                 ->setBody(
                 $this->view->render(new \Slim\Http\Response(), 'information-seekers/emails/fieldwork-connect-approval-email.html.twig', [
@@ -166,6 +166,8 @@ class InformationSeekersController extends Controller {
         // to access items in the container... $this->container->get('');
         $fieldworkInformationSeekerEmail = $request->getQueryParams()['e'];
         $token = $request->getQueryParams()['t'];
+        $fieldworkHash = $request->getQueryParams()['fh'];
+
         $fieldworkInformationSeekers = FieldworkInformationSeekerQuery::create()->filterByApproved(true)->findByInformationSeekerEmail($fieldworkInformationSeekerEmail);
 
         foreach ($fieldworkInformationSeekers as $informationSeeker) {
@@ -188,7 +190,24 @@ class InformationSeekersController extends Controller {
                 ->addInfo('Fieldwork Information seeker detail info was accessed by an information seeker:' . json_encode($fieldworkInformationSeeker->toArray()));
 
         $fieldworkInfo = array();
+
         $fieldworkRequests = $fieldworkInformationSeeker->getFieldworkInformationSeekerRequestsJoinFieldwork()->toArray();
+
+        //rewritting requests if fieldwork hash is given
+        if (!empty($fieldworkHash)) {
+            foreach (FieldworkQuery::create()->find() as $fieldwork) {
+                if ($fieldwork->hashCode() == $fieldworkHash) {
+                    $fieldworkRequests = FieldworkInformationSeekerRequestQuery::create()
+                            ->filterByFieldwork($fieldwork)
+                            ->filterByFieldworkInformationSeeker($fieldworkInformationSeeker)
+                            ->joinFieldwork()
+                            ->find()
+                            ->toArray();
+                    break;
+                }
+            }
+        }
+
         foreach ($fieldworkRequests as $key => $fieldworkRequest) {
             $fieldworkInfo[$key]['Id'] = FieldworkQuery::create()->findOneById($fieldworkRequest['Fieldwork']['Id'])->hashCode();
             $fieldworkInfo[$key]['ApplicationSent'] = $fieldworkRequest['ApplicationSent'];
@@ -255,7 +274,7 @@ class InformationSeekersController extends Controller {
 
         $requestedFieldworks = $fieldworkInformationSeeker->getFieldworkInformationSeekerRequestsJoinFieldwork();
         $emailMsg = (new \Swift_Message('Your request is approved at Cryo Connect now'))
-                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryoconnect'])
+                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryo Connect'])
                 ->setTo($fieldworkInformationSeeker->getInformationSeekerEmail())
                 ->setBody(
                 $this->view->render(new \Slim\Http\Response(), 'information-seekers/emails/fieldwork-connect-welcome-email.html.twig', [
@@ -294,7 +313,6 @@ class InformationSeekersController extends Controller {
             $technicalAdminEmail = $this->container->get('settings')['contacts']['technical_admin'];
             $response->getBody()->write("Something went wrong! Please contact us at: " . $technicalAdminEmail);
 
-
             return $response->withStatus(400);
         }
 
@@ -305,7 +323,7 @@ class InformationSeekersController extends Controller {
         $fieldworkInformationSeeker->delete();
 
         $emailMsg = (new \Swift_Message('Sorry Cryoconnect could not approve your request'))
-                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryoconnect'])
+                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryo Connect'])
                 ->setTo($fieldworkInformationSeeker->getInformationSeekerEmail())
                 ->setBody(
                 $this->view->render(new \Slim\Http\Response(), 'information-seekers/emails/fieldwork-connect-rejection-email.html.twig', [
@@ -318,73 +336,6 @@ class InformationSeekersController extends Controller {
         $this->mailer->send($emailMsg);
 
         return $response->withStatus(200);
-    }
-
-    /**
-     * Approving fieldwork
-     * @param type $request
-     * @param type $response
-     * @param type $args
-     */
-    public function fieldworkApplicantsAction(Request $request, Response $response, $args) {
-        // your code
-        // to access items in the container... $this->container->get('');
-        $fieldworkLeaderEmail = $request->getQueryParams()['e'];
-        $token = $request->getQueryParams()['t'];
-
-        $fieldworks = FieldworkQuery::create()->findByFieldworkLeaderEmail($fieldworkLeaderEmail);
-
-        foreach ($fieldworks as $oneFieldwork) {
-            if (md5($oneFieldwork->getFieldworkLeaderEmail() . $oneFieldwork->hashCode()) == $token) {
-                $fieldwork = $oneFieldwork;
-                break;
-            }
-        }
-
-        $fieldworkInformationSeekerRequests = FieldworkInformationSeekerRequestQuery::create()
-                ->filterByFieldwork($fieldwork)
-                ->filterByApplicationSent(true)
-                ->find();
-
-        if (!isset($fieldworkInformationSeekerRequests) || empty($fieldworkInformationSeekerRequests)) {
-            $this->container->get('logger')
-                    ->addError('Wrong fieldwork Hash passed to fieldwork applicant page the query params are: ' . json_encode($request->getQueryParams()));
-            $technicalAdminEmail = $this->container->get('settings')['contacts']['technical_admin'];
-            $response->getBody()->write("Something went wrong! Please contact the technical admin at: " . $technicalAdminEmail);
-            $response->withStatus(400);
-            return $response;
-        }
-
-        $this->container->get('logger')
-                ->addInfo('Fieldwork applicant info was accessed by a leader:' . json_encode($fieldwork->toArray()));
-
-        $applicants = array();
-
-        foreach ($fieldworkInformationSeekerRequests->toArray() as $key => $fieldworkInformationSeekerRequest) {
-            $informationSeeker = FieldworkInformationSeekerQuery::create()->findOneById($fieldworkInformationSeekerRequest['FieldworkInformationSeekerId']);
-            $applicants[$key]['Id'] = $informationSeeker->hashCode();
-            $applicants[$key]['Name'] = $informationSeeker->getInformationSeekerName();
-            $applicants[$key]['Email'] = $informationSeeker->getInformationSeekerEmail();
-            $applicants[$key]['Website'] = $informationSeeker->getInformationSeekerWebsite();
-            $applicants[$key]['Reasons'] = $informationSeeker->getInformationSeekerReasons();
-            $applicants[$key]['Affiliation'] = $informationSeeker->getInformationSeekerAffiliation();
-            $applicants[$key]['AffiliationWebsite'] = $informationSeeker->getInformationSeekerAffiliationWebsite();
-            $applicants[$key]['Bid'] = $fieldworkInformationSeekerRequest['Bid'];
-            $applicants[$key]['Accepted'] = $fieldworkInformationSeekerRequest['ApplicationAccepted'];
-        }
-        return $this->view->render(
-                        $response, 'fieldworks/fieldwork-connect-applicants.html.twig', [
-                    'applicants' => $applicants,
-                    'fieldworkId' => $fieldwork->hashCode(),
-                    'fieldwork_name' => $fieldwork->getFieldworkName(),
-                    'fieldwork_application_deadline' => $fieldwork->getFieldworkInformationSeekerDeadline(),
-                    'fieldwork_website' => $fieldwork->getFieldworkProjectWebsite(),
-                    'fieldwork_cost' => $fieldwork->getFieldworkInformationSeekerCost(),
-                    'fieldwork_start_date' => $fieldwork->getFieldworkStartDate(),
-                    'fieldwork_announcement_deadline' => $fieldwork->getFieldworkInformationSeekerAnnouncementDate(),
-                    'fieldwork_bidding_allowed' => $fieldwork->getFieldworkBidingAllowed()
-                        ]
-        );
     }
 
     /**
@@ -465,7 +416,7 @@ class InformationSeekersController extends Controller {
                 ->addInfo('FieldworkInformationSeeker Bid request has been added to fieldworkInformationSeekerRequest=' . $fieldworkInformationSeekerRequest->getFieldworkInformationSeekerId() . '-' . $fieldworkInformationSeekerRequest->getFieldworkId());
 
         $emailMsg = (new \Swift_Message('A new information seeker has applied for ' . $requestedFieldwork->getFieldworkName()))
-                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryoconnect'])
+                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryo Connect'])
                 ->setTo($requestedFieldwork->getFieldworkLeaderEmail())
                 ->setBody(
                 $this->view->render(new \Slim\Http\Response(), 'information-seekers/emails/fieldwork-connect-bid-request-email.html.twig', [
@@ -473,6 +424,7 @@ class InformationSeekersController extends Controller {
                     'leader_email' => $requestedFieldwork->getFieldworkLeaderEmail(),
                     'fieldwork_name' => $requestedFieldwork->getFieldworkName(),
                     'information_seeker_name' => $fieldworkInformationSeeker->getInformationSeekerName(),
+                    'information_seeker_affliation' => $fieldworkInformationSeeker->getInformationSeekerAffiliation(),
                     'token' => md5($requestedFieldwork->getFieldworkLeaderEmail() . $requestedFieldwork->hashCode()),
                     'announcement_day' => $requestedFieldwork->getFieldworkInformationSeekerAnnouncementDate()
                         ]

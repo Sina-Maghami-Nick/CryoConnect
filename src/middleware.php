@@ -106,7 +106,7 @@ $app->add(new TokenAuthentication([
 
 
 //fieldwork connect applicant lust page token authentication
-$fieldworkApplicantsAuthenticator = function(Slim\Http\Request $request, TokenAuthentication $tokenAuth) {
+$fieldworkDashboardAuthenticator = function(Slim\Http\Request $request, TokenAuthentication $tokenAuth) {
     # Search for token on header, parameter, cookie or attribute
     $token = $tokenAuth->findToken($request);
     $fieldworkLeaderEmail = str_replace(' ', '+', $request->getParam('e'));
@@ -127,8 +127,8 @@ $fieldworkApplicantsAuthenticator = function(Slim\Http\Request $request, TokenAu
 
 
 $app->add(new TokenAuthentication([
-    'path' => '/fieldwork/connect/applicants',
-    'authenticator' => $fieldworkApplicantsAuthenticator,
+    'path' => '/fieldwork/connect/dashboard',
+    'authenticator' => $fieldworkDashboardAuthenticator,
     'parameter' => 't',
     'header' => 'Token-Authorization-X'
 ]));
