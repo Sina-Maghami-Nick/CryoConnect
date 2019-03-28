@@ -118,6 +118,13 @@ abstract class FieldworkInformationSeeker implements ActiveRecordInterface
     protected $information_seeker_reasons;
 
     /**
+     * The value for the information_seeker_requested_spots field.
+     *
+     * @var        int
+     */
+    protected $information_seeker_requested_spots;
+
+    /**
      * The value for the approved field.
      *
      * Note: this column has a database default value of: false
@@ -478,6 +485,16 @@ abstract class FieldworkInformationSeeker implements ActiveRecordInterface
     }
 
     /**
+     * Get the [information_seeker_requested_spots] column value.
+     *
+     * @return int
+     */
+    public function getInformationSeekerRequestedSpots()
+    {
+        return $this->information_seeker_requested_spots;
+    }
+
+    /**
      * Get the [approved] column value.
      *
      * @return boolean
@@ -658,6 +675,26 @@ abstract class FieldworkInformationSeeker implements ActiveRecordInterface
     } // setInformationSeekerReasons()
 
     /**
+     * Set the value of [information_seeker_requested_spots] column.
+     *
+     * @param int $v new value
+     * @return $this|\CryoConnectDB\FieldworkInformationSeeker The current object (for fluent API support)
+     */
+    public function setInformationSeekerRequestedSpots($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->information_seeker_requested_spots !== $v) {
+            $this->information_seeker_requested_spots = $v;
+            $this->modifiedColumns[FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_REQUESTED_SPOTS] = true;
+        }
+
+        return $this;
+    } // setInformationSeekerRequestedSpots()
+
+    /**
      * Sets the value of the [approved] column.
      * Non-boolean arguments are converted using the following rules:
      *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
@@ -766,10 +803,13 @@ abstract class FieldworkInformationSeeker implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : FieldworkInformationSeekerTableMap::translateFieldName('InformationSeekerReasons', TableMap::TYPE_PHPNAME, $indexType)];
             $this->information_seeker_reasons = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : FieldworkInformationSeekerTableMap::translateFieldName('Approved', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : FieldworkInformationSeekerTableMap::translateFieldName('InformationSeekerRequestedSpots', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->information_seeker_requested_spots = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : FieldworkInformationSeekerTableMap::translateFieldName('Approved', TableMap::TYPE_PHPNAME, $indexType)];
             $this->approved = (null !== $col) ? (boolean) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : FieldworkInformationSeekerTableMap::translateFieldName('Timestamp', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : FieldworkInformationSeekerTableMap::translateFieldName('Timestamp', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
@@ -782,7 +822,7 @@ abstract class FieldworkInformationSeeker implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 9; // 9 = FieldworkInformationSeekerTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 10; // 10 = FieldworkInformationSeekerTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\CryoConnectDB\\FieldworkInformationSeeker'), 0, $e);
@@ -1053,6 +1093,9 @@ abstract class FieldworkInformationSeeker implements ActiveRecordInterface
         if ($this->isColumnModified(FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_REASONS)) {
             $modifiedColumns[':p' . $index++]  = 'information_seeker_reasons';
         }
+        if ($this->isColumnModified(FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_REQUESTED_SPOTS)) {
+            $modifiedColumns[':p' . $index++]  = 'information_seeker_requested_spots';
+        }
         if ($this->isColumnModified(FieldworkInformationSeekerTableMap::COL_APPROVED)) {
             $modifiedColumns[':p' . $index++]  = 'approved';
         }
@@ -1090,6 +1133,9 @@ abstract class FieldworkInformationSeeker implements ActiveRecordInterface
                         break;
                     case 'information_seeker_reasons':
                         $stmt->bindValue($identifier, $this->information_seeker_reasons, PDO::PARAM_STR);
+                        break;
+                    case 'information_seeker_requested_spots':
+                        $stmt->bindValue($identifier, $this->information_seeker_requested_spots, PDO::PARAM_INT);
                         break;
                     case 'approved':
                         $stmt->bindValue($identifier, (int) $this->approved, PDO::PARAM_INT);
@@ -1181,9 +1227,12 @@ abstract class FieldworkInformationSeeker implements ActiveRecordInterface
                 return $this->getInformationSeekerReasons();
                 break;
             case 7:
-                return $this->getApproved();
+                return $this->getInformationSeekerRequestedSpots();
                 break;
             case 8:
+                return $this->getApproved();
+                break;
+            case 9:
                 return $this->getTimestamp();
                 break;
             default:
@@ -1223,11 +1272,12 @@ abstract class FieldworkInformationSeeker implements ActiveRecordInterface
             $keys[4] => $this->getInformationSeekerEmail(),
             $keys[5] => $this->getInformationSeekerAffiliationWebsite(),
             $keys[6] => $this->getInformationSeekerReasons(),
-            $keys[7] => $this->getApproved(),
-            $keys[8] => $this->getTimestamp(),
+            $keys[7] => $this->getInformationSeekerRequestedSpots(),
+            $keys[8] => $this->getApproved(),
+            $keys[9] => $this->getTimestamp(),
         );
-        if ($result[$keys[8]] instanceof \DateTimeInterface) {
-            $result[$keys[8]] = $result[$keys[8]]->format('c');
+        if ($result[$keys[9]] instanceof \DateTimeInterface) {
+            $result[$keys[9]] = $result[$keys[9]]->format('c');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -1307,9 +1357,12 @@ abstract class FieldworkInformationSeeker implements ActiveRecordInterface
                 $this->setInformationSeekerReasons($value);
                 break;
             case 7:
-                $this->setApproved($value);
+                $this->setInformationSeekerRequestedSpots($value);
                 break;
             case 8:
+                $this->setApproved($value);
+                break;
+            case 9:
                 $this->setTimestamp($value);
                 break;
         } // switch()
@@ -1360,10 +1413,13 @@ abstract class FieldworkInformationSeeker implements ActiveRecordInterface
             $this->setInformationSeekerReasons($arr[$keys[6]]);
         }
         if (array_key_exists($keys[7], $arr)) {
-            $this->setApproved($arr[$keys[7]]);
+            $this->setInformationSeekerRequestedSpots($arr[$keys[7]]);
         }
         if (array_key_exists($keys[8], $arr)) {
-            $this->setTimestamp($arr[$keys[8]]);
+            $this->setApproved($arr[$keys[8]]);
+        }
+        if (array_key_exists($keys[9], $arr)) {
+            $this->setTimestamp($arr[$keys[9]]);
         }
     }
 
@@ -1426,6 +1482,9 @@ abstract class FieldworkInformationSeeker implements ActiveRecordInterface
         }
         if ($this->isColumnModified(FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_REASONS)) {
             $criteria->add(FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_REASONS, $this->information_seeker_reasons);
+        }
+        if ($this->isColumnModified(FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_REQUESTED_SPOTS)) {
+            $criteria->add(FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_REQUESTED_SPOTS, $this->information_seeker_requested_spots);
         }
         if ($this->isColumnModified(FieldworkInformationSeekerTableMap::COL_APPROVED)) {
             $criteria->add(FieldworkInformationSeekerTableMap::COL_APPROVED, $this->approved);
@@ -1525,6 +1584,7 @@ abstract class FieldworkInformationSeeker implements ActiveRecordInterface
         $copyObj->setInformationSeekerEmail($this->getInformationSeekerEmail());
         $copyObj->setInformationSeekerAffiliationWebsite($this->getInformationSeekerAffiliationWebsite());
         $copyObj->setInformationSeekerReasons($this->getInformationSeekerReasons());
+        $copyObj->setInformationSeekerRequestedSpots($this->getInformationSeekerRequestedSpots());
         $copyObj->setApproved($this->getApproved());
         $copyObj->setTimestamp($this->getTimestamp());
 
@@ -2096,6 +2156,7 @@ abstract class FieldworkInformationSeeker implements ActiveRecordInterface
         $this->information_seeker_email = null;
         $this->information_seeker_affiliation_website = null;
         $this->information_seeker_reasons = null;
+        $this->information_seeker_requested_spots = null;
         $this->approved = null;
         $this->timestamp = null;
         $this->alreadyInSave = false;

@@ -333,6 +333,7 @@ CREATE TABLE `fieldwork_information_seeker`
     `information_seeker_email` TEXT NOT NULL,
     `information_seeker_affiliation_website` TEXT NOT NULL,
     `information_seeker_reasons` TEXT,
+    `information_seeker_requested_spots` int(5) unsigned,
     `approved` TINYINT(1) DEFAULT 0 NOT NULL,
     `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)

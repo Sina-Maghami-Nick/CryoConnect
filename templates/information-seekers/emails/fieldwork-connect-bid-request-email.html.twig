@@ -1,6 +1,6 @@
 <p>Dear {{_context.leader_name | raw}},</p>
 <p>We received a  request from an information seeker ({{information_seeker_name | raw}} from {{information_seeker_affliation | raw}}) to join your {{fieldwork_name | raw}} expedition.<br>
-    You have {{ date( _context.announcement_day|date ).diff( date() ).format('%a') }} X day(s) to respond to this and other requests. Please use this link to approve/reject the requests:
+    You have {{ date( _context.announcement_day|date ).diff( date() ).format('%a') }} day(s) to respond to this and other requests. Please use this link to approve/reject the requests:
     <br>
 <a href="https://cryoconnect.net{{path_for('fieldwork_dashboard',{},{'e': _context.leader_email  , 't': _context.token}) }}">https://cryoconnect.net{{ path_for('fieldwork_dashboard',{} , {'e': _context.leader_email , 't': _context.token}) }}</a></p>
 

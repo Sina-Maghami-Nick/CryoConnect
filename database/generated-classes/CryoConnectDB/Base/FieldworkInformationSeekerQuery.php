@@ -27,6 +27,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildFieldworkInformationSeekerQuery orderByInformationSeekerEmail($order = Criteria::ASC) Order by the information_seeker_email column
  * @method     ChildFieldworkInformationSeekerQuery orderByInformationSeekerAffiliationWebsite($order = Criteria::ASC) Order by the information_seeker_affiliation_website column
  * @method     ChildFieldworkInformationSeekerQuery orderByInformationSeekerReasons($order = Criteria::ASC) Order by the information_seeker_reasons column
+ * @method     ChildFieldworkInformationSeekerQuery orderByInformationSeekerRequestedSpots($order = Criteria::ASC) Order by the information_seeker_requested_spots column
  * @method     ChildFieldworkInformationSeekerQuery orderByApproved($order = Criteria::ASC) Order by the approved column
  * @method     ChildFieldworkInformationSeekerQuery orderByTimestamp($order = Criteria::ASC) Order by the timestamp column
  *
@@ -37,6 +38,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildFieldworkInformationSeekerQuery groupByInformationSeekerEmail() Group by the information_seeker_email column
  * @method     ChildFieldworkInformationSeekerQuery groupByInformationSeekerAffiliationWebsite() Group by the information_seeker_affiliation_website column
  * @method     ChildFieldworkInformationSeekerQuery groupByInformationSeekerReasons() Group by the information_seeker_reasons column
+ * @method     ChildFieldworkInformationSeekerQuery groupByInformationSeekerRequestedSpots() Group by the information_seeker_requested_spots column
  * @method     ChildFieldworkInformationSeekerQuery groupByApproved() Group by the approved column
  * @method     ChildFieldworkInformationSeekerQuery groupByTimestamp() Group by the timestamp column
  *
@@ -70,6 +72,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildFieldworkInformationSeeker findOneByInformationSeekerEmail(string $information_seeker_email) Return the first ChildFieldworkInformationSeeker filtered by the information_seeker_email column
  * @method     ChildFieldworkInformationSeeker findOneByInformationSeekerAffiliationWebsite(string $information_seeker_affiliation_website) Return the first ChildFieldworkInformationSeeker filtered by the information_seeker_affiliation_website column
  * @method     ChildFieldworkInformationSeeker findOneByInformationSeekerReasons(string $information_seeker_reasons) Return the first ChildFieldworkInformationSeeker filtered by the information_seeker_reasons column
+ * @method     ChildFieldworkInformationSeeker findOneByInformationSeekerRequestedSpots(int $information_seeker_requested_spots) Return the first ChildFieldworkInformationSeeker filtered by the information_seeker_requested_spots column
  * @method     ChildFieldworkInformationSeeker findOneByApproved(boolean $approved) Return the first ChildFieldworkInformationSeeker filtered by the approved column
  * @method     ChildFieldworkInformationSeeker findOneByTimestamp(string $timestamp) Return the first ChildFieldworkInformationSeeker filtered by the timestamp column *
 
@@ -83,6 +86,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildFieldworkInformationSeeker requireOneByInformationSeekerEmail(string $information_seeker_email) Return the first ChildFieldworkInformationSeeker filtered by the information_seeker_email column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildFieldworkInformationSeeker requireOneByInformationSeekerAffiliationWebsite(string $information_seeker_affiliation_website) Return the first ChildFieldworkInformationSeeker filtered by the information_seeker_affiliation_website column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildFieldworkInformationSeeker requireOneByInformationSeekerReasons(string $information_seeker_reasons) Return the first ChildFieldworkInformationSeeker filtered by the information_seeker_reasons column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildFieldworkInformationSeeker requireOneByInformationSeekerRequestedSpots(int $information_seeker_requested_spots) Return the first ChildFieldworkInformationSeeker filtered by the information_seeker_requested_spots column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildFieldworkInformationSeeker requireOneByApproved(boolean $approved) Return the first ChildFieldworkInformationSeeker filtered by the approved column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildFieldworkInformationSeeker requireOneByTimestamp(string $timestamp) Return the first ChildFieldworkInformationSeeker filtered by the timestamp column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
@@ -94,6 +98,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildFieldworkInformationSeeker[]|ObjectCollection findByInformationSeekerEmail(string $information_seeker_email) Return ChildFieldworkInformationSeeker objects filtered by the information_seeker_email column
  * @method     ChildFieldworkInformationSeeker[]|ObjectCollection findByInformationSeekerAffiliationWebsite(string $information_seeker_affiliation_website) Return ChildFieldworkInformationSeeker objects filtered by the information_seeker_affiliation_website column
  * @method     ChildFieldworkInformationSeeker[]|ObjectCollection findByInformationSeekerReasons(string $information_seeker_reasons) Return ChildFieldworkInformationSeeker objects filtered by the information_seeker_reasons column
+ * @method     ChildFieldworkInformationSeeker[]|ObjectCollection findByInformationSeekerRequestedSpots(int $information_seeker_requested_spots) Return ChildFieldworkInformationSeeker objects filtered by the information_seeker_requested_spots column
  * @method     ChildFieldworkInformationSeeker[]|ObjectCollection findByApproved(boolean $approved) Return ChildFieldworkInformationSeeker objects filtered by the approved column
  * @method     ChildFieldworkInformationSeeker[]|ObjectCollection findByTimestamp(string $timestamp) Return ChildFieldworkInformationSeeker objects filtered by the timestamp column
  * @method     ChildFieldworkInformationSeeker[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
@@ -194,7 +199,7 @@ abstract class FieldworkInformationSeekerQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, information_seeker_name, information_seeker_affiliation, information_seeker_website, information_seeker_email, information_seeker_affiliation_website, information_seeker_reasons, approved, timestamp FROM fieldwork_information_seeker WHERE id = :p0';
+        $sql = 'SELECT id, information_seeker_name, information_seeker_affiliation, information_seeker_website, information_seeker_email, information_seeker_affiliation_website, information_seeker_reasons, information_seeker_requested_spots, approved, timestamp FROM fieldwork_information_seeker WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -473,6 +478,47 @@ abstract class FieldworkInformationSeekerQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_REASONS, $informationSeekerReasons, $comparison);
+    }
+
+    /**
+     * Filter the query on the information_seeker_requested_spots column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByInformationSeekerRequestedSpots(1234); // WHERE information_seeker_requested_spots = 1234
+     * $query->filterByInformationSeekerRequestedSpots(array(12, 34)); // WHERE information_seeker_requested_spots IN (12, 34)
+     * $query->filterByInformationSeekerRequestedSpots(array('min' => 12)); // WHERE information_seeker_requested_spots > 12
+     * </code>
+     *
+     * @param     mixed $informationSeekerRequestedSpots The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildFieldworkInformationSeekerQuery The current query, for fluid interface
+     */
+    public function filterByInformationSeekerRequestedSpots($informationSeekerRequestedSpots = null, $comparison = null)
+    {
+        if (is_array($informationSeekerRequestedSpots)) {
+            $useMinMax = false;
+            if (isset($informationSeekerRequestedSpots['min'])) {
+                $this->addUsingAlias(FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_REQUESTED_SPOTS, $informationSeekerRequestedSpots['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($informationSeekerRequestedSpots['max'])) {
+                $this->addUsingAlias(FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_REQUESTED_SPOTS, $informationSeekerRequestedSpots['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_REQUESTED_SPOTS, $informationSeekerRequestedSpots, $comparison);
     }
 
     /**

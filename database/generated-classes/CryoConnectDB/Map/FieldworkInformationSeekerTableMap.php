@@ -59,7 +59,7 @@ class FieldworkInformationSeekerTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 9;
+    const NUM_COLUMNS = 10;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class FieldworkInformationSeekerTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 9;
+    const NUM_HYDRATE_COLUMNS = 10;
 
     /**
      * the column name for the id field
@@ -107,6 +107,11 @@ class FieldworkInformationSeekerTableMap extends TableMap
     const COL_INFORMATION_SEEKER_REASONS = 'fieldwork_information_seeker.information_seeker_reasons';
 
     /**
+     * the column name for the information_seeker_requested_spots field
+     */
+    const COL_INFORMATION_SEEKER_REQUESTED_SPOTS = 'fieldwork_information_seeker.information_seeker_requested_spots';
+
+    /**
      * the column name for the approved field
      */
     const COL_APPROVED = 'fieldwork_information_seeker.approved';
@@ -128,11 +133,11 @@ class FieldworkInformationSeekerTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'InformationSeekerName', 'InformationSeekerAffiliation', 'InformationSeekerWebsite', 'InformationSeekerEmail', 'InformationSeekerAffiliationWebsite', 'InformationSeekerReasons', 'Approved', 'Timestamp', ),
-        self::TYPE_CAMELNAME     => array('id', 'informationSeekerName', 'informationSeekerAffiliation', 'informationSeekerWebsite', 'informationSeekerEmail', 'informationSeekerAffiliationWebsite', 'informationSeekerReasons', 'approved', 'timestamp', ),
-        self::TYPE_COLNAME       => array(FieldworkInformationSeekerTableMap::COL_ID, FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_NAME, FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_AFFILIATION, FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_WEBSITE, FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_EMAIL, FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_AFFILIATION_WEBSITE, FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_REASONS, FieldworkInformationSeekerTableMap::COL_APPROVED, FieldworkInformationSeekerTableMap::COL_TIMESTAMP, ),
-        self::TYPE_FIELDNAME     => array('id', 'information_seeker_name', 'information_seeker_affiliation', 'information_seeker_website', 'information_seeker_email', 'information_seeker_affiliation_website', 'information_seeker_reasons', 'approved', 'timestamp', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, )
+        self::TYPE_PHPNAME       => array('Id', 'InformationSeekerName', 'InformationSeekerAffiliation', 'InformationSeekerWebsite', 'InformationSeekerEmail', 'InformationSeekerAffiliationWebsite', 'InformationSeekerReasons', 'InformationSeekerRequestedSpots', 'Approved', 'Timestamp', ),
+        self::TYPE_CAMELNAME     => array('id', 'informationSeekerName', 'informationSeekerAffiliation', 'informationSeekerWebsite', 'informationSeekerEmail', 'informationSeekerAffiliationWebsite', 'informationSeekerReasons', 'informationSeekerRequestedSpots', 'approved', 'timestamp', ),
+        self::TYPE_COLNAME       => array(FieldworkInformationSeekerTableMap::COL_ID, FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_NAME, FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_AFFILIATION, FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_WEBSITE, FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_EMAIL, FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_AFFILIATION_WEBSITE, FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_REASONS, FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_REQUESTED_SPOTS, FieldworkInformationSeekerTableMap::COL_APPROVED, FieldworkInformationSeekerTableMap::COL_TIMESTAMP, ),
+        self::TYPE_FIELDNAME     => array('id', 'information_seeker_name', 'information_seeker_affiliation', 'information_seeker_website', 'information_seeker_email', 'information_seeker_affiliation_website', 'information_seeker_reasons', 'information_seeker_requested_spots', 'approved', 'timestamp', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
     );
 
     /**
@@ -142,11 +147,11 @@ class FieldworkInformationSeekerTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'InformationSeekerName' => 1, 'InformationSeekerAffiliation' => 2, 'InformationSeekerWebsite' => 3, 'InformationSeekerEmail' => 4, 'InformationSeekerAffiliationWebsite' => 5, 'InformationSeekerReasons' => 6, 'Approved' => 7, 'Timestamp' => 8, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'informationSeekerName' => 1, 'informationSeekerAffiliation' => 2, 'informationSeekerWebsite' => 3, 'informationSeekerEmail' => 4, 'informationSeekerAffiliationWebsite' => 5, 'informationSeekerReasons' => 6, 'approved' => 7, 'timestamp' => 8, ),
-        self::TYPE_COLNAME       => array(FieldworkInformationSeekerTableMap::COL_ID => 0, FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_NAME => 1, FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_AFFILIATION => 2, FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_WEBSITE => 3, FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_EMAIL => 4, FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_AFFILIATION_WEBSITE => 5, FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_REASONS => 6, FieldworkInformationSeekerTableMap::COL_APPROVED => 7, FieldworkInformationSeekerTableMap::COL_TIMESTAMP => 8, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'information_seeker_name' => 1, 'information_seeker_affiliation' => 2, 'information_seeker_website' => 3, 'information_seeker_email' => 4, 'information_seeker_affiliation_website' => 5, 'information_seeker_reasons' => 6, 'approved' => 7, 'timestamp' => 8, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'InformationSeekerName' => 1, 'InformationSeekerAffiliation' => 2, 'InformationSeekerWebsite' => 3, 'InformationSeekerEmail' => 4, 'InformationSeekerAffiliationWebsite' => 5, 'InformationSeekerReasons' => 6, 'InformationSeekerRequestedSpots' => 7, 'Approved' => 8, 'Timestamp' => 9, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'informationSeekerName' => 1, 'informationSeekerAffiliation' => 2, 'informationSeekerWebsite' => 3, 'informationSeekerEmail' => 4, 'informationSeekerAffiliationWebsite' => 5, 'informationSeekerReasons' => 6, 'informationSeekerRequestedSpots' => 7, 'approved' => 8, 'timestamp' => 9, ),
+        self::TYPE_COLNAME       => array(FieldworkInformationSeekerTableMap::COL_ID => 0, FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_NAME => 1, FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_AFFILIATION => 2, FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_WEBSITE => 3, FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_EMAIL => 4, FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_AFFILIATION_WEBSITE => 5, FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_REASONS => 6, FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_REQUESTED_SPOTS => 7, FieldworkInformationSeekerTableMap::COL_APPROVED => 8, FieldworkInformationSeekerTableMap::COL_TIMESTAMP => 9, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'information_seeker_name' => 1, 'information_seeker_affiliation' => 2, 'information_seeker_website' => 3, 'information_seeker_email' => 4, 'information_seeker_affiliation_website' => 5, 'information_seeker_reasons' => 6, 'information_seeker_requested_spots' => 7, 'approved' => 8, 'timestamp' => 9, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
     );
 
     /**
@@ -173,6 +178,7 @@ class FieldworkInformationSeekerTableMap extends TableMap
         $this->addColumn('information_seeker_email', 'InformationSeekerEmail', 'LONGVARCHAR', true, null, null);
         $this->addColumn('information_seeker_affiliation_website', 'InformationSeekerAffiliationWebsite', 'LONGVARCHAR', true, null, null);
         $this->addColumn('information_seeker_reasons', 'InformationSeekerReasons', 'LONGVARCHAR', false, null, null);
+        $this->addColumn('information_seeker_requested_spots', 'InformationSeekerRequestedSpots', 'INTEGER', false, null, null);
         $this->addColumn('approved', 'Approved', 'BOOLEAN', true, 1, false);
         $this->addColumn('timestamp', 'Timestamp', 'TIMESTAMP', true, null, 'CURRENT_TIMESTAMP');
     } // initialize()
@@ -349,6 +355,7 @@ class FieldworkInformationSeekerTableMap extends TableMap
             $criteria->addSelectColumn(FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_EMAIL);
             $criteria->addSelectColumn(FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_AFFILIATION_WEBSITE);
             $criteria->addSelectColumn(FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_REASONS);
+            $criteria->addSelectColumn(FieldworkInformationSeekerTableMap::COL_INFORMATION_SEEKER_REQUESTED_SPOTS);
             $criteria->addSelectColumn(FieldworkInformationSeekerTableMap::COL_APPROVED);
             $criteria->addSelectColumn(FieldworkInformationSeekerTableMap::COL_TIMESTAMP);
         } else {
@@ -359,6 +366,7 @@ class FieldworkInformationSeekerTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.information_seeker_email');
             $criteria->addSelectColumn($alias . '.information_seeker_affiliation_website');
             $criteria->addSelectColumn($alias . '.information_seeker_reasons');
+            $criteria->addSelectColumn($alias . '.information_seeker_requested_spots');
             $criteria->addSelectColumn($alias . '.approved');
             $criteria->addSelectColumn($alias . '.timestamp');
         }

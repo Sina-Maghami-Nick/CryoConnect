@@ -310,6 +310,7 @@ class FieldworkController extends Controller {
                 ->addInfo('Fieldwork applicant info was accessed by a leader:' . json_encode($fieldwork->toArray()));
 
         $applicants = array();
+        $acceptedApplicantCount = 0;
 
         if (!empty($fieldworkInformationSeekerRequests)) {
             foreach ($fieldworkInformationSeekerRequests->toArray() as $key => $fieldworkInformationSeekerRequest) {
@@ -323,12 +324,18 @@ class FieldworkController extends Controller {
                 $applicants[$key]['AffiliationWebsite'] = $informationSeeker->getInformationSeekerAffiliationWebsite();
                 $applicants[$key]['Bid'] = $fieldworkInformationSeekerRequest['Bid'];
                 $applicants[$key]['Accepted'] = $fieldworkInformationSeekerRequest['ApplicationAccepted'];
+                $applicants[$key]['RequestedSpots'] = $informationSeeker->getInformationSeekerRequestedSpots();
+
+                if ($applicants[$key]['Accepted']) {
+                    $acceptedApplicantCount += $applicants[$key]['RequestedSpots'];
+                }
             }
         }
 
         return $this->view->render(
                         $response, 'fieldworks/fieldwork-connect-applicants.html.twig', [
                     'applicants' => $applicants,
+                    'accepted_applicant_count' => $acceptedApplicantCount,
                     'fieldworkId' => $fieldwork->hashCode(),
                     'fieldwork_leader_email' => $fieldwork->getFieldworkLeaderEmail(),
                     'fieldwork_name' => $fieldwork->getFieldworkName(),

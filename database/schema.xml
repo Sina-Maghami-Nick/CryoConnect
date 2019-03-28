@@ -157,6 +157,7 @@
         <column name="information_seeker_email" phpName="InformationSeekerEmail" type="LONGVARCHAR" required="true"/>
         <column name="information_seeker_affiliation_website" phpName="InformationSeekerAffiliationWebsite" type="LONGVARCHAR" required="true"/>
         <column name="information_seeker_reasons" phpName="InformationSeekerReasons" type="LONGVARCHAR"/>
+        <column name="information_seeker_requested_spots" phpName="InformationSeekerRequestedSpots" type="INTEGER" sqlType="int(5) unsigned"/>
         <column name="approved" phpName="Approved" type="BOOLEAN" size="1" required="true" defaultValue="false"/>
         <column name="timestamp" phpName="Timestamp" type="TIMESTAMP" required="true" defaultExpr="CURRENT_TIMESTAMP"/>
     </table>

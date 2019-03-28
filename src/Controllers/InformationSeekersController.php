@@ -7,6 +7,7 @@ use CryoConnectDB\FieldworkInformationSeeker;
 use CryoConnectDB\FieldworkInformationSeekerQuery;
 use CryoConnectDB\CryosphereWhereQuery;
 use CryoConnectDB\FieldworkInformationSeekerRequestQuery;
+use CryoConnectDB\FieldworkInformationSeekerRequest;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -53,12 +54,15 @@ class InformationSeekersController extends Controller {
         $informationSeekerWebsite = filter_var($data['information_seeker_website'], FILTER_SANITIZE_URL);
         $informationSeekerAffiliationWebsite = filter_var($data['information_seeker_affiliation_website'], FILTER_SANITIZE_URL);
         $informationSeekerReasons = filter_var($data['information_seeker_reasons'], FILTER_SANITIZE_STRING);
+        $informationSeekerRequestedSpots = filter_var($data['information_seeker_requested_spots'], FILTER_SANITIZE_NUMBER_INT);
+        
 
         //rest of validations
         if (
                 empty($informationSeekerEmailAddress) ||
                 empty($informationSeekerName) ||
                 empty($requestedFieldworkIds) ||
+                empty($informationSeekerRequestedSpots) ||
                 empty($informationSeekerAffiliationName) ||
                 empty($informationSeekerWebsite) ||
                 empty($informationSeekerAffiliationWebsite) ||
@@ -80,7 +84,8 @@ class InformationSeekersController extends Controller {
                 ->setInformationSeekerWebsite($informationSeekerWebsite)
                 ->setInformationSeekerAffiliation($informationSeekerAffiliationName)
                 ->setInformationSeekerAffiliationWebsite($informationSeekerAffiliationWebsite)
-                ->setInformationSeekerReasons($informationSeekerReasons);
+                ->setInformationSeekerReasons($informationSeekerReasons)
+                ->setInformationSeekerRequestedSpots($informationSeekerRequestedSpots);
 
         foreach ($requestedFieldworkIds as $requestedFieldworkId) {
             $fieldwork = FieldworkQuery::create()->findOneById($requestedFieldworkId);
@@ -424,6 +429,7 @@ class InformationSeekersController extends Controller {
                     'leader_email' => $requestedFieldwork->getFieldworkLeaderEmail(),
                     'fieldwork_name' => $requestedFieldwork->getFieldworkName(),
                     'information_seeker_name' => $fieldworkInformationSeeker->getInformationSeekerName(),
+                    'requested_spots' => $fieldworkInformationSeeker->getInformationSeekerRequestedSpots(),
                     'information_seeker_affliation' => $fieldworkInformationSeeker->getInformationSeekerAffiliation(),
                     'token' => md5($requestedFieldwork->getFieldworkLeaderEmail() . $requestedFieldwork->hashCode()),
                     'announcement_day' => $requestedFieldwork->getFieldworkInformationSeekerAnnouncementDate()
