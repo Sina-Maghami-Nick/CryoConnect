@@ -236,7 +236,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flipclock/0.7.8/flipclock.js"></script>
 
 <script>
-    console.log({{ _context | json_encode | raw }});
+    {#console.log({{ _context | json_encode | raw }});#}
     $(document).ready(function () {
 
         var date = new Date('{{_context.fieldwork_announcement_deadline | date}}'); //Month Days, Year HH:MM:SS
