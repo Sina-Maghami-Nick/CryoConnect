@@ -47,12 +47,12 @@
                                             </div>
                                         </div>
                                     {% endif %}#}
-                                    <p>
+                                    {#<p>
                                         <label>
                                             <input type="checkbox" class="filled-in" required />
                                             <span><font color="black">I agree to the terms and conditions<font color="red">*</font></font></span>
                                         </label>
-                                    </p>
+                                    </p>#}
                                     <p class="center-align">
                                         <button class="btn waves-effect waves-light green pulse" type="submit" name="action">Apply
                                             <i class="material-icons right">pan_tool</i>
@@ -103,7 +103,7 @@
                             location.reload();
                         })
                         .fail(function (errMsg) {
-                            alert('Some problem occurred, please try again and make sure your entries are correct. If problem consists please contact the IT support!');
+                            alert('Apologies, an error occurred. Please try again or contact info@cryoconnect.net.');
                             $('.submitBtn').removeAttr("disabled");
                             $('.modal-body').css('opacity', '');
                         });

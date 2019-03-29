@@ -1,8 +1,9 @@
 <p>Dear {{_context.fieldwork_leader_name | raw}},</p>
-<p>We have carefully studied the information you provided, but we are sorry to inform you that we can’t approve your expedition listing at Cryo Connect for now. The reason provided by our moderator team is:</p>
+<p>We have carefully studied the information you provided, but we are sorry to inform you that we can’t approve your expedition listing at Cryo Connect for now. The reason provided by our moderator team is:<br>
 {% if _context.explanation != '' %}
-    <p>{{_context.explanation | raw}}</p>
+    {{_context.explanation | raw}}
 {% endif %}
+</p>
 <p>
     Best,
     <br>

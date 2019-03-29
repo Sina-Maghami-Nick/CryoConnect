@@ -81,6 +81,12 @@ $app->group('/fieldwork', function () {
     
     //route to fieldwork edit
     $this->put('/connect/dashboard/edit', FieldworkController::class . ':fieldworkEditAction')->setName('fieldwork_edit');
+    
+    //route to fieldwork applicant accept
+    $this->post('/connect/dashboard/applicant/accept', FieldworkController::class . ':fieldworkApplicantAcceptAction')->setName('fieldwork_applicant_accept');
+    
+    //route to fieldwork applicant reject
+    $this->post('/connect/dashboard/applicant/reject', FieldworkController::class . ':fieldworkApplicantRejectAction')->setName('fieldwork_applicant_reject');
 });
 
 //Information Seeker Routes

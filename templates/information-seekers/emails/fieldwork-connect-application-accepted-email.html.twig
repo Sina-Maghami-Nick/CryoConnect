@@ -1,10 +1,7 @@
 <p>Dear {{_context.fieldwork_information_seeker_name | raw}},</p>
-<p>We have carefully studied the information you provided, but we are sorry to inform you that we can’t provide you with information on expeditions listed at Cryo Connect. </p>
-{% if _context.explanation != '' %}
-    <p>
-        The reason provided by our moderator team is:&nbsp;
-        {{_context.explanation | raw}}
-    </p>
-{% endif %}
+<p>
+ {{_context.fieldwork_leader_name | raw}}, the leader of the {{_context.fieldwork_name | raw}} expedition, has approved your application to join the field campaign. Please contact her/him directly at (<a href="mailto:{{_context.fieldwork_leader_email | raw}}">{{_context.fieldwork_leader_email | raw}}</a>) to learn all you need to know about the expedition. We wish you an enjoyable and insightful experience.
+</p>
+
 <p>Best,<br>
 Cryo Connect</p>

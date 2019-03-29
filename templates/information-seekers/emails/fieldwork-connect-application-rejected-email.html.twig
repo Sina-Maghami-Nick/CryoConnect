@@ -1,10 +1,6 @@
 <p>Dear {{_context.fieldwork_information_seeker_name | raw}},</p>
-<p>We have carefully studied the information you provided, but we are sorry to inform you that we can’t provide you with information on expeditions listed at Cryo Connect. </p>
-{% if _context.explanation != '' %}
-    <p>
-        The reason provided by our moderator team is:&nbsp;
-        {{_context.explanation | raw}}
-    </p>
-{% endif %}
+<p>We regret to inform you that you did not get selected to join {{_context.fieldwork_name | raw}} expedition. Either too many information seekers showed an interest in the expedition, or the expedition plans changed. Please feel free to look for other scientific expeditions to the cryosphere that may be of interest to you at https://CryoConnect.net.
+</p>
+
 <p>Best,<br>
 Cryo Connect</p>

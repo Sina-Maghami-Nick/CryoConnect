@@ -1,6 +1,6 @@
 <p>Dear moderator,</p>
 <p>
-    {{_context.fieldwork_information_seeker.InformationSeekerName | raw}} (<a href="mailto:{{_context.fieldwork_information_seeker.InformationSeekerEmail}}">{{_context.fieldwork_information_seeker.InformationSeekerEmail}}</a>) requested to join an expedition using the Cryo Connect website. Please approve the new listing using the following link:
+    {{_context.fieldwork_information_seeker.InformationSeekerName | raw}} (<a href="mailto:{{_context.fieldwork_information_seeker.InformationSeekerEmail}}">{{_context.fieldwork_information_seeker.InformationSeekerEmail}}</a>) requested to recieve information about expeditions using the Cryo Connect website. Please approve the new listing using the following link:
     <br>
     <a href="https://cryoconnect.net{{path_for('fieldwork_connect_approval',{},{'id': _context.fieldwork_information_seeker.Id  , 't': _context.token}) }}">https://cryoconnect.net{{ path_for('fieldwork_connect_approval',{} , {'id': _context.fieldwork_information_seeker.Id , 't': _context.token}) }}</a></p>
 

@@ -12,12 +12,12 @@
             <div class="col s12 m12">
                 <div class="card cyan lighten-2">
                     <div class="card-content">
-                        
+
                         <span class="card-title">Expedition: {{_context.fieldwork_name | raw}}</span>
                         <br>
                         <div class="row">
                             <div class="col s3">
-                                <br><br><strong>Please select the information seeker(s) of your choice within:</strong>
+                                <br><strong>Please select the information seeker(s) of your choice within:</strong>
                             </div>
                             <div class="col s9"><p></p>
                                 <div class="announcement-day-countdown"></div>
@@ -52,44 +52,64 @@
         <div class="row">
             <div class="col s12 m12">
                 {% for applicant in _context.applicants %}
-                    <form class="application-submit col s12" id="{{applicant.Id}}">
-                        <div class="row">
-                            <div class="card purple lighten-5 hoverable">
-                                <div class="card-content black-text">
-                                    <span class="card-title">Applicant name: {{applicant.Name | raw}}</span>
-                                    <p>Website: <a href source="{{applicant.Website}}">{{applicant.Website}}</a></p>
-                                    <p>Affiliation: {{applicant.Affiliation | raw}}</p>
-                                    <p>Affiliation website: <a href source="{{applicant.AffiliationWebsite}}">{{applicant.AffiliationWebsite}}</a></p>
-                                    <p>Application reason: {{applicant.Reasons}}</p>
-                                    <p>Email: {{applicant.Email}}</p>
-                                    <p><strong>Requested spots: {{applicant.RequestedSpots}}</strong></p>
-                                    
-                                </div>
-                                <div class="card-action">
-                                    {% if applicant.Accepted == false %}
-                                        <label>
-                                            <input type="checkbox" class="filled-in" required />
-                                            <span><font color="black">I agree to the terms and conditions<font color="red">*</font></font></span>
-                                        </label>
+                    <div class="row">
+                        <div class="card purple lighten-5 hoverable">
+                            <div class="card-content black-text">
+                                <span class="card-title">Applicant name: {{applicant.Name | raw}}</span>
+                                <p>Website: <a href source="{{applicant.Website}}">{{applicant.Website}}</a></p>
+                                <p>Affiliation: {{applicant.Affiliation | raw}}</p>
+                                <p>Affiliation website: <a href source="{{applicant.AffiliationWebsite}}">{{applicant.AffiliationWebsite}}</a></p>
+                                <p>Application reason: {{applicant.Reasons}}</p>
+                                <p>Email: {{applicant.Email}}</p>
+                                <p><strong>Requested spots: {{applicant.RequestedSpots}}</strong></p>
+
+                            </div>
+                            <div class="card-action">
+                                {% if applicant.Accepted == false %}
+                                    {#<label>
+                                        <input type="checkbox" class="filled-in" required />
+                                        <span><font color="black">I agree to the terms and conditions<font color="red">*</font></font></span>
+                                    </label>
+                                    </p>#}
+                                    <div class="row">
+                                        <p class="center-align">
+                                            <button class="btn waves-effect waves-light green" data-applicantid="{{applicant.Id}}" name="accept-applicant">Accept applicant
+                                                <i class="material-icons right">check</i>
+                                            </button>
+                                            <button class="btn modal-trigger waves-effect waves-light red"  data-target="modal-reject-applicant" name="reject-applicant-modal-toggle" data-applicantid="{{applicant.Id}}">Reject applicant
+                                                <i class="material-icons right">close</i>
+                                            </button>
                                         </p>
-                                        <div class="row">
-                                            <p class="center-align">
-                                                <button class="btn waves-effect waves-light green" type="submit" name="accep-applicantt">Accept applicant
-                                                    <i class="material-icons right">check</i>
-                                                </button>
-                                                <button class="btn waves-effect waves-light red" type="submit" name="reject-applicantt">Reject applicant
-                                                    <i class="material-icons right">close</i>
-                                                </button>
-                                            </p>
-                                        </div>
-                                    {% else %}
-                                        <p><strong>This applicant is already accepted!</strong></p>
-                                    {% endif %}
-                                </div>
+                                    </div>
+                                {% else %}
+                                    <div class="row">
+                                        <strong>This applicant is already accepted!</strong>
+
+                                        <i class="right">
+                                            <button class="btn-floating btn-medium modal-trigger waves-effect waves-light red"  data-target="modal-reject-applicant" name="reject-applicant-modal-toggle" data-applicantid="{{applicant.Id}}">
+                                                <i class="material-icons right">close</i>
+                                            </button>
+                                        </i>
+                                    </div>
+
+
+                                {% endif %}
                             </div>
                         </div>
-                    </form>
+                    </div>
                 {% endfor %}
+            </div>
+        </div>
+
+        <!-- Modal reject -->
+        <div id="modal-reject-applicant" class="modal">
+            <div class="modal-content">
+                <h4>Are you sure to reject this applicant?</h4><br>
+                <p>By proceeding the applicant will be rejected and <strong>permanently</strong> deleted from your expedition list.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button id="withdraw-applicant" class="btn waves-effect waves-light red">remove applicant</button>
             </div>
         </div>
 
@@ -97,7 +117,7 @@
         <div id="modal-remove-expedition" class="modal">
             <div class="modal-content">
                 <h4>Are you sure ?</h4><br>
-                <p>By clicking on delete all of the data on this expedition will be deleted.
+                <p>By clicking on the 'delete' all of the data on this expedition will be deleted.
                     <br>
                     Once the expedition is deleted the applicants wil be informed by email.</p>
             </div>
@@ -106,7 +126,7 @@
             </div>
         </div>
 
-        <!-- Modal remove -->
+        <!-- Modal edit -->
         <div id="modal-edit-expedition" class="modal">
             <div class="modal-content">
 
@@ -188,15 +208,14 @@
                             </div>
                         </div>
 
-                        <div class="row">
+                        {#<div class="row">
                             <div class="input-field col s12">
                                 <label>
                                     <input type="checkbox" required/>
                                     <span>I agree to the terms and conditions<font color="red">*</font></span>
                                 </label>
                             </div>
-                        </div>
-
+                        </div>#}
                 </div>
 
             </div>
@@ -230,6 +249,86 @@
         $(document).ready(function () {
             $('.modal').modal();
         });
+        //accept applicant
+        $('button[name=accept-applicant]').click(function () {
+            var clickedBut = $(this);
+            var fieldworkId = "{{_context.fieldworkId}}";
+            var fieldworkLeaderEmail = "{{_context.fieldwork_leader_email}}";
+            var token = getUrlParameter('t');
+            var applicantId = $(this).data('applicantid');
+            var postUrl = "{{path_for('fieldwork_applicant_accept')}}";
+            if (
+                    String(token).trim() == '' ||
+                    String(fieldworkId).trim() == '' ||
+                    String(fieldworkLeaderEmail).trim() == '' ||
+                    String(applicantId).trim() == '')
+            {
+                alert('Something went wrong! Please contact Cryo Connect!');
+                return false;
+            } else {
+                $.ajax({
+                    type: 'POST',
+                    headers: {
+                        'Token-Authorization-X': `Bearer ${token}`,
+                    },
+                    url: postUrl,
+                    data: 'e=' + fieldworkLeaderEmail + '&id=' + fieldworkId + '&aph=' + applicantId,
+                    beforeSend: function () {
+                        clickedBut.attr("disabled", "disabled");
+                    }
+                })
+                        .done(function (data) {
+                            location.reload();
+                        })
+                        .fail(function (errMsg) {
+                            alert('Apologies, an error occurred. Please try again or contact info@cryoconnect.net.');
+                            clickedBut.removeAttr("disabled");
+                        });
+            }
+        });
+
+        //reject applicant
+        $('button[name=reject-applicant-modal-toggle]').click(function () {
+            document.getElementById("withdraw-applicant").dataset.applicantid = $(this).data('applicantid');
+        });
+
+        $('#withdraw-applicant').click(function () {
+            var fieldworkId = "{{_context.fieldworkId}}";
+            var clickedBut = $(this);
+            var fieldworkLeaderEmail = "{{_context.fieldwork_leader_email}}";
+            var token = getUrlParameter('t');
+            var applicantId = $(this).data('applicantid');
+            var postUrl = "{{path_for('fieldwork_applicant_reject')}}";
+            if (
+                    String(token).trim() == '' ||
+                    String(fieldworkId).trim() == '' ||
+                    String(fieldworkLeaderEmail).trim() == '' ||
+                    String(applicantId).trim() == '')
+            {
+                alert('Something went wrong! Please contact Cryo Connect!');
+                return false;
+            } else {
+                $.ajax({
+                    type: 'POST',
+                    headers: {
+                        'Token-Authorization-X': `Bearer ${token}`,
+                    },
+                    url: postUrl,
+                    data: 'e=' + fieldworkLeaderEmail + '&id=' + fieldworkId + '&aph=' + applicantId,
+                    beforeSend: function () {
+                        clickedBut.attr("disabled", "disabled");
+                    }
+                })
+                        .done(function (data) {
+                            location.reload();
+                        })
+                        .fail(function (errMsg) {
+                            alert('Apologies, an error occurred. Please try again or contact info@cryoconnect.net.');
+                            clickedBut.removeAttr("disabled");
+                        });
+            }
+        });
+
         //delete expedition
         $("#delete-expedition-forever").click(function () {
 
@@ -258,11 +357,16 @@
                     }
                 })
                         .done(function (data) {
-                            alert('Your expedition has been succesfully deleted!');
-                            window.location.href = "/";
+                            M.toast({
+                                html: 'Your expedition has been succesfully deleted!',
+                                displayLength: 5000,
+                                completeCallback: function () {
+                                    window.location.href = "/"
+                                }
+                            });
                         })
                         .fail(function (errMsg) {
-                            alert('Some problem occurred, please try again and make sure your enteries are correct. If problem consists please contact the IT support!');
+                            alert('Apologies, an error occurred. Please try again or contact info@cryoconnect.net.');
                             $('#delete-expedition-forever').removeAttr("disabled");
                             $('.modal-remove-expedition').css('opacity', '');
                         });
@@ -273,13 +377,11 @@
 
             /* stop form from submitting normally */
             event.preventDefault();
-
             var fieldworkId = "{{_context.fieldworkId}}";
             var fieldworkLeaderEmail = "{{_context.fieldwork_leader_email}}";
             var token = getUrlParameter('t');
             var postUrl = "{{path_for('fieldwork_edit')}}";
             var formObject = $(this);
-
             if (
                     String(token).trim() == '' ||
                     String(fieldworkId).trim() == '' ||
@@ -304,7 +406,7 @@
                             location.reload();
                         })
                         .fail(function (errMsg) {
-                            alert('Some problem occurred, please try again and make sure your enteries are correct. If problem consists please contact the IT support!');
+                            alert('Apologies, an error occurred. Please try again or contact info@cryoconnect.net.');
                             $('#edit-expedition-btn').removeAttr("disabled");
                             $('.modal-edit-expedition').css('opacity', '');
                         });
@@ -333,23 +435,20 @@
                         location.reload();
                     })
                     .fail(function (errMsg) {
-                        alert('Some problem occurred, please try again and make sure your entries are correct. If problem consists please contact the IT support!');
+                        alert('Apologies, an error occurred. Please try again or contact info@cryoconnect.net.');
                         $('.submitBtn').removeAttr("disabled");
                         $('.modal-body').css('opacity', '');
                     });
         });
         //to initialize materelize forms
         $('select').formSelect();
-
         var getUrlParameter = function getUrlParameter(sParam) {
             var sPageURL = window.location.search.substring(1),
                     sURLVariables = sPageURL.split('&'),
                     sParameterName,
                     i;
-
             for (i = 0; i < sURLVariables.length; i++) {
                 sParameterName = sURLVariables[i].split('=');
-
                 if (sParameterName[0] === sParam) {
                     return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
                 }

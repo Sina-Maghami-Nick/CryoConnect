@@ -373,6 +373,7 @@ class InformationSeekersController extends Controller {
             $response->withStatus(400);
             return $response;
         }
+        
         $fieldworkInformationSeekers = FieldworkInformationSeekerQuery::create()->filterByApproved(true)->findByInformationSeekerEmail($fieldworkInformationSeekerEmail);
 
         foreach ($fieldworkInformationSeekers as $informationSeeker) {
@@ -396,7 +397,7 @@ class InformationSeekersController extends Controller {
                 ($requestedFieldwork->getFieldworkBidingAllowed() && empty($bid))
         ) {
             $this->container->get('logger')
-                    ->addError('Wrong fieldwork infromation seeker Hash passed to fieldwork detail page the query params are: ' . json_encode($request->getQueryParams()));
+                    ->addError('Wrong fieldwork infromation seeker Hash passed to fieldwork detail page the query params are: ' . json_encode($data));
             $technicalAdminEmail = $this->container->get('settings')['contacts']['technical_admin'];
             $response->getBody()->write("Something went wrong! Please contact the technical admin at: " . $technicalAdminEmail);
             $response->withStatus(400);
@@ -420,7 +421,7 @@ class InformationSeekersController extends Controller {
         $this->container->get('logger')
                 ->addInfo('FieldworkInformationSeeker Bid request has been added to fieldworkInformationSeekerRequest=' . $fieldworkInformationSeekerRequest->getFieldworkInformationSeekerId() . '-' . $fieldworkInformationSeekerRequest->getFieldworkId());
 
-        $emailMsg = (new \Swift_Message('A new information seeker has applied for ' . $requestedFieldwork->getFieldworkName()))
+        $emailMsg = (new \Swift_Message('New expedition join request'))
                 ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryo Connect'])
                 ->setTo($requestedFieldwork->getFieldworkLeaderEmail())
                 ->setBody(

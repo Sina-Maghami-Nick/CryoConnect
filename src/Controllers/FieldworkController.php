@@ -363,6 +363,144 @@ class FieldworkController extends Controller {
      * @param type $response
      * @param type $args
      */
+    public function fieldworkApplicantAcceptAction(Request $request, Response $response, $args) {
+        $data = $request->getParsedBody();
+
+        $fieldworkHash = trim(filter_var($data['id'], FILTER_SANITIZE_STRING));
+        $fieldworkLeaderEmail = filter_var(str_replace(' ', '+', $data['e']), FILTER_SANITIZE_EMAIL);
+        $informationSeekerHash = trim(filter_var($data['aph'], FILTER_SANITIZE_STRING));
+
+        $fieldworks = FieldworkQuery::create()->findByFieldworkLeaderEmail($fieldworkLeaderEmail);
+
+        foreach ($fieldworks as $oneFieldwork) {
+            if ($oneFieldwork->hashCode() == $fieldworkHash) {
+                $fieldwork = $oneFieldwork;
+                break;
+            }
+        }
+
+        $fieldworkInformationSeekerRequests = FieldworkInformationSeekerRequestQuery::create()->filterByFieldwork($fieldwork)->find();
+
+        foreach ($fieldworkInformationSeekerRequests as $oneFieldworkInformationSeekerRequest) {
+            if ($oneFieldworkInformationSeekerRequest->getFieldworkInformationSeeker()->hashCode() == $informationSeekerHash) {
+                $fieldworkInformationSeekerRequest = $oneFieldworkInformationSeekerRequest;
+                break;
+            }
+        }
+
+        if (
+                empty($fieldworkInformationSeekerRequest) ||
+                empty($fieldwork) ||
+                empty($fieldwork->getId())
+        ) {
+            $this->container->get('logger')
+                    ->addError('Empty or wronge fieldwork id recieved for fieldwork applicant acceptance from dashboard: ' . json_encode($data));
+            $technicalAdminEmail = $this->container->get('settings')['contacts']['technical_admin'];
+            $response->getBody()->write("Something went wrong! Please contact us at: " . $technicalAdminEmail);
+
+            return $response->withStatus(400);
+        }
+
+        $informationSeeker = $fieldworkInformationSeekerRequest->getFieldworkInformationSeeker();
+
+        $this->container->get('logger')
+                ->addInfo('A applicant fieldwork is being accepted by a leader. FieldworkID:' . $fieldwork->getId() . ' Infomration seeker ID: ' . $informationSeeker->getId());
+
+        $fieldworkInformationSeekerRequest
+                        ->setApplicationAccepted(true)
+                ->save();
+
+        $emailMsg = (new \Swift_Message('You are invited to join the expedition'))
+                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryo Connect'])
+                ->setTo($informationSeeker->getInformationSeekerEmail())
+                ->setBody(
+                $this->view->render(new \Slim\Http\Response(), 'information-seekers/emails/fieldwork-connect-application-accepted-email.html.twig', [
+                    'fieldwork_information_seeker_name' => $informationSeeker->getInformationSeekerName(),
+                    'fieldwork_leader_email' => $fieldwork->getFieldworkLeaderEmail(),
+                    'fieldwork_leader_name' => $fieldwork->getFieldworkLeaderName(),
+                    'fieldwork_name' => $fieldwork->getFieldworkName()
+                        ]
+                )->getBody(), 'text/html'
+        );
+
+        $this->mailer->send($emailMsg);
+
+        return $response->withStatus(200);
+    }
+
+    /**
+     * @param type $request
+     * @param type $response
+     * @param type $args
+     */
+    public function fieldworkApplicantRejectAction(Request $request, Response $response, $args) {
+
+        $data = $request->getParsedBody();
+
+        $fieldworkHash = trim(filter_var($data['id'], FILTER_SANITIZE_STRING));
+        $fieldworkLeaderEmail = filter_var(str_replace(' ', '+', $data['e']), FILTER_SANITIZE_EMAIL);
+        $informationSeekerHash = trim(filter_var($data['aph'], FILTER_SANITIZE_STRING));
+
+        $fieldworks = FieldworkQuery::create()->findByFieldworkLeaderEmail($fieldworkLeaderEmail);
+
+        foreach ($fieldworks as $oneFieldwork) {
+            if ($oneFieldwork->hashCode() == $fieldworkHash) {
+                $fieldwork = $oneFieldwork;
+                break;
+            }
+        }
+
+        $fieldworkInformationSeekerRequests = FieldworkInformationSeekerRequestQuery::create()->filterByFieldwork($fieldwork)->find();
+
+        foreach ($fieldworkInformationSeekerRequests as $oneFieldworkInformationSeekerRequest) {
+            if ($oneFieldworkInformationSeekerRequest->getFieldworkInformationSeeker()->hashCode() == $informationSeekerHash) {
+                $fieldworkInformationSeekerRequest = $oneFieldworkInformationSeekerRequest;
+                break;
+            }
+        }
+
+        if (
+                empty($fieldworkInformationSeekerRequest) ||
+                empty($fieldwork) ||
+                empty($fieldwork->getId())
+        ) {
+            $this->container->get('logger')
+                    ->addError('Empty or wrong fieldwork id recieved for fieldwork applicant reject from dashboard: ' . json_encode($data));
+            $technicalAdminEmail = $this->container->get('settings')['contacts']['technical_admin'];
+            $response->getBody()->write("Something went wrong! Please contact us at: " . $technicalAdminEmail);
+
+            return $response->withStatus(400);
+        }
+
+        $informationSeeker = $fieldworkInformationSeekerRequest->getFieldworkInformationSeeker();
+
+        $this->container->get('logger')
+                ->addInfo('A applicant fieldwork is being rejected by a leader. FieldworkID:' . $fieldwork->getId() . ' Infomration seeker ID: ' . $informationSeeker->getId());
+
+
+        $fieldworkInformationSeekerRequest->delete();
+
+        $emailMsg = (new \Swift_Message('You did not get selected to join the expedition'))
+                ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryo Connect'])
+                ->setTo($informationSeeker->getInformationSeekerEmail())
+                ->setBody(
+                $this->view->render(new \Slim\Http\Response(), 'information-seekers/emails/fieldwork-connect-application-rejected-email.html.twig', [
+                    'fieldwork_information_seeker_name' => $informationSeeker->getInformationSeekerName(),
+                    'fieldwork_name' => $fieldwork->getFieldworkName()
+                        ]
+                )->getBody(), 'text/html'
+        );
+
+        $this->mailer->send($emailMsg);
+
+        return $response->withStatus(200);
+    }
+
+    /**
+     * @param type $request
+     * @param type $response
+     * @param type $args
+     */
     public function fieldworkDeleteAction(Request $request, Response $response, $args) {
 
         $data = $request->getParsedBody();
