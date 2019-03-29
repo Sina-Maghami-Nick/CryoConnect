@@ -1,7 +1,7 @@
 <?php
 
-/* information-seekers/emails/fieldwork-connect-application-rejected-email.html.twig */
-class __TwigTemplate_12358b0caffac428ccf6063d834be80f1c4883ff96cb9221ae2eed8e327f50fe extends Twig_Template
+/* information-seekers/emails/fieldwork-deleted-email.html.twig */
+class __TwigTemplate_f7ded785540ce39bb2241a9f9e576a8bf0d00a65fc59ed3d4c6a10887c4bfa56 extends Twig_Template
 {
     private $source;
 
@@ -23,11 +23,10 @@ class __TwigTemplate_12358b0caffac428ccf6063d834be80f1c4883ff96cb9221ae2eed8e327
         echo "<p>Dear ";
         echo twig_get_attribute($this->env, $this->source, $context, "fieldwork_information_seeker_name", array());
         echo ",</p>
-<p>We regret to inform you that you did not get selected to join ";
+<p>We are sorry to inform you that the expedition that you have applied for (";
         // line 2
         echo twig_get_attribute($this->env, $this->source, $context, "fieldwork_name", array());
-        echo " expedition. Either too many information seekers showed an interest in the expedition, or the expedition plans changed. Please feel free to look for other scientific expeditions to the cryosphere that may be of interest to you at https://CryoConnect.net.
-</p>
+        echo ") has been cancelled.</p>
 
 <p>Best,<br>
 Cryo Connect</p>";
@@ -35,7 +34,7 @@ Cryo Connect</p>";
 
     public function getTemplateName()
     {
-        return "information-seekers/emails/fieldwork-connect-application-rejected-email.html.twig";
+        return "information-seekers/emails/fieldwork-deleted-email.html.twig";
     }
 
     public function isTraitable()
@@ -50,6 +49,6 @@ Cryo Connect</p>";
 
     public function getSourceContext()
     {
-        return new Twig_Source("", "information-seekers/emails/fieldwork-connect-application-rejected-email.html.twig", "/mnt/c/Users/Sina/Documents/DoNotChange/phpdevserver/CryoConnect/templates/information-seekers/emails/fieldwork-connect-application-rejected-email.html.twig");
+        return new Twig_Source("", "information-seekers/emails/fieldwork-deleted-email.html.twig", "/mnt/c/Users/Sina/Documents/DoNotChange/phpdevserver/CryoConnect/templates/information-seekers/emails/fieldwork-deleted-email.html.twig");
     }
 }

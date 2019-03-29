@@ -343,11 +343,30 @@ class __TwigTemplate_1b76bd06898bac95efd2c3e216a883ff571e960ba8f603782d38d460500
                         </div>
 
                         ";
-        // line 219
+        // line 211
+        if ((twig_get_attribute($this->env, $this->source, $context, "fieldwork_is_certain", array()) == false)) {
+            // line 212
+            echo "                            <div class=\"row\">
+                                <div class=\"input-field col s12\">
+                                    <span class=\"helper-text\">Has it become (virtually) certain that the expedition will take place?<font color=\"red\">*</font><br><br></span>
+                                    <div class=\"switch\">
+                                        <label>
+                                            No
+                                            <input id=\"project_certain\" name=\"project_certain\" type=\"checkbox\">
+                                            <span class=\"lever\"></span>
+                                            Yes
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        ";
+        }
+        // line 226
+        echo "
+                        ";
+        // line 235
         echo "                </div>
 
-            </div>
-            <div class=\"modal-footer\">
                 <p class=\"center-align\">
                     <button id=\"edit-expedition-btn\" class=\"btn waves-effect waves-light\" type=\"submit\" name=\"action\">Update expedition
                         <i class=\"material-icons right\">edit</i>
@@ -364,278 +383,276 @@ class __TwigTemplate_1b76bd06898bac95efd2c3e216a883ff571e960ba8f603782d38d460500
 <script src=\"https://cdnjs.cloudflare.com/ajax/libs/flipclock/0.7.8/flipclock.js\"></script>
 
 <script>
-    console.log(";
-        // line 239
-        echo json_encode($context);
-        echo ");
-    \$(document).ready(function () {
+    ";
+        // line 254
+        echo "        \$(document).ready(function () {
 
-        var date = new Date('";
-        // line 242
+            var date = new Date('";
+        // line 256
         echo twig_escape_filter($this->env, twig_date_format_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "fieldwork_announcement_deadline", array())), "html", null, true);
         echo "'); //Month Days, Year HH:MM:SS
-        var now = new Date();
-        var diff = (date.getTime() / 1000) - (now.getTime() / 1000);
-        var clock = \$('.announcement-day-countdown').FlipClock(diff, {
-            clockFace: 'DailyCounter',
-            countdown: true
-        });
-        \$(document).ready(function () {
-            \$('.modal').modal();
-        });
-        //accept applicant
-        \$('button[name=accept-applicant]').click(function () {
-            var clickedBut = \$(this);
-            var fieldworkId = \"";
-        // line 255
+            var now = new Date();
+            var diff = (date.getTime() / 1000) - (now.getTime() / 1000);
+            var clock = \$('.announcement-day-countdown').FlipClock(diff, {
+                clockFace: 'DailyCounter',
+                countdown: true
+            });
+            \$(document).ready(function () {
+                \$('.modal').modal();
+            });
+            //accept applicant
+            \$('button[name=accept-applicant]').click(function () {
+                var clickedBut = \$(this);
+                var fieldworkId = \"";
+        // line 269
         echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "fieldworkId", array()), "html", null, true);
         echo "\";
-            var fieldworkLeaderEmail = \"";
-        // line 256
+                var fieldworkLeaderEmail = \"";
+        // line 270
         echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "fieldwork_leader_email", array()), "html", null, true);
         echo "\";
-            var token = getUrlParameter('t');
-            var applicantId = \$(this).data('applicantid');
-            var postUrl = \"";
-        // line 259
+                var token = getUrlParameter('t');
+                var applicantId = \$(this).data('applicantid');
+                var postUrl = \"";
+        // line 273
         echo twig_escape_filter($this->env, $this->extensions['Slim\Views\TwigExtension']->pathFor("fieldwork_applicant_accept"), "html", null, true);
         echo "\";
-            if (
-                    String(token).trim() == '' ||
-                    String(fieldworkId).trim() == '' ||
-                    String(fieldworkLeaderEmail).trim() == '' ||
-                    String(applicantId).trim() == '')
-            {
-                alert('Something went wrong! Please contact Cryo Connect!');
-                return false;
-            } else {
-                \$.ajax({
-                    type: 'POST',
-                    headers: {
-                        'Token-Authorization-X': `Bearer \${token}`,
-                    },
-                    url: postUrl,
-                    data: 'e=' + fieldworkLeaderEmail + '&id=' + fieldworkId + '&aph=' + applicantId,
-                    beforeSend: function () {
-                        clickedBut.attr(\"disabled\", \"disabled\");
-                    }
-                })
-                        .done(function (data) {
-                            location.reload();
-                        })
-                        .fail(function (errMsg) {
-                            alert('Apologies, an error occurred. Please try again or contact info@cryoconnect.net.');
-                            clickedBut.removeAttr(\"disabled\");
-                        });
-            }
-        });
+                if (
+                        String(token).trim() == '' ||
+                        String(fieldworkId).trim() == '' ||
+                        String(fieldworkLeaderEmail).trim() == '' ||
+                        String(applicantId).trim() == '')
+                {
+                    alert('Something went wrong! Please contact Cryo Connect!');
+                    return false;
+                } else {
+                    \$.ajax({
+                        type: 'POST',
+                        headers: {
+                            'Token-Authorization-X': `Bearer \${token}`,
+                        },
+                        url: postUrl,
+                        data: 'e=' + fieldworkLeaderEmail + '&id=' + fieldworkId + '&aph=' + applicantId,
+                        beforeSend: function () {
+                            clickedBut.attr(\"disabled\", \"disabled\");
+                        }
+                    })
+                            .done(function (data) {
+                                location.reload();
+                            })
+                            .fail(function (errMsg) {
+                                alert('Apologies, an error occurred. Please try again or contact info@cryoconnect.net.');
+                                clickedBut.removeAttr(\"disabled\");
+                            });
+                }
+            });
 
-        //reject applicant
-        \$('button[name=reject-applicant-modal-toggle]').click(function () {
-            document.getElementById(\"withdraw-applicant\").dataset.applicantid = \$(this).data('applicantid');
-        });
+            //reject applicant
+            \$('button[name=reject-applicant-modal-toggle]').click(function () {
+                document.getElementById(\"withdraw-applicant\").dataset.applicantid = \$(this).data('applicantid');
+            });
 
-        \$('#withdraw-applicant').click(function () {
-            var fieldworkId = \"";
-        // line 296
+            \$('#withdraw-applicant').click(function () {
+                var fieldworkId = \"";
+        // line 310
         echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "fieldworkId", array()), "html", null, true);
         echo "\";
-            var clickedBut = \$(this);
-            var fieldworkLeaderEmail = \"";
-        // line 298
+                var clickedBut = \$(this);
+                var fieldworkLeaderEmail = \"";
+        // line 312
         echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "fieldwork_leader_email", array()), "html", null, true);
         echo "\";
-            var token = getUrlParameter('t');
-            var applicantId = \$(this).data('applicantid');
-            var postUrl = \"";
-        // line 301
+                var token = getUrlParameter('t');
+                var applicantId = \$(this).data('applicantid');
+                var postUrl = \"";
+        // line 315
         echo twig_escape_filter($this->env, $this->extensions['Slim\Views\TwigExtension']->pathFor("fieldwork_applicant_reject"), "html", null, true);
         echo "\";
-            if (
-                    String(token).trim() == '' ||
-                    String(fieldworkId).trim() == '' ||
-                    String(fieldworkLeaderEmail).trim() == '' ||
-                    String(applicantId).trim() == '')
-            {
-                alert('Something went wrong! Please contact Cryo Connect!');
-                return false;
-            } else {
+                if (
+                        String(token).trim() == '' ||
+                        String(fieldworkId).trim() == '' ||
+                        String(fieldworkLeaderEmail).trim() == '' ||
+                        String(applicantId).trim() == '')
+                {
+                    alert('Something went wrong! Please contact Cryo Connect!');
+                    return false;
+                } else {
+                    \$.ajax({
+                        type: 'POST',
+                        headers: {
+                            'Token-Authorization-X': `Bearer \${token}`,
+                        },
+                        url: postUrl,
+                        data: 'e=' + fieldworkLeaderEmail + '&id=' + fieldworkId + '&aph=' + applicantId,
+                        beforeSend: function () {
+                            clickedBut.attr(\"disabled\", \"disabled\");
+                        }
+                    })
+                            .done(function (data) {
+                                location.reload();
+                            })
+                            .fail(function (errMsg) {
+                                alert('Apologies, an error occurred. Please try again or contact info@cryoconnect.net.');
+                                clickedBut.removeAttr(\"disabled\");
+                            });
+                }
+            });
+
+            //delete expedition
+            \$(\"#delete-expedition-forever\").click(function () {
+
+                var fieldworkId = \"";
+        // line 349
+        echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "fieldworkId", array()), "html", null, true);
+        echo "\";
+                var fieldworkLeaderEmail = \"";
+        // line 350
+        echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "fieldwork_leader_email", array()), "html", null, true);
+        echo "\";
+                var token = getUrlParameter('t');
+                var postUrl = \"";
+        // line 352
+        echo twig_escape_filter($this->env, $this->extensions['Slim\Views\TwigExtension']->pathFor("fieldwork_delete"), "html", null, true);
+        echo "\";
+                if (
+                        String(token).trim() == '' ||
+                        String(fieldworkId).trim() == '' ||
+                        String(fieldworkLeaderEmail).trim() == '')
+                {
+                    alert('Something went wrong! Please contact Cryo Connect!');
+                    return false;
+                } else {
+                    \$.ajax({
+                        type: 'DELETE',
+                        headers: {
+                            'Token-Authorization-X': `Bearer \${token}`,
+                        },
+                        url: postUrl,
+                        data: 'e=' + fieldworkLeaderEmail + '&id=' + fieldworkId,
+                        beforeSend: function () {
+                            \$('#delete-expedition-forever').attr(\"disabled\", \"disabled\");
+                            \$('.modal-remove-expedition').css('opacity', '.5');
+                        }
+                    })
+                            .done(function (data) {
+                                M.toast({
+                                    html: 'Your expedition has been succesfully deleted!',
+                                    displayLength: 5000,
+                                    completeCallback: function () {
+                                        window.location.href = \"/\"
+                                    }
+                                });
+                            })
+                            .fail(function (errMsg) {
+                                alert('Apologies, an error occurred. Please try again or contact info@cryoconnect.net.');
+                                \$('#delete-expedition-forever').removeAttr(\"disabled\");
+                                \$('.modal-remove-expedition').css('opacity', '');
+                            });
+                }
+            });
+            //edit fieldwork subbmit
+            \$(\"#fieldwork_edit_form\").submit(function (event) {
+
+                /* stop form from submitting normally */
+                event.preventDefault();
+                var fieldworkId = \"";
+        // line 394
+        echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "fieldworkId", array()), "html", null, true);
+        echo "\";
+                var fieldworkLeaderEmail = \"";
+        // line 395
+        echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "fieldwork_leader_email", array()), "html", null, true);
+        echo "\";
+                var token = getUrlParameter('t');
+                var postUrl = \"";
+        // line 397
+        echo twig_escape_filter($this->env, $this->extensions['Slim\Views\TwigExtension']->pathFor("fieldwork_edit"), "html", null, true);
+        echo "\";
+                var formObject = \$(this);
+                if (
+                        String(token).trim() == '' ||
+                        String(fieldworkId).trim() == '' ||
+                        String(fieldworkLeaderEmail).trim() == '')
+                {
+                    alert('Something went wrong! Please contact Cryo Connect!');
+                    return false;
+                } else {
+                    \$.ajax({
+                        type: 'PUT',
+                        headers: {
+                            'Token-Authorization-X': `Bearer \${token}`,
+                        },
+                        url: postUrl,
+                        data: formObject.serialize() + '&e=' + fieldworkLeaderEmail + '&id=' + fieldworkId,
+                        beforeSend: function () {
+                            \$('#edit-expedition-btn').attr(\"disabled\", \"disabled\");
+                            \$('.modal-edit-expedition').css('opacity', '.5');
+                        }
+                    })
+                            .done(function (data) {
+                                location.reload();
+                            })
+                            .fail(function (errMsg) {
+                                alert('Apologies, an error occurred. Please try again or contact info@cryoconnect.net.');
+                                \$('#edit-expedition-btn').removeAttr(\"disabled\");
+                                \$('.modal-edit-expedition').css('opacity', '');
+                            });
+                }
+
+            });
+            //form subbmition
+            \$(\".application-submit\").submit(function (event) {
+
+                /* stop form from submitting normally */
+                event.preventDefault();
+                var formObject = \$(this);
                 \$.ajax({
                     type: 'POST',
                     headers: {
-                        'Token-Authorization-X': `Bearer \${token}`,
-                    },
-                    url: postUrl,
-                    data: 'e=' + fieldworkLeaderEmail + '&id=' + fieldworkId + '&aph=' + applicantId,
-                    beforeSend: function () {
-                        clickedBut.attr(\"disabled\", \"disabled\");
-                    }
-                })
-                        .done(function (data) {
-                            location.reload();
-                        })
-                        .fail(function (errMsg) {
-                            alert('Apologies, an error occurred. Please try again or contact info@cryoconnect.net.');
-                            clickedBut.removeAttr(\"disabled\");
-                        });
-            }
-        });
-
-        //delete expedition
-        \$(\"#delete-expedition-forever\").click(function () {
-
-            var fieldworkId = \"";
-        // line 335
-        echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "fieldworkId", array()), "html", null, true);
-        echo "\";
-            var fieldworkLeaderEmail = \"";
-        // line 336
-        echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "fieldwork_leader_email", array()), "html", null, true);
-        echo "\";
-            var token = getUrlParameter('t');
-            var postUrl = \"";
-        // line 338
-        echo twig_escape_filter($this->env, $this->extensions['Slim\Views\TwigExtension']->pathFor("fieldwork_delete"), "html", null, true);
-        echo "\";
-            if (
-                    String(token).trim() == '' ||
-                    String(fieldworkId).trim() == '' ||
-                    String(fieldworkLeaderEmail).trim() == '')
-            {
-                alert('Something went wrong! Please contact Cryo Connect!');
-                return false;
-            } else {
-                \$.ajax({
-                    type: 'DELETE',
-                    headers: {
-                        'Token-Authorization-X': `Bearer \${token}`,
-                    },
-                    url: postUrl,
-                    data: 'e=' + fieldworkLeaderEmail + '&id=' + fieldworkId,
-                    beforeSend: function () {
-                        \$('#delete-expedition-forever').attr(\"disabled\", \"disabled\");
-                        \$('.modal-remove-expedition').css('opacity', '.5');
-                    }
-                })
-                        .done(function (data) {
-                            M.toast({
-                                html: 'Your expedition has been succesfully deleted!',
-                                displayLength: 5000,
-                                completeCallback: function () {
-                                    window.location.href = \"/\"
-                                }
-                            });
-                        })
-                        .fail(function (errMsg) {
-                            alert('Apologies, an error occurred. Please try again or contact info@cryoconnect.net.');
-                            \$('#delete-expedition-forever').removeAttr(\"disabled\");
-                            \$('.modal-remove-expedition').css('opacity', '');
-                        });
-            }
-        });
-        //edit fieldwork subbmit
-        \$(\"#fieldwork_edit_form\").submit(function (event) {
-
-            /* stop form from submitting normally */
-            event.preventDefault();
-            var fieldworkId = \"";
-        // line 380
-        echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "fieldworkId", array()), "html", null, true);
-        echo "\";
-            var fieldworkLeaderEmail = \"";
-        // line 381
-        echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "fieldwork_leader_email", array()), "html", null, true);
-        echo "\";
-            var token = getUrlParameter('t');
-            var postUrl = \"";
-        // line 383
-        echo twig_escape_filter($this->env, $this->extensions['Slim\Views\TwigExtension']->pathFor("fieldwork_edit"), "html", null, true);
-        echo "\";
-            var formObject = \$(this);
-            if (
-                    String(token).trim() == '' ||
-                    String(fieldworkId).trim() == '' ||
-                    String(fieldworkLeaderEmail).trim() == '')
-            {
-                alert('Something went wrong! Please contact Cryo Connect!');
-                return false;
-            } else {
-                \$.ajax({
-                    type: 'PUT',
-                    headers: {
-                        'Token-Authorization-X': `Bearer \${token}`,
-                    },
-                    url: postUrl,
-                    data: formObject.serialize() + '&e=' + fieldworkLeaderEmail + '&id=' + fieldworkId,
-                    beforeSend: function () {
-                        \$('#edit-expedition-btn').attr(\"disabled\", \"disabled\");
-                        \$('.modal-edit-expedition').css('opacity', '.5');
-                    }
-                })
-                        .done(function (data) {
-                            location.reload();
-                        })
-                        .fail(function (errMsg) {
-                            alert('Apologies, an error occurred. Please try again or contact info@cryoconnect.net.');
-                            \$('#edit-expedition-btn').removeAttr(\"disabled\");
-                            \$('.modal-edit-expedition').css('opacity', '');
-                        });
-            }
-
-        });
-        //form subbmition
-        \$(\".application-submit\").submit(function (event) {
-
-            /* stop form from submitting normally */
-            event.preventDefault();
-            var formObject = \$(this);
-            \$.ajax({
-                type: 'POST',
-                headers: {
-                    'Token-Authorization-X': `Bearer ";
-        // line 425
+                        'Token-Authorization-X': `Bearer ";
+        // line 439
         echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "token", array()), "html", null, true);
         echo "`,
-                },
-                url: \"";
-        // line 427
+                    },
+                    url: \"";
+        // line 441
         echo twig_escape_filter($this->env, $this->extensions['Slim\Views\TwigExtension']->pathFor("fieldwork_bid_request_submit"), "html", null, true);
         echo "\",
-                data: formObject.serialize() + \"&e=";
-        // line 428
+                    data: formObject.serialize() + \"&e=";
+        // line 442
         echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "email", array()), "html", null, true);
         echo "&ish=";
         echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "fieldwork_information_seeker_hash", array()), "html", null, true);
         echo "&fh=\" + formObject[0].id,
-                beforeSend: function () {
-                    \$('.submitBtn').attr(\"disabled\", \"disabled\");
-                    \$('.modal-body').css('opacity', '.5');
+                    beforeSend: function () {
+                        \$('.submitBtn').attr(\"disabled\", \"disabled\");
+                        \$('.modal-body').css('opacity', '.5');
+                    }
+                })
+                        .done(function (data) {
+                            location.reload();
+                        })
+                        .fail(function (errMsg) {
+                            alert('Apologies, an error occurred. Please try again or contact info@cryoconnect.net.');
+                            \$('.submitBtn').removeAttr(\"disabled\");
+                            \$('.modal-body').css('opacity', '');
+                        });
+            });
+            //to initialize materelize forms
+            \$('select').formSelect();
+            var getUrlParameter = function getUrlParameter(sParam) {
+                var sPageURL = window.location.search.substring(1),
+                        sURLVariables = sPageURL.split('&'),
+                        sParameterName,
+                        i;
+                for (i = 0; i < sURLVariables.length; i++) {
+                    sParameterName = sURLVariables[i].split('=');
+                    if (sParameterName[0] === sParam) {
+                        return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+                    }
                 }
-            })
-                    .done(function (data) {
-                        location.reload();
-                    })
-                    .fail(function (errMsg) {
-                        alert('Apologies, an error occurred. Please try again or contact info@cryoconnect.net.');
-                        \$('.submitBtn').removeAttr(\"disabled\");
-                        \$('.modal-body').css('opacity', '');
-                    });
+            };
         });
-        //to initialize materelize forms
-        \$('select').formSelect();
-        var getUrlParameter = function getUrlParameter(sParam) {
-            var sPageURL = window.location.search.substring(1),
-                    sURLVariables = sPageURL.split('&'),
-                    sParameterName,
-                    i;
-            for (i = 0; i < sURLVariables.length; i++) {
-                sParameterName = sURLVariables[i].split('=');
-                if (sParameterName[0] === sParam) {
-                    return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
-                }
-            }
-        };
-    });
 
 </script>
 ";
@@ -653,7 +670,7 @@ class __TwigTemplate_1b76bd06898bac95efd2c3e216a883ff571e960ba8f603782d38d460500
 
     public function getDebugInfo()
     {
-        return array (  606 => 428,  602 => 427,  597 => 425,  552 => 383,  547 => 381,  543 => 380,  498 => 338,  493 => 336,  489 => 335,  452 => 301,  446 => 298,  441 => 296,  401 => 259,  395 => 256,  391 => 255,  375 => 242,  369 => 239,  347 => 219,  339 => 206,  328 => 198,  318 => 191,  307 => 185,  297 => 178,  286 => 170,  275 => 162,  266 => 156,  256 => 149,  247 => 143,  238 => 137,  200 => 101,  191 => 97,  180 => 89,  174 => 85,  165 => 79,  159 => 76,  155 => 74,  153 => 69,  151 => 68,  144 => 64,  140 => 63,  136 => 62,  130 => 61,  126 => 60,  120 => 59,  116 => 58,  111 => 55,  107 => 54,  83 => 33,  79 => 32,  75 => 31,  71 => 30,  67 => 29,  61 => 28,  57 => 27,  53 => 26,  40 => 16,  23 => 1,);
+        return array (  623 => 442,  619 => 441,  614 => 439,  569 => 397,  564 => 395,  560 => 394,  515 => 352,  510 => 350,  506 => 349,  469 => 315,  463 => 312,  458 => 310,  418 => 273,  412 => 270,  408 => 269,  392 => 256,  388 => 254,  368 => 235,  365 => 226,  349 => 212,  347 => 211,  339 => 206,  328 => 198,  318 => 191,  307 => 185,  297 => 178,  286 => 170,  275 => 162,  266 => 156,  256 => 149,  247 => 143,  238 => 137,  200 => 101,  191 => 97,  180 => 89,  174 => 85,  165 => 79,  159 => 76,  155 => 74,  153 => 69,  151 => 68,  144 => 64,  140 => 63,  136 => 62,  130 => 61,  126 => 60,  120 => 59,  116 => 58,  111 => 55,  107 => 54,  83 => 33,  79 => 32,  75 => 31,  71 => 30,  67 => 29,  61 => 28,  57 => 27,  53 => 26,  40 => 16,  23 => 1,);
     }
 
     public function getSourceContext()

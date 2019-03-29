@@ -1,5 +1,5 @@
 <p>Dear {{_context.fieldwork_information_seeker_name | raw}},</p>
-<p>The expedition that you have applied for ({{_context.fieldwork_name}}) has been updated. Please use the following link to see the changes:
+<p>The expedition that you have applied for ({{_context.fieldwork_name | raw}}) has been updated. Please use the following link to see the changes:
 <br><a href="https://cryoconnect.net{{path_for('fieldwork_detail',{},{'e': _context.email  , 't': _context.token , 'fh': _context.fieldwork_hash }) }}">https://cryoconnect.net{{ path_for('fieldwork_detail',{} , {'e': _context.email , 't': _context.token , 'fh': _context.fieldwork_hash}) }}</a></p>
 
 <p>Best,<br>

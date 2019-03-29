@@ -351,6 +351,8 @@ class FieldworkController extends Controller {
                     'fieldwork_end_date' => $fieldwork->getFieldworkEndDate(),
                     'fieldwork_application_deadline' => $fieldwork->getFieldworkInformationSeekerDeadline(),
                     'fieldwork_announcement_deadline' => $fieldwork->getFieldworkInformationSeekerAnnouncementDate(),
+                    'fieldwork_is_certain' => $fieldwork->getFieldworkIsCertain(),
+                    'fieldwork_is_certain_date' => $fieldwork->getFieldworkWhenCertain(),
                     'fieldwork_leader_name' => $fieldwork->getFieldworkLeaderName(),
                     'fieldwork_leader_website' => $fieldwork->getFieldworkLeaderWebsite(),
                     'fieldwork_leader_affiliation' => $fieldwork->getFieldworkLeaderAffiliation(),
@@ -407,7 +409,7 @@ class FieldworkController extends Controller {
                 ->addInfo('A applicant fieldwork is being accepted by a leader. FieldworkID:' . $fieldwork->getId() . ' Infomration seeker ID: ' . $informationSeeker->getId());
 
         $fieldworkInformationSeekerRequest
-                        ->setApplicationAccepted(true)
+                ->setApplicationAccepted(true)
                 ->save();
 
         $emailMsg = (new \Swift_Message('You are invited to join the expedition'))
@@ -610,6 +612,7 @@ class FieldworkController extends Controller {
         $packageExcluded = filter_var($data['package_excluded'], FILTER_SANITIZE_STRING);
         $informationSeekerApplicationDeadline = strtotime($data['infomation_seeker_deadline']);
         $informationSeekerAnnouncmentDate = strtotime($data['infomation_seeker_announcment_date']);
+        $fieldworkCertain = $data['project_certain'] ? true : false;
 
 
         $this->container->get('logger')
@@ -665,6 +668,10 @@ class FieldworkController extends Controller {
 
         if (!empty($informationSeekerAnnouncmentDate)) {
             $fieldwork->setFieldworkInformationSeekerAnnouncementDate($informationSeekerAnnouncmentDate);
+        }
+
+        if (!$fieldwork->getFieldworkIsCertain() && $fieldworkCertain) {
+            $fieldwork->setFieldworkIsCertain(true);
         }
 
         $fieldworkInformationSeekerRequests = FieldworkInformationSeekerRequestQuery::create()
