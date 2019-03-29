@@ -23,8 +23,8 @@
                                 <p>Expedition goal(s): {{fieldwork.FieldworkGoal | raw}}</p>
                                 <p>Deadline: {{fieldwork.FieldworkInformationSeekerDeadline|slice(0, 10)}}</p>
                                 <p>Cost: {{fieldwork.FieldworkInformationSeekerCost}} Euros</p>
-                                <p>Included by the cost: {{fieldwork.FieldworkInformationSeekerPackageIncluded | raw}}</p>
-                                <p>Not included by the cost: {{fieldwork.FieldworkInformationSeekerPackageExcluded | raw}}</p>
+                                <p>Included in the cost: {{fieldwork.FieldworkInformationSeekerPackageIncluded | raw}}</p>
+                                <p>Not included in the cost: {{fieldwork.FieldworkInformationSeekerPackageExcluded | raw}}</p>
                                 <p>Results announcement date: {{fieldwork.FieldworkInformationSeekerAnnouncementDate|slice(0, 10)}}</p>
                                 {% if fieldwork.FieldworkIsCertain == false %}
                                     <p>
