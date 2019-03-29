@@ -15,17 +15,21 @@
                         <div class="card green lighten-3 hoverable">
                             <div class="card-content black-text">
                                 <span class="card-title">Expedition name: {{fieldwork.FieldworkName | raw}}</span>
+                                <p>Expedition leader name: {{fieldwork.FieldworkLeaderName | raw}}</p>
+                                <p>Expedition leader affliation: {{fieldwork.FieldworkLeaderAffiliation | raw}}</p>
+                                <p>Expedition leader website: {{fieldwork.FieldworkLeaderWebsite | raw}}</p>
                                 <p>Expedition website: <a href source="{{fieldwork.FieldworkProjectWebsite}}">{{fieldwork.FieldworkProjectWebsite}}</a></p>
                                 <p>Region: {{fieldwork.FieldworkRegion | raw}}</p>
                                 <p>Location(s): {{fieldwork.FieldworkLocations | raw}}</p>
                                 <p>Start date: {{fieldwork.FieldworkStartDate|slice(0, 10)}}</p>
                                 <p>End date: {{fieldwork.FieldworkEndDate|slice(0, 10)}}</p>
                                 <p>Expedition goal(s): {{fieldwork.FieldworkGoal | raw}}</p>
-                                <p>Deadline: {{fieldwork.FieldworkInformationSeekerDeadline|slice(0, 10)}}</p>
+                                <p>Total spots offered: {{fieldwork.FieldworkInformationSeekerLimit}}</p>
                                 <p>Cost: {{fieldwork.FieldworkInformationSeekerCost}} Euros</p>
                                 <p>Included in the cost: {{fieldwork.FieldworkInformationSeekerPackageIncluded | raw}}</p>
                                 <p>Not included in the cost: {{fieldwork.FieldworkInformationSeekerPackageExcluded | raw}}</p>
-                                <p>Results announcement date: {{fieldwork.FieldworkInformationSeekerAnnouncementDate|slice(0, 10)}}</p>
+                                <p>Deadline: {{fieldwork.FieldworkInformationSeekerDeadline|slice(0, 10)}}</p>
+                                <p>Approximate date of decision on who joins by the expedition leader: {{fieldwork.FieldworkInformationSeekerAnnouncementDate|slice(0, 10)}}</p>
                                 {% if fieldwork.FieldworkIsCertain == false %}
                                     <p>
                                         <strong>

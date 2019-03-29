@@ -55,7 +55,7 @@ class InformationSeekersController extends Controller {
         $informationSeekerAffiliationWebsite = filter_var($data['information_seeker_affiliation_website'], FILTER_SANITIZE_URL);
         $informationSeekerReasons = filter_var($data['information_seeker_reasons'], FILTER_SANITIZE_STRING);
         $informationSeekerRequestedSpots = filter_var($data['information_seeker_requested_spots'], FILTER_SANITIZE_NUMBER_INT);
-        
+
 
         //rest of validations
         if (
@@ -236,6 +236,10 @@ class InformationSeekersController extends Controller {
             $fieldworkInfo[$key]['FieldworkInformationSeekerAnnouncementDate'] = $fieldworkRequest['Fieldwork']['FieldworkInformationSeekerAnnouncementDate'];
             $fieldworkInfo[$key]['FieldworkInformationSeekerDeadline'] = $fieldworkRequest['Fieldwork']['FieldworkInformationSeekerDeadline'];
             $fieldworkInfo[$key]['FieldworkProjectWebsite'] = $fieldworkRequest['Fieldwork']['FieldworkProjectWebsite'];
+            $fieldworkInfo[$key]['FieldworkLeaderName'] = $fieldworkRequest['Fieldwork']['FieldworkLeaderName'];
+            $fieldworkInfo[$key]['FieldworkLeaderAffiliation'] = $fieldworkRequest['Fieldwork']['FieldworkLeaderAffiliation'];
+            $fieldworkInfo[$key]['FieldworkLeaderWebsite'] = $fieldworkRequest['Fieldwork']['FieldworkLeaderWebsite'];
+            $fieldworkInfo[$key]['FieldworkInformationSeekerLimit'] = $fieldworkRequest['Fieldwork']['FieldworkInformationSeekerLimit'];
         }
         return $this->view->render(
                         $response, 'information-seekers/fieldwork-connect-details.html.twig', [
@@ -373,7 +377,7 @@ class InformationSeekersController extends Controller {
             $response->withStatus(400);
             return $response;
         }
-        
+
         $fieldworkInformationSeekers = FieldworkInformationSeekerQuery::create()->filterByApproved(true)->findByInformationSeekerEmail($fieldworkInformationSeekerEmail);
 
         foreach ($fieldworkInformationSeekers as $informationSeeker) {
