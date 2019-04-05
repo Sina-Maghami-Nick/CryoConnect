@@ -86,7 +86,7 @@ class FieldworkController extends Controller {
                 empty($startDate) ||
                 empty($endDate) ||
                 empty($informationSeekerLimit) ||
-                empty($informationSeekerCost) ||
+                $informationSeekerCost < 0 ||
                 empty($informationSeekerApplicationDeadline) ||
                 empty($informationSeekerAnnouncmentDate) ||
                 (!$fieldworkCertain && empty($fieldworkCertainDate))
