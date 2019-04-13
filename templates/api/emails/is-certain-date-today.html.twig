@@ -1,0 +1,8 @@
+<p>Dear {{_context.leader_name | raw}},</p>
+<p>Is the expedition "{{fieldwork_name | raw}}" expedition certain already ?<br>
+    If yes, please use the following link to edit your expedition and set it as "certain":
+    <br>
+<a href="https://cryoconnect.net{{path_for('fieldwork_dashboard',{},{'e': _context.leader_email  , 't': _context.token}) }}">https://cryoconnect.net{{ path_for('fieldwork_dashboard',{} , {'e': _context.leader_email , 't': _context.token}) }}</a></p>
+
+<p>Best wishes,<br>
+Cryo Connect</p>

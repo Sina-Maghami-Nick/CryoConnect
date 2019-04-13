@@ -29,11 +29,11 @@ class __TwigTemplate_7c6429a566cf30a3a238f5bc5a3c9864669f39ecb02bda32c0c0c0ab1a2
         echo twig_get_attribute($this->env, $this->source, $context, "fieldwork_leader_name", array());
         echo ", the leader of the ";
         echo twig_get_attribute($this->env, $this->source, $context, "fieldwork_name", array());
-        echo " expedition, has approved your application to join the field campaign. Please contact her/him directly at (<a href=\"mailto:";
+        echo " expedition, has approved your application to join the field campaign. Please contact her/him directly at <a href=\"mailto:";
         echo twig_get_attribute($this->env, $this->source, $context, "fieldwork_leader_email", array());
         echo "\">";
         echo twig_get_attribute($this->env, $this->source, $context, "fieldwork_leader_email", array());
-        echo "</a>) to learn all you need to know about the expedition. We wish you an enjoyable and insightful experience.
+        echo "</a> to learn all you need to know about the expedition. We wish you an enjoyable and insightful experience.
 </p>
 
 <p>Best,<br>

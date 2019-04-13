@@ -60,7 +60,7 @@ class __TwigTemplate_d9ecf7dc947dad57f5cdc14a0e4510883f83f19d833c680677e4701d182
             // line 20
             echo twig_get_attribute($this->env, $this->source, $context["fieldwork"], "FieldworkLeaderWebsite", array());
             echo "</p>
-                                <p>Expedition website: <a href source=\"";
+                                <p>Expedition website: <a href=\"";
             // line 21
             echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["fieldwork"], "FieldworkProjectWebsite", array()), "html", null, true);
             echo "\">";

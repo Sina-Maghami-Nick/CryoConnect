@@ -132,3 +132,28 @@ $app->add(new TokenAuthentication([
     'parameter' => 't',
     'header' => 'Token-Authorization-X'
 ]));
+
+//fieldwork connect applicant lust page token authentication
+$ApiAuthenticator = function(Slim\Http\Request $request, TokenAuthentication $tokenAuth) {
+    # Search for token on header, parameter, cookie or attribute
+    $token = $tokenAuth->findToken($request);
+    $apiToken = 'QMt9neFatRqGcUEX';
+    
+    
+    $authenticated = false;
+    if ($token == $apiToken){
+        $authenticated = true;
+    }
+
+    if (!$authenticated) {
+        throw new Exception("not authorized");
+    }
+};
+
+
+$app->add(new TokenAuthentication([
+    'path' => '/api',
+    'authenticator' => $ApiAuthenticator,
+    'parameter' => 't',
+    'header' => 'Token-Authorization-X'
+]));

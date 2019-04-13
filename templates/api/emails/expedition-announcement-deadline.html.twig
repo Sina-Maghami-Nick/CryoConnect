@@ -1,0 +1,8 @@
+<p>Dear {{_context.leader_name | raw}},</p>
+<p>There are only 3 days left until the accepeted applicants annoucement date for: "{{fieldwork_name | raw}}"!<br>
+    Please use the following link to accept or reject the information seekers who applied for this expedition:
+    <br>
+<a href="https://cryoconnect.net{{path_for('fieldwork_dashboard',{},{'e': _context.leader_email  , 't': _context.token}) }}">https://cryoconnect.net{{ path_for('fieldwork_dashboard',{} , {'e': _context.leader_email , 't': _context.token}) }}</a></p>
+
+<p>Best wishes,<br>
+Cryo Connect</p>

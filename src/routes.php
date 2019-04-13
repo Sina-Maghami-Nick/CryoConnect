@@ -6,6 +6,16 @@ use App\Controllers\ExpertsController;
 use App\Controllers\InformationSeekersController;
 use App\Controllers\DataController;
 use App\Controllers\FieldworkController;
+use App\Controllers\ApiController;
+
+//Api routes
+$app->group('/api', function () {
+    //route to the expert sign-up form
+    $this->get('/expedition/remind-uncertain', ApiController::class . ':remindUrcertainExpedition')->setname('remind_uncertain_expedition');
+    $this->get('/expedition/remind-approving-applicants', ApiController::class . ':remindApplicantApprove')->setname('remind_applicant_approve');
+
+});
+
 
 //Experts Routes
 $app->group('/experts', function () {

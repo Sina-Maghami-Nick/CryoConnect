@@ -82,8 +82,15 @@ class __TwigTemplate_1b76bd06898bac95efd2c3e216a883ff571e960ba8f603782d38d460500
         // line 33
         echo twig_escape_filter($this->env, twig_date_format_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "fieldwork_announcement_deadline", array()), "F jS\\, Y"), "html", null, true);
         echo "</p>
-
-                    </div>
+                        ";
+        // line 34
+        if ((twig_get_attribute($this->env, $this->source, $context, "fieldwork_is_certain", array()) == false)) {
+            // line 35
+            echo "                            <p style=\"color:red;\"><strong>This fieldwork is set as uncertain. Please edit once dates are certain.</strong></p>
+                        ";
+        }
+        // line 37
+        echo "                    </div>
                     <div class=\"card-action\">
                         <div class=\"row\">
                             <p class=\"center-align\">
@@ -103,65 +110,65 @@ class __TwigTemplate_1b76bd06898bac95efd2c3e216a883ff571e960ba8f603782d38d460500
         <div class=\"row\">
             <div class=\"col s12 m12\">
                 ";
-        // line 54
+        // line 56
         $context['_parent'] = $context;
         $context['_seq'] = twig_ensure_traversable(twig_get_attribute($this->env, $this->source, $context, "applicants", array()));
         foreach ($context['_seq'] as $context["_key"] => $context["applicant"]) {
-            // line 55
+            // line 57
             echo "                    <div class=\"row\">
                         <div class=\"card purple lighten-5 hoverable\">
                             <div class=\"card-content black-text\">
                                 <span class=\"card-title\">Applicant name: ";
-            // line 58
+            // line 60
             echo twig_get_attribute($this->env, $this->source, $context["applicant"], "Name", array());
             echo "</span>
-                                <p>Website: <a href source=\"";
-            // line 59
+                                <p>Website: <a href=\"";
+            // line 61
             echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["applicant"], "Website", array()), "html", null, true);
             echo "\">";
             echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["applicant"], "Website", array()), "html", null, true);
             echo "</a></p>
                                 <p>Affiliation: ";
-            // line 60
+            // line 62
             echo twig_get_attribute($this->env, $this->source, $context["applicant"], "Affiliation", array());
             echo "</p>
-                                <p>Affiliation website: <a href source=\"";
-            // line 61
+                                <p>Affiliation website: <a href=\"";
+            // line 63
             echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["applicant"], "AffiliationWebsite", array()), "html", null, true);
             echo "\">";
             echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["applicant"], "AffiliationWebsite", array()), "html", null, true);
             echo "</a></p>
                                 <p>Application reason: ";
-            // line 62
+            // line 64
             echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["applicant"], "Reasons", array()), "html", null, true);
             echo "</p>
                                 <p>Email: ";
-            // line 63
+            // line 65
             echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["applicant"], "Email", array()), "html", null, true);
             echo "</p>
                                 <p><strong>Requested spots: ";
-            // line 64
+            // line 66
             echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["applicant"], "RequestedSpots", array()), "html", null, true);
             echo "</strong></p>
 
                             </div>
                             <div class=\"card-action\">
                                 ";
-            // line 68
+            // line 70
             if ((twig_get_attribute($this->env, $this->source, $context["applicant"], "Accepted", array()) == false)) {
-                // line 69
+                // line 71
                 echo "                                    ";
-                // line 74
+                // line 76
                 echo "                                    <div class=\"row\">
                                         <p class=\"center-align\">
                                             <button class=\"btn waves-effect waves-light green\" data-applicantid=\"";
-                // line 76
+                // line 78
                 echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["applicant"], "Id", array()), "html", null, true);
                 echo "\" name=\"accept-applicant\">Accept applicant
                                                 <i class=\"material-icons right\">check</i>
                                             </button>
                                             <button class=\"btn modal-trigger waves-effect waves-light red\"  data-target=\"modal-reject-applicant\" name=\"reject-applicant-modal-toggle\" data-applicantid=\"";
-                // line 79
+                // line 81
                 echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["applicant"], "Id", array()), "html", null, true);
                 echo "\">Reject applicant
                                                 <i class=\"material-icons right\">close</i>
@@ -170,13 +177,13 @@ class __TwigTemplate_1b76bd06898bac95efd2c3e216a883ff571e960ba8f603782d38d460500
                                     </div>
                                 ";
             } else {
-                // line 85
+                // line 87
                 echo "                                    <div class=\"row\">
                                         <strong>This applicant is already accepted!</strong>
 
                                         <i class=\"right\">
                                             <button class=\"btn-floating btn-medium modal-trigger waves-effect waves-light red\"  data-target=\"modal-reject-applicant\" name=\"reject-applicant-modal-toggle\" data-applicantid=\"";
-                // line 89
+                // line 91
                 echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["applicant"], "Id", array()), "html", null, true);
                 echo "\">
                                                 <i class=\"material-icons right\">close</i>
@@ -187,7 +194,7 @@ class __TwigTemplate_1b76bd06898bac95efd2c3e216a883ff571e960ba8f603782d38d460500
 
                                 ";
             }
-            // line 97
+            // line 99
             echo "                            </div>
                         </div>
                     </div>
@@ -196,7 +203,7 @@ class __TwigTemplate_1b76bd06898bac95efd2c3e216a883ff571e960ba8f603782d38d460500
         $_parent = $context['_parent'];
         unset($context['_seq'], $context['_iterated'], $context['_key'], $context['applicant'], $context['_parent'], $context['loop']);
         $context = array_intersect_key($context, $_parent) + $_parent;
-        // line 101
+        // line 103
         echo "            </div>
         </div>
 
@@ -234,7 +241,7 @@ class __TwigTemplate_1b76bd06898bac95efd2c3e216a883ff571e960ba8f603782d38d460500
                         <div class=\"row\">
                             <div class=\"input-field col s12\">
                                 <input id=\"leader_name\" name=\"leader_name\" type=\"text\" class=\"validate\" value=\"";
-        // line 137
+        // line 139
         echo twig_get_attribute($this->env, $this->source, $context, "fieldwork_leader_name", array());
         echo "\" required>
                                 <label for=\"leader_name\">Expedition leader's full name<font color=\"red\">*</font></label>
@@ -243,7 +250,7 @@ class __TwigTemplate_1b76bd06898bac95efd2c3e216a883ff571e960ba8f603782d38d460500
                         <div class=\"row\">
                             <div class=\"input-field col s12\">
                                 <input id=\"leader_affiliation\" name=\"leader_affiliation\" type=\"text\" value=\"";
-        // line 143
+        // line 145
         echo twig_get_attribute($this->env, $this->source, $context, "fieldwork_leader_affiliation", array());
         echo "\" class=\"validate\" required>
                                 <label for=\"leader_affiliation\">Expedition leader's primary affiliation<font color=\"red\">*</font></label>
@@ -252,7 +259,7 @@ class __TwigTemplate_1b76bd06898bac95efd2c3e216a883ff571e960ba8f603782d38d460500
                         <div class=\"row\">
                             <div class=\"input-field col s12\">
                                 <input id=\"leader_website\" name=\"leader_website\" type=\"url\" value=\"";
-        // line 149
+        // line 151
         echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "fieldwork_leader_website", array()), "html", null, true);
         echo "\" class=\"validate\">
                                 <label for=\"leader_website\">Webpage with information about the expedition leader<font color=\"red\">*</font></label>
@@ -262,7 +269,7 @@ class __TwigTemplate_1b76bd06898bac95efd2c3e216a883ff571e960ba8f603782d38d460500
                         <div class=\"row\">
                             <div class=\"input-field col s12\">
                                 <input id=\"project_name\" name=\"project_name\" type=\"text\" value=\"";
-        // line 156
+        // line 158
         echo twig_get_attribute($this->env, $this->source, $context, "fieldwork_name", array());
         echo "\" class=\"validate\" required>
                                 <label for=\"project_name\">Project or expedition name<font color=\"red\">*</font></label>
@@ -271,7 +278,7 @@ class __TwigTemplate_1b76bd06898bac95efd2c3e216a883ff571e960ba8f603782d38d460500
                         <div class=\"row\">
                             <div class=\"input-field col s12\">
                                 <input id=\"project_website\" name=\"project_website\" type=\"url\" value=\"";
-        // line 162
+        // line 164
         echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "fieldwork_website", array()), "html", null, true);
         echo "\" class=\"validate\">
                                 <label for=\"project_website\">Webpage with information about the project or expedition</label>
@@ -282,7 +289,7 @@ class __TwigTemplate_1b76bd06898bac95efd2c3e216a883ff571e960ba8f603782d38d460500
                         <div class=\"row\">
                             <div class=\"input-field col s12\">
                                 <input id=\"locations\" name=\"locations\" type=\"text\" value=\"";
-        // line 170
+        // line 172
         echo twig_get_attribute($this->env, $this->source, $context, "fieldwork_locations", array());
         echo "\" class=\"validate\" required>
                                 <label for=\"locations\">More precise location</label>
@@ -293,7 +300,7 @@ class __TwigTemplate_1b76bd06898bac95efd2c3e216a883ff571e960ba8f603782d38d460500
                         <div class=\"row\">
                             <div class=\"input-field col s12\">
                                 <textarea id=\"science_goals\" name=\"science_goals\" class=\"materialize-textarea\">";
-        // line 178
+        // line 180
         echo twig_get_attribute($this->env, $this->source, $context, "fieldwork_goal", array());
         echo "</textarea>
                                 <label for=\"science_goals\">Scientific goal(s) of expedition</label>
@@ -303,7 +310,7 @@ class __TwigTemplate_1b76bd06898bac95efd2c3e216a883ff571e960ba8f603782d38d460500
                         <div class=\"row\">
                             <div class=\"input-field col s12\">
                                 <input id=\"infomation_seeker_limit\" name=\"infomation_seeker_limit\" type=\"number\" min=\"";
-        // line 185
+        // line 187
         echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "fieldwork_information_seeker_limit", array()), "html", null, true);
         echo "\" value=\"";
         echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "fieldwork_information_seeker_limit", array()), "html", null, true);
@@ -314,7 +321,7 @@ class __TwigTemplate_1b76bd06898bac95efd2c3e216a883ff571e960ba8f603782d38d460500
                         <div class=\"row\">
                             <div class=\"input-field col s12\">
                                 <input id=\"infomation_seeker_cost\" name=\"infomation_seeker_cost\" type=\"number\" min=\"0\" value=\"";
-        // line 191
+        // line 193
         echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "fieldwork_cost", array()), "html", null, true);
         echo "\" class=\"validate\" required>
                                 <label for=\"infomation_seeker_cost\">Approximate cost per information seeker in Euros<font color=\"red\">*</font></label>
@@ -324,7 +331,7 @@ class __TwigTemplate_1b76bd06898bac95efd2c3e216a883ff571e960ba8f603782d38d460500
                         <div class=\"row\">
                             <div class=\"input-field col s12\">
                                 <textarea id=\"package_included\" name=\"package_included\" class=\"materialize-textarea\" required>";
-        // line 198
+        // line 200
         echo twig_get_attribute($this->env, $this->source, $context, "fieldwork_cost_inc", array());
         echo "</textarea>
                                 <label for=\"package_included\">What would be covered by this cost?<font color=\"red\">*</font></label>
@@ -335,7 +342,7 @@ class __TwigTemplate_1b76bd06898bac95efd2c3e216a883ff571e960ba8f603782d38d460500
                         <div class=\"row\">
                             <div class=\"input-field col s12\">
                                 <textarea id=\"package_excluded\" name=\"package_excluded\" class=\"materialize-textarea\">";
-        // line 206
+        // line 208
         echo twig_get_attribute($this->env, $this->source, $context, "fieldwork_cost_exc", array());
         echo "</textarea>
                                 <label for=\"package_excluded\">What would <u>not</u> be covered by this cost?</label>
@@ -343,9 +350,9 @@ class __TwigTemplate_1b76bd06898bac95efd2c3e216a883ff571e960ba8f603782d38d460500
                         </div>
 
                         ";
-        // line 211
+        // line 213
         if ((twig_get_attribute($this->env, $this->source, $context, "fieldwork_is_certain", array()) == false)) {
-            // line 212
+            // line 214
             echo "                            <div class=\"row\">
                                 <div class=\"input-field col s12\">
                                     <span class=\"helper-text\">Has it become (virtually) certain that the expedition will take place?<font color=\"red\">*</font><br><br></span>
@@ -361,10 +368,10 @@ class __TwigTemplate_1b76bd06898bac95efd2c3e216a883ff571e960ba8f603782d38d460500
                             </div>
                         ";
         }
-        // line 226
+        // line 228
         echo "
                         ";
-        // line 235
+        // line 237
         echo "                </div>
 
                 <p class=\"center-align\">
@@ -384,11 +391,11 @@ class __TwigTemplate_1b76bd06898bac95efd2c3e216a883ff571e960ba8f603782d38d460500
 
 <script>
     ";
-        // line 254
+        // line 256
         echo "        \$(document).ready(function () {
 
             var date = new Date('";
-        // line 256
+        // line 258
         echo twig_escape_filter($this->env, twig_date_format_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "fieldwork_announcement_deadline", array())), "html", null, true);
         echo "'); //Month Days, Year HH:MM:SS
             var now = new Date();
@@ -404,17 +411,17 @@ class __TwigTemplate_1b76bd06898bac95efd2c3e216a883ff571e960ba8f603782d38d460500
             \$('button[name=accept-applicant]').click(function () {
                 var clickedBut = \$(this);
                 var fieldworkId = \"";
-        // line 269
+        // line 271
         echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "fieldworkId", array()), "html", null, true);
         echo "\";
                 var fieldworkLeaderEmail = \"";
-        // line 270
+        // line 272
         echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "fieldwork_leader_email", array()), "html", null, true);
         echo "\";
                 var token = getUrlParameter('t');
                 var applicantId = \$(this).data('applicantid');
                 var postUrl = \"";
-        // line 273
+        // line 275
         echo twig_escape_filter($this->env, $this->extensions['Slim\Views\TwigExtension']->pathFor("fieldwork_applicant_accept"), "html", null, true);
         echo "\";
                 if (
@@ -454,18 +461,18 @@ class __TwigTemplate_1b76bd06898bac95efd2c3e216a883ff571e960ba8f603782d38d460500
 
             \$('#withdraw-applicant').click(function () {
                 var fieldworkId = \"";
-        // line 310
+        // line 312
         echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "fieldworkId", array()), "html", null, true);
         echo "\";
                 var clickedBut = \$(this);
                 var fieldworkLeaderEmail = \"";
-        // line 312
+        // line 314
         echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "fieldwork_leader_email", array()), "html", null, true);
         echo "\";
                 var token = getUrlParameter('t');
                 var applicantId = \$(this).data('applicantid');
                 var postUrl = \"";
-        // line 315
+        // line 317
         echo twig_escape_filter($this->env, $this->extensions['Slim\Views\TwigExtension']->pathFor("fieldwork_applicant_reject"), "html", null, true);
         echo "\";
                 if (
@@ -502,16 +509,16 @@ class __TwigTemplate_1b76bd06898bac95efd2c3e216a883ff571e960ba8f603782d38d460500
             \$(\"#delete-expedition-forever\").click(function () {
 
                 var fieldworkId = \"";
-        // line 349
+        // line 351
         echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "fieldworkId", array()), "html", null, true);
         echo "\";
                 var fieldworkLeaderEmail = \"";
-        // line 350
+        // line 352
         echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "fieldwork_leader_email", array()), "html", null, true);
         echo "\";
                 var token = getUrlParameter('t');
                 var postUrl = \"";
-        // line 352
+        // line 354
         echo twig_escape_filter($this->env, $this->extensions['Slim\Views\TwigExtension']->pathFor("fieldwork_delete"), "html", null, true);
         echo "\";
                 if (
@@ -536,7 +543,7 @@ class __TwigTemplate_1b76bd06898bac95efd2c3e216a883ff571e960ba8f603782d38d460500
                     })
                             .done(function (data) {
                                 M.toast({
-                                    html: 'Your expedition has been succesfully deleted!',
+                                    html: 'Your expedition has been successfully deleted!',
                                     displayLength: 5000,
                                     completeCallback: function () {
                                         window.location.href = \"/\"
@@ -556,16 +563,16 @@ class __TwigTemplate_1b76bd06898bac95efd2c3e216a883ff571e960ba8f603782d38d460500
                 /* stop form from submitting normally */
                 event.preventDefault();
                 var fieldworkId = \"";
-        // line 394
+        // line 396
         echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "fieldworkId", array()), "html", null, true);
         echo "\";
                 var fieldworkLeaderEmail = \"";
-        // line 395
+        // line 397
         echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "fieldwork_leader_email", array()), "html", null, true);
         echo "\";
                 var token = getUrlParameter('t');
                 var postUrl = \"";
-        // line 397
+        // line 399
         echo twig_escape_filter($this->env, $this->extensions['Slim\Views\TwigExtension']->pathFor("fieldwork_edit"), "html", null, true);
         echo "\";
                 var formObject = \$(this);
@@ -610,16 +617,16 @@ class __TwigTemplate_1b76bd06898bac95efd2c3e216a883ff571e960ba8f603782d38d460500
                     type: 'POST',
                     headers: {
                         'Token-Authorization-X': `Bearer ";
-        // line 439
+        // line 441
         echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "token", array()), "html", null, true);
         echo "`,
                     },
                     url: \"";
-        // line 441
+        // line 443
         echo twig_escape_filter($this->env, $this->extensions['Slim\Views\TwigExtension']->pathFor("fieldwork_bid_request_submit"), "html", null, true);
         echo "\",
                     data: formObject.serialize() + \"&e=";
-        // line 442
+        // line 444
         echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "email", array()), "html", null, true);
         echo "&ish=";
         echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context, "fieldwork_information_seeker_hash", array()), "html", null, true);
@@ -670,7 +677,7 @@ class __TwigTemplate_1b76bd06898bac95efd2c3e216a883ff571e960ba8f603782d38d460500
 
     public function getDebugInfo()
     {
-        return array (  623 => 442,  619 => 441,  614 => 439,  569 => 397,  564 => 395,  560 => 394,  515 => 352,  510 => 350,  506 => 349,  469 => 315,  463 => 312,  458 => 310,  418 => 273,  412 => 270,  408 => 269,  392 => 256,  388 => 254,  368 => 235,  365 => 226,  349 => 212,  347 => 211,  339 => 206,  328 => 198,  318 => 191,  307 => 185,  297 => 178,  286 => 170,  275 => 162,  266 => 156,  256 => 149,  247 => 143,  238 => 137,  200 => 101,  191 => 97,  180 => 89,  174 => 85,  165 => 79,  159 => 76,  155 => 74,  153 => 69,  151 => 68,  144 => 64,  140 => 63,  136 => 62,  130 => 61,  126 => 60,  120 => 59,  116 => 58,  111 => 55,  107 => 54,  83 => 33,  79 => 32,  75 => 31,  71 => 30,  67 => 29,  61 => 28,  57 => 27,  53 => 26,  40 => 16,  23 => 1,);
+        return array (  630 => 444,  626 => 443,  621 => 441,  576 => 399,  571 => 397,  567 => 396,  522 => 354,  517 => 352,  513 => 351,  476 => 317,  470 => 314,  465 => 312,  425 => 275,  419 => 272,  415 => 271,  399 => 258,  395 => 256,  375 => 237,  372 => 228,  356 => 214,  354 => 213,  346 => 208,  335 => 200,  325 => 193,  314 => 187,  304 => 180,  293 => 172,  282 => 164,  273 => 158,  263 => 151,  254 => 145,  245 => 139,  207 => 103,  198 => 99,  187 => 91,  181 => 87,  172 => 81,  166 => 78,  162 => 76,  160 => 71,  158 => 70,  151 => 66,  147 => 65,  143 => 64,  137 => 63,  133 => 62,  127 => 61,  123 => 60,  118 => 57,  114 => 56,  93 => 37,  89 => 35,  87 => 34,  83 => 33,  79 => 32,  75 => 31,  71 => 30,  67 => 29,  61 => 28,  57 => 27,  53 => 26,  40 => 16,  23 => 1,);
     }
 
     public function getSourceContext()

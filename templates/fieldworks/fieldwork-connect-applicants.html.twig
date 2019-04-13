@@ -31,7 +31,9 @@
                         <p>Application deadline: {{_context.fieldwork_start_date | date("F jS\\, Y")}}</p>
                         <p>Cost: {{_context.fieldwork_cost}} Euros</p>
                         <p>Results announcement date: {{_context.fieldwork_announcement_deadline | date("F jS\\, Y")}}</p>
-
+                        {% if _context.fieldwork_is_certain == false %}
+                            <p style="color:red;"><strong>This fieldwork is set as uncertain. Please edit once dates are certain.</strong></p>
+                        {% endif %}
                     </div>
                     <div class="card-action">
                         <div class="row">

@@ -22,8 +22,8 @@ return [
         'mailer' => [
             'smtp' => 'mail.webruimtemail.nl',
             'port' => 587,
-            'username' => 'no-reply@cryoconnect.net',
-            'password' => 'tshaC2eNx',
+            'username' => 'testing-dev-noreply@cryoconnect.net',
+            'password' => 'AxO1o2bSr4',
         ],
         //Admin emails
         'contacts' => [
@@ -31,7 +31,7 @@ return [
             'approval_admin' => 'sina.nick@gmail.com',
         ],
         'tokens' => [
-            'expert-approval-auth' => 'QMt9neFatRqGcUEX',
+            'api-auth' => 'QMt9neFatRqGcUEX',
         ]
     ],
 ];
