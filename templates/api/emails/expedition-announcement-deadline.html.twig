@@ -1,8 +1,7 @@
 <p>Dear {{_context.leader_name | raw}},</p>
-<p>There are only 3 days left until the accepeted applicants annoucement date for: "{{fieldwork_name | raw}}"!<br>
-    Please use the following link to accept or reject the information seekers who applied for this expedition:
+<p>Thank you for listing your expedition ({{fieldwork_name | raw}}) on the Cryo Connect platform on {{_context.fieldwork_registeration_date | date("F jS\\, Y")}}. In 3 days the deadline that you set for inviting information seekers to join your expedition will pass. We therefore recommend that you click the link below at your earliest convenience, to accept or reject applicants:
     <br>
 <a href="https://cryoconnect.net{{path_for('fieldwork_dashboard',{},{'e': _context.leader_email  , 't': _context.token}) }}">https://cryoconnect.net{{ path_for('fieldwork_dashboard',{} , {'e': _context.leader_email , 't': _context.token}) }}</a></p>
-
+<p>Nota bene: to keep the influx of email into your inbox low, you will receive no further messages on this topic. If we don't hear from you, the status of your expedition on Cryo Connect will automatically be changed to "cancelled" after your deadline passes.</p>
 <p>Best wishes,<br>
 Cryo Connect</p>

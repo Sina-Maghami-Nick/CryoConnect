@@ -20,12 +20,13 @@ class ApiController extends Controller {
 
         if (isset($notCertainExpeditions) && !empty($notCertainExpeditions)) {
             foreach ($notCertainExpeditions as $expedition) {
-                $emailMsg = (new \Swift_Message('Reminder: time to set your expedition to certain'))
+                $emailMsg = (new \Swift_Message('Confirm your expedition'))
                         ->setFrom([$this->container->get('settings')['mailer']['username'] => 'Cryo Connect'])
                         ->setTo($expedition->getFieldworkLeaderEmail())
                         ->setBody(
                         $this->view->render(new \Slim\Http\Response(), 'api/emails/is-certain-date-today.html.twig', [
                             'leader_name' => $expedition->getFieldworkLeaderName(),
+                            'fieldwork_registeration_date' => $expedition->getTimestamp(),
                             'leader_email' => $expedition->getFieldworkLeaderEmail(),
                             'fieldwork_name' => $expedition->getFieldworkName(),
                             'token' => md5($expedition->getFieldworkLeaderEmail() . $expedition->hashCode()),
@@ -74,6 +75,7 @@ class ApiController extends Controller {
                         $this->view->render(new \Slim\Http\Response(), 'api/emails/expedition-announcement-deadline.html.twig', [
                             'leader_name' => $expedition->getFieldworkLeaderName(),
                             'leader_email' => $expedition->getFieldworkLeaderEmail(),
+                            'fieldwork_registeration_date' => $expedition->getTimestamp(),
                             'fieldwork_name' => $expedition->getFieldworkName(),
                             'token' => md5($expedition->getFieldworkLeaderEmail() . $expedition->hashCode()),
                                 ]

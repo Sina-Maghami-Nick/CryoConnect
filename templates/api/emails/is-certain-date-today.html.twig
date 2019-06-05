@@ -1,8 +1,7 @@
 <p>Dear {{_context.leader_name | raw}},</p>
-<p>Is the expedition "{{fieldwork_name | raw}}" expedition certain already ?<br>
-    If yes, please use the following link to edit your expedition and set it as "certain":
+<p>Thank you for listing your expedition ({{fieldwork_name | raw}}) on the Cryo Connect platform on {{_context.fieldwork_registeration_date | date("F jS\\, Y")}}. Initially you indicated that the expedition was not guaranteed to take place. At this time, we would like to ask you to update your expedition information, and specifically to set the likelihood of the expedition to "certain", if this applies. Please use this link to access your information:
     <br>
 <a href="https://cryoconnect.net{{path_for('fieldwork_dashboard',{},{'e': _context.leader_email  , 't': _context.token}) }}">https://cryoconnect.net{{ path_for('fieldwork_dashboard',{} , {'e': _context.leader_email , 't': _context.token}) }}</a></p>
-
+<p>Nota bene: to keep the influx of email into your inbox low, you will receive no further messages on this topic.</p>
 <p>Best wishes,<br>
 Cryo Connect</p>
