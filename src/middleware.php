@@ -111,7 +111,7 @@ $fieldworkDashboardAuthenticator = function(Slim\Http\Request $request, TokenAut
     $token = $tokenAuth->findToken($request);
     $fieldworkLeaderEmail = str_replace(' ', '+', $request->getParam('e'));
     $fieldworks = FieldworkQuery::create()->findByFieldworkLeaderEmail($fieldworkLeaderEmail);
-    
+
     $authenticated = false;
     foreach ($fieldworks as $fieldwork) {
         if (md5($fieldwork->getFieldworkLeaderEmail() . $fieldwork->hashCode()) == $token) {
@@ -138,10 +138,10 @@ $ApiAuthenticator = function(Slim\Http\Request $request, TokenAuthentication $to
     # Search for token on header, parameter, cookie or attribute
     $token = $tokenAuth->findToken($request);
     $apiToken = 'QMt9neFatRqGcUEX';
-    
-    
+
+
     $authenticated = false;
-    if ($token == $apiToken){
+    if ($token == $apiToken) {
         $authenticated = true;
     }
 
@@ -156,4 +156,42 @@ $app->add(new TokenAuthentication([
     'authenticator' => $ApiAuthenticator,
     'parameter' => 't',
     'header' => 'Token-Authorization-X'
+]));
+
+//add recaptcha Authentication
+$recaptchaAuthentication = function(Slim\Http\Request $request, TokenAuthentication $tokenAuth) {
+    # Search for token on header, parameter, cookie or attribute
+    $captcha = $request->getParsedBody()['rt'];
+    $secretKey = '6LeyIZ4UAAAAAN4fAqIZq5gztSzKuolohXsJAaQB';
+
+    // post request to server
+    $url = 'https://www.google.com/recaptcha/api/siteverify';
+    $data = array('secret' => $secretKey, 'response' => $captcha);
+
+    $options = array(
+        'http' => array(
+            'header' => "Content-type: application/x-www-form-urlencoded\r\n",
+            'method' => 'POST',
+            'content' => http_build_query($data)
+        )
+    );
+    $context = stream_context_create($options);
+    $response = file_get_contents($url, false, $context);
+
+    $responseKeys = json_decode($response, true);
+
+    $authenticated = false;
+    if ($responseKeys["success"] == 'true') {
+        $authenticated = true;
+    }
+
+    if (!$authenticated) {
+        throw new Exception("not authorized");
+    }
+};
+
+//recaptcha checks
+$app->add(new TokenAuthentication([
+    'path' => ['/fieldwork/new-request', '/fieldwork/connect/new-request'],
+    'authenticator' => $recaptchaAuthentication,
 ]));

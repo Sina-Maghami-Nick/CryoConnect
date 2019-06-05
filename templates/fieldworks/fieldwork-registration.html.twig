@@ -1,4 +1,4 @@
-{# empty Twig template #}
+{% import "./macros/view-macros.html.twig" as macros %}
 <html>
     <head>
         <title>Fieldwork registration</title>
@@ -80,7 +80,7 @@
                 <div class="row">
                     <div class="input-field col s12">
                         <input id="end_date" name="end_date" type="text" class="datepicker" required>
-                        <label for="start_date">Approximate expedition end date<font color="red">*</font></label>
+                        <label for="end_date">Approximate expedition end date<font color="red">*</font></label>
                     </div>
                 </div>
 
@@ -182,6 +182,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    {{macros.recaptchaLoad()}}
     <script>
 
         //enables date picker for uncertain dates
@@ -197,17 +198,20 @@
         });
 
         $(document).ready(function () {
-
+            
+            {{macros.recaptchaExecute()}}
+                    
             //form subbmition
             $("#fieldwork_form").submit(function (event) {
-
+                
                 /* stop form from submitting normally */
                 event.preventDefault();
-
+                var recaptchaToken = $(document).data('repactcha-token');
+ 
                 $.ajax({
                     type: 'POST',
                     url: "{{path_for('fieldwork-registration')}}",
-                    data: $(this).serialize(),
+                    data: $(this).serialize() + "&rt=" + recaptchaToken,
                     beforeSend: function () {
                         $('#submitBtn').attr("disabled", "disabled");
                     }

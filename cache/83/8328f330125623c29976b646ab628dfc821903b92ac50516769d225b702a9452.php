@@ -19,6 +19,8 @@ class __TwigTemplate_d8e70e8824507d278a3b2ce7c8579836ae85b16e6c55552fd3dbdd70b19
 
     protected function doDisplay(array $context, array $blocks = array())
     {
+        // line 1
+        $context["macros"] = $this->loadTemplate("./macros/view-macros.html.twig", "fieldworks/fieldwork-connect.html.twig", 1);
         // line 2
         echo "<html>
     <head>
@@ -59,7 +61,7 @@ class __TwigTemplate_d8e70e8824507d278a3b2ce7c8579836ae85b16e6c55552fd3dbdd70b19
                 <div class=\"row\">
                     <div class=\"input-field col s12\">
                         <input id=\"range_date\" name=\"range_date\" type=\"text\" class=\"datepicker\" required>
-                        <label for=\"start_date\">Please select the date range<font color=\"red\">*</font></label>
+                        <label for=\"range_date\">Please select the date range<font color=\"red\">*</font></label>
                     </div>
                 </div>
 
@@ -98,6 +100,10 @@ class __TwigTemplate_d8e70e8824507d278a3b2ce7c8579836ae85b16e6c55552fd3dbdd70b19
     <script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js\"></script>
     <script src=\"https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js\"></script>
     <script src=\"https://cdn.jsdelivr.net/npm/flatpickr\"></script>
+    ";
+        // line 66
+        echo $context["macros"]->macro_recaptchaLoad();
+        echo "
     <script>
 
         
@@ -132,6 +138,12 @@ class __TwigTemplate_d8e70e8824507d278a3b2ce7c8579836ae85b16e6c55552fd3dbdd70b19
 
         \$(document).ready(function () {
             
+            //run recaptcha
+            ";
+        // line 102
+        echo $context["macros"]->macro_recaptchaExecute();
+        echo "
+            
             //fixe iframe focusing out of drop box
             \$(window).on('blur',function() { document.getElementById('search_form').click()} );
 
@@ -147,7 +159,7 @@ class __TwigTemplate_d8e70e8824507d278a3b2ce7c8579836ae85b16e6c55552fd3dbdd70b19
                 \$.ajax({
                     type: 'GET',
                     url: \"";
-        // line 114
+        // line 118
         echo twig_escape_filter($this->env, $this->extensions['Slim\Views\TwigExtension']->pathFor("fieldwork_connect_search"), "html", null, true);
         echo "\",
                     data: \$(this).serialize(),
@@ -182,14 +194,16 @@ class __TwigTemplate_d8e70e8824507d278a3b2ce7c8579836ae85b16e6c55552fd3dbdd70b19
 
                 /* stop form from submitting normally */
                 event.preventDefault();
+                // get recaptcha token
+                var recaptchaToken = \$(document).data('repactcha-token');
 
                 \$.ajax({
                     type: 'POST',
                     url: \"";
-        // line 150
+        // line 156
         echo twig_escape_filter($this->env, $this->extensions['Slim\Views\TwigExtension']->pathFor("fieldwork_connect_new_request"), "html", null, true);
         echo "\",
-                    data: \$(this).serialize(),
+                    data: \$(this).serialize() + \"&rt=\" + recaptchaToken,
                     beforeSend: function () {
                         \$('#submitBtnTwo').attr('disabled', 'disabled');
                     }
@@ -252,7 +266,7 @@ class __TwigTemplate_d8e70e8824507d278a3b2ce7c8579836ae85b16e6c55552fd3dbdd70b19
 
     public function getDebugInfo()
     {
-        return array (  190 => 150,  151 => 114,  55 => 20,  44 => 18,  40 => 17,  23 => 2,);
+        return array (  204 => 156,  163 => 118,  144 => 102,  105 => 66,  57 => 20,  46 => 18,  42 => 17,  25 => 2,  23 => 1,);
     }
 
     public function getSourceContext()

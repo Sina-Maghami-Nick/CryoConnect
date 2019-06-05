@@ -1,4 +1,4 @@
-{# empty Twig template #}
+{% import "./macros/view-macros.html.twig" as macros %}
 <html>
     <head>
         <title>Expedition connect</title>
@@ -24,7 +24,7 @@
                 <div class="row">
                     <div class="input-field col s12">
                         <input id="range_date" name="range_date" type="text" class="datepicker" required>
-                        <label for="start_date">Please select the date range<font color="red">*</font></label>
+                        <label for="range_date">Please select the date range<font color="red">*</font></label>
                     </div>
                 </div>
 
@@ -63,6 +63,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    {{macros.recaptchaLoad()}}
     <script>
 
         
@@ -96,6 +97,9 @@
         });
 
         $(document).ready(function () {
+            
+            //run recaptcha
+            {{macros.recaptchaExecute()}}
             
             //fixe iframe focusing out of drop box
             $(window).on('blur',function() { document.getElementById('search_form').click()} );
@@ -144,11 +148,13 @@
 
                 /* stop form from submitting normally */
                 event.preventDefault();
+                // get recaptcha token
+                var recaptchaToken = $(document).data('repactcha-token');
 
                 $.ajax({
                     type: 'POST',
                     url: "{{path_for('fieldwork_connect_new_request')}}",
-                    data: $(this).serialize(),
+                    data: $(this).serialize() + "&rt=" + recaptchaToken,
                     beforeSend: function () {
                         $('#submitBtnTwo').attr('disabled', 'disabled');
                     }

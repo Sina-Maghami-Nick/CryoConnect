@@ -1,0 +1,12 @@
+{# empty Twig template #}
+{% macro recaptchaLoad()%}
+    <script src="https://www.google.com/recaptcha/api.js?render=6LeyIZ4UAAAAABsMnmmR0r9iV2p3NCBPmal3iPjF"></script>
+{% endmacro %}
+
+{% macro recaptchaExecute()%}
+    grecaptcha.ready(function () {
+        grecaptcha.execute('6LeyIZ4UAAAAABsMnmmR0r9iV2p3NCBPmal3iPjF', {action: 'app'}).then(function(token) {
+            $(document).data('repactcha-token', token);
+        });
+    });
+{% endmacro %}
