@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{% import "./macros/view-macros.html.twig" as macros %}
 <html>
 
     <head>
@@ -46,12 +46,12 @@
                         <label for="affiliation_city">Affiliation city<font color="red">*</font></label>
                     </div>
                     <div class="secondaryaffiliationdiv">
-                        <div class="input-field col s10">
-                            <input class="secondaryaffiliations" name="affiliation[secondary][0]" type="text" class="validate" required>
-                            <label for="secondaryaffiliations">Other affiliation<font color="red">*</font></label>
+                        <div class="input-field col s8">
+                            <input class="secondaryaffiliations" name="affiliation[secondary][0]" type="text" class="validate">
+                            <label for="secondaryaffiliations">Other affiliation</font></label>
                         </div>
                     </div>
-                    <div class="input-field col s2">
+                    <div class="input-field col s4">
                         <a id="addaffiliation" class="waves-effect waves-light btn"><i class="material-icons left">add</i>Add</a>
                     </div>
                 </div>
@@ -242,7 +242,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
+        {{macros.recaptchaLoad()}}
         <script>
             document.addEventListener("DOMContentLoaded", function () {
 
@@ -290,7 +290,8 @@
 
 
             $(document).ready(function () {
-
+                
+                {{macros.recaptchaExecute()}}
 
 
                 $("#addaffiliation").click(function () {
@@ -309,11 +310,12 @@
 
                     /* stop form from submitting normally */
                     event.preventDefault();
+                    var recaptchaToken = $(document).data('repactcha-token');
 
                     $.ajax({
                         type: 'POST',
                         url: $(this).attr('action'),
-                        data: $(this).serialize(),
+                        data: $(this).serialize() + "&rt=" + recaptchaToken,
                         beforeSend: function () {
                             $('#submitBtn').attr("disabled", "disabled");
                         }

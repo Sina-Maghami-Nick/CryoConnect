@@ -347,7 +347,7 @@ class ExpertsController extends Controller {
 
         $this->container->get('logger')
                 ->addInfo('An expert is being deleted by an expert. Expert Email: ' . $emailAddress);
-        
+
         $expert->delete();
 
         $emailMsg = (new \Swift_Message('You have been removed from the Cryo Connect database'))
@@ -674,10 +674,12 @@ class ExpertsController extends Controller {
             }
 
             foreach ($secondryAffiliations as $secondryAffiliationName) {
-                $expertSecondryAffiliation = new ExpertSecondaryAffiliation();
-                $expertSecondryAffiliation->setSecondaryAffiliationName($secondryAffiliationName);
-                $expert->addExpertSecondaryAffiliation($expertSecondryAffiliation);
-                unset($expertSecondryAffiliation);
+                if (!empty($secondryAffiliationName)) {
+                    $expertSecondryAffiliation = new ExpertSecondaryAffiliation();
+                    $expertSecondryAffiliation->setSecondaryAffiliationName($secondryAffiliationName);
+                    $expert->addExpertSecondaryAffiliation($expertSecondryAffiliation);
+                    unset($expertSecondryAffiliation);
+                }
             }
         }
 

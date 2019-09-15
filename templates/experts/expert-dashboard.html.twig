@@ -124,13 +124,13 @@
                             </div>
                             {% for expert_secondary_affiliation in _context.expert_secondary_affiliation %}
                                 <div class="secondaryaffiliationdiv">
-                                    <div class="input-field col s10">
-                                        <input class="secondaryaffiliations" name="affiliation[secondary][{{loop.index0}}]" type="text" class="validate" value="{{expert_secondary_affiliation.SecondaryAffiliationName}}" required>
-                                        <label for="secondaryaffiliations">Other affiliation<font color="red">*</font></label>
+                                    <div class="input-field col s8">
+                                        <input class="secondaryaffiliations" name="affiliation[secondary][{{loop.index0}}]" type="text" class="validate" value="{{expert_secondary_affiliation.SecondaryAffiliationName}}">
+                                        <label for="secondaryaffiliations">Other affiliation</label>
                                     </div>
                                 </div>
                             {% endfor %}
-                            <div class="input-field col s2">
+                            <div class="input-field col s4">
                                 <a id="addaffiliation" class="waves-effect waves-light btn"><i class="material-icons left">add</i>Add</a>
                             </div>
                         </div>

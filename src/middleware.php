@@ -218,6 +218,6 @@ $recaptchaAuthentication = function(Slim\Http\Request $request, TokenAuthenticat
 
 //recaptcha checks
 $app->add(new TokenAuthentication([
-    'path' => ['/fieldwork/new-request', '/fieldwork/connect/new-request'],
+    'path' => ['/fieldwork/new-request', '/fieldwork/connect/new-request', '/experts/new-request'],
     'authenticator' => $recaptchaAuthentication,
 ]));
