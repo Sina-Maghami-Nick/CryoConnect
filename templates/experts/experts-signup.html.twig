@@ -1,213 +1,255 @@
 <!DOCTYPE html>
 <html>
+
     <head>
-        <title>Experts Sign-up</title>
-        <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/grids-responsive-min.css">
-
-
-
-        <style>
-            
-            .pure-form select {
-                width: 215px;
-            }
-            .pure-form-aligned .pure-control-group label {
-                text-align: left;
-                display: inline-block;
-                vertical-align: middle;
-                width: 20em;
-                margin: 0 1em 0 0;
-            }
-
-            .success-button {
-                background: rgb(28, 184, 65);
-                color: white;
-                border-radius: 5px;
-                margin-top: 2px;
-            }
-
-            hr.hrform {
-                border-top: 3px double #8c8b8b;
-                width: 555px;
-                margin-left: 0;
-            }
-        </style>
-        
+        <title>Experts registration</title>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     </head>
+
     <body>
-        <div id="formpage" style="text-align:centre">
-            <form class="pure-form pure-form-aligned" id="expertform" action={{path_for('expert_signup')}} method="post">
-                <fieldset>
+        <div class="row">
+            <form class="col s12" id="expertform" action={{path_for('expert_signup')}} method="post">
 
-                    <div class="pure-control-group">
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="firstName" name="first_name" type="text" class="validate" required>
                         <label for="firstName">First name<font color="red">*</font></label>
-                        <input name="first_name" id="firstName" type="text" placeholder="First name" required>
                     </div>
+                </div>
 
-                    <div class="pure-control-group">
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="lastName" name="last_name" type="text" class="validate" required>
                         <label for="lastName">Last name<font color="red">*</font></label>
-                        <input name="last_name" id="lastName" type="text" placeholder="Last name" required>
                     </div>
+                </div>
 
-                    <div class="pure-control-group">
-                        <label for="affiliation">Affiliations (name<font color="red">*</font>, country<font color="red">*</font>, city, secondary affliations) </label>
-                        <div class="pure-u">
-                            <input name="affiliation[primary][name]" id="affiliation" type="text" placeholder="name of primary affiliation" required>
-                            <br>
-                            <select name="affiliation[primary][country]" id="primaryaffiliationcountry" required>
-                                <option disabled selected value> choose </option>
-                                {% for country in _context.countries %}
-                                    <option value="{{country.CountryCode}}">{{country.CountryName}}</option>
-                                {% endfor %}
-                            </select>
-                            <br>
-                            <input name="affiliation[primary][city]" id="primaryaffiliationcity" type="text" placeholder="city of primary affiliation">
-                            <br>
-                            <input name="affiliation[secondary][0]" class="secondaryaffiliations" type="text" placeholder="other affiliation">
-                            <br>
-                            <button type="button" id="addaffiliation" class="pure-button success-button">add affiliation</button>
-                        </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="affiliation" name="affiliation[primary][name]" type="text" class="validate" required>
+                        <label for="affiliation">Affiliation name<font color="red">*</font></label>
                     </div>
-
-
-                    <div class="pure-control-group">
-                        <label for="careerstage">Career stage<font color="red">*</font></label>
-                        <select name="caree_stage" id="careerstage" required>
-                            <option disabled selected value> choose </option>
-                            {% for career_stages in _context.career_stages %}
-                                <option value="{{career_stages.Id}}">{{career_stages.CareerStageName}}</option>
+                    <div class="input-field col s12">
+                        <select id="affiliation_country" name="affiliation[primary][country]" required>
+                            <option value="" disabled selected>choose</option>
+                            {% for country in _context.countries %}
+                                <option value="{{country.CountryCode}}">{{country.CountryName | raw}}</option>
                             {% endfor %}
                         </select>
+                        <label for="affiliation_country">Affiliation country<font color="red">*</font></label>
                     </div>
+                    <div class="input-field col s12">
+                        <input id="affiliation_city" name="affiliation[primary][city]" type="text" class="validate" required>
+                        <label for="affiliation_city">Affiliation city<font color="red">*</font></label>
+                    </div>
+                    <div class="secondaryaffiliationdiv">
+                        <div class="input-field col s10">
+                            <input class="secondaryaffiliations" name="affiliation[secondary][0]" type="text" class="validate" required>
+                            <label for="secondaryaffiliations">Other affiliation<font color="red">*</font></label>
+                        </div>
+                    </div>
+                    <div class="input-field col s2">
+                        <a id="addaffiliation" class="waves-effect waves-light btn"><i class="material-icons left">add</i>Add</a>
+                    </div>
+                </div>
 
-                    <div class="pure-control-group">
+                <div class="row">
+                    <div class="input-field col s12">
+                        <select name="caree_stage" id="careerstage" required>
+                            <option value="" disabled selected>choose</option>
+                            {% for career_stages in _context.career_stages %}
+                                <option value="{{career_stages.Id}}">{{career_stages.CareerStageName | raw}}</option>
+                            {% endfor %}
+                        </select>
+                        <label for="careerstage">Career stage<font color="red">*</font></label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="input-field col s12">             
+                        <input name="birth_year" id="birtyear" type="number" placeholder="birth year" required>
                         <label for="birtyear">When is your birth year?<font color="red">*</font></label>
-                        <input name="birth_year" id="birtyear" type="number" placeholder="birt year" required>
                     </div>
+                </div>
 
-                    <div class="pure-control-group">
-                        <label for="gender">Gender<font color="red">*</font></label>
+                <div class="row">
+                    <div class="input-field col s12">    
                         <select name="gender" required>
-                            <option disabled selected value>choose</option>
+                            <option value="" disabled selected>choose</option>
                             <option value="F">female</option>
                             <option value="M">male</option>
                             <option value="O">other</option>
                         </select>
+                        <label for="gender">Gender<font color="red">*</font></label>
                     </div>
+                </div>
 
-                    <div class="pure-control-group">
+                <div class="row">
+                    <div class="input-field col s12">    
+                        <select name="languages[]" required multiple>
+                            {% for language in _context.languages %}
+                                <option value="{{language.LanguageCode}}">{{language.Language}}</option>
+                            {% endfor %}
+                        </select>
                         <label for="languages">Languages in which you are capable of answering scientific questions<font color="red">*</font></label>
-                        <div class="pure-u" id="languages">
-                            <select name="languages[0]" required>
-                                <option disabled selected value>choose</option>
-                                {% for language in _context.languages %}
-                                    <option value="{{language.LanguageCode}}">{{language.Language}}</option>
-                                {% endfor %}
-                            </select>
-                            <br>
-                            <button type="button" id="addlanguage" class="pure-button success-button">add language </button>
-                        </div>
-                    </div>  
+                    </div>
+                </div>
 
-                    <div class="pure-control-group">
-                        <label for="phonenumber">Phone number (incl. country code)<font color="red">*</font></label>
+                <div class="row">
+                    <div class="input-field col s12"> 
                         <input name="phone_number" id="phonenumber" type="tel" placeholder="number with country code">
+                        <label for="phonenumber">Phone number (incl. country code)<font color="red">*</font></label>
                     </div>
+                </div>
 
-                    <div class="pure-control-group">
-                        <label for="personalwebsite">Personal website</label>
+                <div class="row">
+                    <div class="input-field col s12">           
                         <input name="personal_website" id="personalwebsite" type="url" placeholder="website">
+                        <label for="personalwebsite">Personal website</label>
                     </div>
-
-                    <div class="pure-control-group">
-                        <label for="personallinkedin">LinkedIn</label>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12"> 
                         <input name="personal_linkedin" id="personallinkedin" type="url" placeholder="linkedIn">
+                        <label for="personallinkedin">LinkedIn</label>
                     </div>
-
-                    <div class="pure-control-group">
-                        <label for="personalgooglescholar">Google Scholar profile</label>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12"> 
                         <input name="personal_google_scholar" id="personalgooglescholar" type="url" placeholder="google scholar">
+                        <label for="personalgooglescholar">Google Scholar profile</label>
                     </div>
-
-                    <div class="pure-control-group">
-                        <label for="email">Email address<font color="red">*</font></label>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12"> 
                         <input name="email" id="email" type="email" placeholder="Email address" required>
+                        <label for="email">Email address<font color="red">*</font></label>
                     </div>
+                </div>
 
-                    <hr class="hrform">
-
-                    <div class="pure-control-group">
+                <div class="row">
+                    <div class="input-field col s12" >    
+                        <span id="cryosphere_what"/>
                         <label for="cryosphere_what">Which parts of the cryosphere are you comfortable answering questions about?<font color="red">*</font> </label>
-                        <div class="pure-u" id="cryosphere_what">
-                            {% for cryosphere_what in _context.cryosphere_what %}
-
-                                <input name="cryosphere_what[{{cryosphere_what.CryosphereWhatName}}]" class="cryosphere_what" type="checkbox" value="{{cryosphere_what.Id}}" required > {{cryosphere_what.CryosphereWhatName}}</input>
-                                <br>
-                            {% endfor %}
-                        </div>
+                        <br><br>
+                        {% for cryosphere_what in _context.cryosphere_what %}
+                            <label>
+                                <input name="cryosphere_what[{{cryosphere_what.CryosphereWhatName}}]" value="{{cryosphere_what.Id}}" type="checkbox" class="cryosphere_what" required />
+                                <span>{{cryosphere_what.CryosphereWhatName}}</span>
+                            </label>
+                            </br> 
+                        {% endfor %}
                     </div>
+                </div>
 
-                    <div class="pure-control-group">
-                        <label for="cryosphere_where">In which general region(s) have you studied the cryosphere?<font color="red">*</font></label>
-                        <div class="pure-u" id="cryosphere_where">
-                            {% for cryosphere_where in _context.cryosphere_where %}
-                                <input name="cryosphere_where[{{cryosphere_what.CryosphereWhereName}}]" type="checkbox" class="cryosphere_where" value="{{cryosphere_where.Id}}" required >{{cryosphere_where.CryosphereWhereName}}</input>
-                                <br>
-                            {% endfor %}
-                        </div>
+                <div class="row">
+                    <div class="input-field col s12" >    
+                        <span id="cryosphere_where"/>
+                        <label for="cryosphere_where">In which general region(s) have you studied the cryosphere?<font color="red">*</font> </label>
+                        <br><br>
+                        {% for cryosphere_where in _context.cryosphere_where %}
+
+                            <label>
+                                <input name="cryosphere_where[{{cryosphere_where.CryosphereWhereName}}]" value="{{cryosphere_where.Id}}" type="checkbox" class="cryosphere_where" required />
+                                <span>{{cryosphere_where.CryosphereWhereName}}</span>
+                            </label>
+                            </br>   
+                        {% endfor %}
                     </div>
+                </div>
 
-                    <div class="pure-control-group">
-                        <label for="cryosphere_what_specefic">Which processes & subdisciplines are you comfortable answering questions about?<font color="red">*</font></label>
-                        <div class="pure-u" id="cryosphere_what_specefic">
-                            {% for cryosphere_what_specefic in _context.cryosphere_what_specefic %}
-                                <input name="cryosphere_what_specefic[{{cryosphere_what_specefic.CryosphereWhatSpeceficName}}]" class="cryosphere_what_specefic" type="checkbox" value="{{cryosphere_what_specefic.Id}}" required >{{cryosphere_what_specefic.CryosphereWhatSpeceficName}}</input>
-                                <br>
-                            {% endfor %}
-                        </div>
+                <div class="row">
+                    <div class="input-field col s12" >    
+                        <span id="cryosphere_what_specefic"/>
+                        <label for="cryosphere_what_specefic">Which processes & subdisciplines are you comfortable answering questions about?<font color="red">*</font> </label>
+                        <br><br>
+                        {% for cryosphere_what_specefic in _context.cryosphere_what_specefic %}
+
+                            <label>
+                                <input name="cryosphere_what_specefic[{{cryosphere_what_specefic.CryosphereWhatSpeceficName}}]" value="{{cryosphere_what_specefic.Id}}" type="checkbox" class="cryosphere_what_specefic" required />
+                                <span>{{cryosphere_what_specefic.CryosphereWhatSpeceficName}}</span>
+                            </label>
+                            </br>   
+                        {% endfor %}
                     </div>
+                </div>
 
-                    <div class="pure-control-group">
-                        <label for="cryosphere_method">Which methods are you comfortable answering questions about?<font color="red">*</font></label>
-                        <div class="pure-u" id="cryosphere_method">
-                            {% for cryosphere_method in _context.cryosphere_methods %}
-                                <input name="cryosphere_method[{{cryosphere_method.CryosphereMethodsName}}]" type="checkbox" class="cryosphere_method" value="{{cryosphere_method.Id}}" required >{{cryosphere_method.CryosphereMethodsName}}</input>
-                                <br>
-                            {% endfor %}
-                        </div>
+
+
+                <div class="row">
+                    <div class="input-field col s12" >    
+                        <span id="cryosphere_method"/>
+                        <label for="cryosphere_method">Which methods are you comfortable answering questions about?<font color="red">*</font> </label>
+                        <br><br>
+                        {% for cryosphere_method in _context.cryosphere_methods %}
+                            <label>
+                                <input name="cryosphere_method[{{cryosphere_method.CryosphereMethodsName}}]" value="{{cryosphere_method.Id}}" type="checkbox" class="cryosphere_method" required />
+                                <span>{{cryosphere_method.CryosphereMethodsName}}</span>
+                            </label>
+                            </br>   
+                        {% endfor %}
                     </div>
+                </div>
 
-                    <div class="pure-control-group">
-                        <label for="cryosphere_when">Which time periods are you comfortable answering questions about?<font color="red">*</font></label>
-                        <div class="pure-u" id="cryosphere_when">
-                            {% for cryosphere_when in _context.cryosphere_when %}
-                                <input name="cryosphere_when[{{cryosphere_when.CryosphereWhatName}}]" type="checkbox" class="cryosphere_when" value="{{cryosphere_when.Id}}" required >{{cryosphere_when.CryosphereWhenName}}</input>
-                                <br>
-                            {% endfor %}
-                        </div>
+                <div class="row">
+                    <div class="input-field col s12" >    
+                        <span id="cryosphere_when"/>
+                        <label for="cryosphere_when">Which time periods are you comfortable answering questions about?<font color="red">*</font> </label>
+                        <br><br>
+                        {% for cryosphere_when in _context.cryosphere_when %}
+                            <label>
+                                <input name="cryosphere_when[{{cryosphere_when.CryosphereWhenName}}]" value="{{cryosphere_when.Id}}" type="checkbox" class="cryosphere_when" required />
+                                <span>{{cryosphere_when.CryosphereWhenName}}</span>
+                            </label>
+                            </br>   
+                        {% endfor %}
                     </div>
+                </div>
 
-
-
-                    <div class="pure-controls">
-                        <label for="termcondition" class="pure-checkbox">
-                            <input id="termcondition" type="checkbox" required> I agree to the terms and conditions
+                <div class="row">
+                    <div class="input-field col s12">
+                        <label>
+                            <input id="termcondition" type="checkbox" class="filled-in" required/>
+                            <span>I agree to the terms and conditions<font color="red">*</font></span>
                         </label>
-
-                        <button type="submit" id="submitBtn" class="pure-button pure-button-primary">Sign up</button>
                     </div>
-                    <span class="pure-form-message-inline"><font color="red">*</font>required fields</span>
-                </fieldset>
+                </div>
+
+                <div class="row">
+                    <div class="input-field col s12">
+                        <p class="center-align">
+                            <button id="submitBtn" class="btn waves-effect waves-light" type="submit" name="action">Sign up
+                                <i class="material-icons right">send</i>
+                            </button>
+                        </p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <span class="pure-form-message-inline"><font color="red">*</font>required fields</span>
+                    </div>
+                </div>
+
+
             </form>
         </div>
 
 
+
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
         <script>
             document.addEventListener("DOMContentLoaded", function () {
+
+                //to initialize materelize forms
+                $('select').formSelect();
+
+
                 var elements = $("input:checkbox");
                 for (var i = 0; i < elements.length; i++) {
                     if (elements[i].id != "termcondition") {
@@ -249,25 +291,16 @@
 
             $(document).ready(function () {
 
-                $("#addlanguage").click(function () {
 
-                    var selectCount = $(this).parent().find("select").length;
-                    var selectObj = $(this).parent().find("select").first().clone();
-                    selectObj.attr('name', 'languages[' + selectCount + ']');
-                    selectObj.selectedIndex = 0;
-                    selectObj.prop('required', false);
-                    selectObj.insertBefore($(this));
-                    $('<br />').insertBefore($(this));
-                });
 
                 $("#addaffiliation").click(function () {
 
-                    var selectCount = $(this).parent().find(".secondaryaffiliations").length;
-                    var selectObj = $(this).parent().find(".secondaryaffiliations").first().clone();
-                    selectObj.attr('name', 'affiliation[secondary][' + selectCount + ']');
-                    selectObj.val(null);
-                    selectObj.insertBefore($(this));
-                    $('<br />').insertBefore($(this));
+                    var selectCount = $(this).parent().parent().find(".secondaryaffiliationdiv").length;
+                    var selectObj = $(this).parent().parent().find(".secondaryaffiliationdiv").first().clone();
+                    selectObj.children().first().find(".secondaryaffiliations").attr('name', 'affiliation[secondary][' + selectCount + ']');
+                    selectObj.children().first().find(".secondaryaffiliations").val(null);
+                    selectObj.insertBefore($(this).parent());
+
                 });
 
 

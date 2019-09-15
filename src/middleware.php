@@ -133,6 +133,32 @@ $app->add(new TokenAuthentication([
     'header' => 'Token-Authorization-X'
 ]));
 
+
+//expert dashboard token authentication
+$expertDashboardAuthenticator = function(Slim\Http\Request $request, TokenAuthentication $tokenAuth) {
+    # Search for token on header, parameter, cookie or attribute
+    $token = $tokenAuth->findToken($request);
+    $expertEmail = str_replace(' ', '+', $request->getParam('e'));
+    $expert = ExpertsQuery::create()->findOneByEmail($expertEmail);
+
+    $authenticated = false;
+    if (md5($expert->getEmail() . $expert->hashCode()) == $token) {
+        $authenticated = true;
+    }
+
+    if (!$authenticated) {
+        throw new Exception("not authorized" . $expert->toJSON());
+    }
+};
+
+
+$app->add(new TokenAuthentication([
+    'path' => '/experts/dashboard',
+    'authenticator' => $expertDashboardAuthenticator,
+    'parameter' => 't',
+    'header' => 'Token-Authorization-X'
+]));
+
 //fieldwork connect applicant lust page token authentication
 $ApiAuthenticator = function(Slim\Http\Request $request, TokenAuthentication $tokenAuth) {
     # Search for token on header, parameter, cookie or attribute

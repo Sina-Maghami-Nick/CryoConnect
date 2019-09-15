@@ -36,6 +36,15 @@ $app->group('/experts', function () {
 
     //route to check if expert email exists
     $this->post('/email-exist-check', ExpertsController::class . ':expertEmailExistCheckAction')->setName('expert_check_email');
+    
+    //route to expert dashboard
+    $this->get('/dashboard', ExpertsController::class . ':expertDashboardAction')->setName('expert_dashboard');
+    
+    //route to expert removeforever
+    $this->delete('/dashboard/delete', ExpertsController::class . ':expertDeleteAction')->setName('expert_delete');
+    
+    //route to expert edit
+    $this->put('/dashboard/edit', ExpertsController::class . ':expertEditAction')->setName('expert_edit');
 });
 
 

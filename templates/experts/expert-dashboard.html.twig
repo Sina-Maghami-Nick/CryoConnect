@@ -1,0 +1,586 @@
+<html>
+    <head>
+        <title>Expert Dashboard</title>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flipclock/0.7.8/flipclock.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </head>
+
+    <body>
+        <div class="row">
+            <div class="col s12 m12">
+                <div class="card cyan lighten-2">
+                    <div class="card-content">
+
+                        <div class="row">
+                            <div class="center-align col s12"><span class="flow-text">Expert's Dashboard</span></div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <p>First Name: <div class="chip green white-text">{{_context.expert.FirstName | raw}}</div></p>
+                        </div><div class="row">
+                            <p>Last Name: <div class="chip green white-text">{{_context.expert.LastName | raw}}</div></p>
+                        </div><div class="row">
+                            <p>Gender: <div class="chip green white-text">{% if _context.expert.Gender == "M" %}Male{% elseif _context.expert.Gender == "F" %}Female{% elseif _context.expert.Gender == "O" %}Other{% endif %}</div></p>
+                        </div><div class="row">
+                            <p>Birth Year: <div class="chip green white-text">{{_context.expert.BirthYear}}</div></p>
+                        </div><div class="row"> 
+                            <p>Location: <div class="chip green white-text">{{(_context.expert_country | first).CountryName}}</div></p>
+                        </div><div class="row">
+                            <p>Languages:{% for expert_language in _context.expert_languages %}<div class="chip green white-text">{{expert_language.Language}}</div> {% endfor %}</p>
+                        </div><div class="row">
+                            <p>Career Stage: <div class="chip green white-text">{{_context.expert_career_stages|first.CareerStage.CareerStageName | raw}}</div></p>
+                        </div><div class="row">
+                            <p>Primary Affiliation (Name - City - Country): <div class="chip green white-text">{{expert_primary_affiliation.PrimaryAffiliationName | raw}} - {{expert_primary_affiliation.PrimaryAffiliationCity}} - {{expert_primary_affiliation.PrimaryAffiliationCountryCode}}</div></p>
+                        </div><div class="row">
+                            <p>Secondary Affiliations: {% for expert_secondary_affiliation in _context.expert_secondary_affiliation %}<div class="chip green white-text">{{expert_secondary_affiliation.SecondaryAffiliationName}}</div> {% endfor %}</p>
+                        </div><div class="row">
+                            <p>Expertise: {% for expert_what in _context.expert_what %}<div class="chip green white-text">{% if expert_what.CryosphereWhat.Approved == true %}{{expert_what.CryosphereWhat.CryosphereWhatName}} </div> {% endif %}{% endfor %}</p>
+                        </div><div class="row">  
+                            <p>Specefic Expertise: {% for expert_what_specefic in _context.expert_what_specefic %}{% if expert_what_specefic.CryosphereWhatSpecefic.Approved == true %}<div class="chip green white-text">{{expert_what_specefic.CryosphereWhatSpecefic.CryosphereWhatSpeceficName}} </div>  {% endif %}{% endfor %}</p>
+                        </div><div class="row">
+                            <p>Expertise Location: {% for expert_where in _context.expert_where %}<div class="chip green white-text">{{expert_where.CryosphereWhere.CryosphereWhereName}} </div>{% endfor %}</p>
+                        </div><div class="row">
+                            <p>Expertise Time: {% for expert_when in _context.expert_when %}<div class="chip green white-text">{{expert_when.CryosphereWhen.CryosphereWhenName}}</div> {% endfor %}</p>
+                        </div><div class="row">
+                            <p>Expertise Methods: {% for expert_methods in _context.expert_methods %}{% if expert_methods.CryosphereMethods.Approved == true %}<div class="chip green white-text">{{expert_methods.CryosphereMethods.CryosphereMethodsName}} </div> {% endif %}{% endfor %}</p>
+                        </div><div class="row">
+                            <p>Contact info: {% for expert_contact in _context.expert_contacts %}<div class="chip green darken-2 white-text"><div class="chip green white-text">{{expert_contact.ContactTypes.ContactType}}</div> : <div class="chip green white-text">{{expert_contact.ContactInformation}} </div></div> {% endfor %}</p>              
+                        </div>
+
+                    </div>
+                    <div class="card-action">
+                        <div class="row">
+                            <p class="center-align">
+                                <button class="btn modal-trigger waves-effect waves-light orange" name="edit-expert" data-target="modal-edit-expert">Edit your info
+                                    <i class="material-icons right">edit</i>
+                                </button>
+                                <button class="btn modal-trigger waves-effect waves-light red" name="delete-expert" data-target="modal-remove-expert">Delete your record
+                                    <i class="material-icons right">delete_forever</i>
+                                </button>
+
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Modal remove -->
+        <div id="modal-remove-expert" class="modal">
+            <div class="modal-content">
+                <h4>Are you sure ?</h4><br>
+                <p>By clicking on the 'delete' your profile as an expert will be deleted from CryoConnect.</p>
+            </div>
+            <div class="modal-footer">
+                <button id="delete-expert-forever" class="btn waves-effect waves-light red">Delete my profile</button>
+            </div>
+        </div>
+
+        <!-- Modal edit -->
+        <div id="modal-edit-expert" class="modal">
+            <div class="modal-content">
+
+                <div class="row">
+                    <form class="col s12" id="expert_edit_form">
+
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <input id="firstName" name="first_name" type="text" class="validate" value="{{_context.expert.FirstName | raw}}" required>
+                                <label for="firstName">First name<font color="red">*</font></label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <input id="lastName" name="last_name" type="text" class="validate" value="{{_context.expert.LastName | raw}}" required>
+                                <label for="lastName">Last name<font color="red">*</font></label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <input id="affiliation" name="affiliation[primary][name]" type="text" class="validate" value="{{expert_primary_affiliation.PrimaryAffiliationName | raw}}" required>
+                                <label for="affiliation">Affiliation name<font color="red">*</font></label>
+                            </div>
+                            <div class="input-field col s12">
+                                <select id="affiliation_country" name="affiliation[primary][country]" required>
+                                    {% for country in _context.countries %}
+                                        {% if country.CountryCode == expert_primary_affiliation.PrimaryAffiliationCountryCode %}
+                                            <option value="{{country.CountryCode}}" selected>{{country.CountryName | raw}}</option>
+                                        {% else %}
+                                            <option value="{{country.CountryCode}}">{{country.CountryName | raw}}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                                <label for="affiliation_country">Affiliation country<font color="red">*</font></label>
+                            </div>
+                            <div class="input-field col s12">
+                                <input id="affiliation_city" name="affiliation[primary][city]" type="text" class="validate" value="{{expert_primary_affiliation.PrimaryAffiliationCity}}" required>
+                                <label for="affiliation_city">Affiliation city<font color="red">*</font></label>
+                            </div>
+                            {% for expert_secondary_affiliation in _context.expert_secondary_affiliation %}
+                                <div class="secondaryaffiliationdiv">
+                                    <div class="input-field col s10">
+                                        <input class="secondaryaffiliations" name="affiliation[secondary][{{loop.index0}}]" type="text" class="validate" value="{{expert_secondary_affiliation.SecondaryAffiliationName}}" required>
+                                        <label for="secondaryaffiliations">Other affiliation<font color="red">*</font></label>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            <div class="input-field col s2">
+                                <a id="addaffiliation" class="waves-effect waves-light btn"><i class="material-icons left">add</i>Add</a>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <select name="caree_stage" id="careerstage" required>
+                                    {% for career_stages in _context.career_stages %}
+                                        {% if career_stages.CareerStageName | raw == _context.expert_career_stages|first.CareerStage.CareerStageName | raw %}
+                                            <option value="{{career_stages.Id}}" selected>{{career_stages.CareerStageName | raw}}</option>
+                                        {% else %}
+                                            <option value="{{career_stages.Id}}">{{career_stages.CareerStageName | raw}}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                                <label for="careerstage">Career stage<font color="red">*</font></label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-field col s12">    
+                                <select name="languages[]" required multiple>
+                                    {% for language in _context.languages %}
+                                        {% set languageMatched = false %}
+                                        {% for expert_language in _context.expert_languages %}
+                                            {% if language.LanguageCode == expert_language.LanguageCode %}
+                                                <option value="{{language.LanguageCode}}" selected>{{language.Language}}</option>
+                                                {% set languageMatched = true %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if languageMatched == false %}
+                                            <option value="{{language.LanguageCode}}">{{language.Language}}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                                <label for="languages">Languages in which you are capable of answering scientific questions<font color="red">*</font></label>
+                            </div>
+                        </div>
+
+                        {% set expertPhone ="" %}
+                        {% set expertWebsite ="" %}
+                        {% set expertLinkedIn ="" %}
+                        {% set expertGoogleScholar ="" %}
+
+                        {% for expert_contact in _context.expert_contacts %}
+                            {% if expert_contact.ContactTypes.ContactType == "phone" %}
+                                {% set expertPhone = expert_contact.ContactInformation %}
+                            {% elseif expert_contact.ContactTypes.ContactType == "website" %}
+                                {% set expertWebsite = expert_contact.ContactInformation %}
+                            {% elseif expert_contact.ContactTypes.ContactType == "linkedIn" %}
+                                {% set expertLinkedIn = expert_contact.ContactInformation %}
+                            {% elseif expert_contact.ContactTypes.ContactType == "googleScholar" %}
+                                {% set expertGoogleScholar = expert_contact.ContactInformation %}
+                            {% endif %}
+                        {% endfor %}
+
+                        <div class="row">
+                            <div class="input-field col s12"> 
+                                <input name="phone_number" id="phonenumber" type="tel" placeholder="number with country code" value="{{expertPhone}}">
+                                <label for="phonenumber">Phone number (incl. country code)<font color="red">*</font></label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-field col s12">           
+                                <input name="personal_website" id="personalwebsite" type="url" placeholder="website" value="{{expertWebsite}}">
+                                <label for="personalwebsite">Personal website</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-field col s12"> 
+                                <input name="personal_linkedin" id="personallinkedin" type="url" placeholder="linkedIn" value="{{expertLinkedIn}}">
+                                <label for="personallinkedin">LinkedIn</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-field col s12"> 
+                                <input name="personal_google_scholar" id="personalgooglescholar" type="url" value="{{expertGoogleScholar}}" placeholder="google scholar">
+                                <label for="personalgooglescholar">Google Scholar profile</label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-field col s12" >    
+                                <span id="cryosphere_what"/>
+                                <label for="cryosphere_what">Which parts of the cryosphere are you comfortable answering questions about?<font color="red">*</font> </label>
+                                <br><br>
+                                {% for cryosphere_what in _context.cryosphere_what %}
+                                    <label>
+                                        {% set itemMatched = false %}
+                                        {% for expert_what in _context.expert_what %}
+                                            {% if cryosphere_what.Id == expert_what.CryosphereWhatId %}
+                                                <input name="cryosphere_what[{{cryosphere_what.CryosphereWhatName}}]" value="{{cryosphere_what.Id}}" type="checkbox" class="cryosphere_what" checked="checked" required />
+                                                {% set itemMatched = true %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if itemMatched == false %}
+                                            <input name="cryosphere_what[{{cryosphere_what.CryosphereWhatName}}]" value="{{cryosphere_what.Id}}" type="checkbox" class="cryosphere_what" required />
+                                        {% endif %}
+                                        <span>{{cryosphere_what.CryosphereWhatName}}</span>
+                                    </label>
+                                    </br>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-field col s12" >    
+                                <span id="cryosphere_where"/>
+                                <label for="cryosphere_where">In which general region(s) have you studied the cryosphere?<font color="red">*</font> </label>
+                                <br><br>
+                                {% for cryosphere_where in _context.cryosphere_where %}
+
+                                    <label>
+                                        {% set itemMatched = false %}
+                                        {% for expert_where in _context.expert_where %}
+                                            {% if cryosphere_where.Id == expert_where.CryosphereWhereId %}
+                                                <input name="cryosphere_where[{{cryosphere_where.CryosphereWhereName}}]" value="{{cryosphere_where.Id}}" type="checkbox" class="cryosphere_where" checked="checked" required />
+                                                {% set itemMatched = true %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if itemMatched == false %}
+                                            <input name="cryosphere_where[{{cryosphere_where.CryosphereWhereName}}]" value="{{cryosphere_where.Id}}" type="checkbox" class="cryosphere_where" required />
+                                        {% endif %}
+                                        <span>{{cryosphere_where.CryosphereWhereName}}</span>
+                                    </label>
+                                    </br>   
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-field col s12" >    
+                                <span id="cryosphere_what_specefic"/>
+                                <label for="cryosphere_what_specefic">Which processes & subdisciplines are you comfortable answering questions about?<font color="red">*</font> </label>
+                                <br><br>
+                                {% for cryosphere_what_specefic in _context.cryosphere_what_specefic %}
+
+                                    <label>
+                                        {% set itemMatched = false %}
+                                        {% for expert_what_specefic in _context.expert_what_specefic %}
+                                            {% if cryosphere_what_specefic.Id == expert_what_specefic.CryosphereWhatSpeceficId %}
+                                                <input name="cryosphere_what_specefic[{{cryosphere_what_specefic.CryosphereWhatSpeceficName}}]" value="{{cryosphere_what_specefic.Id}}" type="checkbox" class="cryosphere_what_specefic" checked="checked" required />
+                                                {% set itemMatched = true %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if itemMatched == false %}
+                                            <input name="cryosphere_what_specefic[{{cryosphere_what_specefic.CryosphereWhatSpeceficName}}]" value="{{cryosphere_what_specefic.Id}}" type="checkbox" class="cryosphere_what_specefic" required />
+                                        {% endif %}
+                                        <span>{{cryosphere_what_specefic.CryosphereWhatSpeceficName}}</span>
+                                    </label>
+                                    </br>   
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-field col s12" >    
+                                <span id="cryosphere_method"/>
+                                <label for="cryosphere_method">Which methods are you comfortable answering questions about?<font color="red">*</font> </label>
+                                <br><br>
+                                {% for cryosphere_method in _context.cryosphere_methods %}
+                                    <label>
+                                        {% set itemMatched = false %}
+                                        {% for expert_method in _context.expert_methods %}
+                                            {% if cryosphere_method.Id == expert_method.MethodId %}
+                                                <input name="cryosphere_method[{{cryosphere_method.CryosphereMethodsName}}]" value="{{cryosphere_method.Id}}" type="checkbox" class="cryosphere_method" checked="checked" required />
+                                                {% set itemMatched = true %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if itemMatched == false %}
+                                            <input name="cryosphere_method[{{cryosphere_method.CryosphereMethodsName}}]" value="{{cryosphere_method.Id}}" type="checkbox" class="cryosphere_method" required />
+                                        {% endif %}           
+                                        <span>{{cryosphere_method.CryosphereMethodsName}}</span>
+                                    </label>
+                                    </br>   
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-field col s12" >    
+                                <span id="cryosphere_when"/>
+                                <label for="cryosphere_when">Which time periods are you comfortable answering questions about?<font color="red">*</font> </label>
+                                <br><br>
+                                {% for cryosphere_when in _context.cryosphere_when %}
+                                    <label>
+                                        {% set itemMatched = false %}
+                                        {% for expert_when in _context.expert_when %}
+                                            {% if cryosphere_when.Id == expert_when.CryosphereWhenId %}
+                                                <input name="cryosphere_when[{{cryosphere_when.CryosphereWhenName}}]" value="{{cryosphere_when.Id}}" type="checkbox" class="cryosphere_when" checked="checked" required />
+                                                {% set itemMatched = true %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if itemMatched == false %}
+                                            <input name="cryosphere_when[{{cryosphere_when.CryosphereWhenName}}]" value="{{cryosphere_when.Id}}" type="checkbox" class="cryosphere_when" required />
+                                        {% endif %}
+                                        <span>{{cryosphere_when.CryosphereWhenName}}</span>
+                                    </label>
+                                    </br>   
+                                {% endfor %}
+                            </div>
+                        </div>
+                </div>
+
+                <p class="center-align">
+                    <button id="edit-expert-btn" class="btn waves-effect waves-light" type="submit" name="action">Update your info
+                        <i class="material-icons right">edit</i>
+                    </button>
+                </p>
+            </div>
+        </form>
+    </div>
+</body>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flipclock/0.7.8/flipclock.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        //to initialize materelize forms
+        $('select').formSelect();
+
+
+        var elements = $("input:checkbox");
+        for (var i = 0; i < elements.length; i++) {
+            if (elements[i].id != "termcondition") {
+                elements[i].oninvalid = function (e) {
+                    e.target.setCustomValidity("");
+                    if (!e.target.validity.valid) {
+                        e.target.setCustomValidity("Please select one or more options.");
+                    }
+                };
+                elements[i].oninput = function (e) {
+                    e.target.setCustomValidity("");
+                };
+            }
+        }
+    });
+    $(document).ready(function () {
+
+
+        $('.modal').modal();
+
+        //add affiliation
+        $("#addaffiliation").click(function () {
+
+            var selectCount = $(this).parent().parent().find(".secondaryaffiliationdiv").length;
+            var selectObj = $(this).parent().parent().find(".secondaryaffiliationdiv").first().clone();
+            selectObj.children().first().find(".secondaryaffiliations").attr('name', 'affiliation[secondary][' + selectCount + ']');
+            selectObj.children().first().find(".secondaryaffiliations").val(null);
+            selectObj.insertBefore($(this).parent());
+
+        });
+
+        //delete expert
+        $("#delete-expert-forever").click(function () {
+
+            /* stop form from submitting normally */
+            event.preventDefault();
+            var expertId = "{{_context.expertId}}";
+            var expertEmail = "{{_context.expert_email}}";
+            var token = getUrlParameter('t');
+            var postUrl = "{{path_for('expert_delete')}}";
+            if (
+                    String(token).trim() == '' ||
+                    String(expertId).trim() == '' ||
+                    String(expertEmail).trim() == '')
+            {
+                alert('Something went wrong! Please contact Cryo Connect!');
+                return false;
+            } else {
+                $.ajax({
+                    type: 'DELETE',
+                    headers: {
+                        'Token-Authorization-X': `Bearer ${token}`,
+                    },
+                    url: postUrl,
+                    data: 'e=' + expertEmail + '&id=' + expertId,
+                    beforeSend: function () {
+                        $('#delete-expert-forever').attr("disabled", "disabled");
+                        $('.modal-remove-expert').css('opacity', '.5');
+                    }
+                })
+                        .done(function (data) {
+                            M.toast({
+                                html: 'Your expert has been successfully deleted!',
+                                displayLength: 5000,
+                                completeCallback: function () {
+                                    window.location.href = "/"
+                                }
+                            });
+                        })
+                        .fail(function (errMsg) {
+                            alert('Apologies, an error occurred. Please try again or contact info@cryoconnect.net.');
+                            $('#delete-expert-forever').removeAttr("disabled");
+                            $('.modal-remove-expert').css('opacity', '');
+                        });
+            }
+        });
+        //edit fieldwork subbmit
+        $("#expert_edit_form").submit(function (event) {
+
+            /* stop form from submitting normally */
+            event.preventDefault();
+            var expertId = "{{_context.expertId}}";
+            var expertEmail = "{{_context.expert_email}}";
+            var token = getUrlParameter('t');
+            var postUrl = "{{path_for('expert_edit')}}";
+            var formObject = $(this);
+            if (
+                    String(token).trim() == '' ||
+                    String(expertId).trim() == '' ||
+                    String(expertEmail).trim() == '')
+            {
+                alert('Something went wrong! Please contact Cryo Connect!');
+                return false;
+            } else {
+                $.ajax({
+                    type: 'PUT',
+                    headers: {
+                        'Token-Authorization-X': `Bearer ${token}`,
+                    },
+                    url: postUrl,
+                    data: formObject.serialize() + '&e=' + expertEmail + '&id=' + expertId,
+                    beforeSend: function () {
+                        $('#edit-expert-btn').attr("disabled", "disabled");
+                        $('.modal-edit-expert').css('opacity', '.5');
+                    }
+                })
+                        .done(function (data) {
+                            location.reload();
+                        })
+                        .fail(function (errMsg) {
+                            alert('Apologies, an error occurred. Please try again or contact info@cryoconnect.net.');
+                            $('#edit-expert-btn').removeAttr("disabled");
+                            $('.modal-edit-expert').css('opacity', '');
+                        });
+            }
+
+        });
+        //form subbmition
+        $(".application-submit").submit(function (event) {
+
+            /* stop form from submitting normally */
+            event.preventDefault();
+            var formObject = $(this);
+            $.ajax({
+                type: 'POST',
+                headers: {
+                    'Token-Authorization-X': `Bearer {{_context.token}}`,
+                },
+                url: "{{path_for('fieldwork_bid_request_submit')}}",
+                data: formObject.serialize() + "&e={{_context.email}}&ish={{_context.fieldwork_information_seeker_hash}}&fh=" + formObject[0].id,
+                beforeSend: function () {
+                    $('.submitBtn').attr("disabled", "disabled");
+                    $('.modal-body').css('opacity', '.5');
+                }
+            })
+                    .done(function (data) {
+                        location.reload();
+                    })
+                    .fail(function (errMsg) {
+                        alert('Apologies, an error occurred. Please try again or contact info@cryoconnect.net.');
+                        $('.submitBtn').removeAttr("disabled");
+                        $('.modal-body').css('opacity', '');
+                    });
+        });
+        //to initialize materelize forms
+        $('select').formSelect();
+        var getUrlParameter = function getUrlParameter(sParam) {
+            var sPageURL = window.location.search.substring(1),
+                    sURLVariables = sPageURL.split('&'),
+                    sParameterName,
+                    i;
+            for (i = 0; i < sURLVariables.length; i++) {
+                sParameterName = sURLVariables[i].split('=');
+                if (sParameterName[0] === sParam) {
+                    return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+                }
+            }
+        };
+
+        if ($(document).find('.cryosphere_what').filter(':checked').length < 1) {
+            $(document).find('.cryosphere_what').prop('required', true);
+        } else {
+            $(document).find('.cryosphere_what').prop('required', false);
+        }
+        $(document).find('.cryosphere_what').change(function () {
+            if ($(document).find('.cryosphere_what').filter(':checked').length < 1) {
+                $(document).find('.cryosphere_what').prop('required', true);
+            } else {
+                $(document).find('.cryosphere_what').prop('required', false);
+            }
+        });
+
+        if ($(document).find('.cryosphere_what_specefic').filter(':checked').length < 1) {
+            $(document).find('.cryosphere_what_specefic').prop('required', true);
+        } else {
+            $(document).find('.cryosphere_what_specefic').prop('required', false);
+        }
+        $(document).find('.cryosphere_what_specefic').change(function () {
+            if ($(document).find('.cryosphere_what_specefic').filter(':checked').length < 1) {
+                $(document).find('.cryosphere_what_specefic').prop('required', true);
+            } else {
+                $(document).find('.cryosphere_what_specefic').prop('required', false);
+            }
+        });
+
+        if ($(document).find('.cryosphere_where').filter(':checked').length < 1) {
+            $(document).find('.cryosphere_where').prop('required', true);
+        } else {
+            $(document).find('.cryosphere_where').prop('required', false);
+        }
+        $(document).find('.cryosphere_where').change(function () {
+            if ($(document).find('.cryosphere_where').filter(':checked').length < 1) {
+                $(document).find('.cryosphere_where').prop('required', true);
+            } else {
+                $(document).find('.cryosphere_where').prop('required', false);
+            }
+        });
+
+        if ($(document).find('.cryosphere_when').filter(':checked').length < 1) {
+            $(document).find('.cryosphere_when').prop('required', true);
+        } else {
+            $(document).find('.cryosphere_when').prop('required', false);
+        }
+        $(document).find('.cryosphere_when').change(function () {
+            if ($(document).find('.cryosphere_when').filter(':checked').length < 1) {
+                $(document).find('.cryosphere_when').prop('required', true);
+            } else {
+                $(document).find('.cryosphere_when').prop('required', false);
+            }
+        });
+
+        if ($(document).find('.cryosphere_method').filter(':checked').length < 1) {
+            $(document).find('.cryosphere_method').prop('required', true);
+        } else {
+            $(document).find('.cryosphere_method').prop('required', false);
+        }
+        $(document).find('.cryosphere_method').change(function () {
+            if ($(document).find('.cryosphere_method').filter(':checked').length < 1) {
+                $(document).find('.cryosphere_method').prop('required', true);
+            } else {
+                $(document).find('.cryosphere_method').prop('required', false);
+            }
+        });
+    });
+
+</script>

@@ -1,7 +1,7 @@
 <p>Dear {{_context.expert_name}},</p>
 <p>You have successfully signed up as an expert at Cryo Connect. From now on you may receive requests from information seekers.&nbsp;</p>
-<p>Click here to modify your information in our database: …&nbsp;</p>
-<p>Click here to remove all your information from our database permanently: ... &nbsp;</p>
+<p>Click here to modify/remove your information in our database:<br>
+<a href="https://cryoconnect.net{{path_for('expert_dashboard',{},{'e': _context.expert_email  , 't': _context.token}) }}">https://cryoconnect.net{{ path_for('expert_dashboard',{} , {'e': _context.expert_email , 't': _context.token}) }}</a></p>
 
 <p>&nbsp;</p>
 <p>Best,</p>
