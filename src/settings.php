@@ -23,15 +23,15 @@ return [
             'smtp' => 'mail.webruimtemail.nl',
             'port' => 587,
             'username' => 'testing-dev-noreply@cryoconnect.net',
-            'password' => 'AxO1o2bSr4',
+            'password' => '-----',
         ],
         //Admin emails
         'contacts' => [
             'technical_admin' => 'sina.nick@gmail.com',
             'approval_admin' => 'sina.nick@gmail.com',
-        ],
+                ],
         'tokens' => [
-            'api-auth' => 'QMt9neFatRqGcUEX',
+            'api-auth' => '----',
         ]
     ],
 ];

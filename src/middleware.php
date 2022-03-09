@@ -188,7 +188,7 @@ $app->add(new TokenAuthentication([
 $recaptchaAuthentication = function(Slim\Http\Request $request, TokenAuthentication $tokenAuth) {
     # Search for token on header, parameter, cookie or attribute
     $captcha = $request->getParsedBody()['rt'];
-    $secretKey = '6LeyIZ4UAAAAAN4fAqIZq5gztSzKuolohXsJAaQB';
+    $secretKey = '6LeZDJ4UAAAAAJRm74pJHJk9fsEOb63k5GOzIM2x';
 
     // post request to server
     $url = 'https://www.google.com/recaptcha/api/siteverify';
